@@ -2,6 +2,7 @@ package com.kaijin.ChargingBench;
 
 import com.kaijin.ChargingBench.TileEntityChargingBench;
 
+import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;

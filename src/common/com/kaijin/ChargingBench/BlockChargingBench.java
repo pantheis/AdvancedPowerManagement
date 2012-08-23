@@ -1,7 +1,5 @@
 package com.kaijin.ChargingBench;
 
-import net.minecraft.src.ic2.*;
-
 import java.util.ArrayList;
 import java.util.Random;
 
