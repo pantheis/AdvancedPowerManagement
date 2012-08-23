@@ -10,7 +10,7 @@ import net.minecraft.src.ic2.api.*;
 import net.minecraft.src.ic2.common.*;
 import net.minecraft.src.ic2.platform.*;
 
-public class BlockChargingBench extends Block implements ITextureProvider
+public class BlockChargingBench extends BlockMultiID
 {
     public BlockChargingBench(int var1)
     {
@@ -18,12 +18,13 @@ public class BlockChargingBench extends Block implements ITextureProvider
         this.setHardness(1.0F);
     }
 
-    public boolean blockActivated(World var1, int var2, int var3, int var4, EntityPlayer var5)
+    public boolean blockActivated(World world, int x, int y, int z, EntityPlayer entityplayer)
     {
-        return Platform.isSimulating() ? ChargingBenchMod.launchGUI(var5, var1.getBlockTileEntity(var2, var3, var4)) : true;
+        entityplayer.openGui(mod_IC2_ChargingBench.instance, 1, world, x, y, z);
+        return true;
     }
 
-    public TileEntityBlock getBlockEntity(int var1)
+    public TileEntityChargingBench getBlockEntity(int var1)
     {
         switch (var1)
         {

@@ -1,11 +1,7 @@
 package com.kaijin.ChargingBench;
 
 import ic2chargingbench.common.TileEntityChargingBench;
-import net.minecraft.src.BaseModMp;
-import net.minecraft.src.EntityHuman;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ModLoader;
-import net.minecraft.src.TileEntity;
+import net.minecraft.src.*;
 import net.minecraft.src.mod_IC2_ChargingBench;
 
 public abstract class ChargingBenchMod extends BaseModMp

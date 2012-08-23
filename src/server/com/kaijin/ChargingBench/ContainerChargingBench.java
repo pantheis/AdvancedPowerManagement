@@ -1,9 +1,6 @@
 package com.kaijin.ChargingBench;
 
-import net.minecraft.src.EntityHuman;
-import net.minecraft.src.ICrafting;
-import net.minecraft.src.PlayerInventory;
-import net.minecraft.src.Slot;
+import net.minecraft.src.*;
 import net.minecraft.src.ic2.common.ContainerIC2;
 
 public class ContainerChargingBench extends ContainerIC2
@@ -101,8 +98,9 @@ public class ContainerChargingBench extends ContainerIC2
         return 0;
     }
 
-    public boolean canInteractWith(EntityHuman var1)
-    {
-        return this.tileentity.isUseableByPlayer(var1);
-    }
+	@Override
+	public boolean canInteractWith(EntityPlayer arg0) {
+		// TODO Auto-generated method stub
+		return this.tileentity.isUseableByPlayer(arg0);
+	}
 }

@@ -5,8 +5,12 @@ import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.ic2.api.*;
+import net.minecraft.src.ic2.api.ElectricItem;
+import net.minecraft.src.ic2.api.EnergyNet;
+import net.minecraft.src.ic2.common.*;
+import net.minecraft.src.ic2.platform.*;
 
-public class TileEntityChargingBench extends TileEntity implements IEnergySource 
+public class TileEntityChargingBench extends TileEntityElecMachine implements IEnergySource 
 {
     public int baseTier;
     public int baseMaxInput;

@@ -12,7 +12,7 @@ public class mod_IC2_ChargingBench extends NetworkMod
     static int ChargingBenchBlockID;
     public static mod_IC2_ChargingBench instance;
     
-    public static final Block ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0).setHardness(1.0F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("inventoryStocker");
+    public static final Block ChargingBench = new BlockChargingBench(ChargingBenchBlockID).setHardness(1.0F).setResistance(5F).setStepSound(Block.soundStoneFootstep);
     public static int guiIdChargingBench;
 
     public mod_IC2_ChargingBench()
@@ -46,15 +46,13 @@ public class mod_IC2_ChargingBench extends NetworkMod
         ModLoader.registerTileEntity(TileEntityChargingBench1.class, "Charging Bench Mk1");
         ModLoader.registerTileEntity(TileEntityChargingBench2.class, "Charging Bench Mk2");
         ModLoader.registerTileEntity(TileEntityChargingBench3.class, "Charging Bench Mk3");
-        ModLoader.addRecipe(new ItemStack(blockChargingBench, 1, 0), new Object[] {"UUU", "W W", "WWW", 'U', Items.getItem("copperCableItem"), 'W', Block.planks});
-        ModLoader.addRecipe(new ItemStack(blockChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("goldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit")});
-        ModLoader.addRecipe(new ItemStack(blockChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("ironCableItem"), 'W', Block.planks, 'C', Items.getItem("advancedCircuit")});
+        ModLoader.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "W W", "WWW", 'U', Items.getItem("copperCableItem"), 'W', Block.planks});
+        ModLoader.addRecipe(new ItemStack(ChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("goldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit")});
+        ModLoader.addRecipe(new ItemStack(ChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("ironCableItem"), 'W', Block.planks, 'C', Items.getItem("advancedCircuit")});
         ModLoader.addLocalization("blockChargingBench1.name", "Charging Bench Mk1");
         ModLoader.addLocalization("blockChargingBench2.name", "Charging Bench Mk2");
         ModLoader.addLocalization("blockChargingBench3.name", "Charging Bench Mk3");
         MinecraftForgeClient.preloadTexture("/ic2/sprites/ChargingBench.png");
-        ModLoaderMp.registerGUI(this, mod_IC2_ChargingBench.guiIdChargingBench);
-
     }
 
     public String getVersion()
