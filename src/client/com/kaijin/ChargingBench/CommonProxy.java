@@ -15,7 +15,6 @@ public class CommonProxy
     public static void load()
     {
         MinecraftForgeClient.preloadTexture("/com/kaijin/ChargingBench/sprites/ChargingBench.png");
-        ModLoader.addName(mod_IC2_ChargingBench.ChargingBench, "Inventory Stocker");
     }
 
     public static Configuration getConfiguration()

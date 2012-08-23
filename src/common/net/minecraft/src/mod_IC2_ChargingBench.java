@@ -12,7 +12,7 @@ public class mod_IC2_ChargingBench extends NetworkMod
     static int ChargingBenchBlockID;
     public static mod_IC2_ChargingBench instance;
     
-    public static final Block ChargingBench = new BlockChargingBench(ChargingBenchBlockID).setHardness(1.0F).setResistance(5F).setStepSound(Block.soundStoneFootstep);
+    public static final Block ChargingBench = new BlockChargingBench(ChargingBenchBlockID).setStepSound(Block.soundStoneFootstep);
     public static int guiIdChargingBench;
 
     public mod_IC2_ChargingBench()
@@ -52,7 +52,7 @@ public class mod_IC2_ChargingBench extends NetworkMod
         ModLoader.addLocalization("blockChargingBench1.name", "Charging Bench Mk1");
         ModLoader.addLocalization("blockChargingBench2.name", "Charging Bench Mk2");
         ModLoader.addLocalization("blockChargingBench3.name", "Charging Bench Mk3");
-        MinecraftForgeClient.preloadTexture("/ic2/sprites/ChargingBench.png");
+        CommonProxy.load();
     }
 
     public String getVersion()
@@ -64,11 +64,9 @@ public class mod_IC2_ChargingBench extends NetworkMod
     {
         try
         {
-            config = new Configuration(new File(Platform.getMinecraftDir() + "/config/IC2ChargingBench.cfg"));
-            config.load();
-            idBlockChargingBench = Integer.valueOf(config.getOrCreateIntProperty("blockChargingBench", "block", 189).value).intValue();
-            guiIdChargingBench = Integer.valueOf(config.getOrCreateIntProperty("guiIdChargingBench", "general", 110).value).intValue();
-            config.save();
+            configuration.load();
+            ChargingBenchBlockID = Integer.valueOf(configuration.getOrCreateIntProperty("blockChargingBench", "block", 189).value).intValue();
+            configuration.save();
         }
         catch (Exception var1)
         {

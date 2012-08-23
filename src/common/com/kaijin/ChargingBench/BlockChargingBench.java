@@ -2,6 +2,7 @@ package com.kaijin.ChargingBench;
 
 import net.minecraft.src.ic2.*;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import net.minecraft.src.forge.*;
@@ -16,6 +17,11 @@ public class BlockChargingBench extends BlockMultiID
     {
         super(var1, Material.wood);
         this.setHardness(1.0F);
+    }
+    
+    public void addCreativeItems(ArrayList itemList)
+    {
+    	itemList.add(new ItemStack(this));
     }
 
     public boolean blockActivated(World world, int x, int y, int z, EntityPlayer entityplayer)

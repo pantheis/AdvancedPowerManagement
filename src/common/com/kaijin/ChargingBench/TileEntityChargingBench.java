@@ -10,7 +10,7 @@ import net.minecraft.src.ic2.api.EnergyNet;
 import net.minecraft.src.ic2.common.*;
 import net.minecraft.src.ic2.platform.*;
 
-public class TileEntityChargingBench extends TileEntityElecMachine implements IEnergySource 
+public class TileEntityChargingBench extends TileEntityElecMachine implements IEnergySource
 {
     public int baseTier;
     public int baseMaxInput;
@@ -160,11 +160,6 @@ public class TileEntityChargingBench extends TileEntityElecMachine implements IE
         return this.worldObj.isBlockIndirectlyGettingPowered(this.xCoord, this.yCoord, this.zCoord) ? false : this.energy <= this.maxEnergy - this.baseMaxInput;
     }
 
-    public Container getGuiContainer(InventoryPlayer var1)
-    {
-        return new ContainerChargingBench(var1, this);
-    }
-
     public boolean emitsEnergyTo(TileEntity var1, Direction var2)
     {
         return true;
@@ -223,10 +218,4 @@ public class TileEntityChargingBench extends TileEntityElecMachine implements IE
         this.setOverclockRates();
         return super.injectEnergy(var1, var2);
     }
-
-	@Override
-	public boolean isAddedToEnergyNet() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

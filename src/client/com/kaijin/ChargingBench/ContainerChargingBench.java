@@ -4,6 +4,7 @@ import com.kaijin.ChargingBench.TileEntityChargingBench;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Slot;
 import net.minecraft.src.ic2.common.ContainerIC2;
@@ -14,7 +15,7 @@ public class ContainerChargingBench extends ContainerIC2
     public int energy;
     public short maxInput;
 
-    public ContainerChargingBench(InventoryPlayer var1, TileEntityChargingBench var2)
+    public ContainerChargingBench(InventoryPlayer player, TileEntityChargingBench var2)
     {
         this.tileentity = var2;
         this.energy = 0;
@@ -42,13 +43,13 @@ public class ContainerChargingBench extends ContainerIC2
         {
             for (int var4 = 0; var4 < 9; ++var4)
             {
-                this.addSlot(new Slot(var1, var4 + var3 * 9 + 9, 8 + var4 * 18, 84 + var3 * 18));
+                this.addSlot(new Slot(player, var4 + var3 * 9 + 9, 8 + var4 * 18, 84 + var3 * 18));
             }
         }
 
         for (var3 = 0; var3 < 9; ++var3)
         {
-            this.addSlot(new Slot(var1, var3, 8 + var3 * 18, 142));
+            this.addSlot(new Slot(player, var3, 8 + var3 * 18, 142));
         }
     }
 
