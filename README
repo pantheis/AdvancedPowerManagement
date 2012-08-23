@@ -1,0 +1,7 @@
+Unofficial complete of Industrial Craft 2 Charging Bench using the IC2 API
+(http://forum.industrial-craft.net/index.php?page=Thread&threadID=929)
+
+Adds the brand new Charging Bench, an electric machine with 12 charging slots for all your tools, batteries,
+and anything else you can stuff in the top slot of a batbox. Comes in three varieties, one for each tier.
+It's even smart enough to unstack batteries if you place them into it stacked! Plus, if it's redstone powered,
+it'll reverse operation and discharge batteries to emit power instead.
