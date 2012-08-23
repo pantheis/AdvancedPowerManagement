@@ -1,31 +1,48 @@
 package net.minecraft.src;
 
-
 import java.io.File;
-
-import com.kaijin.ChargingBench.BlockChargingBench;
-import com.kaijin.ChargingBench.GuiChargingBench;
-import com.kaijin.ChargingBench.ItemChargingBench;
-import com.kaijin.ChargingBench.TileEntityChargingBench;
-import com.kaijin.ChargingBench.TileEntityChargingBench1;
-import com.kaijin.ChargingBench.TileEntityChargingBench2;
-import com.kaijin.ChargingBench.TileEntityChargingBench3;
-
+import com.kaijin.ChargingBench.*;
 import net.minecraft.src.forge.*;
 import net.minecraft.src.*;
 import net.minecraft.src.ic2.api.*;
 
 public class mod_IC2_ChargingBench extends NetworkMod
 {
-    public static Configuration config;
-    public static int idBlockChargingBench;
-    public static Block blockChargingBench;
+    static Configuration configuration = CommonProxy.getConfiguration();
+    static int ChargingBenchBlockID;
+    public static mod_IC2_ChargingBench instance;
+    
+    public static final Block ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0).setHardness(1.0F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("inventoryStocker");
     public static int guiIdChargingBench;
 
+    public mod_IC2_ChargingBench()
+    {
+    	instance = this;
+    }
+    
+    @Override
+    public boolean clientSideRequired()
+    {
+            return true;
+    }
+
+    @Override
+    public boolean serverSideRequired()
+    {
+            return false;
+    }
+   
+    @Override
+    public String getPriorities()
+    {
+    	return "required-after:mod_IC2";
+    }
+    
     public void load()
     {
-        blockChargingBench = new BlockChargingBench(idBlockChargingBench);
-        ModLoader.registerBlock(blockChargingBench, ItemChargingBench.class);
+    	MinecraftForge.versionDetect("IC2_Charging Bench", 3, 3, 8);
+        ModLoader.registerBlock(ChargingBench, ItemChargingBench.class);
+    	MinecraftForge.setGuiHandler(this.instance, new GuiHandlerIC2ChargingBench());
         ModLoader.registerTileEntity(TileEntityChargingBench1.class, "Charging Bench Mk1");
         ModLoader.registerTileEntity(TileEntityChargingBench2.class, "Charging Bench Mk2");
         ModLoader.registerTileEntity(TileEntityChargingBench3.class, "Charging Bench Mk3");
@@ -42,24 +59,9 @@ public class mod_IC2_ChargingBench extends NetworkMod
 
     public String getVersion()
     {
-        return "1.90-1";
+        return "MC 1.2.5 - IC 1.102 - alpha 1";
     }
     
-
-
-    public static boolean launchGUI(EntityPlayer var0, TileEntity var1)
-    {
-    	ModLoader.openGUI(var0, new GuiChargingBench(var0.inventory, (TileEntityChargingBench)var1));
-    	return true;
-    }
-
-    public GuiScreen handleGUI(int var1)
-    {
-    	EntityPlayerSP var2 = ModLoader.getMinecraftInstance().thePlayer;
-    	return var2 == null ? null : new GuiChargingBench(var2.inventory, new TileEntityChargingBench(0));
-    }
-
-
     static
     {
         try

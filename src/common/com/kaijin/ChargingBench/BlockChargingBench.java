@@ -1,14 +1,16 @@
 package com.kaijin.ChargingBench;
 
-import java.util.Random;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.Material;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
-import net.minecraft.src.ic2.api.*;
-import net.minecraft.src.ic2.common.BlockMultiID;
+import net.minecraft.src.ic2.*;
 
-public class BlockChargingBench extends BlockMultiID
+import java.util.Random;
+
+import net.minecraft.src.forge.*;
+import net.minecraft.src.*;
+import net.minecraft.src.ic2.api.*;
+import net.minecraft.src.ic2.common.*;
+import net.minecraft.src.ic2.platform.*;
+
+public class BlockChargingBench extends Block implements ITextureProvider
 {
     public BlockChargingBench(int var1)
     {
@@ -54,7 +56,7 @@ public class BlockChargingBench extends BlockMultiID
         return var1;
     }
 
-    public TileEntity getBlockEntity(int var1)
+    public TileEntity getTileEntity(int var1)
     {
         return this.getBlockEntity(var1);
     }
