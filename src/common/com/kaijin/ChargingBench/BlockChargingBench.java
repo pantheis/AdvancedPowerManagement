@@ -21,11 +21,17 @@ public class BlockChargingBench extends BlockMultiID
     {
     	itemList.add(new ItemStack(this));
     }
-
+    
+    private boolean launchGUI(World world, int x, int y, int z, EntityPlayer entityplayer)
+    {
+    	entityplayer.openGui(mod_IC2_ChargingBench.instance, 1, world, x, y, z);
+    	return true;
+    }
+    
     public boolean blockActivated(World world, int x, int y, int z, EntityPlayer entityplayer)
     {
-        entityplayer.openGui(mod_IC2_ChargingBench.instance, 1, world, x, y, z);
-        return true;
+    	return Platform.isSimulating()?launchGUI(world, x, y, z, entityplayer):true;
+//        entityplayer.openGui(mod_IC2_ChargingBench.instance, 1, world, x, y, z);
     }
 
     public TileEntityChargingBench getBlockEntity(int var1)
