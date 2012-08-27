@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 import java.io.File;
 import com.kaijin.ChargingBench.*;
+
 import net.minecraft.src.forge.*;
 import net.minecraft.src.*;
 import net.minecraft.src.ic2.api.*;
@@ -10,15 +11,33 @@ public class mod_IC2_ChargingBench extends NetworkMod
 {
     static Configuration configuration = CommonProxy.getConfiguration();
     static int ChargingBenchBlockID;
+    static public boolean isDebugging;
+    
     public static mod_IC2_ChargingBench instance;
     public static final Block ChargingBench = new BlockChargingBench(ChargingBenchBlockID);
-    public static int guiIdChargingBench;
+    static { configurationProperties(); }
 
     public mod_IC2_ChargingBench()
     {
     	instance = this;
     }
     
+    public static void configurationProperties()
+    {
+        try
+        {
+            configuration.load();
+            ChargingBenchBlockID = Integer.valueOf(configuration.getOrCreateIntProperty("blockChargingBench", "block", 189).value).intValue();
+            isDebugging = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("debug", configuration.CATEGORY_GENERAL, true).value));
+            configuration.save();
+        }
+        catch (Exception var1)
+        {
+            System.out.println("[ChargingBench] Error while trying to access configuration!");
+            throw new RuntimeException(var1);
+        }
+    }
+
     @Override
     public boolean clientSideRequired()
     {
@@ -61,20 +80,5 @@ public class mod_IC2_ChargingBench extends NetworkMod
     public String getVersion()
     {
         return "MC 1.2.5 - IC 1.102 - alpha 1";
-    }
-    
-    static
-    {
-        try
-        {
-            configuration.load();
-            ChargingBenchBlockID = Integer.valueOf(configuration.getOrCreateIntProperty("blockChargingBench", "block", 189).value).intValue();
-            configuration.save();
-        }
-        catch (Exception var1)
-        {
-            System.out.println("[ChargingBench] Error while trying to access configuration!");
-            throw new RuntimeException(var1);
-        }
     }
 }

@@ -9,7 +9,7 @@ public class ContainerChargingBench extends ContainerIC2
     public int energy;
     public short maxInput;
 
-    public ContainerChargingBench(IInventory playerinventory, TileEntityChargingBench var2)
+    public ContainerChargingBench(InventoryPlayer playerinventory, TileEntityChargingBench var2)
     {
         this.tileentity = var2;
         this.energy = 0;

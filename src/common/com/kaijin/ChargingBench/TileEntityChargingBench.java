@@ -1,13 +1,14 @@
 package com.kaijin.ChargingBench;
 
 import net.minecraft.src.Container;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.ic2.api.*;
-import net.minecraft.src.ic2.api.ElectricItem;
-import net.minecraft.src.ic2.api.EnergyNet;
 import net.minecraft.src.ic2.common.*;
+import net.minecraft.src.ic2.common.ElectricItem;
+import net.minecraft.src.ic2.common.EnergyNet;
 import net.minecraft.src.ic2.platform.*;
 
 public class TileEntityChargingBench extends TileEntityElecMachine implements IEnergySource
@@ -218,4 +219,10 @@ public class TileEntityChargingBench extends TileEntityElecMachine implements IE
         this.setOverclockRates();
         return super.injectEnergy(var1, var2);
     }
+
+	public Container getGuiContainer(InventoryPlayer player)
+	{
+		return new ContainerChargingBench(player, this);
+
+	}
 }

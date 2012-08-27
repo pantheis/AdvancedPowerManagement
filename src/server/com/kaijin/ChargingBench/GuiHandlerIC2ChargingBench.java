@@ -17,6 +17,10 @@ public class GuiHandlerIC2ChargingBench implements IGuiHandler
 		}
 		
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		if (!(tile instanceof TileEntityChargingBench))
+		{
+			return null;
+		}
 		return new ContainerChargingBench(player.inventory, (TileEntityChargingBench)tile);
 
 	}

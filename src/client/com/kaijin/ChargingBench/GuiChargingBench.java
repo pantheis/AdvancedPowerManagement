@@ -9,18 +9,18 @@ import com.kaijin.ChargingBench.*;
 public class GuiChargingBench extends GuiContainer
 {
 	IInventory playerInventory;
-	TileEntityChargingBench tile;
+	public TileEntityChargingBench tile;
+	public EntityPlayer player;
 	private GuiButton selectedButton = null;
 	
 	private GuiButton button = null;
 	
-	public GuiChargingBench(InventoryPlayer playerInventory, TileEntityChargingBench tileentitychargingbench, EntityPlayer player)
+	public GuiChargingBench(EntityPlayer player, TileEntityChargingBench tileentitychargingbench)
 	{
-		super(new ContainerChargingBench(playerInventory, tileentitychargingbench));
-		// TODO Auto-generated constructor stub
+		super(tileentitychargingbench.getGuiContainer(player.inventory));
+		this.player = player;
+		this.tile = tileentitychargingbench;
 	}
-
-    public TileEntityChargingBench tileentity;
 
     protected void drawGuiContainerForegroundLayer()
     {
@@ -38,9 +38,9 @@ public class GuiChargingBench extends GuiContainer
         int var6 = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(var5, var6, 0, 0, this.xSize, this.ySize);
 
-        if (this.tileentity.energy > 0)
+        if (this.tile.energy > 0)
         {
-            int var7 = this.tileentity.gaugeEnergyScaled(14);
+            int var7 = this.tile.gaugeEnergyScaled(14);
             this.drawTexturedModalRect(var5 + 24, var6 + 23 + 14 - var7, 176, 14 - var7, 14, var7);
         }
     }

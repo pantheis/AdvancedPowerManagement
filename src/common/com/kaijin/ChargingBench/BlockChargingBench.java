@@ -9,33 +9,38 @@ import net.minecraft.src.ic2.api.*;
 import net.minecraft.src.ic2.common.*;
 import net.minecraft.src.ic2.platform.*;
 
-public class BlockChargingBench extends BlockMultiID
+public class BlockChargingBench extends BlockMultiID implements ITextureProvider 
 {
     public BlockChargingBench(int var1)
     {
-        super(var1, Material.wood);
-        this.setHardness(1.0F);
+    	super(var1, Material.wood);
+    	this.setHardness(1.0F);
+    	if (Utils.isDebug()) System.out.println("BlockChargingBench");
     }
     
     public void addCreativeItems(ArrayList itemList)
     {
+    	if (Utils.isDebug()) System.out.println("BlockChargingBench.addCreativeItems");
     	itemList.add(new ItemStack(this));
     }
-    
+
     private boolean launchGUI(World world, int x, int y, int z, EntityPlayer entityplayer)
     {
+    	if (Utils.isDebug()) System.out.println("BlockChargingBench.launchGUI");
     	entityplayer.openGui(mod_IC2_ChargingBench.instance, 1, world, x, y, z);
     	return true;
     }
     
     public boolean blockActivated(World world, int x, int y, int z, EntityPlayer entityplayer)
     {
+    	if (Utils.isDebug()) System.out.println("BlockChargingBench.BlockActivated");
     	return Platform.isSimulating()?launchGUI(world, x, y, z, entityplayer):true;
 //        entityplayer.openGui(mod_IC2_ChargingBench.instance, 1, world, x, y, z);
     }
 
     public TileEntityChargingBench getBlockEntity(int var1)
     {
+    	if (Utils.isDebug()) System.out.println("BlockChargingBench.getBlockEntity.var1: "+var1);
         switch (var1)
         {
             case 0:
@@ -69,6 +74,7 @@ public class BlockChargingBench extends BlockMultiID
 
     public TileEntity getTileEntity(int var1)
     {
+    	if (Utils.isDebug()) System.out.println("BlockChargingBench.getTileEntity.var1: "+var1);
         return this.getBlockEntity(var1);
     }
 }
