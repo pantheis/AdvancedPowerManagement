@@ -26,6 +26,7 @@ public class mod_IC2_ChargingBench extends NetworkMod
     {
         try
         {
+        	System.out.println("mod_IC2_ChargingBench.configurationProperties");
             configuration.load();
             ChargingBenchBlockID = Integer.valueOf(configuration.getOrCreateIntProperty("blockChargingBench", "block", 189).value).intValue();
             isDebugging = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("debug", configuration.CATEGORY_GENERAL, true).value));
@@ -58,6 +59,7 @@ public class mod_IC2_ChargingBench extends NetworkMod
     
     public void load()
     {
+    	if (Utils.isDebug()) System.out.println("mod_IC2_ChargingBench.load");
     	MinecraftForge.versionDetect("IC2_Charging Bench", 3, 3, 8);
         ModLoader.registerBlock(ChargingBench, ItemChargingBench.class);
         ModLoader.registerTileEntity(TileEntityChargingBench1.class, "Charging Bench Mk1");
@@ -72,6 +74,7 @@ public class mod_IC2_ChargingBench extends NetworkMod
 
     public void modsLoaded()
     {
+    	if (Utils.isDebug()) System.out.println("mod_IC2_ChargingBench.modsLoaded");
         ModLoader.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "W W", "WWW", 'U', Items.getItem("copperCableItem"), 'W', Block.planks});
         ModLoader.addRecipe(new ItemStack(ChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("goldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit")});
         ModLoader.addRecipe(new ItemStack(ChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("ironCableItem"), 'W', Block.planks, 'C', Items.getItem("advancedCircuit")});

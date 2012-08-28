@@ -19,7 +19,8 @@ public class TileEntityChargingBench extends TileEntityElecMachine implements IE
 
     public TileEntityChargingBench(int var1)
     {
-        super(17, 0, 4 * (int)Math.pow(2.0D, (double)(var1 * 2 + 3)), 4 * (int)Math.pow(2.0D, (double)(var1 * 2 + 3)), var1);
+    	super(17, 0, 4 * (int)Math.pow(2.0D, (double)(var1 * 2 + 3)), 4 * (int)Math.pow(2.0D, (double)(var1 * 2 + 3)), var1);
+    	if (Utils.isDebug()) System.out.println("TileEntityChargingBench");
         this.fuelslot = 12;
         this.baseTier = var1;
         this.baseMaxInput = (int)Math.pow(2.0D, (double)(var1 * 2 + 3));
@@ -28,11 +29,13 @@ public class TileEntityChargingBench extends TileEntityElecMachine implements IE
 
     public String getInvName()
     {
+    	if (Utils.isDebug()) System.out.println("getInvName");
         return "Charging Bench";
     }
 
     public int gaugeEnergyScaled(int var1)
     {
+    	if (Utils.isDebug()) System.out.println("TileEntityChargingBench.gaugeEnergyScaled");
         if (this.energy <= 0)
         {
             return 0;
@@ -52,10 +55,12 @@ public class TileEntityChargingBench extends TileEntityElecMachine implements IE
 
     public void updateEntity()
     {
+    	if (Utils.isDebug()) System.out.println("TileEntityChargingBench.updateEntity");
         super.updateEntity();
 
         if (Platform.isSimulating())
         {
+        	if (Utils.isDebug()) System.out.println("TileEntityChargingBench.updateEntity.Platform.isSimulating()");
             this.setOverclockRates();
             boolean var1 = false;
             int var2;
@@ -158,21 +163,25 @@ public class TileEntityChargingBench extends TileEntityElecMachine implements IE
 
     public boolean demandsEnergy()
     {
+    	if (Utils.isDebug()) System.out.println("TileEntityChargingBench.demandsEnergy");
         return this.worldObj.isBlockIndirectlyGettingPowered(this.xCoord, this.yCoord, this.zCoord) ? false : this.energy <= this.maxEnergy - this.baseMaxInput;
     }
 
     public boolean emitsEnergyTo(TileEntity var1, Direction var2)
     {
+    	if (Utils.isDebug()) System.out.println("TileEntityChargingBench.emitsEnergyTo");
         return true;
     }
 
     public int getMaxEnergyOutput()
     {
+    	if (Utils.isDebug()) System.out.println("TileEntityChargingBench.getMaxEnergyOutput");
         return (int)Math.pow(2.0D, (double)(2 * this.baseTier + 3));
     }
 
     public void setOverclockRates()
     {
+    	if (Utils.isDebug()) System.out.println("TileEntityChargingBench.setOverclockRates");
         int var1 = 0;
         int var2 = 0;
         int var3 = 0;
@@ -216,12 +225,14 @@ public class TileEntityChargingBench extends TileEntityElecMachine implements IE
 
     public int injectEnergy(Direction var1, int var2)
     {
+    	if (Utils.isDebug()) System.out.println("TileEntityChargingBench.injectEnergy");
         this.setOverclockRates();
         return super.injectEnergy(var1, var2);
     }
 
 	public Container getGuiContainer(InventoryPlayer player)
 	{
+		if (Utils.isDebug()) System.out.println("TileEntityChargingBench.getGuiContainer");
 		return new ContainerChargingBench(player, this);
 
 	}

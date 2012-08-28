@@ -18,6 +18,7 @@ public class GuiChargingBench extends GuiContainer
 	public GuiChargingBench(EntityPlayer player, TileEntityChargingBench tileentitychargingbench)
 	{
 		super(tileentitychargingbench.getGuiContainer(player.inventory));
+		if (Utils.isDebug()) System.out.println("GuiChargingBench");
 		this.player = player;
 		this.tile = tileentitychargingbench;
 	}

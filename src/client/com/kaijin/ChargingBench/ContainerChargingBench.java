@@ -18,6 +18,7 @@ public class ContainerChargingBench extends ContainerIC2
 
     public ContainerChargingBench(InventoryPlayer player, TileEntityChargingBench var2)
     {
+    	if (Utils.isDebug()) System.out.println("ContainerChargingBench");
         this.tileentity = var2;
         this.energy = 0;
         this.maxInput = 0;
@@ -56,6 +57,7 @@ public class ContainerChargingBench extends ContainerIC2
 
     public void updateCraftingResults()
     {
+    	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateCraftingResults");
         super.updateCraftingResults();
 
         for (int var1 = 0; var1 < this.crafters.size(); ++var1)
@@ -80,6 +82,7 @@ public class ContainerChargingBench extends ContainerIC2
 
     public void updateProgressBar(int var1, int var2)
     {
+    	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar");
         switch (var1)
         {
             case 0:
@@ -97,16 +100,19 @@ public class ContainerChargingBench extends ContainerIC2
 
     public int guiInventorySize()
     {
+    	if (Utils.isDebug()) System.out.println("ContainerChargingBench.guiInventorySize");
         return 17;
     }
 
     public int getInput()
     {
+    	if (Utils.isDebug()) System.out.println("ContainerChargingBench.getInput");
         return 0;
     }
 
     public boolean canInteractWith(EntityPlayer var1)
     {
+    	if (Utils.isDebug()) System.out.println("ContainerChargingBench.canInteractWith");
         return this.tileentity.isUseableByPlayer(var1);
     }
 }

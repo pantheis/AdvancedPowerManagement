@@ -59,16 +59,19 @@ public class BlockChargingBench extends BlockMultiID implements ITextureProvider
 
     public String getTextureFile()
     {
+    	if (Utils.isDebug()) System.out.println("BlockChargingBench.getTextureFile");
         return "/ic2/sprites/ChargingBench.png";
     }
 
     public int idDropped(int var1, Random var2, int var3)
     {
+    	if (Utils.isDebug()) System.out.println("BlockChargingBench.idDropped");
         return this.blockID;
     }
 
     protected int damageDropped(int var1)
     {
+    	if (Utils.isDebug()) System.out.println("BlockChargingBench.damageDropped");
         return var1;
     }
 

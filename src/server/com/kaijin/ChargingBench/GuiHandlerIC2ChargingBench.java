@@ -6,11 +6,11 @@ import com.kaijin.ChargingBench.*;
 
 public class GuiHandlerIC2ChargingBench implements IGuiHandler
 {
-
 	@Override
 	public Object getGuiElement(int ID, EntityPlayer player, World world,
 			int x, int y, int z)
 	{
+		if (Utils.isDebug()) System.out.println("GuiHandlerIC2ChargingBench.getGuiElement");
 		if (!world.blockExists(x, y, z))
 		{
 			return null;

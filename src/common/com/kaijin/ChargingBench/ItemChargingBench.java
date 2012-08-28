@@ -7,18 +7,21 @@ public class ItemChargingBench extends ItemBlockCommon
 {
     public ItemChargingBench(int var1)
     {
-        super(var1);
+    	super(var1);
+    	if (Utils.isDebug()) System.out.println("ItemChargingBench");
         this.setMaxDamage(0);
         this.setHasSubtypes(true);
     }
 
     public int getMetadata(int var1)
     {
+    	if (Utils.isDebug()) System.out.println("ItemChargingBench.getMetadata");
         return var1;
     }
 
     public String getItemNameIS(ItemStack var1)
     {
+    	if (Utils.isDebug()) System.out.println("ItemChargingBench.getItemNameIS");
         int var2 = var1.getItemDamage();
 
         switch (var2)
