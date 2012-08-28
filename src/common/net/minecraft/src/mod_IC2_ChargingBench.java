@@ -12,11 +12,12 @@ public class mod_IC2_ChargingBench extends NetworkMod
     static Configuration configuration = CommonProxy.getConfiguration();
     static int ChargingBenchBlockID;
     static public boolean isDebugging;
-    
-    public static mod_IC2_ChargingBench instance;
-    public static final Block ChargingBench = new BlockChargingBench(ChargingBenchBlockID);
     static { configurationProperties(); }
 
+    public static final Block ChargingBench = new BlockChargingBench(ChargingBenchBlockID);
+    
+    public static mod_IC2_ChargingBench instance;
+    
     public mod_IC2_ChargingBench()
     {
     	instance = this;
