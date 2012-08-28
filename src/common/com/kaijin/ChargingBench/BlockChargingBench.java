@@ -21,7 +21,9 @@ public class BlockChargingBench extends BlockMultiID implements ITextureProvider
     public void addCreativeItems(ArrayList itemList)
     {
     	if (Utils.isDebug()) System.out.println("BlockChargingBench.addCreativeItems");
-    	itemList.add(new ItemStack(this));
+    	itemList.add(new ItemStack(this, 1, 0));
+    	itemList.add(new ItemStack(this, 1, 1));
+    	itemList.add(new ItemStack(this, 1, 2));
     }
 
     private boolean launchGUI(World world, int x, int y, int z, EntityPlayer entityplayer)
@@ -60,7 +62,7 @@ public class BlockChargingBench extends BlockMultiID implements ITextureProvider
     public String getTextureFile()
     {
     	if (Utils.isDebug()) System.out.println("BlockChargingBench.getTextureFile");
-        return "/ic2/sprites/ChargingBench.png";
+        return "/com/kaijin/ChargingBench/sprites/ChargingBench.png";
     }
 
     public int idDropped(int var1, Random var2, int var3)

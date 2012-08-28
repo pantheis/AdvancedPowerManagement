@@ -30,7 +30,7 @@ public class mod_IC2_ChargingBench extends NetworkMod
         	System.out.println("mod_IC2_ChargingBench.configurationProperties");
             configuration.load();
             ChargingBenchBlockID = Integer.valueOf(configuration.getOrCreateIntProperty("blockChargingBench", "block", 189).value).intValue();
-            isDebugging = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("debug", configuration.CATEGORY_GENERAL, true).value));
+            isDebugging = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("debug", configuration.CATEGORY_GENERAL, false).value));
             configuration.save();
         }
         catch (Exception var1)

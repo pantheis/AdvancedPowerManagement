@@ -15,6 +15,7 @@ public class CommonProxy
     public static void load()
     {
         MinecraftForgeClient.preloadTexture("/com/kaijin/ChargingBench/sprites/ChargingBench.png");
+        MinecraftForgeClient.preloadTexture("/com/kaijin/ChargingBench/sprites/GUIChargingBench.png");
     }
 
     public static Configuration getConfiguration()
