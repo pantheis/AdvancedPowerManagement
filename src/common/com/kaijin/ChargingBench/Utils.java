@@ -1,11 +1,11 @@
 package com.kaijin.ChargingBench;
 
-import net.minecraft.src.mod_IC2_ChargingBench;
+import net.minecraft.src.mod_ChargingBench;
 
 public class Utils
 {
 	public static boolean isDebug()
 	{
-		return mod_IC2_ChargingBench.isDebugging;
+		return mod_ChargingBench.isDebugging;
 	}
 }

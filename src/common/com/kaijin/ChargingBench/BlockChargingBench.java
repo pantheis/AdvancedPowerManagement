@@ -29,7 +29,7 @@ public class BlockChargingBench extends BlockMultiID implements ITextureProvider
     private boolean launchGUI(World world, int x, int y, int z, EntityPlayer entityplayer)
     {
     	if (Utils.isDebug()) System.out.println("BlockChargingBench.launchGUI");
-    	entityplayer.openGui(mod_IC2_ChargingBench.instance, 1, world, x, y, z);
+    	entityplayer.openGui(mod_ChargingBench.instance, 1, world, x, y, z);
     	return true;
     }
     

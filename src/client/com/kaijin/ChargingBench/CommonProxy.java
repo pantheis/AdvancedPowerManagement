@@ -20,7 +20,7 @@ public class CommonProxy
 
     public static Configuration getConfiguration()
     {
-        return new Configuration(new File(Minecraft.getMinecraftDir(), "config/IC2_ChargingBench.cfg"));
+        return new Configuration(new File(Minecraft.getMinecraftDir(), "config/ChargingBench.cfg"));
     }
 
     public static World PacketHandlerGetWorld(NetworkManager network)

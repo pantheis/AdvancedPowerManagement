@@ -18,7 +18,7 @@ public class CommonProxy
 
     public static Configuration getConfiguration()
     {
-        return new Configuration(new File("config/IC2_ChargingBench.cfg"));
+        return new Configuration(new File("config/ChargingBench.cfg"));
     }
 
     public static World PacketHandlerGetWorld(NetworkManager network)

@@ -7,7 +7,7 @@ import net.minecraft.src.forge.*;
 import net.minecraft.src.*;
 import net.minecraft.src.ic2.api.*;
 
-public class mod_IC2_ChargingBench extends NetworkMod
+public class mod_ChargingBench extends NetworkMod
 {
     static Configuration configuration = CommonProxy.getConfiguration();
     static int ChargingBenchBlockID;
@@ -16,9 +16,9 @@ public class mod_IC2_ChargingBench extends NetworkMod
 
     public static final Block ChargingBench = new BlockChargingBench(ChargingBenchBlockID);
     
-    public static mod_IC2_ChargingBench instance;
+    public static mod_ChargingBench instance;
     
-    public mod_IC2_ChargingBench()
+    public mod_ChargingBench()
     {
     	instance = this;
     }
@@ -29,7 +29,7 @@ public class mod_IC2_ChargingBench extends NetworkMod
         {
         	System.out.println("mod_IC2_ChargingBench.configurationProperties");
             configuration.load();
-            ChargingBenchBlockID = Integer.valueOf(configuration.getOrCreateIntProperty("blockChargingBench", "block", 189).value).intValue();
+            ChargingBenchBlockID = Integer.valueOf(configuration.getOrCreateBlockIdProperty("blockChargingBench", 189).value);
             isDebugging = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("debug", configuration.CATEGORY_GENERAL, false).value));
             configuration.save();
         }
@@ -83,6 +83,6 @@ public class mod_IC2_ChargingBench extends NetworkMod
     
     public String getVersion()
     {
-        return "MC 1.2.5 - IC 1.102 - alpha 1";
+        return "MC 1.2.5 - IC 1.103 - beta 1";
     }
 }
