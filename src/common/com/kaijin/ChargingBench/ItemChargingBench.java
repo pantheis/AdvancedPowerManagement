@@ -2,9 +2,10 @@ package com.kaijin.ChargingBench;
 
 
 import net.minecraft.src.*;
-import net.minecraft.src.ic2.platform.ItemBlockCommon;
+import ic2.api.*;
+import com.kaijin.ChargingBench.*;
 
-public class ItemChargingBench extends ItemBlockCommon
+public class ItemChargingBench extends ItemBlock
 {
     public ItemChargingBench(int var1)
     {

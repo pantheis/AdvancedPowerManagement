@@ -68,7 +68,7 @@ public class CommonProxy implements IGuiHandler
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-		if (!(tile instanceof TileEntityInventoryStocker))
+		if (!(tile instanceof TEChargingBench))
 		{
 			return null;
 		}
@@ -87,10 +87,10 @@ public class CommonProxy implements IGuiHandler
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-		if (!(tile instanceof TileEntityInventoryStocker))
+		if (!(tile instanceof TEChargingBench))
 		{
 			return null;
 		}
-		return new GuiInventoryStocker(player.inventory, (TileEntityInventoryStocker)tile);
+		return new GuiChargingBench(player.inventory, (TEChargingBench)tile);
 	}
 }

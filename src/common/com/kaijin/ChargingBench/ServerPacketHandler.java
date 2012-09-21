@@ -88,18 +88,6 @@ public class ServerPacketHandler implements IPacketHandler
 			{
 				ex.printStackTrace();
 			}
-			if (Utils.isDebug()) System.out.println("ServerPacketHandler: Attempting to get worldObj");
-			World world = ((EntityPlayerMP)player).worldObj;
-
-			TileEntity tile = world.getBlockTileEntity(x, y, z);
-
-			//check if the tile we're looking at is an Inventory Stocker tile
-			if (tile instanceof TileEntityInventoryStocker)
-			{
-				//				String s = new Boolean(snapshot).toString();
-				//				if (Utils.isDebug()) System.out.println("ServerPacketHandler: tile.recvSnapshotReqiest: " + s + ", guid: " + ((TileEntityInventoryStocker)tile).myGUID);
-				((TileEntityInventoryStocker)tile).recvSnapshotRequest(snapshot);
-			}
 		}
 		if (this.packetType == 1)
 		{
@@ -113,29 +101,6 @@ public class ServerPacketHandler implements IPacketHandler
 			catch (Exception ex)
 			{
 				ex.printStackTrace();
-			}
-			if (rotateRequest)
-			{
-				World world = ((EntityPlayerMP)player).worldObj;
-				TileEntity tile = world.getBlockTileEntity(x, y, z);
-				if (tile instanceof TileEntityInventoryStocker)
-				{
-					this.Metainfo = ((TileEntityInventoryStocker)tile).Metainfo;
-					int dir = Metainfo & 7; // Get orientation from first 3 bits of meta data
-					this.Metainfo ^= dir; // Clear those bits
-					++dir; // Rotate
-
-					if (dir > 5)
-					{
-						dir = 0;    // Start over
-					}
-
-					this.Metainfo |= dir; // Write orientation back to meta data value
-
-					((TileEntityInventoryStocker)tile).Metainfo = this.Metainfo;
-					world.markBlockNeedsUpdate(x, y, z);
-//					((TileEntityInventoryStocker)tile).sendExtraTEData();
-				}
 			}
 		}
 	}

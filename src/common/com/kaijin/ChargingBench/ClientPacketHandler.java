@@ -89,19 +89,6 @@ public class ClientPacketHandler implements IPacketHandler
 			{
 				ex.printStackTrace();
 			}
-
-			if (Utils.isDebug()) System.out.println("ClientPacketHandler: Attempting to get theWorld");
-			World world = FMLClientHandler.instance().getClient().theWorld;
-			TileEntity tile = world.getBlockTileEntity(x, y, z);
-
-			//check if the tile we're looking at is an Inventory Stocker tile
-			if (tile instanceof TileEntityInventoryStocker)
-			{
-				//				String s = new Boolean(snapshot).toString();
-				//				if (Utils.isDebug()) System.out.println("ClientPacketHandler: tile.setSnapshotState: " + s + ", guid: " + ((TileEntityInventoryStocker)tile).myGUID);
-				//snapshot state message from server
-				((TileEntityInventoryStocker)tile).setSnapshotState(snapshot);
-			}
 		}
 
 		if (this.packetType == 1)
@@ -116,15 +103,6 @@ public class ClientPacketHandler implements IPacketHandler
 			catch (Exception ex)
 			{
 				ex.printStackTrace();
-			}
-			World world = FMLClientHandler.instance().getClient().theWorld;
-			TileEntity tile = world.getBlockTileEntity(x, y, z);
-
-			//check if the tile we're looking at is an Inventory Stocker tile
-			if (tile instanceof TileEntityInventoryStocker)
-			{
-				((TileEntityInventoryStocker)tile).Metainfo = this.Metainfo;
-				world.markBlockNeedsUpdate(x, y, z);
 			}
 		}
 	}

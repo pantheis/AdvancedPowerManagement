@@ -5,50 +5,52 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
+import cpw.mods.fml.common.network.Player;
 
 public class ContainerChargingBench extends Container
 {
-    public TileEntityChargingBench tileentity;
+    public TEChargingBench tileentity;
     public int energy;
     public short maxInput;
 
-    public ContainerChargingBench(InventoryPlayer player, TEChargingBench var2)
+    public ContainerChargingBench(InventoryPlayer player, TEChargingBench tile)
     {
     	if (Utils.isDebug()) System.out.println("ContainerChargingBench");
-        this.tileentity = var2;
+        this.tileentity = tile;
         this.energy = 0;
         this.maxInput = 0;
-        this.addSlot(new Slot(var2, 0, 61, 19));
-        this.addSlot(new Slot(var2, 1, 79, 19));
-        this.addSlot(new Slot(var2, 2, 97, 19));
-        this.addSlot(new Slot(var2, 3, 115, 19));
-        this.addSlot(new Slot(var2, 4, 61, 37));
-        this.addSlot(new Slot(var2, 5, 79, 37));
-        this.addSlot(new Slot(var2, 6, 97, 37));
-        this.addSlot(new Slot(var2, 7, 115, 37));
-        this.addSlot(new Slot(var2, 8, 61, 55));
-        this.addSlot(new Slot(var2, 9, 79, 55));
-        this.addSlot(new Slot(var2, 10, 97, 55));
-        this.addSlot(new Slot(var2, 11, 115, 55));
-        this.addSlot(new Slot(var2, 12, 24, 40));
-        this.addSlot(new Slot(var2, 13, 152, 8));
-        this.addSlot(new Slot(var2, 14, 152, 26));
-        this.addSlot(new Slot(var2, 15, 152, 44));
-        this.addSlot(new Slot(var2, 16, 152, 62));
+		this.addSlotToContainer(new Slot(tile, 0, 61, 19));
+        this.addSlotToContainer(new Slot(tile, 1, 79, 19));
+        this.addSlotToContainer(new Slot(tile, 2, 97, 19));
+        this.addSlotToContainer(new Slot(tile, 3, 115, 19));
+        this.addSlotToContainer(new Slot(tile, 4, 61, 37));
+        this.addSlotToContainer(new Slot(tile, 5, 79, 37));
+        this.addSlotToContainer(new Slot(tile, 6, 97, 37));
+        this.addSlotToContainer(new Slot(tile, 7, 115, 37));
+        this.addSlotToContainer(new Slot(tile, 8, 61, 55));
+        this.addSlotToContainer(new Slot(tile, 9, 79, 55));
+        this.addSlotToContainer(new Slot(tile, 10, 97, 55));
+        this.addSlotToContainer(new Slot(tile, 11, 115, 55));
+        this.addSlotToContainer(new Slot(tile, 12, 24, 40));
+        this.addSlotToContainer(new Slot(tile, 13, 152, 8));
+        this.addSlotToContainer(new Slot(tile, 14, 152, 26));
+        this.addSlotToContainer(new Slot(tile, 15, 152, 44));
+        this.addSlotToContainer(new Slot(tile, 16, 152, 62));
         int var3;
 
         for (var3 = 0; var3 < 3; ++var3)
         {
             for (int var4 = 0; var4 < 9; ++var4)
             {
-                this.addSlot(new Slot(player, var4 + var3 * 9 + 9, 8 + var4 * 18, 84 + var3 * 18));
+                this.addSlotToContainer(new Slot(player, var4 + var3 * 9 + 9, 8 + var4 * 18, 84 + var3 * 18));
             }
         }
 
         for (var3 = 0; var3 < 9; ++var3)
         {
-            this.addSlot(new Slot(player, var3, 8 + var3 * 18, 142));
+            this.addSlotToContainer(new Slot(player, var3, 8 + var3 * 18, 142));
         }
     }
 
@@ -101,6 +103,41 @@ public class ContainerChargingBench extends Container
         return 17;
     }
 
+	public ItemStack transferStackInSlot(int par1)
+	{
+		ItemStack var2 = null;
+		Slot var3 = (Slot)this.inventorySlots.get(par1);
+
+		if (var3 != null && var3.getHasStack())
+		{
+			ItemStack var4 = var3.getStack();
+			var2 = var4.copy();
+
+			if (par1 < 18)
+			{
+				if (!this.mergeItemStack(var4, 18, this.inventorySlots.size(), true))
+				{
+					return null;
+				}
+			}
+			else if (!this.mergeItemStack(var4, 0, 18, false))
+			{
+				return null;
+			}
+
+			if (var4.stackSize == 0)
+			{
+				var3.putStack((ItemStack)null);
+			}
+			else
+			{
+				var3.onSlotChanged();
+			}
+		}
+		return var2;
+	}
+
+    
     public int getInput()
     {
     	if (Utils.isDebug()) System.out.println("ContainerChargingBench.getInput");

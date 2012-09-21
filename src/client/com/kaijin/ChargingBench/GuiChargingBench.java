@@ -13,12 +13,11 @@ public class GuiChargingBench extends GuiContainer
 	
 	private GuiButton button = null;
 	
-	public GuiChargingBench(EntityPlayer player, TEChargingBench tileentitychargingbench)
+	public GuiChargingBench(InventoryPlayer player, TEChargingBench tile)
 	{
-		super(tileentitychargingbench.getGuiContainer(player.inventory));
+		super(new ContainerChargingBench(player, tile));
 		if (Utils.isDebug()) System.out.println("GuiChargingBench");
-		this.player = player;
-		this.tile = tileentitychargingbench;
+		this.tile = tile;
 	}
 
     protected void drawGuiContainerForegroundLayer()
