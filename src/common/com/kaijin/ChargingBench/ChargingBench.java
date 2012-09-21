@@ -29,7 +29,7 @@ import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
-@Mod(modid = "ChargingBench", name="Charging Bench", version="1.3.2.a1", dependencies = "required-after:Forge@[4.1.1.251,), IC2@[1.106,)")
+@Mod(modid = "ChargingBench", name="Charging Bench", version="1.3.2.a1", dependencies = "required-after:IC2@[1.106,);required-after:Forge@[4.1.1.251,)")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,
 clientPacketHandlerSpec = @SidedPacketHandler(channels = {"ChargingBench"}, packetHandler = ClientPacketHandler.class),
 serverPacketHandlerSpec = @SidedPacketHandler(channels = ("ChargingBench"), packetHandler = ServerPacketHandler.class))
@@ -93,7 +93,7 @@ public class ChargingBench
 	}
 
 	@PostInit
-    public void modsLoaded()
+    public void modsLoaded(FMLInitializationEvent event)
     {
     	if (Utils.isDebug()) System.out.println("ChargingBench.modsLoaded");
 		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "W W", "WWW", 'U', Items.getItem("copperCableItem"), 'W', Block.planks});
