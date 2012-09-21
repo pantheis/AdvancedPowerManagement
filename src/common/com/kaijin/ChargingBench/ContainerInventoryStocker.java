@@ -8,6 +8,10 @@ package com.kaijin.InventoryStocker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+
+import com.kaijin.GenericMod.InventoryStocker;
+import com.kaijin.GenericMod.TileEntityInventoryStocker;
+import com.kaijin.GenericMod.Utils;
 import com.kaijin.InventoryStocker.*;
 import cpw.mods.fml.common.network.Player;
 import net.minecraft.src.*;

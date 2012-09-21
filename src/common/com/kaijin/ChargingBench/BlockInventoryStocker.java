@@ -22,6 +22,10 @@ import net.minecraft.src.MathHelper;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
+import com.kaijin.GenericMod.CommonProxy;
+import com.kaijin.GenericMod.InventoryStocker;
+import com.kaijin.GenericMod.TileEntityInventoryStocker;
+import com.kaijin.GenericMod.Utils;
 import com.kaijin.InventoryStocker.*;
 
 import cpw.mods.fml.common.ModContainer;

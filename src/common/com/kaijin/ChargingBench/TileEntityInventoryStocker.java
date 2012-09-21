@@ -11,6 +11,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.lang.reflect.*;
+
+import com.kaijin.GenericMod.Coords;
+import com.kaijin.GenericMod.InventoryStocker;
+import com.kaijin.GenericMod.Utils;
 import com.kaijin.InventoryStocker.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;

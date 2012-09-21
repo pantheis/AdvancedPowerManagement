@@ -11,6 +11,7 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.kaijin.ChargingBench.*;
+
 import ic2.api.*;
 
 import cpw.mods.fml.common.FMLLog;
@@ -70,9 +71,9 @@ public class ChargingBench
 		LanguageRegistry.addName(ChargingBench, "Charging Bench");
 		GameRegistry.registerBlock(ChargingBench);
 		
-		GameRegistry.registerTileEntity(TEChargingBench1.class, "Charging Bench MK1");
-		GameRegistry.registerTileEntity(TEChargingBench2.class, "Charging Bench MK2");
-		GameRegistry.registerTileEntity(TEChargingBench3.class, "Charging Bench MK3");
+		GameRegistry.registerTileEntity(TEGenericMod1.class, "Charging Bench MK1");
+		GameRegistry.registerTileEntity(TEGenericMod2.class, "Charging Bench MK2");
+		GameRegistry.registerTileEntity(TEGenericMod3.class, "Charging Bench MK3");
         
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench1.name", "Charging Bench Mk1");
         LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "Charging Bench Mk2");

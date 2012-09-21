@@ -73,7 +73,7 @@ public class CommonProxy implements IGuiHandler
 			return null;
 		}
 
-		return new ContainerInventoryStocker(player.inventory, (TileEntityInventoryStocker)tile);
+		return new ContainerGenericMod(player.inventory, (TileEntityInventoryStocker)tile);
 	}
 
 	@Override

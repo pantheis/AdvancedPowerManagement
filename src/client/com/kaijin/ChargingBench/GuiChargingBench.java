@@ -3,7 +3,6 @@ package com.kaijin.ChargingBench;
 import net.minecraft.src.*;
 
 import org.lwjgl.opengl.GL11;
-import com.kaijin.ChargingBench.*;
 
 public class GuiChargingBench extends GuiContainer
 {

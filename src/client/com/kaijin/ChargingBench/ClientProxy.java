@@ -7,6 +7,8 @@ package com.kaijin.ChargingBench;
 
 import java.io.File;
 
+import com.kaijin.GenericMod.CommonProxy;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.registry.LanguageRegistry;

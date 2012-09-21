@@ -7,6 +7,10 @@ package com.kaijin.ChargingBench;
 
 import org.lwjgl.opengl.GL11;
 
+import com.kaijin.GenericMod.ContainerGenericMod;
+import com.kaijin.GenericMod.TileEntityInventoryStocker;
+import com.kaijin.GenericMod.Utils;
+
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 import net.minecraft.src.*;
@@ -23,7 +27,7 @@ public class GuiInventoryStocker extends GuiContainer
 
 	public GuiInventoryStocker(InventoryPlayer playerinventory, TileEntityInventoryStocker tileentityinventorystocker)
 	{
-		super(new ContainerInventoryStocker(playerinventory, tileentityinventorystocker));
+		super(new ContainerGenericMod(playerinventory, tileentityinventorystocker));
 		this.tile = tileentityinventorystocker;
 		xSize = 176;
 		ySize = 168;

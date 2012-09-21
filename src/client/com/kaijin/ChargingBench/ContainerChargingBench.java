@@ -1,14 +1,11 @@
 package com.kaijin.ChargingBench;
 
-import com.kaijin.ChargingBench.TileEntityChargingBench;
-
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Slot;
-import net.minecraft.src.ic2.common.ContainerIC2;
 
 public class ContainerChargingBench extends ContainerIC2
 {

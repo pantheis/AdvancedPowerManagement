@@ -1,5 +1,6 @@
 package com.kaijin.ChargingBench;
 
+
 import net.minecraft.src.*;
 import net.minecraft.src.ic2.platform.ItemBlockCommon;
 

@@ -2,7 +2,6 @@ package com.kaijin.ChargingBench;
 
 import net.minecraft.src.*;
 import net.minecraft.src.forge.*;
-import com.kaijin.ChargingBench.*;
 
 public class GuiHandlerIC2ChargingBench implements IGuiHandler
 {

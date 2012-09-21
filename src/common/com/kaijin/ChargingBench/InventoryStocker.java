@@ -7,6 +7,14 @@ package com.kaijin.InventoryStocker;
 
 import java.io.File;
 import java.util.*;
+
+import com.kaijin.GenericMod.BlockGenericMod;
+import com.kaijin.GenericMod.ClientPacketHandler;
+import com.kaijin.GenericMod.CommonProxy;
+import com.kaijin.GenericMod.InventoryStocker;
+import com.kaijin.GenericMod.ServerPacketHandler;
+import com.kaijin.GenericMod.TileEntityInventoryStocker;
+import com.kaijin.GenericMod.Utils;
 import com.kaijin.InventoryStocker.*;
 
 import net.minecraft.src.Block;
@@ -55,7 +63,7 @@ public class InventoryStocker
 	@Init
 	public void load(FMLInitializationEvent event)
 	{
-		InventoryStocker = new BlockInventoryStocker(InventoryStockerBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("InventoryStocker").setCreativeTab(CreativeTabs.tabBlock);
+		InventoryStocker = new BlockGenericMod(InventoryStockerBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("InventoryStocker").setCreativeTab(CreativeTabs.tabBlock);
 		LanguageRegistry.addName(InventoryStocker, "Inventory Stocker");
 		GameRegistry.registerBlock(InventoryStocker);
 		GameRegistry.registerTileEntity(TileEntityInventoryStocker.class, "InventoryStocker");

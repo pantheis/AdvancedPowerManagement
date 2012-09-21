@@ -24,7 +24,7 @@ public class BlockChargingBench extends Block
     private boolean launchGUI(World world, int x, int y, int z, EntityPlayer entityplayer)
     {
     	if (Utils.isDebug()) System.out.println("BlockChargingBench.launchGUI");
-    	entityplayer.openGui(ChargingBench.instance, 1, world, x, y, z);
+    	entityplayer.openGui(GenericMod.instance, 1, world, x, y, z);
     	return true;
     }
     

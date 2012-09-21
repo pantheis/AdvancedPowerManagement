@@ -3,11 +3,12 @@
  *  Licensed as open source with restrictions. Please see attached LICENSE.txt.
  */
 
-package com.kaijin.InventoryStocker;
+package com.kaijin.ChargingBench;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import com.kaijin.InventoryStocker.*;
+
+import com.kaijin.ChargingBench.*;
 import net.minecraft.src.*;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Side;
