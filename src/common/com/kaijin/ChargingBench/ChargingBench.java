@@ -22,6 +22,7 @@ import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -93,7 +94,7 @@ public class ChargingBench
 	}
 
 	@PostInit
-    public void modsLoaded(FMLInitializationEvent event)
+    public void modsLoaded(FMLPostInitializationEvent event)
     {
     	if (Utils.isDebug()) System.out.println("ChargingBench.modsLoaded");
 		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "W W", "WWW", 'U', Items.getItem("copperCableItem"), 'W', Block.planks});
