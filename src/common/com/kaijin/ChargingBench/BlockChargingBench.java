@@ -1,7 +1,6 @@
 package com.kaijin.ChargingBench;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 import net.minecraft.src.*;
 
@@ -13,18 +12,18 @@ public class BlockChargingBench extends Block
 		super(i, j, material);
 	}
     
-    public void addCreativeItems(ArrayList itemList)
+    public void getSubBlocks(int blockID, CreativeTabs creativetabs, List list)
     {
-    	if (Utils.isDebug()) System.out.println("BlockChargingBench.addCreativeItems");
-    	itemList.add(new ItemStack(this, 1, 0));
-    	itemList.add(new ItemStack(this, 1, 1));
-    	itemList.add(new ItemStack(this, 1, 2));
+        for (int i = 0; i < 3; ++i)
+        {
+            list.add(new ItemStack(blockID, 1, i));
+        }
     }
 
     private boolean launchGUI(World world, int x, int y, int z, EntityPlayer entityplayer)
     {
     	if (Utils.isDebug()) System.out.println("BlockChargingBench.launchGUI");
-    	entityplayer.openGui(GenericMod.instance, 1, world, x, y, z);
+    	entityplayer.openGui(ChargingBench.instance, 1, world, x, y, z);
     	return true;
     }
     
@@ -35,19 +34,19 @@ public class BlockChargingBench extends Block
 //        entityplayer.openGui(mod_IC2_ChargingBench.instance, 1, world, x, y, z);
     }
 
-    public TileEntityChargingBench getBlockEntity(int var1)
+    public TEChargingBench getBlockEntity(int var1)
     {
     	if (Utils.isDebug()) System.out.println("BlockChargingBench.getBlockEntity.var1: "+var1);
         switch (var1)
         {
             case 0:
-                return new TileEntityChargingBench1();
+                return new TEChargingBench1();
 
             case 1:
-                return new TileEntityChargingBench2();
+                return new TEChargingBench2();
 
             case 2:
-                return new TileEntityChargingBench3();
+                return new TEChargingBench3();
 
             default:
                 return null;

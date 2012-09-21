@@ -7,13 +7,13 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Slot;
 
-public class ContainerChargingBench extends ContainerIC2
+public class ContainerChargingBench extends Container
 {
     public TileEntityChargingBench tileentity;
     public int energy;
     public short maxInput;
 
-    public ContainerChargingBench(InventoryPlayer player, TileEntityChargingBench var2)
+    public ContainerChargingBench(InventoryPlayer player, TEChargingBench var2)
     {
     	if (Utils.isDebug()) System.out.println("ContainerChargingBench");
         this.tileentity = var2;

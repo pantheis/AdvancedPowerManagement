@@ -7,13 +7,13 @@ import org.lwjgl.opengl.GL11;
 public class GuiChargingBench extends GuiContainer
 {
 	IInventory playerInventory;
-	public TileEntityChargingBench tile;
+	public TEChargingBench tile;
 	public EntityPlayer player;
 	private GuiButton selectedButton = null;
 	
 	private GuiButton button = null;
 	
-	public GuiChargingBench(EntityPlayer player, TileEntityChargingBench tileentitychargingbench)
+	public GuiChargingBench(EntityPlayer player, TEChargingBench tileentitychargingbench)
 	{
 		super(tileentitychargingbench.getGuiContainer(player.inventory));
 		if (Utils.isDebug()) System.out.println("GuiChargingBench");

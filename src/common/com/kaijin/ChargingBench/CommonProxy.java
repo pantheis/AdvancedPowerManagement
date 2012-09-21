@@ -20,7 +20,7 @@ import net.minecraftforge.common.Configuration;
 
 public class CommonProxy implements IGuiHandler
 {
-	public static String BLOCK_PNG = "/com/kaijin/InventoryStocker/textures/terrain.png";
+	public static String BLOCK_PNG = "/com/kaijin/ChargingBench/textures/ChargingBench.png";
 
 	public void load()
 	{
@@ -73,7 +73,7 @@ public class CommonProxy implements IGuiHandler
 			return null;
 		}
 
-		return new ContainerGenericMod(player.inventory, (TileEntityInventoryStocker)tile);
+		return new ContainerChargingBench(player.inventory, (TEChargingBench)tile);
 	}
 
 	@Override
