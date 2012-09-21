@@ -3,7 +3,7 @@
  *  Licensed as open source with restrictions. Please see attached LICENSE.txt.
  */
 
-package com.kaijin.InventoryStocker;
+package com.kaijin.ChargingBench;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -13,7 +13,7 @@ public class Utils
 	// This is set by a configuration file property debug
 	public static boolean isDebug()
 	{
-		return InventoryStocker.isDebugging;
+		return ChargingBench.isDebugging;
 	}
 
 	/**

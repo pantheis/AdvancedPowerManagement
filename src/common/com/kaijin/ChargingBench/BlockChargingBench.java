@@ -3,20 +3,15 @@ package com.kaijin.ChargingBench;
 import java.util.ArrayList;
 import java.util.Random;
 
-import net.minecraft.src.forge.*;
 import net.minecraft.src.*;
-import net.minecraft.src.ic2.api.*;
-import net.minecraft.src.ic2.common.*;
-import net.minecraft.src.ic2.platform.*;
 
-public class BlockChargingBench extends BlockMultiID implements ITextureProvider 
+
+public class BlockChargingBench extends Block
 {
-    public BlockChargingBench(int var1)
-    {
-    	super(var1, Material.wood);
-    	this.setHardness(1.0F);
-    	if (Utils.isDebug()) System.out.println("BlockChargingBench");
-    }
+	public BlockChargingBench(int i, int j, Material material)
+	{
+		super(i, j, material);
+	}
     
     public void addCreativeItems(ArrayList itemList)
     {
@@ -29,7 +24,7 @@ public class BlockChargingBench extends BlockMultiID implements ITextureProvider
     private boolean launchGUI(World world, int x, int y, int z, EntityPlayer entityplayer)
     {
     	if (Utils.isDebug()) System.out.println("BlockChargingBench.launchGUI");
-    	entityplayer.openGui(mod_ChargingBench.instance, 1, world, x, y, z);
+    	entityplayer.openGui(ChargingBench.instance, 1, world, x, y, z);
     	return true;
     }
     

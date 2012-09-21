@@ -3,7 +3,7 @@
  *  Licensed as open source with restrictions. Please see attached LICENSE.txt.
  */
 
-package com.kaijin.InventoryStocker;
+package com.kaijin.ChargingBench;
 
 import java.io.File;
 
@@ -17,7 +17,6 @@ import cpw.mods.fml.server.FMLServerHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.src.*;
 import net.minecraftforge.common.Configuration;
-import com.kaijin.InventoryStocker.*;
 
 public class CommonProxy implements IGuiHandler
 {

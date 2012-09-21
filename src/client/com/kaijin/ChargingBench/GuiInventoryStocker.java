@@ -3,10 +3,9 @@
  *  Licensed as open source with restrictions. Please see attached LICENSE.txt.
  */
 
-package com.kaijin.InventoryStocker;
+package com.kaijin.ChargingBench;
 
 import org.lwjgl.opengl.GL11;
-import com.kaijin.InventoryStocker.*;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;

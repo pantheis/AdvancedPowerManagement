@@ -44,6 +44,7 @@ public class InventoryStocker
 	@PreInit
 	public static void preInit(FMLPreInitializationEvent event)
 	{
+		
 		Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
 		configuration.load();
 		InventoryStockerBlockID = configuration.getOrCreateBlockIdProperty("InventoryStocker", 2490).getInt();
