@@ -68,9 +68,9 @@ public class ChargingBench
 	@Init
 	public void load(FMLInitializationEvent event)
 	{
-		ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("InventoryStocker").setCreativeTab(CreativeTabs.tabBlock);
+		ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("ChargingBench").setCreativeTab(CreativeTabs.tabBlock);
 		LanguageRegistry.addName(ChargingBench, "Charging Bench");
-		GameRegistry.registerBlock(ChargingBench);
+		GameRegistry.registerBlock(ChargingBench, ItemChargingBench.class);
 		
 		GameRegistry.registerTileEntity(TEChargingBench1.class, "Charging Bench MK1");
 		GameRegistry.registerTileEntity(TEChargingBench2.class, "Charging Bench MK2");

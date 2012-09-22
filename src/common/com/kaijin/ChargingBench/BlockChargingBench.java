@@ -56,33 +56,46 @@ public class BlockChargingBench extends Block
 		return ChargingBench.proxy.BLOCK_PNG;
 	}
 
-	@SideOnly(Side.CLIENT)
-	public int getBlockTexture(IBlockAccess blocks, int x, int y, int z, int i)
-	{
-		return i;
-	}
-
-	public int getBlockTextureFromSide(int i)
+	@Override
+	public int getBlockTextureFromSideAndMetadata(int i, int meta)
 	{
 		switch (i)
 		{
-		case 0: // Bottom
-			return 16;
-
-		case 1: // Top
+		case 0: // bottom
 			return 0;
+			
+		case 1: // top
+			switch (meta)
+			{
+			case 0: // mark 1
+				return 16;
 
-		case 2: // North
-			return 16;
+			case 1: // mark 2
+				return 17;
 
-		case 3: // South
-			return 16;
+			case 2: // mark 3
+				return 18;
 
-		default: // 4-5 West-East
-			return 16;
+			default: // something wrong?
+				return 0;
+			}
+			
+		default: // the rest of the sides
+			switch (meta)
+			{
+			case 0: // mark 1
+				return 32;
+
+			case 1: // mark 2
+				return 33;
+
+			case 3: // mark 3
+				return 34;
+			}
+			return 0; // if we're here, something is wrong
 		}
 	}
-	
+
 	@Override
 	public boolean canProvidePower()
 	{
