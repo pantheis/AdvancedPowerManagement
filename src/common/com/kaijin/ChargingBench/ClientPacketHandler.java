@@ -89,8 +89,6 @@ public class ClientPacketHandler implements IPacketHandler
 			{
 				ex.printStackTrace();
 			}
-			
-			
 		}
 	}
 }

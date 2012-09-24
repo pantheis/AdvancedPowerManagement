@@ -11,111 +11,102 @@ import cpw.mods.fml.common.network.Player;
 
 public class ContainerChargingBench extends Container
 {
-    public TEChargingBench tileentity;
-    public int currentEnergy;
-    public short maxInput;
+	public TEChargingBench tileentity;
+	public int currentEnergy;
+	public short maxInput;
 
-    public ContainerChargingBench(InventoryPlayer player, TEChargingBench tile)
-    {
-    	if (Utils.isDebug()) System.out.println("ContainerChargingBench");
-        this.tileentity = tile;
-        this.currentEnergy = 0;
-        this.maxInput = 0;
+	public ContainerChargingBench(InventoryPlayer player, TEChargingBench tile)
+	{
+		if (Utils.isDebug()) System.out.println("ContainerChargingBench");
+		this.tileentity = tile;
+		this.currentEnergy = 0;
+		this.maxInput = 0;
 		this.addSlotToContainer(new Slot(tile, 0, 61, 19));
-        this.addSlotToContainer(new Slot(tile, 1, 79, 19));
-        this.addSlotToContainer(new Slot(tile, 2, 97, 19));
-        this.addSlotToContainer(new Slot(tile, 3, 115, 19));
-        this.addSlotToContainer(new Slot(tile, 4, 61, 37));
-        this.addSlotToContainer(new Slot(tile, 5, 79, 37));
-        this.addSlotToContainer(new Slot(tile, 6, 97, 37));
-        this.addSlotToContainer(new Slot(tile, 7, 115, 37));
-        this.addSlotToContainer(new Slot(tile, 8, 61, 55));
-        this.addSlotToContainer(new Slot(tile, 9, 79, 55));
-        this.addSlotToContainer(new Slot(tile, 10, 97, 55));
-        this.addSlotToContainer(new Slot(tile, 11, 115, 55));
-        this.addSlotToContainer(new Slot(tile, 12, 24, 40));
-        this.addSlotToContainer(new Slot(tile, 13, 152, 8));
-        this.addSlotToContainer(new Slot(tile, 14, 152, 26));
-        this.addSlotToContainer(new Slot(tile, 15, 152, 44));
-        this.addSlotToContainer(new Slot(tile, 16, 152, 62));
-        int var3;
+		this.addSlotToContainer(new Slot(tile, 1, 79, 19));
+		this.addSlotToContainer(new Slot(tile, 2, 97, 19));
+		this.addSlotToContainer(new Slot(tile, 3, 115, 19));
+		this.addSlotToContainer(new Slot(tile, 4, 61, 37));
+		this.addSlotToContainer(new Slot(tile, 5, 79, 37));
+		this.addSlotToContainer(new Slot(tile, 6, 97, 37));
+		this.addSlotToContainer(new Slot(tile, 7, 115, 37));
+		this.addSlotToContainer(new Slot(tile, 8, 61, 55));
+		this.addSlotToContainer(new Slot(tile, 9, 79, 55));
+		this.addSlotToContainer(new Slot(tile, 10, 97, 55));
+		this.addSlotToContainer(new Slot(tile, 11, 115, 55));
+		this.addSlotToContainer(new Slot(tile, 12, 24, 40));
+		this.addSlotToContainer(new Slot(tile, 13, 152, 8));
+		this.addSlotToContainer(new Slot(tile, 14, 152, 26));
+		this.addSlotToContainer(new Slot(tile, 15, 152, 44));
+		this.addSlotToContainer(new Slot(tile, 16, 152, 62));
+		int var3;
 
-        for (var3 = 0; var3 < 3; ++var3)
-        {
-            for (int var4 = 0; var4 < 9; ++var4)
-            {
-                this.addSlotToContainer(new Slot(player, var4 + var3 * 9 + 9, 8 + var4 * 18, 84 + var3 * 18));
-            }
-        }
+		for (var3 = 0; var3 < 3; ++var3)
+		{
+			for (int var4 = 0; var4 < 9; ++var4)
+			{
+				this.addSlotToContainer(new Slot(player, var4 + var3 * 9 + 9, 8 + var4 * 18, 84 + var3 * 18));
+			}
+		}
 
-        for (var3 = 0; var3 < 9; ++var3)
-        {
-            this.addSlotToContainer(new Slot(player, var3, 8 + var3 * 18, 142));
-        }
-    }
+		for (var3 = 0; var3 < 9; ++var3)
+		{
+			this.addSlotToContainer(new Slot(player, var3, 8 + var3 * 18, 142));
+		}
+	}
 
-    public void updateCraftingResults()
-    {
-    	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateCraftingResults");
-        super.updateCraftingResults();
+	public void updateCraftingResults()
+	{
+		if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateCraftingResults");
+		super.updateCraftingResults();
 
-        for (int var1 = 0; var1 < this.crafters.size(); ++var1)
-        {
-            ICrafting var2 = (ICrafting)this.crafters.get(var1);
-            if (Utils.isDebug()) System.out.println("ConCurrentEnergy: " + this.currentEnergy);
-            if (Utils.isDebug()) System.out.println("TEcurrentEnergy: " + this.tileentity.currentEnergy);
+		for (int var1 = 0; var1 < this.crafters.size(); ++var1)
+		{
+			ICrafting var2 = (ICrafting)this.crafters.get(var1);
 
-            if (this.currentEnergy != this.tileentity.currentEnergy)
-            {
-            	if (Utils.isDebug()) System.out.println("ContainerChargingBench.enery != tile.currentEnergy");
-                var2.updateCraftingInventoryInfo(this, 0, this.tileentity.currentEnergy & 65535);
-                var2.updateCraftingInventoryInfo(this, 1, this.tileentity.currentEnergy >>> 16);
-            }
+			if (this.currentEnergy != this.tileentity.currentEnergy)
+			{
+				var2.updateCraftingInventoryInfo(this, 0, this.tileentity.currentEnergy & 65535);
+				var2.updateCraftingInventoryInfo(this, 1, this.tileentity.currentEnergy >>> 16);
+			}
 
-            if (this.maxInput != this.tileentity.maxInput)
-            {
-            	if (Utils.isDebug()) System.out.println("ContainerChargingBench.maxInput != tile.maxInput");
-                var2.updateCraftingInventoryInfo(this, 2, this.tileentity.maxInput);
-            }
-        }
-        this.currentEnergy = this.tileentity.currentEnergy;
-        this.maxInput = (short)this.tileentity.maxInput;
-    }
-    
-    
-    
-    @Override
-    public void updateProgressBar(int var1, int var2)
-    {
-    	super.updateProgressBar(var1, var2);
-    	
-    	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar");
-        switch (var1)
-        {
-            case 0:
-            	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case0");
-            	this.tileentity.currentEnergy = this.tileentity.currentEnergy & -65536 | var2;
-                if (Utils.isDebug()) System.out.println("ContainerCB.currentEnergy: " + this.tileentity.currentEnergy);
-                break;
+			if (this.maxInput != this.tileentity.maxInput)
+			{
+				var2.updateCraftingInventoryInfo(this, 2, this.tileentity.maxInput);
+			}
+		}
+		this.currentEnergy = this.tileentity.currentEnergy;
+		this.maxInput = (short)this.tileentity.maxInput;
+	}
 
-            case 1:
-            	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case1");
-                this.tileentity.currentEnergy = this.tileentity.currentEnergy & 65535 | var2 << 16;
-                if (Utils.isDebug()) System.out.println("ContainerCB.currentEnergy: " + this.tileentity.currentEnergy);
-                break;
+	@Override
+	public void updateProgressBar(int var1, int var2)
+	{
+		super.updateProgressBar(var1, var2);
 
-            case 2:
-            	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case2");
-            	if (Utils.isDebug()) System.out.println("ContainerCB.currentEnergy: " + this.tileentity.currentEnergy);
-                this.tileentity.maxInput = var2;
-        }
-    }
+		if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar");
+		switch (var1)
+		{
+		case 0:
+			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case0");
+			this.tileentity.currentEnergy = this.tileentity.currentEnergy & -65536 | var2;
+			break;
 
-    public int guiInventorySize()
-    {
-    	if (Utils.isDebug()) System.out.println("ContainerChargingBench.guiInventorySize");
-        return 17;
-    }
+		case 1:
+			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case1");
+			this.tileentity.currentEnergy = this.tileentity.currentEnergy & 65535 | var2 << 16;
+			break;
+
+		case 2:
+			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case2");
+			this.tileentity.maxInput = var2;
+		}
+	}
+
+	public int guiInventorySize()
+	{
+		if (Utils.isDebug()) System.out.println("ContainerChargingBench.guiInventorySize");
+		return 17;
+	}
 
 	public ItemStack transferStackInSlot(int par1)
 	{
@@ -151,16 +142,16 @@ public class ContainerChargingBench extends Container
 		return var2;
 	}
 
-    
-    public int getInput()
-    {
-    	if (Utils.isDebug()) System.out.println("ContainerChargingBench.getInput");
-        return 0;
-    }
 
-    public boolean canInteractWith(EntityPlayer var1)
-    {
-    	if (Utils.isDebug()) System.out.println("ContainerChargingBench.canInteractWith");
-        return this.tileentity.isUseableByPlayer(var1);
-    }
+	public int getInput()
+	{
+		if (Utils.isDebug()) System.out.println("ContainerChargingBench.getInput");
+		return 0;
+	}
+
+	public boolean canInteractWith(EntityPlayer var1)
+	{
+		if (Utils.isDebug()) System.out.println("ContainerChargingBench.canInteractWith");
+		return this.tileentity.isUseableByPlayer(var1);
+	}
 }

@@ -89,7 +89,6 @@ IEnergyStorage, IInventory, ISidedInventory
 	@Override
 	public boolean demandsEnergy()
 	{
-		if (Utils.isDebug()) System.out.println("TE.demandsEnergy: " + this.currentEnergy);
 		return currentEnergy < maxEnergy;
 	}
 
@@ -99,15 +98,11 @@ IEnergyStorage, IInventory, ISidedInventory
 		int surplus = 0;
 		if (ChargingBench.proxy.isServer())
 		{
-			if (Utils.isDebug()) System.out.println("TEInjectEnergy; supply: " + supply);
-
 			// if supply is greater than the max we can take per tick
-			if(supply - maxInput >= 0)
+			if(supply >= maxInput)
 			{
-				if (Utils.isDebug()) System.out.println("TEInjectEnergy; supply >=0: " + supply);
 				// add the max we can take per tick to our current energy level
 				this.currentEnergy += maxInput;
-				if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
 				// check if our current energy level is now over the max energy level
 				if (currentEnergy > maxEnergy)
 				{
@@ -115,16 +110,13 @@ IEnergyStorage, IInventory, ISidedInventory
 					surplus = currentEnergy - maxEnergy;
 					//and set our current energy level TO our max energy level
 					this.currentEnergy = maxEnergy;
-					if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
 				}
 				//surplus may be zero or greater here
 				surplus += (supply - maxInput);
 			}
-			else if(supply - maxInput <=0)
+			else
 			{
-				if (Utils.isDebug()) System.out.println("TEInjectEnergy; supply <=0: " + supply);
 				this.currentEnergy += supply;
-				if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
 				// check if our current energy level is now over the max energy level
 				if (currentEnergy > maxEnergy)
 				{
@@ -132,7 +124,6 @@ IEnergyStorage, IInventory, ISidedInventory
 					surplus = currentEnergy - maxEnergy;
 					//and set our current energy level TO our max energy level
 					this.currentEnergy = maxEnergy;
-					if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
 				}
 				//surplus may be zero or greater here
 			}

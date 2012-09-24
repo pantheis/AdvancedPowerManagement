@@ -25,17 +25,20 @@ public class BlockChargingBench extends Block
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
 	{
-		String currentEquippedItem = "";
+		int currentEquippedItemID = 0;
+		ItemStack wrench = Items.getItem("wrench");
+		ItemStack electricWrench = Items.getItem("electricWrench");
+
 		if(world.isRemote)
 		{
 			// Prevent GUI pop-up
 			//NPE catch, do not try to get the name of a null item
 			if (entityplayer.getCurrentEquippedItem() != null)
 			{
-				currentEquippedItem = entityplayer.getCurrentEquippedItem().getItemName();
+				currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
 			}
-			if (entityplayer.isSneaking() || currentEquippedItem == Items.getItem("wrench").getItemName() ||
-					currentEquippedItem == Items.getItem("electricWrench").getItemName())
+
+			if (entityplayer.isSneaking() || currentEquippedItemID == wrench.itemID || currentEquippedItemID == electricWrench.itemID)
 			{
 				if (Utils.isDebug()) System.out.println("Block.world.isRemote.isSneaking");
 				// Prevent GUI popup when sneaking
@@ -43,19 +46,17 @@ public class BlockChargingBench extends Block
 				return false;
 			}
 		}
-		
+
 		else if (ChargingBench.proxy.isServer())
 		{
 			// Prevent GUI pop-up
 			//NPE catch, do not try to get the name of a null item
 			if (entityplayer.getCurrentEquippedItem() != null)
 			{
-				currentEquippedItem = entityplayer.getCurrentEquippedItem().getItemName();
+				currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
 			}
-			
-			if (entityplayer.isSneaking() || currentEquippedItem == Items.getItem("wrench").getItemName() ||
-					currentEquippedItem == Items.getItem("electricWrench").getItemName())
 
+			if (entityplayer.isSneaking() || currentEquippedItemID == wrench.itemID || currentEquippedItemID == electricWrench.itemID)
 			{
 				// Prevent GUI popup when sneaking
 				// This allows you to sneak place things directly on the inventory stocker
