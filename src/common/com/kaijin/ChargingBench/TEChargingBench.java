@@ -23,7 +23,7 @@ import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
 public class TEChargingBench extends TileEntity implements IEnergySource, IEnergySink, IWrenchable,
-IEnergyStorage, IInventory, ISidedInventory, INetworkUpdateListener, INetworkDataProvider
+IEnergyStorage, IInventory, ISidedInventory
 {
 	private ItemStack[] contents = new ItemStack[this.getSizeInventory()];
 	private boolean initialized;
@@ -96,42 +96,46 @@ IEnergyStorage, IInventory, ISidedInventory, INetworkUpdateListener, INetworkDat
 	@Override
 	public int injectEnergy(Direction directionFrom, int supply)
 	{
-		if (Utils.isDebug()) System.out.println("TEInjectEnergy; supply: " + supply);
 		int surplus = 0;
-		// if supply is greater than the max we can take per tick
-		if(supply - maxInput >= 0)
+		if (ChargingBench.proxy.isServer())
 		{
-			if (Utils.isDebug()) System.out.println("TEInjectEnergy; supply >=0: " + supply);
-			// add the max we can take per tick to our current energy level
-			this.currentEnergy += maxInput;
-			if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
-			// check if our current energy level is now over the max energy level
-			if (currentEnergy > maxEnergy)
+			if (Utils.isDebug()) System.out.println("TEInjectEnergy; supply: " + supply);
+
+			// if supply is greater than the max we can take per tick
+			if(supply - maxInput >= 0)
 			{
-				//if so, our surplus to return is equal to that amount over
-				surplus = currentEnergy - maxEnergy;
-				//and set our current energy level TO our max energy level
-				this.currentEnergy = maxEnergy;
+				if (Utils.isDebug()) System.out.println("TEInjectEnergy; supply >=0: " + supply);
+				// add the max we can take per tick to our current energy level
+				this.currentEnergy += maxInput;
 				if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
+				// check if our current energy level is now over the max energy level
+				if (currentEnergy > maxEnergy)
+				{
+					//if so, our surplus to return is equal to that amount over
+					surplus = currentEnergy - maxEnergy;
+					//and set our current energy level TO our max energy level
+					this.currentEnergy = maxEnergy;
+					if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
+				}
+				//surplus may be zero or greater here
+				surplus += (supply - maxInput);
 			}
-			//surplus may be zero or greater here
-			surplus += (supply - maxInput);
-		}
-		else if(supply - maxInput <=0)
-		{
-			if (Utils.isDebug()) System.out.println("TEInjectEnergy; supply <=0: " + supply);
-			this.currentEnergy += supply;
-			if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
-			// check if our current energy level is now over the max energy level
-			if (currentEnergy > maxEnergy)
+			else if(supply - maxInput <=0)
 			{
-				//if so, our surplus to return is equal to that amount over
-				surplus = currentEnergy - maxEnergy;
-				//and set our current energy level TO our max energy level
-				this.currentEnergy = maxEnergy;
+				if (Utils.isDebug()) System.out.println("TEInjectEnergy; supply <=0: " + supply);
+				this.currentEnergy += supply;
 				if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
+				// check if our current energy level is now over the max energy level
+				if (currentEnergy > maxEnergy)
+				{
+					//if so, our surplus to return is equal to that amount over
+					surplus = currentEnergy - maxEnergy;
+					//and set our current energy level TO our max energy level
+					this.currentEnergy = maxEnergy;
+					if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
+				}
+				//surplus may be zero or greater here
 			}
-			//surplus may be zero or greater here
 		}
 		return surplus;
 	}
@@ -460,18 +464,6 @@ IEnergyStorage, IInventory, ISidedInventory, INetworkUpdateListener, INetworkDat
 		super.invalidate();
 	}
 
-	@Override
-	public void onNetworkUpdate(String field)
-	{
-		
-	}
-
-	private static List<String> fields=Arrays.asList(new String[0]);
-	@Override
-	public List<String> getNetworkedFields()
-	{
-		return fields;
-	}	
 	//Networking stuff
 
 }
