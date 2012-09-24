@@ -62,37 +62,48 @@ public class ContainerChargingBench extends Container
         for (int var1 = 0; var1 < this.crafters.size(); ++var1)
         {
             ICrafting var2 = (ICrafting)this.crafters.get(var1);
+            if (Utils.isDebug()) System.out.println("ConCurrentEnergy: " + this.energy);
+            if (Utils.isDebug()) System.out.println("TEcurrentEnergy: " + this.tileentity.getStored());
 
-            if (this.energy != this.tileentity.currentEnergy)
+            if (this.energy != this.tileentity.getStored())
             {
-                var2.updateCraftingInventoryInfo(this, 0, this.tileentity.currentEnergy & 65535);
-                var2.updateCraftingInventoryInfo(this, 1, this.tileentity.currentEnergy >>> 16);
+            	if (Utils.isDebug()) System.out.println("ContainerChargingBench.enery != tile.currentEnergy");
+                var2.updateCraftingInventoryInfo(this, 0, this.tileentity.getStored() & 65535);
+                var2.updateCraftingInventoryInfo(this, 1, this.tileentity.getStored() >>> 16);
             }
 
             if (this.maxInput != this.tileentity.maxInput)
             {
+            	if (Utils.isDebug()) System.out.println("ContainerChargingBench.maxInput != tile.maxInput");
                 var2.updateCraftingInventoryInfo(this, 2, this.tileentity.maxInput);
             }
         }
-
-        this.energy = this.tileentity.currentEnergy;
+        this.energy = this.tileentity.getStored();
         this.maxInput = (short)this.tileentity.maxInput;
     }
-
+    
+    @Override
     public void updateProgressBar(int var1, int var2)
     {
+    	super.updateProgressBar(var1, var2);
     	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar");
         switch (var1)
         {
             case 0:
-                this.tileentity.currentEnergy = this.tileentity.currentEnergy & -65536 | var2;
+            	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case0");
+            	this.tileentity.setStored(this.tileentity.getStored() & -65536 | var2);
+                if (Utils.isDebug()) System.out.println("ContainerCB.currentEnergy: " + this.tileentity.getStored());
                 break;
 
             case 1:
-                this.tileentity.currentEnergy = this.tileentity.currentEnergy & 65535 | var2 << 16;
+            	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case1");
+                this.tileentity.setStored(this.tileentity.getStored() & 65535 | var2 << 16);
+                if (Utils.isDebug()) System.out.println("ContainerCB.currentEnergy: " + this.tileentity.getStored());
                 break;
 
             case 2:
+            	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case2");
+            	if (Utils.isDebug()) System.out.println("ContainerCB.currentEnergy: " + this.tileentity.getStored());
                 this.tileentity.maxInput = var2;
         }
     }

@@ -83,21 +83,6 @@ public class ClientPacketHandler implements IPacketHandler
 				this.x = stream.readInt();
 				this.y = stream.readInt();
 				this.z = stream.readInt();
-				this.snapshot = stream.readBoolean();
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-
-		if (this.packetType == 1)
-		{
-			try
-			{
-				this.x = stream.readInt();
-				this.y = stream.readInt();
-				this.z = stream.readInt();
 				this.Metainfo = stream.readInt();
 			}
 			catch (Exception ex)

@@ -36,7 +36,7 @@ public class GuiChargingBench extends GuiContainer
         int var6 = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(var5, var6, 0, 0, this.xSize, this.ySize);
 
-        if (this.tile.currentEnergy > 0)
+        if (this.tile.getStored() > 0)
         {
             int var7 = this.tile.gaugeEnergyScaled(14);
             this.drawTexturedModalRect(var5 + 24, var6 + 23 + 14 - var7, 176, 14 - var7, 14, var7);

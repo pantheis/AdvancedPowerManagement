@@ -1,5 +1,8 @@
 package com.kaijin.ChargingBench;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 import ic2.api.*;
@@ -10,10 +13,14 @@ import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
+import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 import com.kaijin.ChargingBench.*;
+
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 public class TEChargingBench extends TileEntity implements IEnergySource, IEnergySink, IWrenchable,
 IEnergyStorage, IInventory, ISidedInventory
@@ -21,11 +28,13 @@ IEnergyStorage, IInventory, ISidedInventory
 	private ItemStack[] contents = new ItemStack[this.getSizeInventory()];
 	private boolean initialized;
 
-	public int currentEnergy;
+	private int currentEnergy;
 	public int maxInput;
 	public int maxEnergy;
 	public int baseTier;
 	public int energyUsedPerTick;
+	
+	private int Metainfo;
 
 	public TEChargingBench(int i)
 	{
@@ -67,7 +76,7 @@ IEnergyStorage, IInventory, ISidedInventory
 	public int getMaxEnergyOutput() 
 	{
 		// TODO Auto-generated method stub
-		return 0;
+		return energyUsedPerTick;
 	}
 
 	@Override
@@ -80,39 +89,47 @@ IEnergyStorage, IInventory, ISidedInventory
 	@Override
 	public boolean demandsEnergy()
 	{
+		if (Utils.isDebug()) System.out.println("TE.demandsEnergy: " + this.currentEnergy);
 		return currentEnergy < maxEnergy;
 	}
 
 	@Override
 	public int injectEnergy(Direction directionFrom, int supply)
 	{
+		if (Utils.isDebug()) System.out.println("TEInjectEnergy; supply: " + supply);
 		int surplus = 0;
 		// if supply is greater than the max we can take per tick
 		if(supply - maxInput >= 0)
 		{
+			if (Utils.isDebug()) System.out.println("TEInjectEnergy; supply >=0: " + supply);
 			// add the max we can take per tick to our current energy level
-			currentEnergy += maxInput;
+			this.currentEnergy += maxInput;
+			if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
 			// check if our current energy level is now over the max energy level
 			if (currentEnergy > maxEnergy)
 			{
 				//if so, our surplus to return is equal to that amount over
 				surplus = currentEnergy - maxEnergy;
 				//and set our current energy level TO our max energy level
-				currentEnergy = maxEnergy;
+				this.currentEnergy = maxEnergy;
+				if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
 			}
 			//surplus may be zero or greater here
 			surplus += (supply - maxInput);
 		}
 		else if(supply - maxInput <=0)
 		{
-			currentEnergy += supply;
+			if (Utils.isDebug()) System.out.println("TEInjectEnergy; supply <=0: " + supply);
+			this.currentEnergy += supply;
+			if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
 			// check if our current energy level is now over the max energy level
 			if (currentEnergy > maxEnergy)
 			{
 				//if so, our surplus to return is equal to that amount over
 				surplus = currentEnergy - maxEnergy;
 				//and set our current energy level TO our max energy level
-				currentEnergy = maxEnergy;
+				this.currentEnergy = maxEnergy;
+				if (Utils.isDebug()) System.out.println("TE.injectEnergy: " + this.currentEnergy);
 			}
 			//surplus may be zero or greater here
 		}
@@ -144,7 +161,7 @@ IEnergyStorage, IInventory, ISidedInventory
 	public boolean wrenchCanRemove(EntityPlayer entityPlayer) 
 	{
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -158,21 +175,27 @@ IEnergyStorage, IInventory, ISidedInventory
 	public int getStored() 
 	{
 		// TODO Auto-generated method stub
-		return 0;
+		if (Utils.isDebug()) System.out.println("TE.getStored: " + this.currentEnergy);
+		return currentEnergy;
 	}
 
+	public void setStored(int energy)
+	{
+		this.currentEnergy = energy;	
+	}
+	
 	@Override
 	public int getCapacity() 
 	{
 		// TODO Auto-generated method stub
-		return 102400;
+		return maxEnergy;
 	}
 
 	@Override
 	public int getOutput() 
 	{
 		// TODO Auto-generated method stub
-		return 0;
+		return energyUsedPerTick;
 	}
 
 	@Override
@@ -273,6 +296,7 @@ IEnergyStorage, IInventory, ISidedInventory
 
 			// Read extra NBT stuff here
 			currentEnergy = nbttagcompound.getInteger("currentEnergy");
+			if (Utils.isDebug()) System.out.println("ReadNBT.CurrentEergy: " + this.currentEnergy);
 			maxInput = nbttagcompound.getInteger("maxInput");
 			maxEnergy = nbttagcompound.getInteger("maxEnergy");
 			baseTier = nbttagcompound.getInteger("baseTier");
@@ -324,6 +348,7 @@ IEnergyStorage, IInventory, ISidedInventory
 			//write extra NBT stuff here
 
 			nbttagcompound.setInteger("currentEnergy", currentEnergy);
+			if (Utils.isDebug()) System.out.println("WriteNBT.CurrentEergy: " + this.currentEnergy);
 			nbttagcompound.setInteger("maxInput", maxInput);
 			nbttagcompound.setInteger("maxEnergy", maxEnergy);
 			nbttagcompound.setInteger("baseTier", baseTier);
@@ -374,6 +399,10 @@ IEnergyStorage, IInventory, ISidedInventory
 	@Override
 	public void updateEntity()
 	{
+		if (ChargingBench.proxy.isClient())
+		{
+			return;
+		}
 		if (!initialized && worldObj != null)
 		{
 			EnergyNet.getForWorld(worldObj).addTileEntity(this);
@@ -384,6 +413,7 @@ IEnergyStorage, IInventory, ISidedInventory
 			//System.out.printf("TEFloodlightIC2.updateEntity: using %d energy from %d\n",
 			//	energyUsedPerTick, energy);
 			currentEnergy -= energyUsedPerTick;
+			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
 			if (currentEnergy < 0)
 				currentEnergy = 0;
 		}
@@ -393,7 +423,9 @@ IEnergyStorage, IInventory, ISidedInventory
 	public boolean isActive() 
 	{
 		//System.out.printf("TEFloodlightIC2.isActive: energy = %d\n", energy);
+		if (Utils.isDebug()) System.out.println("TE.isActive: " + this.currentEnergy);
 		return currentEnergy > 0 && receivingRedstoneSignal();
+
 	}
 
 	boolean receivingRedstoneSignal() 
@@ -404,13 +436,15 @@ IEnergyStorage, IInventory, ISidedInventory
 	public int gaugeEnergyScaled(int var1)
 	{
 		if (Utils.isDebug()) System.out.println("TileEntityChargingBench.gaugeEnergyScaled");
+		if (Utils.isDebug()) System.out.println("currentEnergy: " + currentEnergy);
+		if (Utils.isDebug()) System.out.println("this.currentEnergy: " + this.currentEnergy);
 		if (this.currentEnergy <= 0)
 		{
 			return 0;
 		}
 		else
 		{
-			int var2 = this.currentEnergy * var1 / (this.maxEnergy - this.maxInput);
+			int var2 = currentEnergy * var1 / maxEnergy;
 
 			if (var2 > var1)
 			{

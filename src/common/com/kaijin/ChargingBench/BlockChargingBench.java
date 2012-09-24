@@ -25,14 +25,17 @@ public class BlockChargingBench extends Block
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
 	{
+		String currentEquippedItem = "";
 		if(world.isRemote)
 		{
-			//TODO need to fix item in hand detection to prevent GUI popup when using the wrench or electric
-			//wrench
-
 			// Prevent GUI pop-up
-			if (entityplayer.isSneaking() || entityplayer.getCurrentEquippedItem() == Items.getItem("wrench") ||
-					entityplayer.getCurrentEquippedItem() == Items.getItem("electricWrench"))
+			//NPE catch, do not try to get the name of a null item
+			if (entityplayer.getCurrentEquippedItem() != null)
+			{
+				currentEquippedItem = entityplayer.getCurrentEquippedItem().getItemName();
+			}
+			if (entityplayer.isSneaking() || currentEquippedItem == Items.getItem("wrench").getItemName() ||
+					currentEquippedItem == Items.getItem("electricWrench").getItemName())
 			{
 				if (Utils.isDebug()) System.out.println("Block.world.isRemote.isSneaking");
 				// Prevent GUI popup when sneaking
@@ -40,14 +43,19 @@ public class BlockChargingBench extends Block
 				return false;
 			}
 		}
+		
 		else if (ChargingBench.proxy.isServer())
 		{
-			//TODO need to fix item in hand detection to prevent GUI popup when using the wrench or electric
-			//wrench
-
 			// Prevent GUI pop-up
-			if (entityplayer.isSneaking() || entityplayer.getCurrentEquippedItem() == Items.getItem("wrench") ||
-					entityplayer.getCurrentEquippedItem() == Items.getItem("electricWrench"))
+			//NPE catch, do not try to get the name of a null item
+			if (entityplayer.getCurrentEquippedItem() != null)
+			{
+				currentEquippedItem = entityplayer.getCurrentEquippedItem().getItemName();
+			}
+			
+			if (entityplayer.isSneaking() || currentEquippedItem == Items.getItem("wrench").getItemName() ||
+					currentEquippedItem == Items.getItem("electricWrench").getItemName())
+
 			{
 				// Prevent GUI popup when sneaking
 				// This allows you to sneak place things directly on the inventory stocker
