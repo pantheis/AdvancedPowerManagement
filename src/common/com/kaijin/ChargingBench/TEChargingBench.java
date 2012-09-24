@@ -31,13 +31,13 @@ IEnergyStorage, IInventory, ISidedInventory
 	{
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
 		this.maxInput = (int)Math.pow(2.0D, (double)(i * 2 + 3));
-		
+
 		//base tier = what we're passed, so 1, 2 or 3
 		this.baseTier = i;
-		
+
 		//Max energy stored is 32(Tier 1), 128(Tier 2) or 512(Tier 3) * 20 ticks * 5 seconds.
 		this.maxEnergy = (((int)Math.pow(2.0D, (double)(i * 2 + 3)) * 20) * 5);
-		
+
 		//Energy used per tick is 32(Tier 1), 128(Tier 2), or 512(Tier 3). This will be used
 		//to output energy back to the grid when powered by redstone
 		this.energyUsedPerTick = (int)Math.pow(2.0D, (double)(i * 2 + 3));

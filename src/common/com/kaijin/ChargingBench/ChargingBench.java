@@ -38,7 +38,7 @@ public class ChargingBench
 {
 	@SidedProxy(clientSide = "com.kaijin.ChargingBench.ClientProxy", serverSide = "com.kaijin.ChargingBench.CommonProxy")
 	public static CommonProxy proxy; //This object will be populated with the class that you choose for the environment
-	
+
 	@Instance("ChargingBench")
 	public static ChargingBench instance; //The instance of the mod that will be defined, populated, and callable
 
@@ -71,18 +71,18 @@ public class ChargingBench
 		ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("ChargingBench").setCreativeTab(CreativeTabs.tabBlock);
 		LanguageRegistry.addName(ChargingBench, "Charging Bench");
 		GameRegistry.registerBlock(ChargingBench, ItemChargingBench.class);
-		
+
 		GameRegistry.registerTileEntity(TEChargingBench1.class, "Charging Bench MK1");
 		GameRegistry.registerTileEntity(TEChargingBench2.class, "Charging Bench MK2");
 		GameRegistry.registerTileEntity(TEChargingBench3.class, "Charging Bench MK3");
-        
+
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench1.name", "Charging Bench Mk1");
-        LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "Charging Bench Mk2");
-        LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "Charging Bench Mk3");
-        
-        NetworkRegistry.instance().registerGuiHandler(this.instance, proxy);
-		
-        proxy.load();
+		LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "Charging Bench Mk2");
+		LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "Charging Bench Mk3");
+
+		NetworkRegistry.instance().registerGuiHandler(this.instance, proxy);
+
+		proxy.load();
 		if (proxy.isServer())
 		{
 			FMLLog.getLogger().info ("ChargingBench loaded.");
@@ -94,13 +94,13 @@ public class ChargingBench
 	}
 
 	@PostInit
-    public void modsLoaded(FMLPostInitializationEvent event)
-    {
-    	if (Utils.isDebug()) System.out.println("ChargingBench.modsLoaded");
+	public void modsLoaded(FMLPostInitializationEvent event)
+	{
+		if (Utils.isDebug()) System.out.println("ChargingBench.modsLoaded");
 		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "W W", "WWW", 'U', Items.getItem("copperCableItem"), 'W', Block.planks});
 		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("goldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit")});
 		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("ironCableItem"), 'W', Block.planks, 'C', Items.getItem("advancedCircuit")});
-    }
-    
-    public static Block ChargingBench; 
+	}
+
+	public static Block ChargingBench; 
 }

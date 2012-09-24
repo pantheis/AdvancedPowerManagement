@@ -29,8 +29,8 @@ public class BlockChargingBench extends Block
 		{
 			//TODO need to fix item in hand detection to prevent GUI popup when using the wrench or electric
 			//wrench
-			
-			// Prevent GUI pop-up and handle block rotation
+
+			// Prevent GUI pop-up
 			if (entityplayer.isSneaking() || entityplayer.getCurrentEquippedItem() == Items.getItem("wrench") ||
 					entityplayer.getCurrentEquippedItem() == Items.getItem("electricWrench"))
 			{
@@ -45,7 +45,7 @@ public class BlockChargingBench extends Block
 			//TODO need to fix item in hand detection to prevent GUI popup when using the wrench or electric
 			//wrench
 
-			// Prevent GUI pop-up and handle block rotation
+			// Prevent GUI pop-up
 			if (entityplayer.isSneaking() || entityplayer.getCurrentEquippedItem() == Items.getItem("wrench") ||
 					entityplayer.getCurrentEquippedItem() == Items.getItem("electricWrench"))
 			{
@@ -98,7 +98,7 @@ public class BlockChargingBench extends Block
 			case 1: // mark 2
 				return 33;
 
-			case 3: // mark 3
+			case 2: // mark 3
 				return 34;
 			}
 			return 0; // if we're here, something is wrong
@@ -141,7 +141,20 @@ public class BlockChargingBench extends Block
 	@Override
 	public boolean hasTileEntity(int metadata)
 	{
-		return true;
+		switch (metadata)
+		{
+		case 0:
+			return true;
+
+		case 1:
+			return true;
+
+		case 2:
+			return true;
+
+		default:
+			return false;
+		}
 	}
 
 	public int idDropped(int var1, Random var2, int var3)
