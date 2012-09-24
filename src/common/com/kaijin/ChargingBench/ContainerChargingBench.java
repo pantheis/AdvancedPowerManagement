@@ -12,14 +12,14 @@ import cpw.mods.fml.common.network.Player;
 public class ContainerChargingBench extends Container
 {
     public TEChargingBench tileentity;
-    public int energy;
+    public int currentEnergy;
     public short maxInput;
 
     public ContainerChargingBench(InventoryPlayer player, TEChargingBench tile)
     {
     	if (Utils.isDebug()) System.out.println("ContainerChargingBench");
         this.tileentity = tile;
-        this.energy = 0;
+        this.currentEnergy = 0;
         this.maxInput = 0;
 		this.addSlotToContainer(new Slot(tile, 0, 61, 19));
         this.addSlotToContainer(new Slot(tile, 1, 79, 19));
@@ -62,14 +62,14 @@ public class ContainerChargingBench extends Container
         for (int var1 = 0; var1 < this.crafters.size(); ++var1)
         {
             ICrafting var2 = (ICrafting)this.crafters.get(var1);
-            if (Utils.isDebug()) System.out.println("ConCurrentEnergy: " + this.energy);
-            if (Utils.isDebug()) System.out.println("TEcurrentEnergy: " + this.tileentity.getStored());
+            if (Utils.isDebug()) System.out.println("ConCurrentEnergy: " + this.currentEnergy);
+            if (Utils.isDebug()) System.out.println("TEcurrentEnergy: " + this.tileentity.currentEnergy);
 
-            if (this.energy != this.tileentity.getStored())
+            if (this.currentEnergy != this.tileentity.currentEnergy)
             {
             	if (Utils.isDebug()) System.out.println("ContainerChargingBench.enery != tile.currentEnergy");
-                var2.updateCraftingInventoryInfo(this, 0, this.tileentity.getStored() & 65535);
-                var2.updateCraftingInventoryInfo(this, 1, this.tileentity.getStored() >>> 16);
+                var2.updateCraftingInventoryInfo(this, 0, this.tileentity.currentEnergy & 65535);
+                var2.updateCraftingInventoryInfo(this, 1, this.tileentity.currentEnergy >>> 16);
             }
 
             if (this.maxInput != this.tileentity.maxInput)
@@ -78,32 +78,35 @@ public class ContainerChargingBench extends Container
                 var2.updateCraftingInventoryInfo(this, 2, this.tileentity.maxInput);
             }
         }
-        this.energy = this.tileentity.getStored();
+        this.currentEnergy = this.tileentity.currentEnergy;
         this.maxInput = (short)this.tileentity.maxInput;
     }
+    
+    
     
     @Override
     public void updateProgressBar(int var1, int var2)
     {
     	super.updateProgressBar(var1, var2);
+    	
     	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar");
         switch (var1)
         {
             case 0:
             	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case0");
-            	this.tileentity.setStored(this.tileentity.getStored() & -65536 | var2);
-                if (Utils.isDebug()) System.out.println("ContainerCB.currentEnergy: " + this.tileentity.getStored());
+            	this.tileentity.currentEnergy = this.tileentity.currentEnergy & -65536 | var2;
+                if (Utils.isDebug()) System.out.println("ContainerCB.currentEnergy: " + this.tileentity.currentEnergy);
                 break;
 
             case 1:
             	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case1");
-                this.tileentity.setStored(this.tileentity.getStored() & 65535 | var2 << 16);
-                if (Utils.isDebug()) System.out.println("ContainerCB.currentEnergy: " + this.tileentity.getStored());
+                this.tileentity.currentEnergy = this.tileentity.currentEnergy & 65535 | var2 << 16;
+                if (Utils.isDebug()) System.out.println("ContainerCB.currentEnergy: " + this.tileentity.currentEnergy);
                 break;
 
             case 2:
             	if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case2");
-            	if (Utils.isDebug()) System.out.println("ContainerCB.currentEnergy: " + this.tileentity.getStored());
+            	if (Utils.isDebug()) System.out.println("ContainerCB.currentEnergy: " + this.tileentity.currentEnergy);
                 this.tileentity.maxInput = var2;
         }
     }

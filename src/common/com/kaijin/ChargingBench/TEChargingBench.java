@@ -23,17 +23,17 @@ import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
 public class TEChargingBench extends TileEntity implements IEnergySource, IEnergySink, IWrenchable,
-IEnergyStorage, IInventory, ISidedInventory
+IEnergyStorage, IInventory, ISidedInventory, INetworkUpdateListener, INetworkDataProvider
 {
 	private ItemStack[] contents = new ItemStack[this.getSizeInventory()];
 	private boolean initialized;
 
-	private int currentEnergy;
+	public int currentEnergy;
 	public int maxInput;
 	public int maxEnergy;
 	public int baseTier;
 	public int energyUsedPerTick;
-	
+
 	private int Metainfo;
 
 	public TEChargingBench(int i)
@@ -179,11 +179,6 @@ IEnergyStorage, IInventory, ISidedInventory
 		return currentEnergy;
 	}
 
-	public void setStored(int energy)
-	{
-		this.currentEnergy = energy;	
-	}
-	
 	@Override
 	public int getCapacity() 
 	{
@@ -464,5 +459,19 @@ IEnergyStorage, IInventory, ISidedInventory
 		}
 		super.invalidate();
 	}
+
+	@Override
+	public void onNetworkUpdate(String field)
+	{
+		
+	}
+
+	private static List<String> fields=Arrays.asList(new String[0]);
+	@Override
+	public List<String> getNetworkedFields()
+	{
+		return fields;
+	}	
+	//Networking stuff
 
 }
