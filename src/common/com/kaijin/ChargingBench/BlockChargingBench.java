@@ -5,6 +5,7 @@ import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 import net.minecraft.src.*;
 import com.kaijin.ChargingBench.*;
+import ic2.api.*;
 
 public class BlockChargingBench extends Block
 {
@@ -26,8 +27,12 @@ public class BlockChargingBench extends Block
 	{
 		if(world.isRemote)
 		{
+			//TODO need to fix item in hand detection to prevent GUI popup when using the wrench or electric
+			//wrench
+			
 			// Prevent GUI pop-up and handle block rotation
-			if (entityplayer.isSneaking())
+			if (entityplayer.isSneaking() || entityplayer.getCurrentEquippedItem() == Items.getItem("wrench") ||
+					entityplayer.getCurrentEquippedItem() == Items.getItem("electricWrench"))
 			{
 				if (Utils.isDebug()) System.out.println("Block.world.isRemote.isSneaking");
 				// Prevent GUI popup when sneaking
@@ -37,8 +42,12 @@ public class BlockChargingBench extends Block
 		}
 		else if (ChargingBench.proxy.isServer())
 		{
+			//TODO need to fix item in hand detection to prevent GUI popup when using the wrench or electric
+			//wrench
+
 			// Prevent GUI pop-up and handle block rotation
-			if (entityplayer.isSneaking())
+			if (entityplayer.isSneaking() || entityplayer.getCurrentEquippedItem() == Items.getItem("wrench") ||
+					entityplayer.getCurrentEquippedItem() == Items.getItem("electricWrench"))
 			{
 				// Prevent GUI popup when sneaking
 				// This allows you to sneak place things directly on the inventory stocker
@@ -63,7 +72,7 @@ public class BlockChargingBench extends Block
 		{
 		case 0: // bottom
 			return 0;
-			
+
 		case 1: // top
 			switch (meta)
 			{
@@ -79,7 +88,7 @@ public class BlockChargingBench extends Block
 			default: // something wrong?
 				return 0;
 			}
-			
+
 		default: // the rest of the sides
 			switch (meta)
 			{

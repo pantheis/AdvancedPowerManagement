@@ -63,10 +63,10 @@ public class ContainerChargingBench extends Container
         {
             ICrafting var2 = (ICrafting)this.crafters.get(var1);
 
-            if (this.energy != this.tileentity.energy)
+            if (this.energy != this.tileentity.currentEnergy)
             {
-                var2.updateCraftingInventoryInfo(this, 0, this.tileentity.energy & 65535);
-                var2.updateCraftingInventoryInfo(this, 1, this.tileentity.energy >>> 16);
+                var2.updateCraftingInventoryInfo(this, 0, this.tileentity.currentEnergy & 65535);
+                var2.updateCraftingInventoryInfo(this, 1, this.tileentity.currentEnergy >>> 16);
             }
 
             if (this.maxInput != this.tileentity.maxInput)
@@ -75,7 +75,7 @@ public class ContainerChargingBench extends Container
             }
         }
 
-        this.energy = this.tileentity.energy;
+        this.energy = this.tileentity.currentEnergy;
         this.maxInput = (short)this.tileentity.maxInput;
     }
 
@@ -85,11 +85,11 @@ public class ContainerChargingBench extends Container
         switch (var1)
         {
             case 0:
-                this.tileentity.energy = this.tileentity.energy & -65536 | var2;
+                this.tileentity.currentEnergy = this.tileentity.currentEnergy & -65536 | var2;
                 break;
 
             case 1:
-                this.tileentity.energy = this.tileentity.energy & 65535 | var2 << 16;
+                this.tileentity.currentEnergy = this.tileentity.currentEnergy & 65535 | var2 << 16;
                 break;
 
             case 2:
