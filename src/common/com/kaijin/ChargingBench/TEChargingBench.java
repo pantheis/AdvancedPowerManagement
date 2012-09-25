@@ -50,7 +50,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		switch(baseTier)
 		{
 		case 1:
-			this.baseStorage = 4000;
+			this.baseStorage = 40000;
 			break;
 		case 2:
 			this.baseStorage = 600000;
@@ -175,7 +175,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	public int getSizeInventory() 
 	{
 		// TODO Auto-generated method stub
-		return 18;
+		return 19;
 	}
 
 	@Override
