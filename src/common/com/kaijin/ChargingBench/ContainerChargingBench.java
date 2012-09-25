@@ -69,13 +69,13 @@ public class ContainerChargingBench extends Container
 				var2.updateCraftingInventoryInfo(this, 1, this.tileentity.currentEnergy >>> 16);
 			}
 
-			if (this.maxInput != this.tileentity.maxInput)
+			if (this.maxInput != this.tileentity.baseMaxInput)
 			{
-				var2.updateCraftingInventoryInfo(this, 2, this.tileentity.maxInput);
+				var2.updateCraftingInventoryInfo(this, 2, this.tileentity.baseMaxInput);
 			}
 		}
 		this.currentEnergy = this.tileentity.currentEnergy;
-		this.maxInput = (short)this.tileentity.maxInput;
+		this.maxInput = (short)this.tileentity.baseMaxInput;
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class ContainerChargingBench extends Container
 
 		case 2:
 			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case2");
-			this.tileentity.maxInput = var2;
+			this.tileentity.baseMaxInput = var2;
 		}
 	}
 

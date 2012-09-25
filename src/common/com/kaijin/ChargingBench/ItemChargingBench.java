@@ -15,10 +15,10 @@ public class ItemChargingBench extends ItemBlock
         this.setHasSubtypes(true);
     }
 
-    public int getMetadata(int var1)
+    public int getMetadata(int meta)
     {
     	if (Utils.isDebug()) System.out.println("ItemChargingBench.getMetadata");
-        return var1;
+        return meta;
     }
 
     public String getItemNameIS(ItemStack var1)

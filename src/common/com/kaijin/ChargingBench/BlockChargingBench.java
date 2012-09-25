@@ -172,10 +172,10 @@ public class BlockChargingBench extends Block
 		return this.blockID;
 	}
 
-	protected int damageDropped(int var1)
+	protected int damageDropped(int meta)
 	{
 		if (Utils.isDebug()) System.out.println("BlockChargingBench.damageDropped");
-		return var1;
+		return meta;
 	}
 	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int par1)
 	{

@@ -22,15 +22,14 @@ import com.kaijin.ChargingBench.*;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
-public class TEChargingBench extends TileEntity implements IEnergySource, IEnergySink, IWrenchable,
-IEnergyStorage, IInventory, ISidedInventory
+public class TEChargingBench extends TileEntity implements IEnergySink, IWrenchable, IInventory, ISidedInventory
 {
 	private ItemStack[] contents = new ItemStack[this.getSizeInventory()];
 	private boolean initialized;
 
 	public int currentEnergy;
-	public int maxInput;
-	public int maxEnergy;
+	public int baseMaxInput;
+	public int baseStorage;
 	public int baseTier;
 	public int energyUsedPerTick;
 
@@ -39,13 +38,33 @@ IEnergyStorage, IInventory, ISidedInventory
 	public TEChargingBench(int i)
 	{
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-		this.maxInput = (int)Math.pow(2.0D, (double)(i * 2 + 3));
+		this.baseMaxInput = (int)Math.pow(2.0D, (double)(i * 2 + 3));
 
 		//base tier = what we're passed, so 1, 2 or 3
 		this.baseTier = i;
+		if (Utils.isDebug()) System.out.println("BaseTier: " + this.baseTier);
+		if (Utils.isDebug()) System.out.println("BaseMaxInput: " + this.baseMaxInput);
 
 		//Max energy stored is 32(Tier 1), 128(Tier 2) or 512(Tier 3) * 20 ticks * 5 seconds.
-		this.maxEnergy = (((int)Math.pow(2.0D, (double)(i * 2 + 3)) * 20) * 5);
+		//Total of 3200(Tier 1), 12800(Tier 2), 51200(Tier 3)
+		switch(baseTier)
+		{
+		case 1:
+			this.baseStorage = 40000;
+			break;
+		case 2:
+			this.baseStorage = 600000;
+			break;
+		case 3:
+			this.baseStorage = 10000000;
+			break;
+		default:
+			this.baseStorage = 0;
+		}
+		if (Utils.isDebug()) System.out.println("BaseStorage: " + this.baseStorage);
+		
+		//commented out, we're changing the way this thing works!
+		//this.maxEnergy = (((int)Math.pow(2.0D, (double)(i * 2 + 3)) * 20) * 5);
 
 		//Energy used per tick is 32(Tier 1), 128(Tier 2), or 512(Tier 3). This will be used
 		//to output energy back to the grid when powered by redstone
@@ -59,24 +78,10 @@ IEnergyStorage, IInventory, ISidedInventory
 	}
 
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, Direction direction) 
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean isAddedToEnergyNet() 
 	{
 		// TODO Auto-generated method stub
 		return initialized;
-	}
-
-	@Override
-	public int getMaxEnergyOutput() 
-	{
-		// TODO Auto-generated method stub
-		return energyUsedPerTick;
 	}
 
 	@Override
@@ -89,7 +94,7 @@ IEnergyStorage, IInventory, ISidedInventory
 	@Override
 	public boolean demandsEnergy()
 	{
-		return currentEnergy < maxEnergy;
+		return currentEnergy < baseStorage;
 	}
 
 	@Override
@@ -99,31 +104,31 @@ IEnergyStorage, IInventory, ISidedInventory
 		if (ChargingBench.proxy.isServer())
 		{
 			// if supply is greater than the max we can take per tick
-			if(supply >= maxInput)
+			if(supply >= baseMaxInput)
 			{
 				// add the max we can take per tick to our current energy level
-				this.currentEnergy += maxInput;
+				this.currentEnergy += baseMaxInput;
 				// check if our current energy level is now over the max energy level
-				if (currentEnergy > maxEnergy)
+				if (currentEnergy > baseStorage)
 				{
 					//if so, our surplus to return is equal to that amount over
-					surplus = currentEnergy - maxEnergy;
+					surplus = currentEnergy - baseStorage;
 					//and set our current energy level TO our max energy level
-					this.currentEnergy = maxEnergy;
+					this.currentEnergy = baseStorage;
 				}
 				//surplus may be zero or greater here
-				surplus += (supply - maxInput);
+				surplus += (supply - baseMaxInput);
 			}
 			else
 			{
 				this.currentEnergy += supply;
 				// check if our current energy level is now over the max energy level
-				if (currentEnergy > maxEnergy)
+				if (currentEnergy > baseStorage)
 				{
 					//if so, our surplus to return is equal to that amount over
-					surplus = currentEnergy - maxEnergy;
+					surplus = currentEnergy - baseStorage;
 					//and set our current energy level TO our max energy level
-					this.currentEnergy = maxEnergy;
+					this.currentEnergy = baseStorage;
 				}
 				//surplus may be zero or greater here
 			}
@@ -164,28 +169,6 @@ IEnergyStorage, IInventory, ISidedInventory
 	{
 		// TODO Auto-generated method stub
 		return 1.0F;
-	}
-
-	@Override
-	public int getStored() 
-	{
-		// TODO Auto-generated method stub
-		if (Utils.isDebug()) System.out.println("TE.getStored: " + this.currentEnergy);
-		return currentEnergy;
-	}
-
-	@Override
-	public int getCapacity() 
-	{
-		// TODO Auto-generated method stub
-		return maxEnergy;
-	}
-
-	@Override
-	public int getOutput() 
-	{
-		// TODO Auto-generated method stub
-		return energyUsedPerTick;
 	}
 
 	@Override
@@ -287,8 +270,8 @@ IEnergyStorage, IInventory, ISidedInventory
 			// Read extra NBT stuff here
 			currentEnergy = nbttagcompound.getInteger("currentEnergy");
 			if (Utils.isDebug()) System.out.println("ReadNBT.CurrentEergy: " + this.currentEnergy);
-			maxInput = nbttagcompound.getInteger("maxInput");
-			maxEnergy = nbttagcompound.getInteger("maxEnergy");
+			baseMaxInput = nbttagcompound.getInteger("maxInput");
+			baseStorage = nbttagcompound.getInteger("baseStorage");
 			baseTier = nbttagcompound.getInteger("baseTier");
 			energyUsedPerTick = nbttagcompound.getInteger("energyUsedPerTick");
 
@@ -339,8 +322,8 @@ IEnergyStorage, IInventory, ISidedInventory
 
 			nbttagcompound.setInteger("currentEnergy", currentEnergy);
 			if (Utils.isDebug()) System.out.println("WriteNBT.CurrentEergy: " + this.currentEnergy);
-			nbttagcompound.setInteger("maxInput", maxInput);
-			nbttagcompound.setInteger("maxEnergy", maxEnergy);
+			nbttagcompound.setInteger("maxInput", baseMaxInput);
+			nbttagcompound.setInteger("baseStorage", baseStorage);
 			nbttagcompound.setInteger("baseTier", baseTier);
 			nbttagcompound.setInteger("energyUsedPerTick", energyUsedPerTick);
 		}
@@ -412,10 +395,7 @@ IEnergyStorage, IInventory, ISidedInventory
 
 	public boolean isActive() 
 	{
-		//System.out.printf("TEFloodlightIC2.isActive: energy = %d\n", energy);
-		if (Utils.isDebug()) System.out.println("TE.isActive: " + this.currentEnergy);
 		return currentEnergy > 0 && receivingRedstoneSignal();
-
 	}
 
 	boolean receivingRedstoneSignal() 
@@ -434,7 +414,7 @@ IEnergyStorage, IInventory, ISidedInventory
 		}
 		else
 		{
-			int var2 = currentEnergy * var1 / maxEnergy;
+			int var2 = currentEnergy * var1 / baseStorage;
 
 			if (var2 > var1)
 			{

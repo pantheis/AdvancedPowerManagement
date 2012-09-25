@@ -53,7 +53,7 @@ public class ChargingBench
 
 			Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
 			configuration.load();
-			ChargingBenchBlockID = configuration.getOrCreateBlockIdProperty("ChargingBench", 2490).getInt();
+			ChargingBenchBlockID = configuration.getOrCreateBlockIdProperty("ChargingBench", 2491).getInt();
 			isDebugging = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("debug", configuration.CATEGORY_GENERAL, false).value));
 			configuration.save();
 		}
@@ -72,13 +72,13 @@ public class ChargingBench
 		LanguageRegistry.addName(ChargingBench, "Charging Bench");
 		GameRegistry.registerBlock(ChargingBench, ItemChargingBench.class);
 
-		GameRegistry.registerTileEntity(TEChargingBench1.class, "Charging Bench MK1");
-		GameRegistry.registerTileEntity(TEChargingBench2.class, "Charging Bench MK2");
-		GameRegistry.registerTileEntity(TEChargingBench3.class, "Charging Bench MK3");
+		GameRegistry.registerTileEntity(TEChargingBench1.class, "LV Charging Bench");
+		GameRegistry.registerTileEntity(TEChargingBench2.class, "MV Charging Bench");
+		GameRegistry.registerTileEntity(TEChargingBench3.class, "HV Charging Bench");
 
-		LanguageRegistry.instance().addStringLocalization("blockChargingBench1.name", "Charging Bench Mk1");
-		LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "Charging Bench Mk2");
-		LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "Charging Bench Mk3");
+		LanguageRegistry.instance().addStringLocalization("blockChargingBench1.name", "LV Charging Bench");
+		LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "MV Charging Bench");
+		LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "HV Charging Bench");
 
 		NetworkRegistry.instance().registerGuiHandler(this.instance, proxy);
 
@@ -97,9 +97,15 @@ public class ChargingBench
 	public void modsLoaded(FMLPostInitializationEvent event)
 	{
 		if (Utils.isDebug()) System.out.println("ChargingBench.modsLoaded");
-		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "W W", "WWW", 'U', Items.getItem("copperCableItem"), 'W', Block.planks});
-		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("goldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit")});
-		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("ironCableItem"), 'W', Block.planks, 'C', Items.getItem("advancedCircuit")});
+		//commenting out old recipes
+//		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "W W", "WWW", 'U', Items.getItem("copperCableItem"), 'W', Block.planks});
+//		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("goldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit")});
+//		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("ironCableItem"), 'W', Block.planks, 'C', Items.getItem("advancedCircuit")});
+		
+		//new and improved recipes for a new and improved ChargingBench
+		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("copperCableItem"), 'W', Block.planks, 'C', Items.getItem("batBox")});
+		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("goldCableItem"), 'W', Block.planks, 'C', Items.getItem("mfeUnit")});
+		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("ironCableItem"), 'W', Block.planks, 'C', Items.getItem("mfsUnit")});
 	}
 
 	public static Block ChargingBench; 

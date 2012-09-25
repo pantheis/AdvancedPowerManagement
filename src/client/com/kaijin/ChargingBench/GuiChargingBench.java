@@ -22,8 +22,24 @@ public class GuiChargingBench extends GuiContainer
 
 	protected void drawGuiContainerForegroundLayer()
 	{
-		this.fontRenderer.drawString("Charging Bench", 54, 6, 4210752);
+		String type = "";
+		switch(tile.baseTier)
+		{
+		case 1:
+			type = "LV";
+			break;
+		case 2:
+			type = "MV";
+			break;
+		case 3:
+			type = "HV";
+			break;
+		default:
+		}
+		this.fontRenderer.drawString("Charging Bench", 57, 6, 4210752);
 		this.fontRenderer.drawString("Inventory", 8, this.ySize - 96 + 2, 4210752);
+		this.fontRenderer.drawString(Integer.toString(tile.currentEnergy), 5, this.ySize - 163 +2, 4210752);
+		this.fontRenderer.drawString("/" + Integer.toString(tile.baseStorage), 5, this.ySize - 153 +2, 4210752);
 	}
 
 	@Override
@@ -36,7 +52,7 @@ public class GuiChargingBench extends GuiContainer
 		int var6 = (this.height - this.ySize) / 2;
 		this.drawTexturedModalRect(var5, var6, 0, 0, this.xSize, this.ySize);
 
-		if (this.tile.getStored() > 0)
+		if (this.tile.currentEnergy > 0)
 		{
 			int var7 = this.tile.gaugeEnergyScaled(14);
 			this.drawTexturedModalRect(var5 + 24, var6 + 23 + 14 - var7, 176, 14 - var7, 14, var7);
