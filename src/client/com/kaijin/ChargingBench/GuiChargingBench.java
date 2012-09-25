@@ -61,7 +61,8 @@ public class GuiChargingBench extends GuiContainer
 		if (this.tile.currentEnergy > 0)
 		{
 			// Should make each box light up all at once instead of gradually using barLength = this.tile.gaugeEnergyScaled(66); 
-			int barLength = 1 + 5 * this.tile.gaugeEnergyScaled(13);
+			int barLength = 5 * this.tile.gaugeEnergyScaled(13);
+			if (barLength > 0) barLength++;
 			this.drawTexturedModalRect(xLoc + 32, yLoc + 91 - barLength, 176, 66 - barLength, 66, barLength);
 		}
 	}
