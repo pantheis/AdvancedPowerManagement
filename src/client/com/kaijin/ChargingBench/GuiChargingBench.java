@@ -46,13 +46,17 @@ public class GuiChargingBench extends GuiContainer
 		
 		// Compute strings for current and max storage
 		String s1 = (Integer.toString(tile.currentEnergy));
-		String s2 = (Integer.toString(tile.baseStorage));
+		String s2 = (Integer.toString(tile.adjustedStorage));
 		// Draw Right-aligned current energy number
 		this.fontRenderer.drawString(s1, (80 - this.fontRenderer.getStringWidth(s1)), 20, 4210752);
 		// Draw left-aligned max energy number
 		this.fontRenderer.drawString(s2, 93, 20, 4210752);
 		// Draw separator		
-		this.fontRenderer.drawString((" / "), 80, 20, 4210752);
+		this.fontRenderer.drawString(" / ", 80, 20, 4210752);
+		if (tile.overCurrent)
+		{
+			this.fontRenderer.drawString("OVERCURRENT", 80, 10, 0xFF00FF);
+		}
 	}
 
 	@Override

@@ -1,6 +1,8 @@
 package com.kaijin.ChargingBench;
 
 import java.util.*;
+
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 import net.minecraft.src.*;
@@ -177,8 +179,11 @@ public class BlockChargingBench extends Block
 		if (Utils.isDebug()) System.out.println("BlockChargingBench.damageDropped");
 		return meta;
 	}
+	
+	@Override
 	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int par1)
 	{
+		FMLLog.getLogger().info("block.onBlockDestroyedByPlayer");
 		preDestroyBlock(world, x, y, z);
 		if (Utils.isDebug()) System.out.println("BlockChargingBench.onBlockDestroyedByPlayer");
 		super.onBlockDestroyedByPlayer(world, x, y, z, par1);
