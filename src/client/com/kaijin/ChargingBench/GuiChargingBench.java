@@ -51,17 +51,18 @@ public class GuiChargingBench extends GuiContainer
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
 	{
-		int var4 = this.mc.renderEngine.getTexture(ChargingBench.proxy.GUI_PNG);
+		int textureID = this.mc.renderEngine.getTexture(ChargingBench.proxy.GUI_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		this.mc.renderEngine.bindTexture(var4);
-		int var5 = (this.width - this.xSize) / 2;
-		int var6 = (this.height - this.ySize) / 2;
-		this.drawTexturedModalRect(var5, var6, 0, 0, this.xSize, this.ySize);
+		this.mc.renderEngine.bindTexture(textureID);
+		int xLoc = (this.width - this.xSize) / 2;
+		int yLoc = (this.height - this.ySize) / 2;
+		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, this.xSize, this.ySize);
 
 		if (this.tile.currentEnergy > 0)
 		{
-			int var7 = this.tile.gaugeEnergyScaled(66);
-			this.drawTexturedModalRect(var5 + 32, var6 + 91 - var7, 176, 66 - var7, 66, var7);
+			// Should make each box light up all at once instead of gradually using barLength = this.tile.gaugeEnergyScaled(66); 
+			int barLength = 1 + 5 * this.tile.gaugeEnergyScaled(13);
+			this.drawTexturedModalRect(xLoc + 32, yLoc + 91 - barLength, 176, 66 - barLength, 66, barLength);
 		}
 	}
 }
