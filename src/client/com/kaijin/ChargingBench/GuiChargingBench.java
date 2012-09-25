@@ -1,7 +1,6 @@
 package com.kaijin.ChargingBench;
 
 import net.minecraft.src.*;
-
 import org.lwjgl.opengl.GL11;
 
 public class GuiChargingBench extends GuiContainer
@@ -42,9 +41,18 @@ public class GuiChargingBench extends GuiContainer
 			break;
 		default:
 		}
+		// Draw tier and title
 		this.fontRenderer.drawString(type + " Charging Bench", 43, 7, 4210752);
-//		this.fontRenderer.drawString("Inventory", 8, this.ySize - 96 + 2, 4210752);
-		this.fontRenderer.drawString(Integer.toString(tile.currentEnergy) + " / " + Integer.toString(tile.baseStorage), 29, 20, 4210752);
+		
+		// Compute strings for current and max storage
+		String s1 = (Integer.toString(tile.currentEnergy));
+		String s2 = (Integer.toString(tile.baseStorage));
+		// Draw Right-aligned current energy number
+		this.fontRenderer.drawString(s1, (80 - this.fontRenderer.getStringWidth(s1)), 20, 4210752);
+		// Draw left-aligned max energy number
+		this.fontRenderer.drawString(s2, 93, 20, 4210752);
+		// Draw separator		
+		this.fontRenderer.drawString((" / "), 80, 20, 4210752);
 	}
 
 	@Override

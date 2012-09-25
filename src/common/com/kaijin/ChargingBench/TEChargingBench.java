@@ -299,7 +299,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	 */
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		//TODO
 		if(!ChargingBench.proxy.isClient())
 		{
 			super.writeToNBT(nbttagcompound);
@@ -333,14 +332,12 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	@Override
 	public String getInvName() 
 	{
-		// TODO Auto-generated method stub
 		return "ChargingBench";
 	}
 
 	@Override
-	public int getInventoryStackLimit() 
+	public int getInventoryStackLimit()
 	{
-		// TODO Auto-generated method stub
 		return 64;
 	}
 
@@ -356,18 +353,10 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	}
 
 	@Override
-	public void openChest() 
-	{
-		// TODO Auto-generated method stub
-
-	}
+	public void openChest() {}
 
 	@Override
-	public void closeChest() 
-	{
-		// TODO Auto-generated method stub
-
-	}
+	public void closeChest() {}
 
 	@Override
 	public void updateEntity()

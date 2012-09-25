@@ -115,12 +115,6 @@ public class ContainerChargingBench extends Container
 		}
 	}
 
-	public int guiInventorySize()
-	{
-		if (Utils.isDebug()) System.out.println("ContainerChargingBench.guiInventorySize");
-		return 18;
-	}
-
 	public ItemStack transferStackInSlot(int par1)
 	{
 		ItemStack var2 = null;
