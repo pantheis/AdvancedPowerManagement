@@ -1,7 +1,52 @@
-Unofficial complete rewrite of Industrial Craft 2 Charging Bench using the IC2 API
+Introducing the completely new version of the IC2 Charging Bench!
 (http://forum.industrial-craft.net/index.php?page=Thread&threadID=929)
 
-Adds the brand new Charging Bench, an electric machine with 12 charging slots for all your tools, batteries,
-and anything else you can stuff in the top slot of a batbox. Comes in three varieties, one for each tier.
-It's even smart enough to unstack batteries if you place them into it stacked! Plus, if it's redstone powered,
-it'll reverse operation and discharge batteries to emit power instead.
+This mod adds a Charging Bench to IC2. The Charging Bench allows you to
+charge up to 9 items simultaneously! The Charging Bench comes in three tiers
+with each tier capable of charging all items at its tier level and below, but
+not above. If you want to charge your Quantum armor you'll need to craft a HV
+version. :)
+
+Introducing the three tiers of Charging Bench available!
+-------------------
+Due to advances in over-current circuit protection designs, the Charging Bench
+will not explode if exposed to higher than acceptable current but simply pop
+off onto the ground in a safe manner.
+
+LV Charging Bench
+- The LV Charging Bench has a maximum input energy of 32 EU/t, a maximum base
+  energy storage of 40,000 EU and a base charge rate of 32 EU/t.
+
+MV Charging Bench
+- The MV Charging Bench has a maximum input energy of 128 EU/t, a maximum base
+  energy storage of 600,000 EU and a base charge rate of 128 EU/t.
+
+HV Charging Bench
+- The HV Charging Bench has a maximum input energy of 512 EU/t, a maximum base
+  energy storage of 10,000,000 EU and a base charge rate of 512 EU/t.
+
+
+Available upgrades!
+-------------------
+All three tiers of the Charging Bench accept the standard array of upgrades, with each
+having a very specific effect.
+
+- The transformer upgrade will allow the lower tier benches to accept higher input energy,
+  but not do anything else.
+  
+- The energy storage upgrade will increase the maximum base energy storage of the device by
+  a percentage of the base. This will allow each energy storage upgrade to have the same
+  relative effect on each tier without making them overpowered or underpowered on any one
+  tier.
+  
+- The overclock upgrade is where the Charging Bench will really shine. By using quantum
+  tunneling technology, the Charging Bench is able to carefully manage the voltage and current
+  levels used to charge items and allow items to exceed their normally safe charge rates. With
+  enough overclock upgrades, a fully charged HV bench will be able to completely charge 2 1/2
+  Quantum Armor suits in less than 5 seconds!
+
+  
+There's more!!
+-------------------
+There's a couple of new features coming that I think are going to impress and excite and
+really move this mod to the next level, but I'm keeping them secret for now!

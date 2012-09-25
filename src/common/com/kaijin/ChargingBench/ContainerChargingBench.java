@@ -13,14 +13,18 @@ public class ContainerChargingBench extends Container
 {
 	public TEChargingBench tileentity;
 	public int currentEnergy;
-	public short maxInput;
+	public int adjustedStorage;
+	public short adjustedChargeRate;
+	public short adjustedMaxInput;
 
 	public ContainerChargingBench(InventoryPlayer player, TEChargingBench tile)
 	{
 		if (Utils.isDebug()) System.out.println("ContainerChargingBench");
 		this.tileentity = tile;
 		this.currentEnergy = 0;
-		this.maxInput = 0;
+		this.adjustedMaxInput = 0;
+		this.adjustedStorage = 0;
+		this.adjustedChargeRate = 0;
 
 		int topOffset = 32; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
@@ -44,10 +48,10 @@ public class ContainerChargingBench extends Container
 
 		// Power source slot
 		this.addSlotToContainer(new Slot(tile, 16, 8, topOffset + 54));
-		
+
 		// Input Slot
 		this.addSlotToContainer(new Slot(tile, 17, 130, topOffset));
-		
+
 		// Output slot
 		this.addSlotToContainer(new Slot(tile, 18, 130, topOffset + 54));
 
@@ -82,13 +86,26 @@ public class ContainerChargingBench extends Container
 				var2.updateCraftingInventoryInfo(this, 1, this.tileentity.currentEnergy >>> 16);
 			}
 
-			if (this.maxInput != this.tileentity.baseMaxInput)
+			if (this.adjustedMaxInput != this.tileentity.adjustedMaxInput)
 			{
-				var2.updateCraftingInventoryInfo(this, 2, this.tileentity.baseMaxInput);
+				var2.updateCraftingInventoryInfo(this, 2, this.tileentity.adjustedMaxInput);
+			}
+
+			if (this.adjustedStorage != this.tileentity.adjustedStorage)
+			{
+				var2.updateCraftingInventoryInfo(this, 3, this.tileentity.adjustedStorage & 65535);
+				var2.updateCraftingInventoryInfo(this, 4, this.tileentity.adjustedStorage >>> 16);
+			}
+
+			if (this.adjustedChargeRate != this.tileentity.adjustedChargeRate)
+			{
+				var2.updateCraftingInventoryInfo(this, 5, this.tileentity.adjustedChargeRate);
 			}
 		}
 		this.currentEnergy = this.tileentity.currentEnergy;
-		this.maxInput = (short)this.tileentity.baseMaxInput;
+		this.adjustedStorage = this.tileentity.adjustedStorage;
+		this.adjustedMaxInput = (short)this.tileentity.adjustedMaxInput;
+		this.adjustedChargeRate = (short)this.tileentity.adjustedChargeRate;
 	}
 
 	@Override
@@ -111,14 +128,22 @@ public class ContainerChargingBench extends Container
 
 		case 2:
 			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case2");
-			this.tileentity.baseMaxInput = var2;
-		}
-	}
+			this.tileentity.adjustedMaxInput = var2;
 
-	public int guiInventorySize()
-	{
-		if (Utils.isDebug()) System.out.println("ContainerChargingBench.guiInventorySize");
-		return 18;
+		case 3:
+			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case3");
+			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & -65536 | var2;
+			break;
+
+		case 4:
+			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case4");
+			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & 65535 | var2 << 16;
+			break;
+
+		case 5:
+			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case5");
+			this.tileentity.adjustedChargeRate = var2;
+		}
 	}
 
 	public ItemStack transferStackInSlot(int par1)

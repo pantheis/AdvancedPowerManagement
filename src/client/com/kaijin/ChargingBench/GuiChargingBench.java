@@ -1,7 +1,6 @@
 package com.kaijin.ChargingBench;
 
 import net.minecraft.src.*;
-
 import org.lwjgl.opengl.GL11;
 
 public class GuiChargingBench extends GuiContainer
@@ -12,17 +11,17 @@ public class GuiChargingBench extends GuiContainer
 	private GuiButton selectedButton = null;
 
 	private GuiButton button = null;
-	
+
 	public GuiChargingBench(InventoryPlayer player, TEChargingBench tile)
 	{
 		super(new ContainerChargingBench(player, tile));
 		if (Utils.isDebug()) System.out.println("GuiChargingBench");
 		this.tile = tile;
-	    /** The X size of the inventory window in pixels. */
-	    xSize = 176;
+		/** The X size of the inventory window in pixels. */
+		xSize = 176;
 
-	    /** The Y size of the inventory window in pixels. */
-	    ySize = 190;
+		/** The Y size of the inventory window in pixels. */
+		ySize = 190;
 
 	}
 
@@ -31,20 +30,29 @@ public class GuiChargingBench extends GuiContainer
 		String type = "";
 		switch(tile.baseTier)
 		{
-		case 1:
+		case 0:
 			type = "LV";
 			break;
-		case 2:
+		case 1:
 			type = "MV";
 			break;
-		case 3:
+		case 2:
 			type = "HV";
 			break;
 		default:
 		}
+		// Draw tier and title
 		this.fontRenderer.drawString(type + " Charging Bench", 43, 7, 4210752);
-//		this.fontRenderer.drawString("Inventory", 8, this.ySize - 96 + 2, 4210752);
-		this.fontRenderer.drawString(Integer.toString(tile.currentEnergy) + " / " + Integer.toString(tile.baseStorage), 29, 20, 4210752);
+
+		// Compute strings for current and max storage
+		String s1 = (Integer.toString(tile.currentEnergy));
+		String s2 = (Integer.toString(tile.adjustedStorage));
+		// Draw Right-aligned current energy number
+		this.fontRenderer.drawString(s1, (80 - this.fontRenderer.getStringWidth(s1)), 20, 4210752);
+		// Draw left-aligned max energy number
+		this.fontRenderer.drawString(s2, 93, 20, 4210752);
+		// Draw separator		
+		this.fontRenderer.drawString(" / ", 80, 20, 4210752);
 	}
 
 	@Override

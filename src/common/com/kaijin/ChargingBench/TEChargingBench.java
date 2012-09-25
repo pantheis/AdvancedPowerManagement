@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.*;
 
 import ic2.api.*;
+import net.minecraft.src.Chunk;
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
@@ -27,18 +28,24 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	private ItemStack[] contents = new ItemStack[this.getSizeInventory()];
 	private boolean initialized;
 
-	public int currentEnergy;
+	// Base values
 	public int baseMaxInput;
 	public int baseStorage;
 	public int baseTier;
-	public int energyUsedPerTick;
+	public int baseChargeRate;
 
-	private int Metainfo;
+	// Adjustable values that need communicating via container
+	public int currentEnergy;
+	public int adjustedMaxInput;
+	public int adjustedStorage;
+	public int adjustedChargeRate;
+
+	public boolean overCurrent = false;
 
 	public TEChargingBench(int i)
 	{
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-		this.baseMaxInput = (int)Math.pow(2.0D, (double)(i * 2 + 3));
+		this.baseMaxInput = (int)Math.pow(2.0D, (double)(2*i+5));
 
 		//base tier = what we're passed, so 1, 2 or 3
 		this.baseTier = i;
@@ -49,26 +56,31 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		//Total of 3200(Tier 1), 12800(Tier 2), 51200(Tier 3)
 		switch(baseTier)
 		{
-		case 1:
+		case 0:
 			this.baseStorage = 40000;
 			break;
-		case 2:
+		case 1:
 			this.baseStorage = 600000;
 			break;
-		case 3:
+		case 2:
 			this.baseStorage = 10000000;
 			break;
 		default:
 			this.baseStorage = 0;
 		}
 		if (Utils.isDebug()) System.out.println("BaseStorage: " + this.baseStorage);
-		
+
 		//commented out, we're changing the way this thing works!
 		//this.maxEnergy = (((int)Math.pow(2.0D, (double)(i * 2 + 3)) * 20) * 5);
 
 		//Energy used per tick is 32(Tier 1), 128(Tier 2), or 512(Tier 3). This will be used
 		//to output energy back to the grid when powered by redstone
-		this.energyUsedPerTick = (int)Math.pow(2.0D, (double)(i * 2 + 3));
+		this.baseMaxInput = (int)Math.pow(2.0D, (double)(2*i+5));
+
+		//setup Adjusted variables to = defaults, we'll be adjusting them in entityUpdate
+		this.adjustedChargeRate = this.baseChargeRate;
+		this.adjustedMaxInput = this.baseMaxInput;
+		this.adjustedStorage = this.baseStorage;
 	}
 
 	@Override
@@ -94,7 +106,15 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	@Override
 	public boolean demandsEnergy()
 	{
-		return currentEnergy < baseStorage;
+		return this.currentEnergy < this.adjustedStorage;
+	}
+
+	private void selfDestroy()
+	{
+		BlockChargingBench.preDestroyBlock(worldObj, xCoord, yCoord, zCoord);
+		ItemStack stack = new ItemStack(ChargingBench.ChargingBench, 1, this.baseTier);
+		BlockChargingBench.dropItem(worldObj, stack, xCoord, yCoord, zCoord);
+		worldObj.setBlockAndMetadataWithUpdate(xCoord, yCoord, zCoord, 0, 0, true);
 	}
 
 	@Override
@@ -104,31 +124,41 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		if (ChargingBench.proxy.isServer())
 		{
 			// if supply is greater than the max we can take per tick
-			if(supply >= baseMaxInput)
+			if(supply > adjustedMaxInput)
 			{
-				// add the max we can take per tick to our current energy level
-				this.currentEnergy += baseMaxInput;
-				// check if our current energy level is now over the max energy level
-				if (currentEnergy > baseStorage)
-				{
-					//if so, our surplus to return is equal to that amount over
-					surplus = currentEnergy - baseStorage;
-					//and set our current energy level TO our max energy level
-					this.currentEnergy = baseStorage;
-				}
-				//surplus may be zero or greater here
-				surplus += (supply - baseMaxInput);
+				//If the supplied EU is over the baseMaxInput, we're getting
+				//supplied higher than acceptable current. Set overCurrent flag
+				//and return all of the EU as surplus
+				selfDestroy();
+				return 0;
+
+				/*
+				 * Commenting out the following so we can start adding in current restrictions				
+				 */
+
+				//				// add the max we can take per tick to our current energy level
+				//				this.currentEnergy += baseMaxInput;
+				//				// check if our current energy level is now over the max energy level
+				//				if (currentEnergy > baseStorage)
+				//				{
+				//					//if so, our surplus to return is equal to that amount over
+				//					surplus = currentEnergy - baseStorage;
+				//					//and set our current energy level TO our max energy level
+				//					this.currentEnergy = baseStorage;
+				//				}
+				//				//surplus may be zero or greater here
+				//				surplus += (supply - baseMaxInput);
 			}
 			else
 			{
 				this.currentEnergy += supply;
 				// check if our current energy level is now over the max energy level
-				if (currentEnergy > baseStorage)
+				if (currentEnergy > adjustedStorage)
 				{
 					//if so, our surplus to return is equal to that amount over
-					surplus = currentEnergy - baseStorage;
+					surplus = currentEnergy - adjustedStorage;
 					//and set our current energy level TO our max energy level
-					this.currentEnergy = baseStorage;
+					this.currentEnergy = adjustedStorage;
 				}
 				//surplus may be zero or greater here
 			}
@@ -273,7 +303,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 			baseMaxInput = nbttagcompound.getInteger("maxInput");
 			baseStorage = nbttagcompound.getInteger("baseStorage");
 			baseTier = nbttagcompound.getInteger("baseTier");
-			energyUsedPerTick = nbttagcompound.getInteger("energyUsedPerTick");
+			baseChargeRate = nbttagcompound.getInteger("energyUsedPerTick");
 
 			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
 			NBTTagList nbttagextras = nbttagcompound.getTagList("remoteSnapshot");
@@ -299,7 +329,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	 */
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		//TODO
 		if(!ChargingBench.proxy.isClient())
 		{
 			super.writeToNBT(nbttagcompound);
@@ -325,7 +354,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 			nbttagcompound.setInteger("maxInput", baseMaxInput);
 			nbttagcompound.setInteger("baseStorage", baseStorage);
 			nbttagcompound.setInteger("baseTier", baseTier);
-			nbttagcompound.setInteger("energyUsedPerTick", energyUsedPerTick);
+			nbttagcompound.setInteger("energyUsedPerTick", baseChargeRate);
 		}
 	}
 
@@ -333,14 +362,12 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	@Override
 	public String getInvName() 
 	{
-		// TODO Auto-generated method stub
 		return "ChargingBench";
 	}
 
 	@Override
-	public int getInventoryStackLimit() 
+	public int getInventoryStackLimit()
 	{
-		// TODO Auto-generated method stub
 		return 64;
 	}
 
@@ -356,18 +383,10 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	}
 
 	@Override
-	public void openChest() 
-	{
-		// TODO Auto-generated method stub
-
-	}
+	public void openChest() {}
 
 	@Override
-	public void closeChest() 
-	{
-		// TODO Auto-generated method stub
-
-	}
+	public void closeChest() {}
 
 	@Override
 	public void updateEntity()
@@ -385,7 +404,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		{
 			//System.out.printf("TEFloodlightIC2.updateEntity: using %d energy from %d\n",
 			//	energyUsedPerTick, energy);
-			currentEnergy -= energyUsedPerTick;
+			currentEnergy -= adjustedChargeRate;
 			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
 			if (currentEnergy < 0)
 				currentEnergy = 0;
@@ -414,7 +433,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		}
 		else
 		{
-			int var2 = currentEnergy * var1 / baseStorage;
+			int var2 = currentEnergy * var1 / adjustedStorage;
 
 			if (var2 > var1)
 			{
