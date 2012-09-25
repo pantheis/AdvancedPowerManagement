@@ -21,36 +21,47 @@ public class ContainerChargingBench extends Container
 		this.tileentity = tile;
 		this.currentEnergy = 0;
 		this.maxInput = 0;
-		this.addSlotToContainer(new Slot(tile, 0, 61, 19));
-		this.addSlotToContainer(new Slot(tile, 1, 79, 19));
-		this.addSlotToContainer(new Slot(tile, 2, 97, 19));
-		this.addSlotToContainer(new Slot(tile, 3, 115, 19));
-		this.addSlotToContainer(new Slot(tile, 4, 61, 37));
-		this.addSlotToContainer(new Slot(tile, 5, 79, 37));
-		this.addSlotToContainer(new Slot(tile, 6, 97, 37));
-		this.addSlotToContainer(new Slot(tile, 7, 115, 37));
-		this.addSlotToContainer(new Slot(tile, 8, 61, 55));
-		this.addSlotToContainer(new Slot(tile, 9, 79, 55));
-		this.addSlotToContainer(new Slot(tile, 10, 97, 55));
-		this.addSlotToContainer(new Slot(tile, 11, 115, 55));
-		this.addSlotToContainer(new Slot(tile, 12, 24, 40));
-		this.addSlotToContainer(new Slot(tile, 13, 152, 8));
-		this.addSlotToContainer(new Slot(tile, 14, 152, 26));
-		this.addSlotToContainer(new Slot(tile, 15, 152, 44));
-		this.addSlotToContainer(new Slot(tile, 16, 152, 62));
+		
+		//Input charging slots
+		this.addSlotToContainer(new Slot(tile, 0, 52, 23));
+		this.addSlotToContainer(new Slot(tile, 1, 70, 23));
+		this.addSlotToContainer(new Slot(tile, 2, 88, 23));
+		this.addSlotToContainer(new Slot(tile, 3, 52, 41));
+		this.addSlotToContainer(new Slot(tile, 4, 70, 41));
+		this.addSlotToContainer(new Slot(tile, 5, 88, 41));
+		this.addSlotToContainer(new Slot(tile, 6, 52, 59));
+		this.addSlotToContainer(new Slot(tile, 7, 70, 59));
+		this.addSlotToContainer(new Slot(tile, 8, 88, 59));
+		this.addSlotToContainer(new Slot(tile, 9, 52, 77));
+		this.addSlotToContainer(new Slot(tile, 10, 70, 77));
+		this.addSlotToContainer(new Slot(tile, 11, 88, 77));
+		
+		//Power source slot
+		this.addSlotToContainer(new Slot(tile, 12, 8, 77));
+		
+		//Overclock slots
+		this.addSlotToContainer(new Slot(tile, 13, 152, 23));
+		this.addSlotToContainer(new Slot(tile, 14, 152, 41));
+		this.addSlotToContainer(new Slot(tile, 15, 152, 59));
+		this.addSlotToContainer(new Slot(tile, 16, 152, 77));
+		
+		//Output slot
+		this.addSlotToContainer(new Slot(tile, 17, 130, 50));
 		int var3;
 
+		// player inventory
 		for (var3 = 0; var3 < 3; ++var3)
 		{
 			for (int var4 = 0; var4 < 9; ++var4)
 			{
-				this.addSlotToContainer(new Slot(player, var4 + var3 * 9 + 9, 8 + var4 * 18, 84 + var3 * 18));
+				this.addSlotToContainer(new Slot(player, var4 + var3 * 9 + 9, 8 + var4 * 18, 99 + var3 * 18));
 			}
 		}
 
+		// player hotbar
 		for (var3 = 0; var3 < 9; ++var3)
 		{
-			this.addSlotToContainer(new Slot(player, var3, 8 + var3 * 18, 142));
+			this.addSlotToContainer(new Slot(player, var3, 8 + var3 * 18, 157));
 		}
 	}
 
@@ -105,7 +116,7 @@ public class ContainerChargingBench extends Container
 	public int guiInventorySize()
 	{
 		if (Utils.isDebug()) System.out.println("ContainerChargingBench.guiInventorySize");
-		return 17;
+		return 18;
 	}
 
 	public ItemStack transferStackInSlot(int par1)
@@ -140,13 +151,6 @@ public class ContainerChargingBench extends Container
 			}
 		}
 		return var2;
-	}
-
-
-	public int getInput()
-	{
-		if (Utils.isDebug()) System.out.println("ContainerChargingBench.getInput");
-		return 0;
 	}
 
 	public boolean canInteractWith(EntityPlayer var1)

@@ -175,7 +175,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	public int getSizeInventory() 
 	{
 		// TODO Auto-generated method stub
-		return 17;
+		return 18;
 	}
 
 	@Override
