@@ -12,6 +12,12 @@ public class GuiChargingBench extends GuiContainer
 	private GuiButton selectedButton = null;
 
 	private GuiButton button = null;
+	
+    /** The X size of the inventory window in pixels. */
+    protected int xSize = 176;
+
+    /** The Y size of the inventory window in pixels. */
+    protected int ySize = 181;
 
 	public GuiChargingBench(InventoryPlayer player, TEChargingBench tile)
 	{
@@ -36,10 +42,10 @@ public class GuiChargingBench extends GuiContainer
 			break;
 		default:
 		}
-		this.fontRenderer.drawString("Charging Bench", 57, 6, 4210752);
-		this.fontRenderer.drawString("Inventory", 8, this.ySize - 96 + 2, 4210752);
-		this.fontRenderer.drawString(Integer.toString(tile.currentEnergy), 5, this.ySize - 163 +2, 4210752);
-		this.fontRenderer.drawString("/" + Integer.toString(tile.baseStorage), 5, this.ySize - 153 +2, 4210752);
+		this.fontRenderer.drawString(type + " Charging Bench", 45, -1, 4210752);
+//		this.fontRenderer.drawString("Inventory", 8, this.ySize - 96 + 2, 4210752);
+//		this.fontRenderer.drawString(Integer.toString(tile.currentEnergy), 5, this.ySize - 163 +2, 4210752);
+//		this.fontRenderer.drawString("/" + Integer.toString(tile.baseStorage), 5, this.ySize - 153 +2, 4210752);
 	}
 
 	@Override
@@ -54,8 +60,8 @@ public class GuiChargingBench extends GuiContainer
 
 		if (this.tile.currentEnergy > 0)
 		{
-			int var7 = this.tile.gaugeEnergyScaled(14);
-			this.drawTexturedModalRect(var5 + 24, var6 + 23 + 14 - var7, 176, 14 - var7, 14, var7);
+			int var7 = this.tile.gaugeEnergyScaled(65);
+			this.drawTexturedModalRect(var5 + 32, var6 + 91 - var7, 176, 66 - var7, 65, var7);
 		}
 	}
 }
