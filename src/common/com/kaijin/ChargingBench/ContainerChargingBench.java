@@ -22,7 +22,19 @@ public class ContainerChargingBench extends Container
 		this.currentEnergy = 0;
 		this.maxInput = 0;
 		
-		//Input charging slots
+		int xCol;
+		int yRow;
+
+		// Input charging slots
+		for (yRow = 0; yRow < 4; ++yRow) // 4 rows high
+		{
+			for (xCol = 0; xCol < 3; ++xCol) // 3 columns across
+			{
+				this.addSlotToContainer(new Slot(tile, 3 * yRow + xCol, 52 + xCol * 18, 23 + yRow * 18)); // 52, 23 is upper left input slot 
+			}
+		}
+
+		/* Test the above version, and if it works properly, these lines can go bye-bye
 		this.addSlotToContainer(new Slot(tile, 0, 52, 23));
 		this.addSlotToContainer(new Slot(tile, 1, 70, 23));
 		this.addSlotToContainer(new Slot(tile, 2, 88, 23));
@@ -34,22 +46,22 @@ public class ContainerChargingBench extends Container
 		this.addSlotToContainer(new Slot(tile, 8, 88, 59));
 		this.addSlotToContainer(new Slot(tile, 9, 52, 77));
 		this.addSlotToContainer(new Slot(tile, 10, 70, 77));
-		this.addSlotToContainer(new Slot(tile, 11, 88, 77));
+		this.addSlotToContainer(new Slot(tile, 11, 88, 77)); */
 		
-		//Power source slot
+		// Power source slot
 		this.addSlotToContainer(new Slot(tile, 12, 8, 77));
 		
-		//Overclock slots
+		// Upgrade slots (Overclocker, etc)
 		this.addSlotToContainer(new Slot(tile, 13, 152, 23));
 		this.addSlotToContainer(new Slot(tile, 14, 152, 41));
 		this.addSlotToContainer(new Slot(tile, 15, 152, 59));
 		this.addSlotToContainer(new Slot(tile, 16, 152, 77));
 		
-		//Output slot
+		// Output slot
 		this.addSlotToContainer(new Slot(tile, 17, 130, 50));
 		int var3;
 
-		// player inventory
+		// Player inventory
 		for (var3 = 0; var3 < 3; ++var3)
 		{
 			for (int var4 = 0; var4 < 9; ++var4)
@@ -58,7 +70,7 @@ public class ContainerChargingBench extends Container
 			}
 		}
 
-		// player hotbar
+		// Player hot bar
 		for (var3 = 0; var3 < 9; ++var3)
 		{
 			this.addSlotToContainer(new Slot(player, var3, 8 + var3 * 18, 157));
