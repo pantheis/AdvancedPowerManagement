@@ -90,14 +90,14 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	}
 
 	@Override
-	public boolean isAddedToEnergyNet() 
+	public boolean isAddedToEnergyNet()
 	{
 		// TODO Auto-generated method stub
 		return initialized;
 	}
 
 	@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction) 
+	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
 	{
 		// TODO Auto-generated method stub
 		return true;
@@ -109,6 +109,11 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		return this.currentEnergy < this.adjustedStorage;
 	}
 
+	/**
+	 * This will cause the block to drop anything inside it, create a new item in the
+	 * world of its type, invalidate the tile entity, remove itself from the IC2
+	 * EnergyNet and clear the block space (set it to air)
+	 */
 	private void selfDestroy()
 	{
 		BlockChargingBench.preDestroyBlock(worldObj, xCoord, yCoord, zCoord);
@@ -167,70 +172,70 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	}
 
 	@Override
-	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) 
+	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side)
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public short getFacing() 
+	public short getFacing()
 	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void setFacing(short facing) 
+	public void setFacing(short facing)
 	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public boolean wrenchCanRemove(EntityPlayer entityPlayer) 
+	public boolean wrenchCanRemove(EntityPlayer entityPlayer)
 	{
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public float getWrenchDropRate() 
+	public float getWrenchDropRate()
 	{
 		// TODO Auto-generated method stub
 		return 1.0F;
 	}
 
 	@Override
-	public int getSizeInventory() 
+	public int getSizeInventory()
 	{
 		// TODO Auto-generated method stub
 		return 19;
 	}
 
 	@Override
-	public int getStartInventorySide(ForgeDirection side) 
+	public int getStartInventorySide(ForgeDirection side)
 	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getSizeInventorySide(ForgeDirection side) 
+	public int getSizeInventorySide(ForgeDirection side)
 	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public ItemStack getStackInSlot(int i) 
+	public ItemStack getStackInSlot(int i)
 	{
 		// TODO Auto-generated method stub
 		return contents[i];
 	}
 
 	@Override
-	public ItemStack decrStackSize(int var1, int var2) 
+	public ItemStack decrStackSize(int var1, int var2)
 	{
 		// TODO Auto-generated method stub
 		if (this.contents[var1] != null)
@@ -360,7 +365,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 
 
 	@Override
-	public String getInvName() 
+	public String getInvName()
 	{
 		return "ChargingBench";
 	}
@@ -412,12 +417,12 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 
 	}
 
-	public boolean isActive() 
+	public boolean isActive()
 	{
 		return currentEnergy > 0 && receivingRedstoneSignal();
 	}
 
-	boolean receivingRedstoneSignal() 
+	boolean receivingRedstoneSignal()
 	{
 		return worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 	}

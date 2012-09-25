@@ -18,7 +18,7 @@ public class BlockChargingBench extends Block
 
 	public void getSubBlocks(int blockID, CreativeTabs creativetabs, List list)
 	{
-		for (int i = 0; i < 3; ++i)
+		for (int i = 0; i < 7; ++i)
 		{
 			list.add(new ItemStack(blockID, 1, i));
 		}
@@ -65,8 +65,16 @@ public class BlockChargingBench extends Block
 				return false;
 			}
 			if (Utils.isDebug()) System.out.println("BlockChargingBench.BlockActivated");
-			entityplayer.openGui(ChargingBench.instance, 1, world, x, y, z);
-			return true;
+			int meta = world.getBlockMetadata(x, y, z);
+			if (meta == 0 || meta == 1 || meta == 2)
+			{
+				entityplayer.openGui(ChargingBench.instance, 1, world, x, y, z);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		return true;
 	}
@@ -96,6 +104,18 @@ public class BlockChargingBench extends Block
 			case 2: // mark 3
 				return 18;
 
+			case 3: // emitter 1
+				return 16;
+
+			case 4: // emitter 2
+				return 17;
+
+			case 5: // emitter 3
+				return 18;
+				
+			case 6: // emitter 4
+				return 0;
+
 			default: // something wrong?
 				return 0;
 			}
@@ -111,6 +131,18 @@ public class BlockChargingBench extends Block
 
 			case 2: // mark 3
 				return 34;
+
+			case 3: // emitter 1
+				return 16;
+
+			case 4: // emitter 2
+				return 17;
+
+			case 5: // emitter 3
+				return 18;
+				
+			case 6: // emitter 4
+				return 0;
 			}
 			return 0; // if we're here, something is wrong
 		}
@@ -144,6 +176,18 @@ public class BlockChargingBench extends Block
 		case 2:
 			return new TEChargingBench3();
 
+		case 3:
+			return new TEEmitter1();
+
+		case 4:
+			return new TEEmitter2();
+
+		case 5:
+			return new TEEmitter3();
+			
+		case 6:
+			return new TEEmitter4();
+
 		default:
 			return null;
 		}
@@ -161,6 +205,18 @@ public class BlockChargingBench extends Block
 			return true;
 
 		case 2:
+			return true;
+
+		case 3:
+			return true;
+
+		case 4:
+			return true;
+
+		case 5:
+			return true;
+			
+		case 6:
 			return true;
 
 		default:
@@ -221,6 +277,10 @@ public class BlockChargingBench extends Block
 		if (tile instanceof IInventory && !ChargingBench.proxy.isClient())
 		{
 			dropItems(world, (IInventory) tile, i, j, k);
+			tile.invalidate();
+		}
+		if (tile instanceof TEEmitter && !ChargingBench.proxy.isClient())
+		{
 			tile.invalidate();
 		}
 	}
