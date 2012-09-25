@@ -6,6 +6,6 @@ public class TEChargingBench2 extends TEChargingBench
 {
 	public TEChargingBench2()
 	{
-		super(2);
+		super(1);
 	}
 }

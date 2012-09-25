@@ -10,8 +10,8 @@ version. :)
 Introducing the three tiers of Charging Bench available!
 -------------------
 Due to advances in over-current circuit protection designs, the Charging Bench
-will not explode if exposed to higher than acceptable current but simply fail to
-charge and display an over-current warning in the GUI.
+will not explode if exposed to higher than acceptable current but simply pop
+off onto the ground in a safe manner.
 
 LV Charging Bench
 - The LV Charging Bench has a maximum input energy of 32 EU/t, a maximum base

@@ -179,7 +179,7 @@ public class BlockChargingBench extends Block
 		if (Utils.isDebug()) System.out.println("BlockChargingBench.damageDropped");
 		return meta;
 	}
-	
+
 	@Override
 	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int par1)
 	{
@@ -189,7 +189,7 @@ public class BlockChargingBench extends Block
 		super.onBlockDestroyedByPlayer(world, x, y, z, par1);
 	}
 
-	public static void dropItems(World world, ItemStack stack, int i, int j, int k)
+	public static void dropItem(World world, ItemStack stack, int i, int j, int k)
 	{
 		float f1 = 0.7F;
 		double d = (double)(world.rand.nextFloat() * f1) + (double)(1.0F - f1) * 0.5D;
@@ -209,7 +209,7 @@ public class BlockChargingBench extends Block
 
 			if (items != null && items.stackSize > 0)
 			{
-				dropItems(world, inventory.getStackInSlot(l).copy(), i, j, k);
+				dropItem(world, inventory.getStackInSlot(l).copy(), i, j, k);
 			}
 		}
 	}

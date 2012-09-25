@@ -46,7 +46,7 @@ public class ChargingBench
 	public static ChargingBench instance; //The instance of the mod that will be defined, populated, and callable
 
 	static int ChargingBenchBlockID;
-	static public boolean isDebugging;
+	public static boolean isDebugging;
 
 	@PreInit
 	public static void preInit(FMLPreInitializationEvent event)
@@ -67,6 +67,8 @@ public class ChargingBench
 		}
 
 	}
+
+	public static Block ChargingBench;
 
 	@Init
 	public void load(FMLInitializationEvent event)
@@ -100,16 +102,10 @@ public class ChargingBench
 	public void modsLoaded(FMLPostInitializationEvent event)
 	{
 		if (Utils.isDebug()) System.out.println("ChargingBench.modsLoaded");
-		//commenting out old recipes
-		//		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "W W", "WWW", 'U', Items.getItem("copperCableItem"), 'W', Block.planks});
-		//		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("goldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit")});
-		//		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("ironCableItem"), 'W', Block.planks, 'C', Items.getItem("advancedCircuit")});
 
 		//new and improved recipes for a new and improved ChargingBench
 		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("copperCableItem"), 'W', Block.planks, 'C', Items.getItem("batBox")});
 		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("goldCableItem"), 'W', Block.planks, 'C', Items.getItem("mfeUnit")});
 		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("ironCableItem"), 'W', Block.planks, 'C', Items.getItem("mfsUnit")});
 	}
-
-	public static Block ChargingBench; 
 }

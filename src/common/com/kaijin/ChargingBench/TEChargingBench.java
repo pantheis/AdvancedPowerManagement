@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.*;
 
 import ic2.api.*;
+import net.minecraft.src.Chunk;
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
@@ -41,12 +42,10 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 
 	public boolean overCurrent = false;
 
-	private int Metainfo;
-
 	public TEChargingBench(int i)
 	{
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-		this.baseMaxInput = (int)Math.pow(2.0D, (double)(i * 2 + 3));
+		this.baseMaxInput = (int)Math.pow(2.0D, (double)(2*i+5));
 
 		//base tier = what we're passed, so 1, 2 or 3
 		this.baseTier = i;
@@ -57,13 +56,13 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		//Total of 3200(Tier 1), 12800(Tier 2), 51200(Tier 3)
 		switch(baseTier)
 		{
-		case 1:
+		case 0:
 			this.baseStorage = 40000;
 			break;
-		case 2:
+		case 1:
 			this.baseStorage = 600000;
 			break;
-		case 3:
+		case 2:
 			this.baseStorage = 10000000;
 			break;
 		default:
@@ -76,7 +75,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 
 		//Energy used per tick is 32(Tier 1), 128(Tier 2), or 512(Tier 3). This will be used
 		//to output energy back to the grid when powered by redstone
-		this.baseChargeRate = (int)Math.pow(2.0D, (double)(i * 2 + 3));
+		this.baseMaxInput = (int)Math.pow(2.0D, (double)(2*i+5));
 
 		//setup Adjusted variables to = defaults, we'll be adjusting them in entityUpdate
 		this.adjustedChargeRate = this.baseChargeRate;
@@ -110,37 +109,45 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		return this.currentEnergy < this.adjustedStorage;
 	}
 
+	private void selfDestroy()
+	{
+		BlockChargingBench.preDestroyBlock(worldObj, xCoord, yCoord, zCoord);
+		ItemStack stack = new ItemStack(ChargingBench.ChargingBench, 1, this.baseTier);
+		BlockChargingBench.dropItem(worldObj, stack, xCoord, yCoord, zCoord);
+		worldObj.setBlockAndMetadataWithUpdate(xCoord, yCoord, zCoord, 0, 0, true);
+	}
+
 	@Override
 	public int injectEnergy(Direction directionFrom, int supply)
 	{
 		int surplus = 0;
 		if (ChargingBench.proxy.isServer())
 		{
-			if (Utils.isDebug()) System.out.println("supply: " + supply + "; adjustedMax: " + this.adjustedMaxInput);
 			// if supply is greater than the max we can take per tick
 			if(supply > adjustedMaxInput)
 			{
 				//If the supplied EU is over the baseMaxInput, we're getting
 				//supplied higher than acceptable current. Set overCurrent flag
 				//and return all of the EU as surplus
-				//				return 0;
+				selfDestroy();
+				return 0;
 
 				/*
 				 * Commenting out the following so we can start adding in current restrictions				
 				 */
 
-				// add the max we can take per tick to our current energy level
-				this.currentEnergy += baseMaxInput;
-				// check if our current energy level is now over the max energy level
-				if (currentEnergy > baseStorage)
-				{
-					//if so, our surplus to return is equal to that amount over
-					surplus = currentEnergy - baseStorage;
-					//and set our current energy level TO our max energy level
-					this.currentEnergy = baseStorage;
-				}
-				//surplus may be zero or greater here
-				surplus += (supply - baseMaxInput);
+				//				// add the max we can take per tick to our current energy level
+				//				this.currentEnergy += baseMaxInput;
+				//				// check if our current energy level is now over the max energy level
+				//				if (currentEnergy > baseStorage)
+				//				{
+				//					//if so, our surplus to return is equal to that amount over
+				//					surplus = currentEnergy - baseStorage;
+				//					//and set our current energy level TO our max energy level
+				//					this.currentEnergy = baseStorage;
+				//				}
+				//				//surplus may be zero or greater here
+				//				surplus += (supply - baseMaxInput);
 			}
 			else
 			{
