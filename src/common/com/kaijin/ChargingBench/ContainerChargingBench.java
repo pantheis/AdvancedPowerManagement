@@ -21,7 +21,9 @@ public class ContainerChargingBench extends Container
 		this.tileentity = tile;
 		this.currentEnergy = 0;
 		this.maxInput = 0;
-		
+
+		int topOffset = 32; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
+
 		int xCol;
 		int yRow;
 
@@ -30,50 +32,38 @@ public class ContainerChargingBench extends Container
 		{
 			for (xCol = 0; xCol < 3; ++xCol) // 3 columns across
 			{
-				this.addSlotToContainer(new Slot(tile, 3 * yRow + xCol, 52 + xCol * 18, 23 + yRow * 18)); // 52, 23 is upper left input slot 
+				this.addSlotToContainer(new Slot(tile, 3 * yRow + xCol, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
 			}
 		}
 
-		/* Test the above version, and if it works properly, these lines can go bye-bye
-		this.addSlotToContainer(new Slot(tile, 0, 52, 23));
-		this.addSlotToContainer(new Slot(tile, 1, 70, 23));
-		this.addSlotToContainer(new Slot(tile, 2, 88, 23));
-		this.addSlotToContainer(new Slot(tile, 3, 52, 41));
-		this.addSlotToContainer(new Slot(tile, 4, 70, 41));
-		this.addSlotToContainer(new Slot(tile, 5, 88, 41));
-		this.addSlotToContainer(new Slot(tile, 6, 52, 59));
-		this.addSlotToContainer(new Slot(tile, 7, 70, 59));
-		this.addSlotToContainer(new Slot(tile, 8, 88, 59));
-		this.addSlotToContainer(new Slot(tile, 9, 52, 77));
-		this.addSlotToContainer(new Slot(tile, 10, 70, 77));
-		this.addSlotToContainer(new Slot(tile, 11, 88, 77)); */
-		
+		// Upgrade slots (Overclocker, storage)
+		this.addSlotToContainer(new Slot(tile, 12, 152, topOffset));
+		this.addSlotToContainer(new Slot(tile, 13, 152, topOffset + 18));
+		this.addSlotToContainer(new Slot(tile, 14, 152, topOffset + 36));
+		this.addSlotToContainer(new Slot(tile, 15, 152, topOffset + 54));
+
 		// Power source slot
-		this.addSlotToContainer(new Slot(tile, 12, 8, 77));
+		this.addSlotToContainer(new Slot(tile, 16, 8, topOffset + 54));
 		
-		// Upgrade slots (Overclocker, etc)
-		this.addSlotToContainer(new Slot(tile, 13, 152, 23));
-		this.addSlotToContainer(new Slot(tile, 14, 152, 41));
-		this.addSlotToContainer(new Slot(tile, 15, 152, 59));
-		this.addSlotToContainer(new Slot(tile, 16, 152, 77));
+		// Input Slot
+		this.addSlotToContainer(new Slot(tile, 17, 130, topOffset));
 		
 		// Output slot
-		this.addSlotToContainer(new Slot(tile, 17, 130, 50));
-		int var3;
+		this.addSlotToContainer(new Slot(tile, 18, 130, topOffset + 54));
 
 		// Player inventory
-		for (var3 = 0; var3 < 3; ++var3)
+		for (yRow = 0; yRow < 3; ++yRow)
 		{
-			for (int var4 = 0; var4 < 9; ++var4)
+			for (xCol = 0; xCol < 9; ++xCol)
 			{
-				this.addSlotToContainer(new Slot(player, var4 + var3 * 9 + 9, 8 + var4 * 18, 99 + var3 * 18));
+				this.addSlotToContainer(new Slot(player, xCol + yRow * 9 + 9, 8 + xCol * 18, topOffset + 76 + yRow * 18));
 			}
 		}
 
 		// Player hot bar
-		for (var3 = 0; var3 < 9; ++var3)
+		for (yRow = 0; yRow < 9; ++yRow)
 		{
-			this.addSlotToContainer(new Slot(player, var3, 8 + var3 * 18, 157));
+			this.addSlotToContainer(new Slot(player, yRow, 8 + yRow * 18, topOffset + 134));
 		}
 	}
 

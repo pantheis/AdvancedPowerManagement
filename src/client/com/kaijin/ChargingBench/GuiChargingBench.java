@@ -22,7 +22,7 @@ public class GuiChargingBench extends GuiContainer
 	    xSize = 176;
 
 	    /** The Y size of the inventory window in pixels. */
-	    ySize = 181;
+	    ySize = 190;
 
 	}
 
@@ -44,8 +44,7 @@ public class GuiChargingBench extends GuiContainer
 		}
 		this.fontRenderer.drawString(type + " Charging Bench", 43, 7, 4210752);
 //		this.fontRenderer.drawString("Inventory", 8, this.ySize - 96 + 2, 4210752);
-//		this.fontRenderer.drawString(Integer.toString(tile.currentEnergy), 5, this.ySize - 163 +2, 4210752);
-//		this.fontRenderer.drawString("/" + Integer.toString(tile.baseStorage), 5, this.ySize - 153 +2, 4210752);
+		this.fontRenderer.drawString(Integer.toString(tile.currentEnergy) + " / " + Integer.toString(tile.baseStorage), 29, 20, 4210752);
 	}
 
 	@Override
@@ -60,10 +59,10 @@ public class GuiChargingBench extends GuiContainer
 
 		if (this.tile.currentEnergy > 0)
 		{
-			// Should make each box light up all at once instead of gradually using barLength = this.tile.gaugeEnergyScaled(66); 
+			// Make each box light up all at once like a LED instead of gradually using barLength = this.tile.gaugeEnergyScaled(66); 
 			int barLength = 5 * this.tile.gaugeEnergyScaled(13);
 			if (barLength > 0) barLength++;
-			this.drawTexturedModalRect(xLoc + 32, yLoc + 91 - barLength, 176, 66 - barLength, 66, barLength);
+			this.drawTexturedModalRect(xLoc + 32, yLoc + 100 - barLength, 176, 66 - barLength, 66, barLength);
 		}
 	}
 }
