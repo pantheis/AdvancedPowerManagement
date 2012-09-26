@@ -23,7 +23,7 @@ public class ItemChargingBench extends ItemBlock
 
     public String getItemNameIS(ItemStack var1)
     {
-    	if (Utils.isDebug()) System.out.println("ItemChargingBench.getItemNameIS");
+    	// if (Utils.isDebug()) System.out.println("ItemChargingBench.getItemNameIS");
         int var2 = var1.getItemDamage();
 
         switch (var2)
