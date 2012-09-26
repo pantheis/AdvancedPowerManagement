@@ -11,6 +11,9 @@ import cpw.mods.fml.common.network.Player;
 
 public class ContainerChargingBench extends Container
 {
+	private final int benchShiftClickRange = 17;
+	private final int playerInventoryStartSlot = 19;
+
 	public TEChargingBench tileentity;
 	public int currentEnergy;
 	public int adjustedStorage;
@@ -46,14 +49,14 @@ public class ContainerChargingBench extends Container
 		this.addSlotToContainer(new SlotMachineUpgrade(tile, 14, 152, topOffset + 36));
 		this.addSlotToContainer(new SlotMachineUpgrade(tile, 15, 152, topOffset + 54));
 
-		// Power source slot
-		this.addSlotToContainer(new SlotPowerSource(tile, 16, 8, topOffset + 54, tileentity.baseTier + 1));
-
 		// Input Slot
 		this.addSlotToContainer(new SlotInput(tile, 17, 130, topOffset, tileentity.baseTier + 1));
 
 		// Output slot
 		this.addSlotToContainer(new SlotOutput(tile, 18, 130, topOffset + 54));
+
+		// Power source slot
+		this.addSlotToContainer(new SlotPowerSource(tile, 16, 8, topOffset + 54, tileentity.baseTier + 1));
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
@@ -147,39 +150,147 @@ public class ContainerChargingBench extends Container
 		}
 	}
 
+    /**
+     * merges provided ItemStack with the first avaliable one in the container/player inventory
+     */
 	@Override
-	public ItemStack transferStackInSlot(int par1)
+    protected boolean mergeItemStack(ItemStack stack, int startSlot, int endSlot, boolean reverseOrder)
+    {
+        boolean result = false;
+        int slotID = startSlot;
+
+        if (reverseOrder)
+        {
+            slotID = endSlot - 1;
+        }
+
+        Slot currentSlot;
+        ItemStack currentStack;
+
+        if (stack.isStackable())
+        {
+            while (stack.stackSize > 0 && (!reverseOrder && slotID < endSlot || reverseOrder && slotID >= startSlot))
+            {
+                currentSlot = (Slot)this.inventorySlots.get(slotID);
+                currentStack = currentSlot.getStack();
+
+                if (currentStack != null && currentStack.itemID == stack.itemID
+                		&& (!stack.getHasSubtypes() || stack.getItemDamage() == currentStack.getItemDamage())
+                		&& ItemStack.func_77970_a(stack, currentStack) // func_77970_a = areItemStackTagCompoundsEqual
+                		&& currentSlot.isItemValid(stack))
+                {
+                    int limit = Math.min(stack.getMaxStackSize(), currentSlot.getSlotStackLimit());
+                    int sum = currentStack.stackSize + stack.stackSize;
+                    if (sum <= limit)
+                    {
+                        stack.stackSize = 0;
+                        currentStack.stackSize = sum;
+                        currentSlot.onSlotChanged();
+                        result = true;
+                    }
+                    else if (currentStack.stackSize < limit)
+                    {
+                    	int diff = limit - currentStack.stackSize;
+                        stack.stackSize -= diff;
+                        currentStack.stackSize = limit;
+                        currentSlot.onSlotChanged();
+                        result = true;
+                    }
+                }
+
+                if (reverseOrder)
+                {
+                    --slotID;
+                }
+                else
+                {
+                    ++slotID;
+                }
+            }
+        }
+
+        if (stack.stackSize > 0)
+        {
+            if (reverseOrder)
+            {
+                slotID = endSlot - 1;
+            }
+            else
+            {
+                slotID = startSlot;
+            }
+
+            while (!reverseOrder && slotID < endSlot || reverseOrder && slotID >= startSlot)
+            {
+                currentSlot = (Slot)this.inventorySlots.get(slotID);
+                currentStack = currentSlot.getStack();
+
+                if (currentStack == null && currentSlot.isItemValid(stack))
+                {
+                	int limit = currentSlot.getSlotStackLimit();
+                    if (stack.stackSize <= limit)
+                    {
+                    	currentSlot.putStack(stack.copy());
+                        currentSlot.onSlotChanged();
+                        stack.stackSize = 0;
+                        result = true;
+                        break;
+                    }
+                    else
+                    {
+                    	currentSlot.putStack(stack.splitStack(limit));
+                        currentSlot.onSlotChanged();
+                        result = true;
+                    }
+                }
+
+                if (reverseOrder)
+                {
+                    --slotID;
+                }
+                else
+                {
+                    ++slotID;
+                }
+            }
+        }
+
+        return result;
+    }
+
+	@Override
+	public ItemStack transferStackInSlot(int slotID)
 	{
-		ItemStack var2 = null;
-		Slot var3 = (Slot)this.inventorySlots.get(par1);
+		ItemStack original = null;
+		Slot slotclicked = (Slot)this.inventorySlots.get(slotID);
 
-		if (var3 != null && var3.getHasStack())
+		if (slotclicked != null && slotclicked.getHasStack())
 		{
-			ItemStack var4 = var3.getStack();
-			var2 = var4.copy();
+			ItemStack sourceStack = slotclicked.getStack();
+			original = sourceStack.copy();
 
-			if (par1 < 18)
+			if (slotID < playerInventoryStartSlot)
 			{
-				if (!this.mergeItemStack(var4, 18, this.inventorySlots.size(), true))
+				if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), true))
 				{
 					return null;
 				}
 			}
-			else if (!this.mergeItemStack(var4, 0, 18, false))
+			else if (!this.mergeItemStack(sourceStack, 0, benchShiftClickRange, false))
 			{
 				return null;
 			}
 
-			if (var4.stackSize == 0)
+			if (sourceStack.stackSize == 0)
 			{
-				var3.putStack((ItemStack)null);
+				slotclicked.putStack((ItemStack)null);
 			}
 			else
 			{
-				var3.onSlotChanged();
+				slotclicked.onSlotChanged();
 			}
 		}
-		return var2;
+		return original;
 	}
 
 	@Override
@@ -222,15 +333,16 @@ public class ContainerChargingBench extends Container
                 }
                 else if (shiftclick)
                 {
-                    ItemStack remainder = this.transferStackInSlot(slotID);
+                    ItemStack original = this.transferStackInSlot(slotID);
 
-                    if (remainder != null)
+                	// For crafting and other situations where a new stack could appear in the slot after each click; may be useful for output slot
+                    if (original != null)
                     {
-                        int remainderID = remainder.itemID;
-                        result = remainder.copy();
+                        int originalID = original.itemID;
+                        result = original.copy();
                         Slot slot = (Slot)this.inventorySlots.get(slotID);
 
-                        if (slot != null && slot.getStack() != null && slot.getStack().itemID == remainderID)
+                        if (slot != null && slot.getStack() != null && slot.getStack().itemID == originalID)
                         {
                             this.retrySlotClick(slotID, button, shiftclick, par4EntityPlayer);
                         }
