@@ -515,12 +515,9 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		}
 		if (isActive())
 		{
-			//System.out.printf("TEFloodlightIC2.updateEntity: using %d energy from %d\n",
-			//	energyUsedPerTick, energy);
-			// It's not this simple - it needs to drain a variable amount based on the items being charged and the overclockers installed. And why does it need a redstone signal?
-			//currentEnergy -= adjustedChargeRate;
-			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
-			if (currentEnergy < 0) currentEnergy = 0;
+			//redstone activation stuff here, if any
+//			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
+//			if (currentEnergy < 0) currentEnergy = 0;
 		}
 		chargeBench();
 		sortInventory();
@@ -536,7 +533,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	 */
 	private void chargeBench()
 	{
-		// TODO Auto-generated method stub
 		int chargeReturned = 0;
 		ItemStack stack = getStackInSlot(ChargingBench.slotPowerSource);
 		ItemStack newStack;
@@ -546,7 +542,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		int itemTransferLimit;
 		int itemTier;
 		IElectricItem item;
-		
+
 		if (stack != null && stack.getItem() instanceof IElectricItem && this.currentEnergy < this.adjustedStorage)
 		{
 			item = (IElectricItem)(stack.getItem());
@@ -559,20 +555,34 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 			boolean itemCanProvideEnergy = item.canProvideEnergy();
 			if (itemTier <= this.powerTier && itemCanProvideEnergy)
 			{
-				chargeReturned = ElectricItem.discharge(stack, itemTransferLimit, powerTier, false, false);
+				//Grab how much energy we have room for here
+				int energyNeeded = this.adjustedStorage - this.currentEnergy;
+				//Test if the amount of energy we need is greater than what the item can transfer per tick
+				//if so, request the max it can transfer per tick
+				if (energyNeeded > itemTransferLimit)
+				{
+					chargeReturned = ElectricItem.discharge(stack, itemTransferLimit, powerTier, false, false);
+				}
+				//If we need less than it can transfer per tick, request only what we have room for
+				//so we don't waste power
+				else
+				{
+					chargeReturned = ElectricItem.discharge(stack, energyNeeded, powerTier, false, false);
+				}
 			}
-			
-			//FIXME This needs work, it's not handling lap crystals correctly, and the test isn't completely
-			//FIXME correct. If an item is fully drained by transferring exactly it's itemTransferLimit, this
-			//FIXME wouldn't be triggered. Lap crystals get changed into a still non-stackable but no-damage
-			//FIXME bar item. This is not the behaviour of other machines
-			if (chargeReturned < itemTransferLimit)
+
+			if (chargeReturned == 0)
 			{
-				newStack = new ItemStack(emptyItemID, 1, 0);
-				setInventorySlotContents(ChargingBench.slotPowerSource, newStack);
+				if (emptyItemID != chargedItemID)
+				{
+					newStack = new ItemStack(emptyItemID, 1, 0);
+					setInventorySlotContents(ChargingBench.slotPowerSource, newStack);
+				}
 			}
 		}
+		//Add the energy we received to our current energy level
 		currentEnergy += chargeReturned;
+		//and make sure that we didn't go over, if we somehow did, drop the excess
 		if (currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage;
 	}
 
