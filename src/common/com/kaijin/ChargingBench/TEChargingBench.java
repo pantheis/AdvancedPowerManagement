@@ -524,7 +524,8 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		// Work done every tick
 		drainPowerSource();
 		chargeItems();
-		sortInventory();
+		moveOutputItems();
+		acceptInputItems();
 	}
 
 	/**
@@ -538,20 +539,17 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	{
 		int chargeReturned = 0;
 
-		ItemStack stack = getStackInSlot(ChargingBench.slotPowerSource);
+		ItemStack stack = contents[ChargingBench.slotPowerSource];
 		if (stack != null && stack.getItem() instanceof IElectricItem && this.currentEnergy < this.adjustedStorage)
 		{
 			IElectricItem powerSource = (IElectricItem)(stack.getItem());
 
-			int emptyItemID = powerSource.getEmptyItemId();
-			int chargedItemID = powerSource.getChargedItemId();
-			// Unused: int maxItemCharge = powerSource.getMaxCharge();
-			int itemTransferLimit = powerSource.getTransferLimit();
-
 			if (powerSource.getTier() <= this.powerTier && powerSource.canProvideEnergy())
 			{
-				// Test if the amount of energy we have room for is greater than what the item can transfer per tick.
+				int itemTransferLimit = powerSource.getTransferLimit();
 				int energyNeeded = this.adjustedStorage - this.currentEnergy;
+
+				// Test if the amount of energy we have room for is greater than what the item can transfer per tick.
 				if (energyNeeded > itemTransferLimit)
 				{
 					// If so, request the max it can transfer per tick.
@@ -565,6 +563,8 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 
 			if (chargeReturned == 0)
 			{
+				int emptyItemID = powerSource.getEmptyItemId();
+				int chargedItemID = powerSource.getChargedItemId();
 				if (emptyItemID != chargedItemID)
 				{
 					ItemStack newStack = new ItemStack(emptyItemID, 1, 0);
@@ -574,23 +574,62 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		}
 
 		// Add the energy we received to our current energy level,
-		currentEnergy += chargeReturned;
+		this.currentEnergy += chargeReturned;
 		// and make sure that we didn't go over. If we somehow did, drop the excess.
-		if (currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage;
+		if (this.currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage;
 	}
 
 	/**
 	 * First, check the output slot to see if it's empty. If so, look to see if there are any fully 
 	 * charged items in the main inventory. Move the first fully charged item to the output slot.
-	 * 
-	 * Then, check to see if there are any free charging slots. If so, check to see if there are any
-	 * items in the input slot. If so, move one from the input slot to a free charging slot. Do not
-	 * move more than one, if the stack contains more.
 	 */
-	private void sortInventory()
+	private void moveOutputItems()
 	{
 		// TODO Auto-generated method stub
+		ItemStack stack = contents[ChargingBench.slotOutput];
+		if (stack == null)
+		{
+			// Output slot is empty. Try to find a fully charged item to move there.
+			for (int slot = ChargingBench.slotCharging; slot < ChargingBench.slotCharging + 12; ++slot)
+			{
+				ItemStack currentStack = contents[slot];
+				if (currentStack != null && currentStack.getItem() instanceof IElectricItem)
+				{
+					// Test if the item is fully charged (cannot accept any more power).
+					if (ElectricItem.charge(currentStack, 1, baseTier, false, true) == 0)
+					{
+						contents[ChargingBench.slotOutput] = currentStack;
+						contents[slot] = null;
+						this.onInventoryChanged();
+						break;
+					}
+				}
+			}
+		}
+	}
 
+	/**
+	 * Check to see if there are any items in the input slot. If so, check to see if there are any
+	 * free charging slots. If so, move one from the input slot to a free charging slot. Do not
+	 * move more than one, if the stack contains more.
+	 */
+	private void acceptInputItems()
+	{
+		ItemStack stack = contents[ChargingBench.slotInput];
+		if (stack != null && stack.getItem() instanceof IElectricItem)
+		{
+			// Input slot contains something electrical. If possible, move one of it into the charging area.
+			IElectricItem item = (IElectricItem)(stack.getItem());
+			for (int slot = ChargingBench.slotCharging; slot < ChargingBench.slotCharging + 12; ++slot)
+			{
+				if (contents[slot] == null)
+				{
+					// Grab one unit from input and move it to the selected slot.
+					contents[slot] = decrStackSize(ChargingBench.slotInput, 1);
+					break;
+				}
+			}
+		}
 	}
 
 	/**
