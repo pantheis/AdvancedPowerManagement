@@ -50,8 +50,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	public float drainFactor;
 	public float chargeFactor;
 
-	public boolean overCurrent = false;
-
 	public TEChargingBench(int i)
 	{
 		//base tier = what we're passed, so 1, 2 or 3
@@ -644,7 +642,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	{
 		// TODO Auto-generated method stub
 		int chargeTransferred = 0;
-		int tempCurrentEnergy = this.currentEnergy;
 		ItemStack newStack;
 
 		for(int i = 0; i < 12; i++)
@@ -658,14 +655,15 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 				int currentItemID = stack.itemID; 
 				int maxItemCharge = item.getMaxCharge();
 				int itemTransferLimit = item.getTransferLimit();
+				if (itemTransferLimit == 0) itemTransferLimit = this.baseMaxInput;
 				int itemTier = item.getTier();
-				int adjustedTransferLimit = (int)(itemTransferLimit * this.chargeFactor);
+				int adjustedTransferLimit = (int)Math.ceil(this.chargeFactor * itemTransferLimit);
 
-				if (itemTier <= this.powerTier)
+				if (itemTier <= this.baseTier)
 				{
 					int amountNeeded = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, true);
-					int adjustedEnergyUse = (int) (amountNeeded * this.drainFactor);
-					if(adjustedEnergyUse <= tempCurrentEnergy)
+					int adjustedEnergyUse = (int)Math.ceil((this.drainFactor / this.chargeFactor) * amountNeeded);
+					if(adjustedEnergyUse <= this.currentEnergy)
 					{
 						if (currentItemID != chargedItemID)
 						{
@@ -674,13 +672,12 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 						}
 						chargeTransferred = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, false);
 					}
-					adjustedEnergyUse = (int) (chargeTransferred * this.drainFactor);
-					tempCurrentEnergy -= adjustedEnergyUse;
+					adjustedEnergyUse = (int)Math.ceil((this.drainFactor / this.chargeFactor) * chargeTransferred);
+					this.currentEnergy -= adjustedEnergyUse;
+					if(this.currentEnergy < 0) this.currentEnergy = 0;
 				}
 			}
 		}
-		this.currentEnergy = tempCurrentEnergy;
-		if(this.currentEnergy < 0) this.currentEnergy = 0;		
 	}
 
 	public boolean isActive()
