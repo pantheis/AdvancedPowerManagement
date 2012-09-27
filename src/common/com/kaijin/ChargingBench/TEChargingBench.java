@@ -528,17 +528,52 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	}
 
 	/**
-	 * Look through all of the items in our main inventory and determine the current charge level,
-	 * maximum charge level and maximum base charge rate for each item. Increase maximum charge
-	 * rate for each item based on overclockers as appropriate, then, starting with the first slot
-	 * in the main inventory, transfer one tick worth of energy from our internal storage to the
-	 * item. Continue doing this for all items in the inventory until we reach the end of the main
-	 * inventory or run out of internal EU storage.
+	 * Looks in the power item slot to see if it can pull in EU from a valid item in that slot.
+	 * If so, pull in as much EU as the item allows to be transferred per tick up to the maximum
+	 * energy transfer rate based on our tier, limited also by the maximum energy storage capacity.
+	 * ie. do not pull in more than we have room for
+	 * @return 
 	 */
-	private void chargeItems()
+	private void chargeBench()
 	{
 		// TODO Auto-generated method stub
+		int chargeReturned = 0;
+		ItemStack stack = getStackInSlot(ChargingBench.slotPowerSource);
+		ItemStack newStack;
+		int emptyItemID;
+		int chargedItemID;
+		int maxItemCharge;
+		int itemTransferLimit;
+		int itemTier;
+		IElectricItem item;
 		
+		if (stack != null && stack.getItem() instanceof IElectricItem && this.currentEnergy < this.adjustedStorage)
+		{
+			item = (IElectricItem)(stack.getItem());
+			emptyItemID = item.getEmptyItemId();
+			chargedItemID = item.getChargedItemId();
+			maxItemCharge = item.getMaxCharge();
+			itemTransferLimit = item.getTransferLimit();
+			itemTier = item.getTier();
+
+			boolean itemCanProvideEnergy = item.canProvideEnergy();
+			if (itemTier <= this.powerTier && itemCanProvideEnergy)
+			{
+				chargeReturned = ElectricItem.discharge(stack, itemTransferLimit, powerTier, false, false);
+			}
+			
+			//FIXME This needs work, it's not handling lap crystals correctly, and the test isn't completely
+			//FIXME correct. If an item is fully drained by transferring exactly it's itemTransferLimit, this
+			//FIXME wouldn't be triggered. Lap crystals get changed into a still non-stackable but no-damage
+			//FIXME bar item. This is not the behaviour of other machines
+			if (chargeReturned < itemTransferLimit)
+			{
+				newStack = new ItemStack(emptyItemID, 1, 0);
+				setInventorySlotContents(ChargingBench.slotPowerSource, newStack);
+			}
+		}
+		currentEnergy += chargeReturned;
+		if (currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage;
 	}
 
 	/**
@@ -554,19 +589,21 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	private void sortInventory()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/**
-	 * Looks in the power item slot to see if it can pull in EU from a valid item in that slot.
-	 * If so, pull in as much EU as the item allows to be transferred per tick up to the maximum
-	 * energy transfer rate based on our tier, limited also by the maximum energy storage capacity.
-	 * ie. do not pull in more than we have room for
+	 * Look through all of the items in our main inventory and determine the current charge level,
+	 * maximum charge level and maximum base charge rate for each item. Increase maximum charge
+	 * rate for each item based on overclockers as appropriate, then, starting with the first slot
+	 * in the main inventory, transfer one tick worth of energy from our internal storage to the
+	 * item. Continue doing this for all items in the inventory until we reach the end of the main
+	 * inventory or run out of internal EU storage.
 	 */
-	private void chargeBench()
+	private void chargeItems()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public boolean isActive()
