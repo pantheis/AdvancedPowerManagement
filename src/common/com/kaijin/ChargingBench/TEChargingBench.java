@@ -131,13 +131,13 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 
 	public void dropItem(ItemStack item)
 	{
-// All this math just to slightly alter the start location of the items? Who cares? They spray in every direction anyway. Let's speed this up a little.
-//		final double f1 = 0.7D;
-//		final double f2 = 0.3D;
-//		double dx = ((worldObj.rand.nextFloat() * f1) + f2) * 0.5D;
-//		double dy = ((worldObj.rand.nextFloat() * f1) + f2) * 0.5D;
-//		double dz = ((worldObj.rand.nextFloat() * f1) + f2) * 0.5D;
-//		EntityItem entityitem = new EntityItem(worldObj, (double)xCoord + dx, (double)yCoord + dy, (double)zCoord + dz, item);
+		// All this math just to slightly alter the start location of the items? Who cares? They spray in every direction anyway. Let's speed this up a little.
+		//		final double f1 = 0.7D;
+		//		final double f2 = 0.3D;
+		//		double dx = ((worldObj.rand.nextFloat() * f1) + f2) * 0.5D;
+		//		double dy = ((worldObj.rand.nextFloat() * f1) + f2) * 0.5D;
+		//		double dz = ((worldObj.rand.nextFloat() * f1) + f2) * 0.5D;
+		//		EntityItem entityitem = new EntityItem(worldObj, (double)xCoord + dx, (double)yCoord + dy, (double)zCoord + dz, item);
 		EntityItem entityitem = new EntityItem(worldObj, (double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D, item);
 		entityitem.delayBeforeCanPickup = 10;
 		worldObj.spawnEntityInWorld(entityitem);
@@ -154,7 +154,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		}
 	}
 
-@Override
+	@Override
 	public int injectEnergy(Direction directionFrom, int supply)
 	{
 		int surplus = 0;
@@ -164,10 +164,15 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 			if(supply > adjustedMaxInput)
 			{
 				//If the supplied EU is over the baseMaxInput, we're getting
-				//supplied higher than acceptable current. Set overCurrent flag
-				//and return all of the EU as surplus
+				//supplied higher than acceptable current. Pop ourselves off
+				//into the world and return all but 1 EU, or if the supply
+				//somehow was 1EU and it's still over the max, return zero
+				//to keep IC2 from spitting out massive errors in the log
 				selfDestroy();
-				return 0;
+				if (supply - (supply -1) == 1)
+					return 0;
+				else
+					return 1;
 
 				/*
 				 * Commenting out the following so we can start adding in current restrictions				
@@ -333,22 +338,25 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		int esCount = 0;
 		for (int i = ChargingBench.slotUpgrade; i < ChargingBench.slotUpgrade + 4; ++i)
 		{
-    		stack = this.contents[i];
-    		if (stack != null)
-    		{
-    			if (stack.isItemEqual(ChargingBench.ic2overclockerUpg))
-    			{
-    				ocCount += stack.stackSize;
-    			}
-    			else if (stack.isItemEqual(ChargingBench.ic2storageUpg))
-    			{
-    				esCount += stack.stackSize;
-    			}
-    			else if (stack.isItemEqual(ChargingBench.ic2transformerUpg))
-    			{
-    				tfCount += stack.stackSize;
-    			}
-    		}
+			stack = this.contents[i];
+			if (stack != null)
+			{
+				if (stack.isItemEqual(ChargingBench.ic2overclockerUpg))
+				{
+					ocCount += stack.stackSize;
+					if (ocCount > 64) ocCount = 64;
+				}
+				else if (stack.isItemEqual(ChargingBench.ic2storageUpg))
+				{
+					esCount += stack.stackSize;
+					if (esCount > 204) esCount = 204;
+				}
+				else if (stack.isItemEqual(ChargingBench.ic2transformerUpg))
+				{
+					tfCount += stack.stackSize;
+					if (tfCount > 3) tfCount = 3;
+				}
+			}
 		}
 
 		// Recompute upgrade effects
@@ -366,52 +374,52 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	}
 
 	public void onInventoryChanged(int slot)
-    {
-    	//TODO Start processing inventory updates here
+	{
+		//TODO Start processing inventory updates here
 		if (slot >= ChargingBench.slotCharging && slot < ChargingBench.slotCharging + 12)
-    	{
-    		// Initialize item charging? Make sure it's not fully charged already? Not sure
-			
-    	}
-    	else if (slot >= ChargingBench.slotUpgrade && slot < ChargingBench.slotUpgrade + 4)
-    	{
-    		// One of the upgrade slots was touched, so we need to recalculate.
-    		doUpgradeEffects();
-    	}
-    	else if (slot == ChargingBench.slotPowerSource)
-    	{
-    		// Perhaps eject the item if it's not valid?
-    		
-    	}
-    	else if (slot == ChargingBench.slotInput)
-    	{
-    		// Try to move it into the charging area, if it's valid
-    		// Perhaps eject the item if it's not valid?
-    		
-    	}
-    	else if (slot == ChargingBench.slotOutput)
-    	{
-    		// Nothing to do here? If some machine stuffs something here, the player needs to redesign it - or they're testing sided access.
-    		// Perhaps eject the item if it's not even electrical?
-    	}
-    	super.onInventoryChanged();
-    }
+		{
+			// Initialize item charging? Make sure it's not fully charged already? Not sure
 
-    public boolean isItemValid(int slot, ItemStack stack)
-    {
-    	// Decide if the item is a valid IC2 electrical item
-    	if (stack != null && stack.getItem() instanceof IElectricItem)
-    	{
-    		IElectricItem item = (IElectricItem)(stack.getItem());
-    		// Is the item appropriate for this slot?
-    		if (slot == ChargingBench.slotPowerSource && item.canProvideEnergy() && item.getTier() <= this.powerTier) return true;
-    		if (slot >= ChargingBench.slotCharging && slot < ChargingBench.slotCharging + 12 && item.getTier() <= baseTier) return true;
-    		if (slot >= ChargingBench.slotUpgrade && slot < ChargingBench.slotUpgrade + 4 && (stack.isItemEqual(ChargingBench.ic2overclockerUpg) || stack.isItemEqual(ChargingBench.ic2transformerUpg) || stack.isItemEqual(ChargingBench.ic2storageUpg))) return true;
-    		if (slot == ChargingBench.slotInput && item.getTier() <= baseTier) return true;
-    		if (slot == ChargingBench.slotOutput) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
-    	}
-        return false; 
-    }
+		}
+		else if (slot >= ChargingBench.slotUpgrade && slot < ChargingBench.slotUpgrade + 4)
+		{
+			// One of the upgrade slots was touched, so we need to recalculate.
+			doUpgradeEffects();
+		}
+		else if (slot == ChargingBench.slotPowerSource)
+		{
+			// Perhaps eject the item if it's not valid?
+
+		}
+		else if (slot == ChargingBench.slotInput)
+		{
+			// Try to move it into the charging area, if it's valid
+			// Perhaps eject the item if it's not valid?
+
+		}
+		else if (slot == ChargingBench.slotOutput)
+		{
+			// Nothing to do here? If some machine stuffs something here, the player needs to redesign it - or they're testing sided access.
+			// Perhaps eject the item if it's not even electrical?
+		}
+		super.onInventoryChanged();
+	}
+
+	public boolean isItemValid(int slot, ItemStack stack)
+	{
+		// Decide if the item is a valid IC2 electrical item
+		if (stack != null && stack.getItem() instanceof IElectricItem)
+		{
+			IElectricItem item = (IElectricItem)(stack.getItem());
+			// Is the item appropriate for this slot?
+			if (slot == ChargingBench.slotPowerSource && item.canProvideEnergy() && item.getTier() <= this.powerTier) return true;
+			if (slot >= ChargingBench.slotCharging && slot < ChargingBench.slotCharging + 12 && item.getTier() <= baseTier) return true;
+			if (slot >= ChargingBench.slotUpgrade && slot < ChargingBench.slotUpgrade + 4 && (stack.isItemEqual(ChargingBench.ic2overclockerUpg) || stack.isItemEqual(ChargingBench.ic2transformerUpg) || stack.isItemEqual(ChargingBench.ic2storageUpg))) return true;
+			if (slot == ChargingBench.slotInput && item.getTier() <= baseTier) return true;
+			if (slot == ChargingBench.slotOutput) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
+		}
+		return false; 
+	}
 
 	/**
 	 * Reads a tile entity from NBT.

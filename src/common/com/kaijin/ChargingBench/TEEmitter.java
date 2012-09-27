@@ -33,10 +33,11 @@ public class TEEmitter extends TileEntity implements IEnergySource, IWrenchable
 	public TEEmitter(int i)
 	{
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-		this.outputRate = (int)Math.pow(2.0D, (double)(2*i + 3));
-
-		//base tier = what we're passed, so 1, 2 or 3 (or 4)
 		this.baseTier = i;
+		this.outputRate = (int)Math.pow(2.0D, (double)(2* this.baseTier + 3));
+				
+		//base tier = what we're passed, so 1, 2 or 3 (or 4)
+
 		if (Utils.isDebug()) System.out.println("BaseTier: " + this.baseTier + " ;baseOutput: " + outputRate);
 	}
 
