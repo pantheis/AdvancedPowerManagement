@@ -98,14 +98,12 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	@Override
 	public boolean isAddedToEnergyNet()
 	{
-		// TODO Auto-generated method stub
 		return initialized;
 	}
 
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
 	{
-		// TODO Auto-generated method stub
 		return true;
 	}
 
@@ -166,30 +164,13 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 				//If the supplied EU is over the baseMaxInput, we're getting
 				//supplied higher than acceptable current. Pop ourselves off
 				//into the world and return all but 1 EU, or if the supply
-				//somehow was 1EU and it's still over the max, return zero
-				//to keep IC2 from spitting out massive errors in the log
+				//somehow was 1EU, return zero to keep IC2 from spitting out 
+				//massive errors in the log
 				selfDestroy();
-				if (supply - (supply -1) == 1)
+				if (supply <= 1)
 					return 0;
 				else
-					return 1;
-
-				/*
-				 * Commenting out the following so we can start adding in current restrictions				
-				 */
-
-				//				// add the max we can take per tick to our current energy level
-				//				this.currentEnergy += baseMaxInput;
-				//				// check if our current energy level is now over the max energy level
-				//				if (currentEnergy > baseStorage)
-				//				{
-				//					//if so, our surplus to return is equal to that amount over
-				//					surplus = currentEnergy - baseStorage;
-				//					//and set our current energy level TO our max energy level
-				//					this.currentEnergy = baseStorage;
-				//				}
-				//				//surplus may be zero or greater here
-				//				surplus += (supply - baseMaxInput);
+					return supply - 1;
 			}
 			else
 			{
@@ -211,14 +192,12 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	@Override
 	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public short getFacing()
 	{
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -228,14 +207,12 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	@Override
 	public boolean wrenchCanRemove(EntityPlayer entityPlayer)
 	{
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public float getWrenchDropRate()
 	{
-		// TODO Auto-generated method stub
 		return 1.0F;
 	}
 
@@ -545,7 +522,51 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
 			if (currentEnergy < 0) currentEnergy = 0;
 		}
+		chargeBench();
+		sortInventory();
+		chargeItems();
+	}
 
+	/**
+	 * Look through all of the items in our main inventory and determine the current charge level,
+	 * maximum charge level and maximum base charge rate for each item. Increase maximum charge
+	 * rate for each item based on overclockers as appropriate, then, starting with the first slot
+	 * in the main inventory, transfer one tick worth of energy from our internal storage to the
+	 * item. Continue doing this for all items in the inventory until we reach the end of the main
+	 * inventory or run out of internal EU storage.
+	 */
+	private void chargeItems()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * First, look to see if there are any fully charged items in the main inventory. If so, check
+	 * the output slot to see if it's empty, if so, move the first fully charged item to the output
+	 * slot.
+	 * 
+	 * Then, check to see if there are any free inventory slots, if so, check to see if there are any
+	 * items in the input slot, if so, move one from the input slot to a free main inventory slot. Do
+	 * not move more than one. We also need to check here to see if an item has a different item ID
+	 * as it starts to charge and if so, move one of those into the main inventory instead.
+	 */
+	private void sortInventory()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * Looks in the power item slot to see if it can pull in EU from a valid item in that slot.
+	 * If so, pull in as much EU as the item allows to be transferred per tick up to the maximum
+	 * energy transfer rate based on our tier, limited also by the maximum energy storage capacity.
+	 * ie. do not pull in more than we have room for
+	 */
+	private void chargeBench()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 	public boolean isActive()
@@ -560,9 +581,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 
 	public int gaugeEnergyScaled(int gaugeSize)
 	{
-		//if (Utils.isDebug()) System.out.println("TileEntityChargingBench.gaugeEnergyScaled");
-		//if (Utils.isDebug()) System.out.println("currentEnergy: " + currentEnergy);
-		//if (Utils.isDebug()) System.out.println("this.currentEnergy: " + this.currentEnergy);
 		if (this.currentEnergy <= 0)
 		{
 			return 0;

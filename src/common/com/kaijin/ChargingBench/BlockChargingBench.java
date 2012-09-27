@@ -44,7 +44,7 @@ public class BlockChargingBench extends Block
 			{
 				if (Utils.isDebug()) System.out.println("Block.world.isRemote.isSneaking");
 				// Prevent GUI popup when sneaking
-				// This allows you to sneak place things directly on the inventory stocker
+				// This allows you to sneak place things directly on the charging bench
 				return false;
 			}
 		}
@@ -61,7 +61,7 @@ public class BlockChargingBench extends Block
 			if (entityplayer.isSneaking() || currentEquippedItemID == wrench.itemID || currentEquippedItemID == electricWrench.itemID)
 			{
 				// Prevent GUI popup when sneaking
-				// This allows you to sneak place things directly on the inventory stocker
+				// This allows you to sneak place things directly on the charging bench
 				return false;
 			}
 			if (Utils.isDebug()) System.out.println("BlockChargingBench.BlockActivated");
@@ -227,38 +227,10 @@ public class BlockChargingBench extends Block
 	@Override
 	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int par1)
 	{
-		FMLLog.getLogger().info("BlockChargingBench.onBlockDestroyedByPlayer");
 		preDestroyBlock(world, x, y, z);
 		if (Utils.isDebug()) System.out.println("BlockChargingBench.onBlockDestroyedByPlayer");
 		super.onBlockDestroyedByPlayer(world, x, y, z, par1);
 	}
-
-/* We don't even need these, the tile entity is better qualified to drop its contents correctly
-	public static void dropItem(World world, ItemStack stack, int i, int j, int k)
-	{
-		float f1 = 0.7F;
-		double d = (double)(world.rand.nextFloat() * f1) + (double)(1.0F - f1) * 0.5D;
-		double d1 = (double)(world.rand.nextFloat() * f1) + (double)(1.0F - f1) * 0.5D;
-		double d2 = (double)(world.rand.nextFloat() * f1) + (double)(1.0F - f1) * 0.5D;
-		EntityItem entityitem = new EntityItem(world, (double) i + d,
-				(double) j + d1, (double) k + d2, stack);
-		entityitem.delayBeforeCanPickup = 10;
-		world.spawnEntityInWorld(entityitem);
-	}
-
-	public static void dropItems(World world, IInventory inventory, int i, int j, int k)
-	{
-		for (int l = 0; l < inventory.getSizeInventory(); ++l)
-		{
-			ItemStack items = inventory.getStackInSlot(l);
-
-			if (items != null && items.stackSize > 0)
-			{
-				dropItem(world, inventory.getStackInSlot(l).copy(), i, j, k);
-			}
-		}
-	}
-*/
 
 	public static void preDestroyBlock(World world, int i, int j, int k)
 	{
@@ -275,11 +247,6 @@ public class BlockChargingBench extends Block
 				((TEChargingBench)tile).dropContents();
 				tile.invalidate();
 			}
-			//else if (tile instanceof IInventory)
-			//{
-			//	dropItems(world, (IInventory) tile, i, j, k);
-			//	tile.invalidate();
-			//}
 		}
 	}
 }
