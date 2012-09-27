@@ -199,23 +199,11 @@ public class BlockChargingBench extends Block
 		switch (metadata)
 		{
 		case 0:
-			return true;
-
 		case 1:
-			return true;
-
 		case 2:
-			return true;
-
 		case 3:
-			return true;
-
 		case 4:
-			return true;
-
 		case 5:
-			return true;
-			
 		case 6:
 			return true;
 
@@ -239,12 +227,13 @@ public class BlockChargingBench extends Block
 	@Override
 	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int par1)
 	{
-		FMLLog.getLogger().info("block.onBlockDestroyedByPlayer");
+		FMLLog.getLogger().info("BlockChargingBench.onBlockDestroyedByPlayer");
 		preDestroyBlock(world, x, y, z);
 		if (Utils.isDebug()) System.out.println("BlockChargingBench.onBlockDestroyedByPlayer");
 		super.onBlockDestroyedByPlayer(world, x, y, z, par1);
 	}
 
+/* We don't even need these, the tile entity is better qualified to drop its contents correctly
 	public static void dropItem(World world, ItemStack stack, int i, int j, int k)
 	{
 		float f1 = 0.7F;
@@ -269,19 +258,28 @@ public class BlockChargingBench extends Block
 			}
 		}
 	}
+*/
 
 	public static void preDestroyBlock(World world, int i, int j, int k)
 	{
-		TileEntity tile = world.getBlockTileEntity(i, j, k);
+		if (!ChargingBench.proxy.isClient())
+		{
+			TileEntity tile = world.getBlockTileEntity(i, j, k);
 
-		if (tile instanceof IInventory && !ChargingBench.proxy.isClient())
-		{
-			dropItems(world, (IInventory) tile, i, j, k);
-			tile.invalidate();
-		}
-		if (tile instanceof TEEmitter && !ChargingBench.proxy.isClient())
-		{
-			tile.invalidate();
+			if (tile instanceof TEEmitter)
+			{
+				tile.invalidate();
+			}
+			else if (tile instanceof TEChargingBench) 
+			{
+				((TEChargingBench)tile).dropContents();
+				tile.invalidate();
+			}
+			//else if (tile instanceof IInventory)
+			//{
+			//	dropItems(world, (IInventory) tile, i, j, k);
+			//	tile.invalidate();
+			//}
 		}
 	}
 }

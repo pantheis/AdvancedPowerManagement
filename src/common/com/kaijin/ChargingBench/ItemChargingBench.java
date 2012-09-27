@@ -30,13 +30,18 @@ public class ItemChargingBench extends ItemBlock
         {
             case 0:
                 return "blockChargingBench1";
-
             case 1:
                 return "blockChargingBench2";
-
             case 2:
                 return "blockChargingBench3";
-
+            case 3:
+                return "blockEmitterBlock1";
+            case 4:
+                return "blockEmitterBlock2";
+            case 5:
+                return "blockEmitterBlock3";
+            case 6:
+                return "blockEmitterBlock4";
             default:
                 return null;
         }

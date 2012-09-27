@@ -8,6 +8,7 @@ import java.util.*;
 import ic2.api.*;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.Container;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
@@ -16,6 +17,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 import com.kaijin.ChargingBench.*;
@@ -25,35 +27,41 @@ import cpw.mods.fml.common.asm.SideOnly;
 
 public class TEChargingBench extends TileEntity implements IEnergySink, IWrenchable, IInventory, ISidedInventory
 {
-	private ItemStack[] contents = new ItemStack[this.getSizeInventory()];
+	private ItemStack[] contents = new ItemStack[19];
+
 	private boolean initialized;
+
+	public int baseTier;
+
+	public int powerTier; // Transformer upgrades allow charging from energy crystals and lapotrons
 
 	// Base values
 	public int baseMaxInput;
 	public int baseStorage;
-	public int baseTier;
-	public int baseChargeRate;
+	//public int baseChargeRate;
 
 	// Adjustable values that need communicating via container
-	public int currentEnergy;
 	public int adjustedMaxInput;
 	public int adjustedStorage;
-	public int adjustedChargeRate;
+	//public int adjustedChargeRate;
+
+	public int currentEnergy;
+
+	public float drainFactor;
+	public float chargeFactor;
 
 	public boolean overCurrent = false;
 
 	public TEChargingBench(int i)
 	{
-		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-		this.baseMaxInput = (int)Math.pow(2.0D, (double)(2*i+5));
-
 		//base tier = what we're passed, so 1, 2 or 3
 		this.baseTier = i;
 		if (Utils.isDebug()) System.out.println("BaseTier: " + this.baseTier);
+
+		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
+		this.baseMaxInput = (int)Math.pow(2.0D, (double)(2 * this.baseTier + 3));
 		if (Utils.isDebug()) System.out.println("BaseMaxInput: " + this.baseMaxInput);
 
-		//Max energy stored is 32(Tier 1), 128(Tier 2) or 512(Tier 3) * 20 ticks * 5 seconds.
-		//Total of 3200(Tier 1), 12800(Tier 2), 51200(Tier 3)
 		switch(baseTier)
 		{
 		case 1:
@@ -70,17 +78,15 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		}
 		if (Utils.isDebug()) System.out.println("BaseStorage: " + this.baseStorage);
 
-		//commented out, we're changing the way this thing works!
-		//this.maxEnergy = (((int)Math.pow(2.0D, (double)(i * 2 + 3)) * 20) * 5);
-
-		//Energy used per tick is 32(Tier 1), 128(Tier 2), or 512(Tier 3). This will be used
-		//to output energy back to the grid when powered by redstone
-		this.baseMaxInput = (int)Math.pow(2.0D, (double)(2*i + 3));
-
 		//setup Adjusted variables to = defaults, we'll be adjusting them in entityUpdate
-		this.adjustedChargeRate = this.baseChargeRate;
+		//this.adjustedChargeRate = this.baseChargeRate;
 		this.adjustedMaxInput = this.baseMaxInput;
 		this.adjustedStorage = this.baseStorage;
+
+		this.powerTier = this.baseTier;
+
+		this.drainFactor = 1.0F;
+		this.chargeFactor = 1.0F;
 	}
 
 	@Override
@@ -116,13 +122,39 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	 */
 	private void selfDestroy()
 	{
-		BlockChargingBench.preDestroyBlock(worldObj, xCoord, yCoord, zCoord);
-		ItemStack stack = new ItemStack(ChargingBench.ChargingBench, 1, this.baseTier);
-		BlockChargingBench.dropItem(worldObj, stack, xCoord, yCoord, zCoord);
+		dropContents();
+		ItemStack stack = new ItemStack(ChargingBench.ChargingBench, 1, this.baseTier - 1);
+		dropItem(stack);
 		worldObj.setBlockAndMetadataWithUpdate(xCoord, yCoord, zCoord, 0, 0, true);
+		this.invalidate();
 	}
 
-	@Override
+	public void dropItem(ItemStack item)
+	{
+// All this math just to slightly alter the start location of the items? Who cares? They spray in every direction anyway. Let's speed this up a little.
+//		final double f1 = 0.7D;
+//		final double f2 = 0.3D;
+//		double dx = ((worldObj.rand.nextFloat() * f1) + f2) * 0.5D;
+//		double dy = ((worldObj.rand.nextFloat() * f1) + f2) * 0.5D;
+//		double dz = ((worldObj.rand.nextFloat() * f1) + f2) * 0.5D;
+//		EntityItem entityitem = new EntityItem(worldObj, (double)xCoord + dx, (double)yCoord + dy, (double)zCoord + dz, item);
+		EntityItem entityitem = new EntityItem(worldObj, (double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D, item);
+		entityitem.delayBeforeCanPickup = 10;
+		worldObj.spawnEntityInWorld(entityitem);
+	}
+
+	public void dropContents()
+	{
+		ItemStack item;
+		int i;
+		for (i = 0; i < contents.length; ++i)
+		{
+			item = contents[i];
+			if (item != null && item.stackSize > 0) dropItem(item);
+		}
+	}
+
+@Override
 	public int injectEnergy(Direction directionFrom, int supply)
 	{
 		int surplus = 0;
@@ -186,11 +218,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	}
 
 	@Override
-	public void setFacing(short facing)
-	{
-		// TODO Auto-generated method stub
-
-	}
+	public void setFacing(short facing)	{}
 
 	@Override
 	public boolean wrenchCanRemove(EntityPlayer entityPlayer)
@@ -209,57 +237,61 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	@Override
 	public int getSizeInventory()
 	{
-		// TODO Auto-generated method stub
-		return 19;
+		// Only input/output slots are accessible to machines
+		return 3;
 	}
 
 	@Override
 	public int getStartInventorySide(ForgeDirection side)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		switch (side)
+		{
+		case UP:
+			return ChargingBench.slotInput;
+		case DOWN:
+			return ChargingBench.slotOutput;
+		default:
+			return ChargingBench.slotPowerSource;
+		}
 	}
 
 	@Override
 	public int getSizeInventorySide(ForgeDirection side)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		// Each side accesses a single slot
+		return 1;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int i)
 	{
-		// TODO Auto-generated method stub
 		return contents[i];
 	}
 
 	@Override
-	public ItemStack decrStackSize(int var1, int var2)
+	public ItemStack decrStackSize(int slot, int amount)
 	{
-		// TODO Auto-generated method stub
-		if (this.contents[var1] != null)
+		if (this.contents[slot] != null)
 		{
-			ItemStack var3;
+			ItemStack output;
 
-			if (this.contents[var1].stackSize <= var2)
+			if (this.contents[slot].stackSize <= amount)
 			{
-				var3 = this.contents[var1];
-				this.contents[var1] = null;
-				this.onInventoryChanged();
-				return var3;
+				output = this.contents[slot];
+				this.contents[slot] = null;
+				this.onInventoryChanged(slot);
+				return output;
 			}
 			else
 			{
-				var3 = this.contents[var1].splitStack(var2);
+				output = this.contents[slot].splitStack(amount);
 
-				if (this.contents[var1].stackSize == 0)
+				if (this.contents[slot].stackSize == 0)
 				{
-					this.contents[var1] = null;
+					this.contents[slot] = null;
 				}
-
-				this.onInventoryChanged();
-				return var3;
+				this.onInventoryChanged(slot);
+				return output;
 			}
 		}
 		else
@@ -268,36 +300,124 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		}
 	}
 
-	public ItemStack getStackInSlotOnClosing(int var1)
+	public ItemStack getStackInSlotOnClosing(int slot)
 	{
-		if (this.contents[var1] == null)
+		if (this.contents[slot] == null)
 		{
 			return null;
 		}
 
-		ItemStack stack = this.contents[var1];
-		this.contents[var1] = null;
+		ItemStack stack = this.contents[slot];
+		this.contents[slot] = null;
 		return stack;
 	}
 
 	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack)
+	public void setInventorySlotContents(int slot, ItemStack itemstack)
 	{
-		this.contents[i] = itemstack;
+		this.contents[slot] = itemstack;
 
 		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit())
 		{
 			itemstack.stackSize = getInventoryStackLimit();
 		}
-		this.onInventoryChanged();
+		this.onInventoryChanged(slot);
 	}
+
+	public void doUpgradeEffects()
+	{
+		// Count our upgrades
+		ItemStack stack;
+		int ocCount = 0;
+		int tfCount = 0;
+		int esCount = 0;
+		for (int i = ChargingBench.slotUpgrade; i < ChargingBench.slotUpgrade + 4; ++i)
+		{
+    		stack = this.contents[i];
+    		if (stack != null)
+    		{
+    			if (stack.isItemEqual(ChargingBench.ic2overclockerUpg))
+    			{
+    				ocCount += stack.stackSize;
+    			}
+    			else if (stack.isItemEqual(ChargingBench.ic2storageUpg))
+    			{
+    				esCount += stack.stackSize;
+    			}
+    			else if (stack.isItemEqual(ChargingBench.ic2transformerUpg))
+    			{
+    				tfCount += stack.stackSize;
+    			}
+    		}
+		}
+
+		// Recompute upgrade effects
+		this.chargeFactor = (float)Math.pow(1.3F, ocCount); // 30% more power transferred to an item per overclocker, exponential.
+		this.drainFactor = (float)Math.pow(1.5F, ocCount); // 50% more power drained per overclocker, exponential. Yes, you waste power, that's how OCs work.
+
+		this.powerTier = this.baseTier + tfCount; // Allows better energy storage items to be plugged into the battery slot of lower tier benches.
+		if (this.powerTier > 3) this.powerTier = 3;
+
+		this.adjustedStorage = this.baseStorage * (esCount + 10) / 10; // 10% additional storage per upgrade.
+		if (this.currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage; // If storage has decreased, lose any excess energy.
+
+		this.adjustedMaxInput = (int)Math.pow(2.0D, (double)(2 * (this.baseTier + tfCount) + 3));
+		if (this.adjustedMaxInput > 2048) this.adjustedMaxInput = 2048; // You can feed EV in with 1-4 TF upgrades, if you so desire.
+	}
+
+	public void onInventoryChanged(int slot)
+    {
+    	//TODO Start processing inventory updates here
+		if (slot >= ChargingBench.slotCharging && slot < ChargingBench.slotCharging + 12)
+    	{
+    		// Initialize item charging? Make sure it's not fully charged already? Not sure
+			
+    	}
+    	else if (slot >= ChargingBench.slotUpgrade && slot < ChargingBench.slotUpgrade + 4)
+    	{
+    		// One of the upgrade slots was touched, so we need to recalculate.
+    		doUpgradeEffects();
+    	}
+    	else if (slot == ChargingBench.slotPowerSource)
+    	{
+    		// Perhaps eject the item if it's not valid?
+    		
+    	}
+    	else if (slot == ChargingBench.slotInput)
+    	{
+    		// Try to move it into the charging area, if it's valid
+    		// Perhaps eject the item if it's not valid?
+    		
+    	}
+    	else if (slot == ChargingBench.slotOutput)
+    	{
+    		// Nothing to do here? If some machine stuffs something here, the player needs to redesign it - or they're testing sided access.
+    		// Perhaps eject the item if it's not even electrical?
+    	}
+    	super.onInventoryChanged();
+    }
+
+    public boolean isItemValid(int slot, ItemStack stack)
+    {
+    	// Decide if the item is a valid IC2 electrical item
+    	if (stack != null && stack.getItem() instanceof IElectricItem)
+    	{
+    		IElectricItem item = (IElectricItem)(stack.getItem());
+    		// Is the item appropriate for this slot?
+    		if (slot == ChargingBench.slotPowerSource && item.canProvideEnergy() && item.getTier() <= this.powerTier) return true;
+    		if (slot >= ChargingBench.slotCharging && slot < ChargingBench.slotCharging + 12 && item.getTier() <= baseTier) return true;
+    		if (slot >= ChargingBench.slotUpgrade && slot < ChargingBench.slotUpgrade + 4 && (stack.isItemEqual(ChargingBench.ic2overclockerUpg) || stack.isItemEqual(ChargingBench.ic2transformerUpg) || stack.isItemEqual(ChargingBench.ic2storageUpg))) return true;
+    		if (slot == ChargingBench.slotInput && item.getTier() <= baseTier) return true;
+    		if (slot == ChargingBench.slotOutput) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
+    	}
+        return false; 
+    }
 
 	/**
 	 * Reads a tile entity from NBT.
 	 */
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
-		//TODO
 		if(!ChargingBench.proxy.isClient())
 		{
 			super.readFromNBT(nbttagcompound);
@@ -308,12 +428,12 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 			baseMaxInput = nbttagcompound.getInteger("maxInput");
 			baseStorage = nbttagcompound.getInteger("baseStorage");
 			baseTier = nbttagcompound.getInteger("baseTier");
-			baseChargeRate = nbttagcompound.getInteger("energyUsedPerTick");
+			//baseChargeRate = nbttagcompound.getInteger("energyUsedPerTick");
 
 			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
 			NBTTagList nbttagextras = nbttagcompound.getTagList("remoteSnapshot");
 
-			contents = new ItemStack[this.getSizeInventory()];
+			contents = new ItemStack[ChargingBench.inventorySize];
 
 			// Our inventory
 			for (int i = 0; i < nbttaglist.tagCount(); ++i)
@@ -326,6 +446,9 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 					contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
 				}
 			}
+
+			// We can calculate these, no need to save/load them.
+			doUpgradeEffects();
 		}
 	}
 
@@ -359,7 +482,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 			nbttagcompound.setInteger("maxInput", baseMaxInput);
 			nbttagcompound.setInteger("baseStorage", baseStorage);
 			nbttagcompound.setInteger("baseTier", baseTier);
-			nbttagcompound.setInteger("energyUsedPerTick", baseChargeRate);
+			//nbttagcompound.setInteger("energyUsedPerTick", baseChargeRate);
 		}
 	}
 
@@ -409,10 +532,10 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		{
 			//System.out.printf("TEFloodlightIC2.updateEntity: using %d energy from %d\n",
 			//	energyUsedPerTick, energy);
-			currentEnergy -= adjustedChargeRate;
+			// It's not this simple - it needs to drain a variable amount based on the items being charged and the overclockers installed. And why does it need a redstone signal?
+			//currentEnergy -= adjustedChargeRate;
 			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
-			if (currentEnergy < 0)
-				currentEnergy = 0;
+			if (currentEnergy < 0) currentEnergy = 0;
 		}
 
 	}
@@ -452,13 +575,10 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	@Override
 	public void invalidate()
 	{
-		if (worldObj!=null && initialized)
+		if (worldObj != null && initialized)
 		{
 			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
 		}
 		super.invalidate();
 	}
-
-	//Networking stuff
-
 }

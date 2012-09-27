@@ -30,13 +30,13 @@ public class GuiChargingBench extends GuiContainer
 		String type = "";
 		switch(tile.baseTier)
 		{
-		case 0:
+		case 1:
 			type = "LV";
 			break;
-		case 1:
+		case 2:
 			type = "MV";
 			break;
-		case 2:
+		case 3:
 			type = "HV";
 			break;
 		default:
