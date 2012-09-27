@@ -67,7 +67,6 @@ public class ChargingBench
 	{
 		try
 		{
-
 			Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
 			configuration.load();
 			ChargingBenchBlockID = configuration.getOrCreateBlockIdProperty("ChargingBench", 2491).getInt();
@@ -79,7 +78,6 @@ public class ChargingBench
 			System.out.println("[ChargingBench] Error while trying to access configuration!");
 			throw new RuntimeException(var1);
 		}
-
 	}
 
 	public static Block ChargingBench;
@@ -91,19 +89,20 @@ public class ChargingBench
 		LanguageRegistry.addName(ChargingBench, "Charging Bench");
 		GameRegistry.registerBlock(ChargingBench, ItemChargingBench.class);
 
+		//Charging Bench blocks
 		GameRegistry.registerTileEntity(TEChargingBench1.class, "LV Charging Bench");
 		GameRegistry.registerTileEntity(TEChargingBench2.class, "MV Charging Bench");
 		GameRegistry.registerTileEntity(TEChargingBench3.class, "HV Charging Bench");
 		
-		//Test Blocks, emit 32, 128 or 512 EU/T
+		LanguageRegistry.instance().addStringLocalization("blockChargingBench1.name", "LV Charging Bench");
+		LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "MV Charging Bench");
+		LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "HV Charging Bench");
+		
+		//Emitter Blocks, emit 32, 128 or 512 EU/T
 		GameRegistry.registerTileEntity(TEEmitter1.class, "LV Emitter");
 		GameRegistry.registerTileEntity(TEEmitter2.class, "MV Emitter");
 		GameRegistry.registerTileEntity(TEEmitter3.class, "HV Emitter");
 		GameRegistry.registerTileEntity(TEEmitter4.class, "EV Emitter");
-
-		LanguageRegistry.instance().addStringLocalization("blockChargingBench1.name", "LV Charging Bench");
-		LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "MV Charging Bench");
-		LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "HV Charging Bench");
 		
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock1.name", "LV Emitter");
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock2.name", "MV Emitter");
@@ -139,8 +138,8 @@ public class ChargingBench
 		if (Utils.isDebug()) System.out.println("ChargingBench.modsLoaded");
 
 		//new and improved recipes for a new and improved ChargingBench
-		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("copperCableItem"), 'W', Block.planks, 'C', Items.getItem("batBox")});
-		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("goldCableItem"), 'W', Block.planks, 'C', Items.getItem("mfeUnit")});
-		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("ironCableItem"), 'W', Block.planks, 'C', Items.getItem("mfsUnit")});
+		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("batBox")});
+		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("insulatedGoldCableItem"), 'W', Block.planks, 'C', Items.getItem("mfeUnit")});
+		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WWW", 'U', Items.getItem("insulatedIronCableItem"), 'W', Block.planks, 'C', Items.getItem("mfsUnit")});
 	}
 }
