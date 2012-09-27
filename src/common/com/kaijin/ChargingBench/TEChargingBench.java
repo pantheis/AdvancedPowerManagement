@@ -56,13 +56,13 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		//Total of 3200(Tier 1), 12800(Tier 2), 51200(Tier 3)
 		switch(baseTier)
 		{
-		case 0:
+		case 1:
 			this.baseStorage = 40000;
 			break;
-		case 1:
+		case 2:
 			this.baseStorage = 600000;
 			break;
-		case 2:
+		case 3:
 			this.baseStorage = 10000000;
 			break;
 		default:
@@ -75,7 +75,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 
 		//Energy used per tick is 32(Tier 1), 128(Tier 2), or 512(Tier 3). This will be used
 		//to output energy back to the grid when powered by redstone
-		this.baseMaxInput = (int)Math.pow(2.0D, (double)(2*i+5));
+		this.baseMaxInput = (int)Math.pow(2.0D, (double)(2*i + 3));
 
 		//setup Adjusted variables to = defaults, we'll be adjusting them in entityUpdate
 		this.adjustedChargeRate = this.baseChargeRate;

@@ -33,9 +33,9 @@ public class TEEmitter extends TileEntity implements IEnergySource, IWrenchable
 	public TEEmitter(int i)
 	{
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-		this.outputRate = (int)Math.pow(2.0D, (double)(2*i+5));
+		this.outputRate = (int)Math.pow(2.0D, (double)(2*i + 3));
 
-		//base tier = what we're passed, so 1, 2 or 3
+		//base tier = what we're passed, so 1, 2 or 3 (or 4)
 		this.baseTier = i;
 		if (Utils.isDebug()) System.out.println("BaseTier: " + this.baseTier + " ;baseOutput: " + outputRate);
 	}
@@ -52,12 +52,6 @@ public class TEEmitter extends TileEntity implements IEnergySource, IWrenchable
 		// TODO Auto-generated method stub
 		return initialized;
 	}
-
-	/**
-	 * This will cause the block to drop anything inside it, create a new item in the
-	 * world of its type, invalidate the tile entity, remove itself from the IC2
-	 * EnergyNet and clear the block space (set it to air)
-	 */
 
 	@Override
 	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side)
@@ -126,7 +120,7 @@ public class TEEmitter extends TileEntity implements IEnergySource, IWrenchable
 	@Override
 	public void invalidate()
 	{
-		if (worldObj!=null && initialized)
+		if (worldObj != null && initialized)
 		{
 			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
 		}
