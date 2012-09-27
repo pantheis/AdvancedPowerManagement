@@ -80,10 +80,23 @@ public class ChargingBench
 		GameRegistry.registerTileEntity(TEChargingBench1.class, "LV Charging Bench");
 		GameRegistry.registerTileEntity(TEChargingBench2.class, "MV Charging Bench");
 		GameRegistry.registerTileEntity(TEChargingBench3.class, "HV Charging Bench");
+		
+		//Test Blocks, emit 32, 128 or 512 EU/T
+		GameRegistry.registerTileEntity(TEEmitter1.class, "LV Emitter");
+		GameRegistry.registerTileEntity(TEEmitter2.class, "MV Emitter");
+		GameRegistry.registerTileEntity(TEEmitter3.class, "HV Emitter");
+		GameRegistry.registerTileEntity(TEEmitter4.class, "EV Emitter");
 
+		
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench1.name", "LV Charging Bench");
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "MV Charging Bench");
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "HV Charging Bench");
+		
+		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock1.name", "LV Emitter");
+		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock2.name", "MV Emitter");
+		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock3.name", "HV Emitter");
+		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock4.name", "EV Emitter");
+
 
 		NetworkRegistry.instance().registerGuiHandler(this.instance, proxy);
 
