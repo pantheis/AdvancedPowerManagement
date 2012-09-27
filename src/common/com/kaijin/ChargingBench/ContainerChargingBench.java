@@ -117,36 +117,40 @@ public class ContainerChargingBench extends Container
 	{
 		super.updateProgressBar(param, value);
 
-		if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar");
 		switch (param)
 		{
 		case 0:
-			if (Utils.isDebug()) System.out.println("case 0 tileentity.currentEnergy = " + this.tileentity.currentEnergy + " & -65536 | " + value);
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & -65536) + " | " + value);
 			this.tileentity.currentEnergy = this.tileentity.currentEnergy & -65536 | value;
 			break;
 
 		case 1:
-			if (Utils.isDebug()) System.out.println("case 1 tileentity.currentEnergy = " + this.tileentity.currentEnergy + " & -65536 | " + value + " << 16");
-			this.tileentity.currentEnergy = this.tileentity.currentEnergy & 65535 | value << 16;
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & 65535) + " | " + (value << 16));
+			this.tileentity.currentEnergy = this.tileentity.currentEnergy & 65535 | (value << 16);
 			break;
 
 		case 2:
-			if (Utils.isDebug()) System.out.println("case 2 tileentity.adjustedMaxInput = " + value);
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 2 tileentity.adjustedMaxInput = " + value);
 			this.tileentity.adjustedMaxInput = value;
+			break;
 
 		case 3:
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & -65536) + " | " + value);
 			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & -65536 | value;
-			if (Utils.isDebug()) System.out.println("case 3 tileentity.adjustedStorage = " + this.tileentity.adjustedStorage + " & -65536 | " + value);
 			break;
 
 		case 4:
-			if (Utils.isDebug()) System.out.println("case 4 tileentity.adjustedStorage = " + this.tileentity.adjustedStorage + " & -65536 | " + value + " << 16");
-			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & 65535 | value << 16;
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & 65535) + " | " + (value << 16));
+			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & 65535 | (value << 16);
 			break;
 
 		case 5:
-			if (Utils.isDebug()) System.out.println("case 5 tileentity.adjustedChargeRate = " + value);
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 5 tileentity.adjustedChargeRate = " + value);
 			this.tileentity.adjustedChargeRate = value;
+			break;
+			
+		default:
+			System.out.println("ContainerChargingBench.updateProgressBar - Warning: default case!");
 		}
 	}
 

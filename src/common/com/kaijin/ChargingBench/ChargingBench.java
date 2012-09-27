@@ -109,6 +109,11 @@ public class ChargingBench
 		{
 			FMLLog.getLogger().info("ChargingBench debugging enabled.");
 		}
+
+		// Attempting to add IC2 machine upgrades to the creative inventory for easier access
+		Items.getItem("overclockerUpgrade").getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
+		Items.getItem("energyStorageUpgrade").getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
+		Items.getItem("transformerUpgrade").getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
 	}
 
 	@PostInit

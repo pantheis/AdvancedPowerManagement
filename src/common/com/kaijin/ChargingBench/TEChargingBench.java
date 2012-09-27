@@ -427,25 +427,25 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		return worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 	}
 
-	public int gaugeEnergyScaled(int var1)
+	public int gaugeEnergyScaled(int gaugeSize)
 	{
-		if (Utils.isDebug()) System.out.println("TileEntityChargingBench.gaugeEnergyScaled");
-		if (Utils.isDebug()) System.out.println("currentEnergy: " + currentEnergy);
-		if (Utils.isDebug()) System.out.println("this.currentEnergy: " + this.currentEnergy);
+		//if (Utils.isDebug()) System.out.println("TileEntityChargingBench.gaugeEnergyScaled");
+		//if (Utils.isDebug()) System.out.println("currentEnergy: " + currentEnergy);
+		//if (Utils.isDebug()) System.out.println("this.currentEnergy: " + this.currentEnergy);
 		if (this.currentEnergy <= 0)
 		{
 			return 0;
 		}
 		else
 		{
-			int var2 = currentEnergy * var1 / adjustedStorage;
+			int result = currentEnergy * gaugeSize / adjustedStorage;
 
-			if (var2 > var1)
+			if (result > gaugeSize)
 			{
-				var2 = var1;
+				result = gaugeSize;
 			}
 
-			return var2;
+			return result;
 		}
 	}
 
