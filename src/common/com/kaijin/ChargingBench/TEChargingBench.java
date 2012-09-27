@@ -321,20 +321,22 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 				if (stack.isItemEqual(ChargingBench.ic2overclockerUpg))
 				{
 					ocCount += stack.stackSize;
-					if (ocCount > 64) ocCount = 64;
 				}
 				else if (stack.isItemEqual(ChargingBench.ic2storageUpg))
 				{
 					esCount += stack.stackSize;
-					if (esCount > 204) esCount = 204;
 				}
 				else if (stack.isItemEqual(ChargingBench.ic2transformerUpg))
 				{
 					tfCount += stack.stackSize;
-					if (tfCount > 3) tfCount = 3;
 				}
 			}
 		}
+
+		// Cap upgrades at sane quantities that won't result in negative energy storage and such.
+		if (ocCount > 64) ocCount = 64;
+		if (esCount > 204) esCount = 204;
+		if (tfCount > 3) tfCount = 3;
 
 		// Recompute upgrade effects
 		this.chargeFactor = (float)Math.pow(1.3F, ocCount); // 30% more power transferred to an item per overclocker, exponential.
@@ -504,24 +506,25 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	@Override
 	public void updateEntity()
 	{
-		if (ChargingBench.proxy.isClient())
-		{
-			return;
-		}
+		if (ChargingBench.proxy.isClient()) return;
+
 		if (!initialized && worldObj != null)
 		{
 			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
+
 		if (isActive())
 		{
 			//redstone activation stuff here, if any
 			//			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
 			//			if (currentEnergy < 0) currentEnergy = 0;
 		}
-		chargeBench();
-		sortInventory();
+
+		// Work done every tick
+		drainPowerSource();
 		chargeItems();
+		sortInventory();
 	}
 
 	/**
@@ -531,41 +534,30 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	 * ie. do not pull in more than we have room for
 	 * @return 
 	 */
-	private void chargeBench()
+	private void drainPowerSource()
 	{
 		int chargeReturned = 0;
-		ItemStack stack = getStackInSlot(ChargingBench.slotPowerSource);
-		ItemStack newStack;
-		int emptyItemID;
-		int chargedItemID;
-		int maxItemCharge;
-		int itemTransferLimit;
-		int itemTier;
-		IElectricItem item;
 
+		ItemStack stack = getStackInSlot(ChargingBench.slotPowerSource);
 		if (stack != null && stack.getItem() instanceof IElectricItem && this.currentEnergy < this.adjustedStorage)
 		{
-			item = (IElectricItem)(stack.getItem());
-			emptyItemID = item.getEmptyItemId();
-			chargedItemID = item.getChargedItemId();
-			maxItemCharge = item.getMaxCharge();
-			itemTransferLimit = item.getTransferLimit();
-			itemTier = item.getTier();
-			boolean itemCanProvideEnergy = item.canProvideEnergy();
+			IElectricItem powerSource = (IElectricItem)(stack.getItem());
 
-			if (itemTier <= this.powerTier && itemCanProvideEnergy)
+			int emptyItemID = powerSource.getEmptyItemId();
+			int chargedItemID = powerSource.getChargedItemId();
+			// Unused: int maxItemCharge = powerSource.getMaxCharge();
+			int itemTransferLimit = powerSource.getTransferLimit();
+
+			if (powerSource.getTier() <= this.powerTier && powerSource.canProvideEnergy())
 			{
-				//Grab how much energy we have room for here
+				// Test if the amount of energy we have room for is greater than what the item can transfer per tick.
 				int energyNeeded = this.adjustedStorage - this.currentEnergy;
-				//Test if the amount of energy we need is greater than what the item can transfer per tick
-				//if so, request the max it can transfer per tick
 				if (energyNeeded > itemTransferLimit)
 				{
+					// If so, request the max it can transfer per tick.
 					chargeReturned = ElectricItem.discharge(stack, itemTransferLimit, powerTier, false, false);
 				}
-				//If we need less than it can transfer per tick, request only what we have room for
-				//so we don't waste power
-				else
+				else // If we need less than it can transfer per tick, request only what we have room for so we don't waste power.
 				{
 					chargeReturned = ElectricItem.discharge(stack, energyNeeded, powerTier, false, false);
 				}
@@ -575,26 +567,25 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 			{
 				if (emptyItemID != chargedItemID)
 				{
-					newStack = new ItemStack(emptyItemID, 1, 0);
+					ItemStack newStack = new ItemStack(emptyItemID, 1, 0);
 					setInventorySlotContents(ChargingBench.slotPowerSource, newStack);
 				}
 			}
 		}
-		//Add the energy we received to our current energy level
+
+		// Add the energy we received to our current energy level,
 		currentEnergy += chargeReturned;
-		//and make sure that we didn't go over, if we somehow did, drop the excess
+		// and make sure that we didn't go over. If we somehow did, drop the excess.
 		if (currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage;
 	}
 
 	/**
-	 * First, look to see if there are any fully charged items in the main inventory. If so, check
-	 * the output slot to see if it's empty, if so, move the first fully charged item to the output
-	 * slot.
+	 * First, check the output slot to see if it's empty. If so, look to see if there are any fully 
+	 * charged items in the main inventory. Move the first fully charged item to the output slot.
 	 * 
-	 * Then, check to see if there are any free inventory slots, if so, check to see if there are any
-	 * items in the input slot, if so, move one from the input slot to a free main inventory slot. Do
-	 * not move more than one. We also need to check here to see if an item has a different item ID
-	 * as it starts to charge and if so, move one of those into the main inventory instead.
+	 * Then, check to see if there are any free charging slots. If so, check to see if there are any
+	 * items in the input slot. If so, move one from the input slot to a free charging slot. Do not
+	 * move more than one, if the stack contains more.
 	 */
 	private void sortInventory()
 	{
