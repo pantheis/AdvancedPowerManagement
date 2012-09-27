@@ -17,7 +17,7 @@ public class ContainerChargingBench extends Container
 	public TEChargingBench tileentity;
 	public int currentEnergy;
 	public int adjustedStorage;
-	public short adjustedChargeRate;
+	//public short adjustedChargeRate;
 	public short adjustedMaxInput;
 
 	public ContainerChargingBench(InventoryPlayer player, TEChargingBench tile)
@@ -27,9 +27,9 @@ public class ContainerChargingBench extends Container
 		this.currentEnergy = 0;
 		this.adjustedMaxInput = 0;
 		this.adjustedStorage = 0;
-		this.adjustedChargeRate = 0;
+		//this.adjustedChargeRate = 0;
 
-		int topOffset = 32; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
+		final int topOffset = 32; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
 		int xCol;
 		int yRow;
@@ -39,24 +39,24 @@ public class ContainerChargingBench extends Container
 		{
 			for (xCol = 0; xCol < 3; ++xCol) // 3 columns across
 			{
-				this.addSlotToContainer(new SlotChargeable(tile, 3 * yRow + xCol, 52 + xCol * 18, topOffset + yRow * 18, tileentity.baseTier + 1)); // 52, 32 is upper left input slot 
+				this.addSlotToContainer(new SlotChargeable(tile, ChargingBench.slotCharging + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
 			}
 		}
 
 		// Upgrade slots (Overclocker, storage)
-		this.addSlotToContainer(new SlotMachineUpgrade(tile, 12, 152, topOffset));
-		this.addSlotToContainer(new SlotMachineUpgrade(tile, 13, 152, topOffset + 18));
-		this.addSlotToContainer(new SlotMachineUpgrade(tile, 14, 152, topOffset + 36));
-		this.addSlotToContainer(new SlotMachineUpgrade(tile, 15, 152, topOffset + 54));
+		for (yRow = 0; yRow < 4; ++yRow) // 4 rows high
+		{
+			this.addSlotToContainer(new SlotMachineUpgrade(tile, ChargingBench.slotUpgrade + yRow, 152, topOffset + yRow * 18));
+		}
 
 		// Input Slot
-		this.addSlotToContainer(new SlotInput(tile, 17, 130, topOffset, tileentity.baseTier + 1));
+		this.addSlotToContainer(new SlotInput(tile, ChargingBench.slotInput, 130, topOffset));
 
 		// Output slot
-		this.addSlotToContainer(new SlotOutput(tile, 18, 130, topOffset + 54));
+		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.slotOutput, 130, topOffset + 54));
 
 		// Power source slot
-		this.addSlotToContainer(new SlotPowerSource(tile, 16, 8, topOffset + 54, tileentity.baseTier + 1));
+		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.slotPowerSource, 8, topOffset + 54));
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
@@ -80,78 +80,82 @@ public class ContainerChargingBench extends Container
 		// if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateCraftingResults");
 		super.updateCraftingResults();
 
-		for (int var1 = 0; var1 < this.crafters.size(); ++var1)
+		for (int crafterIndex = 0; crafterIndex < this.crafters.size(); ++crafterIndex)
 		{
-			ICrafting var2 = (ICrafting)this.crafters.get(var1);
+			ICrafting crafter = (ICrafting)this.crafters.get(crafterIndex);
 
 			if (this.currentEnergy != this.tileentity.currentEnergy)
 			{
-				var2.updateCraftingInventoryInfo(this, 0, this.tileentity.currentEnergy & 65535);
-				var2.updateCraftingInventoryInfo(this, 1, this.tileentity.currentEnergy >>> 16);
+				crafter.updateCraftingInventoryInfo(this, 0, this.tileentity.currentEnergy & 65535);
+				crafter.updateCraftingInventoryInfo(this, 1, this.tileentity.currentEnergy >>> 16);
 			}
 
 			if (this.adjustedMaxInput != this.tileentity.adjustedMaxInput)
 			{
-				var2.updateCraftingInventoryInfo(this, 2, this.tileentity.adjustedMaxInput);
+				crafter.updateCraftingInventoryInfo(this, 2, this.tileentity.adjustedMaxInput);
 			}
 
 			if (this.adjustedStorage != this.tileentity.adjustedStorage)
 			{
-				var2.updateCraftingInventoryInfo(this, 3, this.tileentity.adjustedStorage & 65535);
-				var2.updateCraftingInventoryInfo(this, 4, this.tileentity.adjustedStorage >>> 16);
+				crafter.updateCraftingInventoryInfo(this, 3, this.tileentity.adjustedStorage & 65535);
+				crafter.updateCraftingInventoryInfo(this, 4, this.tileentity.adjustedStorage >>> 16);
 			}
 
-			if (this.adjustedChargeRate != this.tileentity.adjustedChargeRate)
-			{
-				var2.updateCraftingInventoryInfo(this, 5, this.tileentity.adjustedChargeRate);
-			}
+			//if (this.adjustedChargeRate != this.tileentity.adjustedChargeRate)
+			//{
+			//	crafter.updateCraftingInventoryInfo(this, 5, this.tileentity.adjustedChargeRate);
+			//}
 		}
 		this.currentEnergy = this.tileentity.currentEnergy;
 		this.adjustedStorage = this.tileentity.adjustedStorage;
 		this.adjustedMaxInput = (short)this.tileentity.adjustedMaxInput;
-		this.adjustedChargeRate = (short)this.tileentity.adjustedChargeRate;
+		//this.adjustedChargeRate = (short)this.tileentity.adjustedChargeRate;
 	}
 
 	@Override
-	public void updateProgressBar(int var1, int var2)
+	public void updateProgressBar(int param, int value)
 	{
-		super.updateProgressBar(var1, var2);
+		super.updateProgressBar(param, value);
 
-		if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar");
-		switch (var1)
+		switch (param)
 		{
 		case 0:
-			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case0");
-			this.tileentity.currentEnergy = this.tileentity.currentEnergy & -65536 | var2;
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & -65536) + " | " + value);
+			this.tileentity.currentEnergy = this.tileentity.currentEnergy & -65536 | value;
 			break;
 
 		case 1:
-			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case1");
-			this.tileentity.currentEnergy = this.tileentity.currentEnergy & 65535 | var2 << 16;
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & 65535) + " | " + (value << 16));
+			this.tileentity.currentEnergy = this.tileentity.currentEnergy & 65535 | (value << 16);
 			break;
 
 		case 2:
-			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case2");
-			this.tileentity.adjustedMaxInput = var2;
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 2 tileentity.adjustedMaxInput = " + value);
+			this.tileentity.adjustedMaxInput = value;
+			break;
 
 		case 3:
-			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case3");
-			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & -65536 | var2;
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & -65536) + " | " + value);
+			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & -65536 | value;
 			break;
 
 		case 4:
-			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case4");
-			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & 65535 | var2 << 16;
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & 65535) + " | " + (value << 16));
+			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & 65535 | (value << 16);
 			break;
 
 		case 5:
-			if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar.case5");
-			this.tileentity.adjustedChargeRate = var2;
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 5 tileentity.adjustedChargeRate = " + value);
+			//this.tileentity.adjustedChargeRate = value;
+			break;
+			
+		default:
+			System.out.println("ContainerChargingBench.updateProgressBar - Warning: default case!");
 		}
 	}
 
     /**
-     * merges provided ItemStack with the first avaliable one in the container/player inventory
+     * Merges provided ItemStack with the first available one in the container/player inventory
      */
 	@Override
     protected boolean mergeItemStack(ItemStack stack, int startSlot, int endSlot, boolean reverseOrder)
@@ -271,7 +275,7 @@ public class ContainerChargingBench extends Container
 
 			if (slotID < playerInventoryStartSlot)
 			{
-				if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), true))
+				if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
 				{
 					return null;
 				}

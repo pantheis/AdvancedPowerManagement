@@ -46,6 +46,20 @@ public class ChargingBench
 	public static ChargingBench instance; //The instance of the mod that will be defined, populated, and callable
 
 	static int ChargingBenchBlockID;
+
+	// Constants for use in multiple classes
+	static final int slotInput = 0;
+	static final int slotOutput = 1;
+	static final int slotPowerSource = 2;
+	static final int slotCharging = 3;
+	static final int slotUpgrade = 15;
+	
+	static final int inventorySize = 19;
+
+	static ItemStack ic2overclockerUpg;
+	static ItemStack ic2transformerUpg;
+	static ItemStack ic2storageUpg;
+
 	public static boolean isDebugging;
 
 	@PreInit
@@ -73,7 +87,7 @@ public class ChargingBench
 	@Init
 	public void load(FMLInitializationEvent event)
 	{
-		ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("ChargingBench").setCreativeTab(CreativeTabs.tabBlock);
+		ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("ChargingBench").setCreativeTab(CreativeTabs.tabDeco);
 		LanguageRegistry.addName(ChargingBench, "Charging Bench");
 		GameRegistry.registerBlock(ChargingBench, ItemChargingBench.class);
 
@@ -87,7 +101,6 @@ public class ChargingBench
 		GameRegistry.registerTileEntity(TEEmitter3.class, "HV Emitter");
 		GameRegistry.registerTileEntity(TEEmitter4.class, "EV Emitter");
 
-		
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench1.name", "LV Charging Bench");
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "MV Charging Bench");
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "HV Charging Bench");
@@ -97,9 +110,7 @@ public class ChargingBench
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock3.name", "HV Emitter");
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock4.name", "EV Emitter");
 
-
 		NetworkRegistry.instance().registerGuiHandler(this.instance, proxy);
-
 		proxy.load();
 		if (proxy.isServer())
 		{
@@ -109,6 +120,17 @@ public class ChargingBench
 		{
 			FMLLog.getLogger().info("ChargingBench debugging enabled.");
 		}
+
+		// For internal reference to verify items can be placed in inventory.
+		ic2overclockerUpg = Items.getItem("overclockerUpgrade").copy();
+		ic2transformerUpg = Items.getItem("transformerUpgrade").copy();
+		ic2storageUpg = Items.getItem("energyStorageUpgrade").copy();
+
+		// Also adding them to the creative inventory, since current IC2 version doesn't.
+		ic2overclockerUpg.getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
+		ic2transformerUpg.getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
+		ic2storageUpg.getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
+
 	}
 
 	@PostInit

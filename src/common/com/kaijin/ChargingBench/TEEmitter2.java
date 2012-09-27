@@ -6,6 +6,6 @@ public class TEEmitter2 extends TEEmitter
 {
 	public TEEmitter2()
 	{
-		super(1);
+		super(2);
 	}
 }
