@@ -516,8 +516,8 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 		if (isActive())
 		{
 			//redstone activation stuff here, if any
-//			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
-//			if (currentEnergy < 0) currentEnergy = 0;
+			//			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
+			//			if (currentEnergy < 0) currentEnergy = 0;
 		}
 		chargeBench();
 		sortInventory();
@@ -551,8 +551,8 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 			maxItemCharge = item.getMaxCharge();
 			itemTransferLimit = item.getTransferLimit();
 			itemTier = item.getTier();
-
 			boolean itemCanProvideEnergy = item.canProvideEnergy();
+
 			if (itemTier <= this.powerTier && itemCanProvideEnergy)
 			{
 				//Grab how much energy we have room for here
@@ -613,7 +613,44 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	private void chargeItems()
 	{
 		// TODO Auto-generated method stub
+		int chargeTransferred = 0;
+		int tempCurrentEnergy = this.currentEnergy;
+		ItemStack newStack;
 
+		for(int i = 0; i < 12; i++)
+		{
+			ItemStack stack = this.getStackInSlot(ChargingBench.slotCharging + i);
+			if (stack != null && stack.getItem() instanceof IElectricItem)
+			{
+				IElectricItem item = (IElectricItem)(stack.getItem());
+				int emptyItemID = item.getEmptyItemId();
+				int chargedItemID = item.getChargedItemId();
+				int currentItemID = stack.itemID; 
+				int maxItemCharge = item.getMaxCharge();
+				int itemTransferLimit = item.getTransferLimit();
+				int itemTier = item.getTier();
+				int adjustedTransferLimit = (int)(itemTransferLimit * this.chargeFactor);
+
+				if (itemTier <= this.powerTier)
+				{
+					int amountNeeded = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, true);
+					int adjustedEnergyUse = (int) (amountNeeded * this.drainFactor);
+					if(adjustedEnergyUse <= tempCurrentEnergy)
+					{
+						if (currentItemID != chargedItemID)
+						{
+							newStack = new ItemStack(chargedItemID, 1, 0);
+							setInventorySlotContents(ChargingBench.slotCharging + i, newStack);
+						}
+						chargeTransferred = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, false);
+					}
+					adjustedEnergyUse = (int) (chargeTransferred * this.drainFactor);
+					tempCurrentEnergy -= adjustedEnergyUse;
+				}
+			}
+		}
+		this.currentEnergy = tempCurrentEnergy;
+		if(this.currentEnergy < 0) this.currentEnergy = 0;		
 	}
 
 	public boolean isActive()
