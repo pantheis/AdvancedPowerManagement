@@ -321,20 +321,22 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 				if (stack.isItemEqual(ChargingBench.ic2overclockerUpg))
 				{
 					ocCount += stack.stackSize;
-					if (ocCount > 64) ocCount = 64;
 				}
 				else if (stack.isItemEqual(ChargingBench.ic2storageUpg))
 				{
 					esCount += stack.stackSize;
-					if (esCount > 204) esCount = 204;
 				}
 				else if (stack.isItemEqual(ChargingBench.ic2transformerUpg))
 				{
 					tfCount += stack.stackSize;
-					if (tfCount > 3) tfCount = 3;
 				}
 			}
 		}
+
+		// Cap upgrades at sane quantities that won't result in negative energy storage and such.
+		if (ocCount > 64) ocCount = 64;
+		if (esCount > 204) esCount = 204;
+		if (tfCount > 3) tfCount = 3;
 
 		// Recompute upgrade effects
 		this.chargeFactor = (float)Math.pow(1.3F, ocCount); // 30% more power transferred to an item per overclocker, exponential.
