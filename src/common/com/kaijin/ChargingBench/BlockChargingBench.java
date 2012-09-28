@@ -105,16 +105,16 @@ public class BlockChargingBench extends Block
 				return 18;
 
 			case 3: // emitter 1
-				return 16;
+				return 19;
 
 			case 4: // emitter 2
-				return 17;
+				return 20;
 
 			case 5: // emitter 3
-				return 18;
+				return 21;
 				
 			case 6: // emitter 4
-				return 0;
+				return 22;
 
 			default: // something wrong?
 				return 0;
@@ -133,16 +133,16 @@ public class BlockChargingBench extends Block
 				return 34;
 
 			case 3: // emitter 1
-				return 16;
+				return 19;
 
 			case 4: // emitter 2
-				return 17;
+				return 20;
 
 			case 5: // emitter 3
-				return 18;
+				return 21;
 				
 			case 6: // emitter 4
-				return 0;
+				return 22;
 			}
 			return 0; // if we're here, something is wrong
 		}
