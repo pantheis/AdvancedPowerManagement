@@ -297,6 +297,19 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	{
 		this.contents[slot] = itemstack;
 
+		if (Utils.isDebug() && itemstack != null)
+		{
+			if (ChargingBench.proxy.isServer())
+			{
+				System.out.println("Server assigned stack tag: " + itemstack.stackTagCompound);
+				if (itemstack.stackTagCompound != null) System.out.println("     " + itemstack.stackTagCompound.getTags().toString());
+			}
+			if (ChargingBench.proxy.isClient())
+			{
+				System.out.println("Client assigned stack tag: " + itemstack.stackTagCompound);
+				if (itemstack.stackTagCompound != null) System.out.println("     " + itemstack.stackTagCompound.getTags().toString());
+			}
+		}
 		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit())
 		{
 			itemstack.stackSize = getInventoryStackLimit();
@@ -452,6 +465,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 			{
 				if (this.contents[i] != null)
 				{
+                	if (Utils.isDebug()) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
 					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
 					nbttagcompound1.setByte("Slot", (byte)i);
 					contents[i].writeToNBT(nbttagcompound1);
@@ -537,36 +551,40 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	{
 		int chargeReturned = 0;
 
-		ItemStack stack = contents[ChargingBench.slotPowerSource];
+		ItemStack stack = getStackInSlot(ChargingBench.slotPowerSource);
 		if (stack != null && stack.getItem() instanceof IElectricItem && this.currentEnergy < this.adjustedStorage)
 		{
 			IElectricItem powerSource = (IElectricItem)(stack.getItem());
 
-			if (powerSource.getTier() <= this.powerTier && powerSource.canProvideEnergy())
-			{
-				int itemTransferLimit = powerSource.getTransferLimit();
-				int energyNeeded = this.adjustedStorage - this.currentEnergy;
+			int emptyItemID = powerSource.getEmptyItemId();
+			int chargedItemID = powerSource.getChargedItemId();
 
-				// Test if the amount of energy we have room for is greater than what the item can transfer per tick.
-				if (energyNeeded > itemTransferLimit)
+			//if (Utils.isDebug()) System.out.println("emptyItemID: " + emptyItemID + " chargedItemID: " + chargedItemID + " - stack.itemID: " + stack.itemID);
+
+			if (stack.itemID == chargedItemID)
+			{
+				if (powerSource.getTier() <= this.powerTier && powerSource.canProvideEnergy())
 				{
-					// If so, request the max it can transfer per tick.
-					chargeReturned = ElectricItem.discharge(stack, itemTransferLimit, powerTier, false, false);
-				}
-				else // If we need less than it can transfer per tick, request only what we have room for so we don't waste power.
-				{
+					int itemTransferLimit = powerSource.getTransferLimit();
+					int energyNeeded = this.adjustedStorage - this.currentEnergy;
+
+					// Test if the amount of energy we have room for is greater than what the item can transfer per tick.
+					if (energyNeeded > itemTransferLimit)
+					{
+						// If so, request the max it can transfer per tick.
+						energyNeeded = itemTransferLimit;
+						// If we need less than it can transfer per tick, request only what we have room for so we don't waste power.
+					}
 					chargeReturned = ElectricItem.discharge(stack, energyNeeded, powerTier, false, false);
 				}
-			}
 
-			if (chargeReturned == 0)
-			{
-				int emptyItemID = powerSource.getEmptyItemId();
-				int chargedItemID = powerSource.getChargedItemId();
-				if (emptyItemID != chargedItemID)
+				// Workaround for buggy IC2 API .discharge that automatically switches stack to emptyItemID but leaves a stackTagCompound on it, so it can't be stacked with never-used empties  
+				if (chargedItemID != emptyItemID && ElectricItem.discharge(stack, 1, powerTier, false, true) == 0)
 				{
-					ItemStack newStack = new ItemStack(emptyItemID, 1, 0);
-					setInventorySlotContents(ChargingBench.slotPowerSource, newStack);
+					if (Utils.isDebug()) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
+					setInventorySlotContents(ChargingBench.slotPowerSource, new ItemStack(emptyItemID, 1, 0));
+					//ItemStack newStack = new ItemStack(emptyItemID, 1, 0);
+					//contents[ChargingBench.slotPowerSource] = newStack;
 				}
 			}
 		}
@@ -583,7 +601,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	 */
 	private void moveOutputItems()
 	{
-		// TODO Auto-generated method stub
 		ItemStack stack = contents[ChargingBench.slotOutput];
 		if (stack == null)
 		{
@@ -594,7 +611,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 				if (currentStack != null && currentStack.getItem() instanceof IElectricItem)
 				{
 					// Test if the item is fully charged (cannot accept any more power).
-					if (ElectricItem.charge(currentStack, 1, baseTier, false, true) == 0)
+					if (ElectricItem.charge(currentStack.copy(), 1, baseTier, false, true) == 0)
 					{
 						contents[ChargingBench.slotOutput] = currentStack;
 						contents[slot] = null;
@@ -640,41 +657,47 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	 */
 	private void chargeItems()
 	{
-		// TODO Auto-generated method stub
-		int chargeTransferred = 0;
-		ItemStack newStack;
+		//int chargeTransferred = 0;
 
-		for(int i = 0; i < 12; i++)
+		for(int i = ChargingBench.slotCharging; i < ChargingBench.slotCharging + 12; i++)
 		{
-			ItemStack stack = this.getStackInSlot(ChargingBench.slotCharging + i);
-			if (stack != null && stack.getItem() instanceof IElectricItem)
+			ItemStack stack = this.contents[i];
+			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				IElectricItem item = (IElectricItem)(stack.getItem());
-				int emptyItemID = item.getEmptyItemId();
-				int chargedItemID = item.getChargedItemId();
-				int currentItemID = stack.itemID; 
-				int maxItemCharge = item.getMaxCharge();
-				int itemTransferLimit = item.getTransferLimit();
-				if (itemTransferLimit == 0) itemTransferLimit = this.baseMaxInput;
-				int itemTier = item.getTier();
-				int adjustedTransferLimit = (int)Math.ceil(this.chargeFactor * itemTransferLimit);
-
-				if (itemTier <= this.baseTier)
+				if (item.getTier() <= this.baseTier)
 				{
-					int amountNeeded = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, true);
-					int adjustedEnergyUse = (int)Math.ceil((this.drainFactor / this.chargeFactor) * amountNeeded);
-					if(adjustedEnergyUse <= this.currentEnergy)
+					int itemTransferLimit = item.getTransferLimit();
+					if (itemTransferLimit == 0) itemTransferLimit = this.baseMaxInput;
+					int adjustedTransferLimit = (int)Math.ceil(this.chargeFactor * itemTransferLimit);
+
+					int amountNeeded;
+					if (item.getChargedItemId() != item.getEmptyItemId() || stack.isStackable())
 					{
-						if (currentItemID != chargedItemID)
-						{
-							newStack = new ItemStack(chargedItemID, 1, 0);
-							setInventorySlotContents(ChargingBench.slotCharging + i, newStack);
-						}
-						chargeTransferred = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, false);
+						// Running stack.copy() on every item every tick would be a horrible thing for performance, but the workaround is needed
+						// for ElectricItem.charge adding stackTagCompounds for charge level to EmptyItemID batteries even when run in simulate mode.
+						// Limiting its use by what is hopefully a broad enough test to catch all cases where it's necessary in order to avoid problems.
+						// Using it for any item types listed as stackable and for any items where the charged and empty item IDs differ.
+						amountNeeded = ElectricItem.charge(stack.copy(), adjustedTransferLimit, powerTier, true, true);
 					}
-					adjustedEnergyUse = (int)Math.ceil((this.drainFactor / this.chargeFactor) * chargeTransferred);
-					this.currentEnergy -= adjustedEnergyUse;
-					if(this.currentEnergy < 0) this.currentEnergy = 0;
+					else
+					{
+						amountNeeded = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, true);
+					}
+
+					int adjustedEnergyUse = (int)Math.ceil((this.drainFactor / this.chargeFactor) * amountNeeded);
+					if(adjustedEnergyUse <= this.currentEnergy && adjustedEnergyUse > 0)
+					{
+						// We don't need to do this with the current API, it's switching the ItemID for us. Just make sure we don't try to charge stacked batteries, as mentioned above!
+						//int chargedItemID = item.getChargedItemId();
+						//if (stack.itemID != chargedItemID)
+						//{
+						//	setInventorySlotContents(i, new ItemStack(chargedItemID, 1, 0));
+						//}
+						ElectricItem.charge(this.contents[i], adjustedTransferLimit, powerTier, true, false);
+						this.currentEnergy -= adjustedEnergyUse;
+						if (this.currentEnergy < 0) this.currentEnergy = 0;
+					}
 				}
 			}
 		}
