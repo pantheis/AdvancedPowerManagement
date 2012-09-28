@@ -670,12 +670,25 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 					int itemTransferLimit = item.getTransferLimit();
 					if (itemTransferLimit == 0) itemTransferLimit = this.baseMaxInput;
 					int adjustedTransferLimit = (int)Math.ceil(this.chargeFactor * itemTransferLimit);
-					//TODO stack.copy() is a horrible thing here, used as a workaround for ElectricItem.charge adding stackTagCompounds to EmptyItemID batteries even when run in simulate mode. 
-					int amountNeeded = ElectricItem.charge(stack.copy(), adjustedTransferLimit, powerTier, true, true);
+
+					int amountNeeded;
+					if (item.getChargedItemId() != item.getEmptyItemId() || stack.isStackable())
+					{
+						// Running stack.copy() on every item every tick would be a horrible thing for performance, but the workaround is needed
+						// for ElectricItem.charge adding stackTagCompounds for charge level to EmptyItemID batteries even when run in simulate mode.
+						// Limiting its use by what is hopefully a broad enough test to catch all cases where it's necessary in order to avoid problems.
+						// Using it for any item types listed as stackable and for any items where the charged and empty item IDs differ.
+						amountNeeded = ElectricItem.charge(stack.copy(), adjustedTransferLimit, powerTier, true, true);
+					}
+					else
+					{
+						amountNeeded = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, true);
+					}
+
 					int adjustedEnergyUse = (int)Math.ceil((this.drainFactor / this.chargeFactor) * amountNeeded);
 					if(adjustedEnergyUse <= this.currentEnergy && adjustedEnergyUse > 0)
 					{
-						// We don't need to do this with the current API, it's switching the ItemID for us. Just make sure we don't try to charge stacked batteries!
+						// We don't need to do this with the current API, it's switching the ItemID for us. Just make sure we don't try to charge stacked batteries, as mentioned above!
 						//int chargedItemID = item.getChargedItemId();
 						//if (stack.itemID != chargedItemID)
 						//{
