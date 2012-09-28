@@ -368,6 +368,7 @@ public class ContainerChargingBench extends Container
 
                         if (clickedStack != null)
                         {
+                        	if (Utils.isDebug()) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
                             result = clickedStack.copy();
                         }
 
@@ -378,13 +379,10 @@ public class ContainerChargingBench extends Container
                             if (mouseStack != null && slot.isItemValid(mouseStack))
                             {
                                 quantity = button == 0 ? mouseStack.stackSize : 1;
+                                if (quantity > slot.getSlotStackLimit()) quantity = slot.getSlotStackLimit();
 
-                                if (quantity > slot.getSlotStackLimit())
-                                {
-                                    quantity = slot.getSlotStackLimit();
-                                }
-
-                                slot.putStack(mouseStack.splitStack(quantity));
+                                ItemStack temp = mouseStack.splitStack(quantity); 
+                                slot.putStack(temp);
 
                                 if (mouseStack.stackSize == 0)
                                 {
@@ -455,6 +453,7 @@ public class ContainerChargingBench extends Container
                         }
 
                         slot.onSlotChanged();
+
                     }
                 }
             }
