@@ -1,52 +1,95 @@
-Introducing the completely new version of the IC2 Charging Bench!
-(http://forum.industrial-craft.net/index.php?page=Thread&threadID=929)
+Introducing the completely new Industrial Craft 2 Charging Bench!
 
-This mod adds a Charging Bench to IC2. The Charging Bench allows you to
-charge up to 9 items simultaneously! The Charging Bench comes in three tiers
-with each tier capable of charging all items at its tier level and below, but
-not above. If you want to charge your Quantum armor you'll need to craft a HV
-version. :)
+This mod adds a Charging Bench to Industrial Craft 2. The Charging Bench allows you to charge
+up to 9 items simultaneously. The Charging Bench comes in three tiers with each tier capable
+of charging all items at its tier level and below, but not above. If you want to charge your
+Quantum armor you'll need to craft a HV version. :)
+
 
 Introducing the three tiers of Charging Bench available!
 -------------------
-Due to advances in over-current circuit protection designs, the Charging Bench
-will not explode if exposed to higher than acceptable current but simply pop
-off onto the ground in a safe manner.
+Due to advances in over-current circuit protection designs, the Charging Bench will not
+explode if exposed to higher than acceptable current but simply pop off onto the ground in a
+safe manner.
 
 LV Charging Bench
-- The LV Charging Bench has a maximum input energy of 32 EU/t, a maximum base
-  energy storage of 40,000 EU and a base charge rate of 32 EU/t.
+- The LV Charging Bench has a maximum input energy of 32 EU/t, and a base energy storage
+  of 40,000 EU.
 
 MV Charging Bench
-- The MV Charging Bench has a maximum input energy of 128 EU/t, a maximum base
-  energy storage of 600,000 EU and a base charge rate of 128 EU/t.
+- The MV Charging Bench has a maximum input energy of 128 EU/t, and a base energy storage
+  of 600,000 EU.
 
 HV Charging Bench
-- The HV Charging Bench has a maximum input energy of 512 EU/t, a maximum base
-  energy storage of 10,000,000 EU and a base charge rate of 512 EU/t.
+- The HV Charging Bench has a maximum input energy of 512 EU/t, and a base energy storage
+  of 10,000,000 EU.
+
+All three charging benches will automatically place valid electrical items shift-clicked into
+them into the charging area if there is space free. Excess will be placed into the input slot.
+Once an item is done charging, it will be automatically moved to the output slot, if there is
+space, and another item from the input slot will be added to the main charging inventory.
+
+In this way, you can shift-click a full stack of RE-Batteries into the Charging Bench, it will
+automatically unstack them, charge them and you can quickly collect all of them by rapidly
+shift-clicking on the output slot!
 
 
 Available upgrades!
 -------------------
-All three tiers of the Charging Bench accept the standard array of upgrades, with each
-having a very specific effect.
+All three tiers of the Charging Bench accept the standard array of upgrades, with each having
+a very specific effect.
 
 - The transformer upgrade will allow the lower tier benches to accept higher input energy,
-  but not do anything else.
-  
-- The energy storage upgrade will increase the maximum base energy storage of the device by
-  a percentage of the base. This will allow each energy storage upgrade to have the same
-  relative effect on each tier without making them overpowered or underpowered on any one
-  tier.
-  
+  including energy crystals, lappacks, and lapotrons in the power input slot.
+
+- The energy storage upgrade will increase the maximum energy storage of the device by 10%
+  of the base amount per upgrade. This will allow each energy storage upgrade to have the same
+  relative effect on each tier without making them overpowered or underpowered on any one tier.
+
 - The overclock upgrade is where the Charging Bench will really shine. By using quantum
   tunneling technology, the Charging Bench is able to carefully manage the voltage and current
-  levels used to charge items and allow items to exceed their normally safe charge rates. With
-  enough overclock upgrades, a fully charged HV bench will be able to completely charge 2 1/2
-  Quantum Armor suits in less than 5 seconds!
+  levels used to charge items and allow items to exceed their normally safe charge rates. Each
+  upgrade increases both the charge rate exponentially by 30% per overclocker, and the
+  resulting energy drain exponentially by 50% per overclocker. Yes, you waste power, but
+  that's the price you pay whenever you use overclockers.
 
-  
+
 There's more!!
 -------------------
-There's a couple of new features coming that I think are going to impress and excite and
-really move this mod to the next level, but I'm keeping them secret for now!
+The Charging Benches Input, Output and Power slots are exposed to pipes/tubes! Input is on
+top, output is on bottom and the power slot is from any side. While the GUI restricts items
+placed into each of the slots to appropriate types there is no such restriction for pipe/tube
+access. It is up to the player to design their systems so that the wrong types of items don't
+get tossed onto the bench.
+
+Valid electrical items placed into the charging bench via tubes will automatically be moved
+from the input slot to an available charging slot, then moved to the output slot once fully
+charged. In this way, you can easily automate recharging of items!
+
+
+Emitters? Wha?
+-------------------
+As a bonus for people playing in creative mode or wanting to test electrical builds without
+having to constantly spawn laptron crystals and MFSUs, we have added Emitter blocks to the
+creative inventory! They have no crafting recipe and cannot be obtained except by spawning
+them via creative mode or something like NEI. There are four versions available.
+
+LV Emitter
+-  Emits LV current (32 EU/t) when powered by redstone
+
+MV Emitter
+-  Emits MV current (128 EU/t) when powered by redstone
+
+HV Emitter
+-  Emits HV current (512 EU/t) when powered by redstone
+
+EV Emitter
+-  Emits EV current (2048 EU/t) when powered by redstone
+
+
+Credits
+-------------------
+Original idea by Drashian
+Charging Bench graphics by Starlight
+Emitter graphics by Pantheis
+Code: Pantheis and Tallinu
