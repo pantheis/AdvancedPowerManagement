@@ -365,32 +365,32 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 
 	public void onInventoryChanged(int slot)
 	{
-		//TODO Start processing inventory updates here
-		if (slot >= ChargingBench.slotCharging && slot < ChargingBench.slotCharging + 12)
+		if (slot == ChargingBench.slotInput || slot == ChargingBench.slotOutput)
 		{
-			// Initialize item charging? Make sure it's not fully charged already? Not sure
-
+			// Move item from input to output if not valid. (Wrong tier or not electric item.)
+			if (contents[ChargingBench.slotInput] != null && contents[ChargingBench.slotOutput] == null)
+			{
+				if (!isItemValid(ChargingBench.slotInput, contents[ChargingBench.slotInput]))
+				{
+					contents[ChargingBench.slotOutput] = contents[ChargingBench.slotInput];
+					contents[ChargingBench.slotInput] = null;
+				}
+			}
 		}
 		else if (slot >= ChargingBench.slotUpgrade && slot < ChargingBench.slotUpgrade + 4)
 		{
 			// One of the upgrade slots was touched, so we need to recalculate.
 			doUpgradeEffects();
 		}
+		else if (slot >= ChargingBench.slotCharging && slot < ChargingBench.slotCharging + 12)
+		{
+			// Make sure it's not fully charged already? Not sure, full items will be output in updateEntity
+
+		}
 		else if (slot == ChargingBench.slotPowerSource)
 		{
-			// Perhaps eject the item if it's not valid?
-
-		}
-		else if (slot == ChargingBench.slotInput)
-		{
-			// Try to move it into the charging area, if it's valid
-			// Perhaps eject the item if it's not valid?
-
-		}
-		else if (slot == ChargingBench.slotOutput)
-		{
-			// Nothing to do here? If some machine stuffs something here, the player needs to redesign it - or they're testing sided access.
-			// Perhaps eject the item if it's not even electrical?
+			// Perhaps eject the item if it's not valid? No, just leave it alone. 
+			// If machinery added it the player can figure out the problem by trying to remove and replace it and realizing it won't fit.
 		}
 		super.onInventoryChanged();
 	}
