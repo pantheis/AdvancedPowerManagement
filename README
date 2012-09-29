@@ -60,7 +60,9 @@ The Charging Benches Input, Output and Power slots are exposed to pipes/tubes! I
 top, output is on bottom and the power slot is from any side. While the GUI restricts items
 placed into each of the slots to appropriate types there is no such restriction for pipe/tube
 access. It is up to the player to design their systems so that the wrong types of items don't
-get tossed onto the bench.
+get tossed onto the bench. But not to worry, there are no negative consequences to inserting
+incorrect items, aside from temporarily clogging up the slot; the bench simply will not do
+anything with items that it can't process.
 
 Valid electrical items placed into the charging bench via tubes will automatically be moved
 from the input slot to an available charging slot, then moved to the output slot once fully
@@ -69,10 +71,11 @@ charged. In this way, you can easily automate recharging of items!
 
 Emitters? Wha?
 -------------------
-As a bonus for people playing in creative mode or wanting to test electrical builds without
-having to constantly spawn laptron crystals and MFSUs, we have added Emitter blocks to the
-creative inventory! They have no crafting recipe and cannot be obtained except by spawning
-them via creative mode or something like NEI. There are four versions available.
+Originally created for testing purposes, we have added these Emitter blocks to the creative
+inventory as a bonus for people playing in creative mode or wanting to test electrical builds
+without having to constantly spawn lapotron crystals and MFSUs. 
+
+There are four versions available.
 
 LV Emitter
 -  Emits LV current (32 EU/t) when powered by redstone
