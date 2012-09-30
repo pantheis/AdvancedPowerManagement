@@ -205,7 +205,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	@Override
 	public boolean wrenchCanRemove(EntityPlayer entityPlayer)
 	{
-		return true;
+		return false;
 	}
 
 	@Override
