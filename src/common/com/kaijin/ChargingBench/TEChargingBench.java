@@ -218,7 +218,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	public int getSizeInventory()
 	{
 		// Only input/output slots are accessible to machines
-		return 0;
+		return 3;
 	}
 
 	@Override
