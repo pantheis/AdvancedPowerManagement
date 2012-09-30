@@ -346,7 +346,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 
 		// Cap upgrades at sane quantities that won't result in negative energy storage and such.
 		if (ocCount > 64) ocCount = 64;
-		if (esCount > 204) esCount = 204;
+		if (esCount > 64) esCount = 64;
 		if (tfCount > 3) tfCount = 3;
 
 		// Recompute upgrade effects
