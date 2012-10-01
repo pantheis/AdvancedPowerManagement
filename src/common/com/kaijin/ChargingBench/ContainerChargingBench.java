@@ -56,7 +56,7 @@ public class ContainerChargingBench extends Container
 		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.slotOutput, 130, topOffset + 54));
 
 		// Power source slot
-		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.slotPowerSource, 8, topOffset + 54));
+		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.slotPowerSource, 130, topOffset + 27));
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
@@ -72,6 +72,15 @@ public class ContainerChargingBench extends Container
 		{
 			this.addSlotToContainer(new Slot(player, yRow, 8 + yRow * 18, topOffset + 134));
 		}
+		
+		//TODO fix slot, needs a custom armor slot type, can't use SlotArmor as it is private, will
+		//need to make our own
+		
+		// Player armor
+        for (yRow = 0; yRow < 4; ++yRow)
+        {
+            this.addSlotToContainer(new Slot(player, player.getSizeInventory() - 1 - yRow, 8, topOffset + yRow * 18));
+        }
 	}
 
 	@Override

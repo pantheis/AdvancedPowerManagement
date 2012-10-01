@@ -50,42 +50,36 @@ public class TEEmitter extends TileEntity implements IEnergySource, IWrenchable
 	@Override
 	public boolean isAddedToEnergyNet()
 	{
-		// TODO Auto-generated method stub
 		return initialized;
 	}
 
 	@Override
 	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public short getFacing()
 	{
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public void setFacing(short facing)
 	{
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public boolean wrenchCanRemove(EntityPlayer entityPlayer)
 	{
-		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 
 	@Override
 	public float getWrenchDropRate()
 	{
-		// TODO Auto-generated method stub
 		return 1.0F;
 	}
 
