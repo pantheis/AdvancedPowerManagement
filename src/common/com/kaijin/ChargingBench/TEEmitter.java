@@ -23,7 +23,7 @@ import com.kaijin.ChargingBench.*;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
-public class TEEmitter extends TileEntity implements IEnergySource, IWrenchable
+public class TEEmitter extends TileEntity implements IEnergySource
 {
 	private boolean initialized;
 
@@ -51,36 +51,6 @@ public class TEEmitter extends TileEntity implements IEnergySource, IWrenchable
 	public boolean isAddedToEnergyNet()
 	{
 		return initialized;
-	}
-
-	@Override
-	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side)
-	{
-		return false;
-	}
-
-	@Override
-	public short getFacing()
-	{
-		return 0;
-	}
-
-	@Override
-	public void setFacing(short facing)
-	{
-
-	}
-
-	@Override
-	public boolean wrenchCanRemove(EntityPlayer entityPlayer)
-	{
-		return false;
-	}
-
-	@Override
-	public float getWrenchDropRate()
-	{
-		return 1.0F;
 	}
 
 	@Override

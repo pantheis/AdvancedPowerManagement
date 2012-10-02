@@ -25,7 +25,7 @@ import com.kaijin.ChargingBench.*;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
-public class TEChargingBench extends TileEntity implements IEnergySink, IWrenchable, IInventory, ISidedInventory
+public class TEChargingBench extends TileEntity implements IEnergySink, IInventory, ISidedInventory
 {
 	private ItemStack[] contents = new ItemStack[19];
 
@@ -185,33 +185,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 			}
 		}
 		return surplus;
-	}
-
-	@Override
-	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side)
-	{
-		return false;
-	}
-
-	@Override
-	public short getFacing()
-	{
-		return 0;
-	}
-
-	@Override
-	public void setFacing(short facing)	{}
-
-	@Override
-	public boolean wrenchCanRemove(EntityPlayer entityPlayer)
-	{
-		return false;
-	}
-
-	@Override
-	public float getWrenchDropRate()
-	{
-		return 1.0F;
 	}
 
 	@Override
