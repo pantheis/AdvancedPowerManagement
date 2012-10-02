@@ -47,16 +47,9 @@ public class ServerPacketHandler implements IPacketHandler
 	 *             byte 1: x location of TileEntity
 	 *             byte 2: y location of TileEntity
 	 *             byte 3: z location of TileEntity
-	 *             byte 4: boolean information, false = no valid snapshot, true = valid snapshot
-	 *         1=@Deprecated
-	 *             byte 1: x location of TileEntity
-	 *             byte 2: y location of TileEntity
-	 *             byte 3: z location of TileEntity
-	 *             byte 4: int "metadata", sync client TE rotation and lights with server
-	 *             
-	 * remaining bytes: data for packet
+	 *             byte 4: int, charge level for texture
 	 */
-
+	
 	@Override
 	public void onPacketData(NetworkManager network, Packet250CustomPayload packet, Player player)
 	{

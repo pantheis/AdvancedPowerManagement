@@ -31,6 +31,9 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 
 	private boolean initialized;
 
+	private int tickTime;
+	private int tickDelay = 10;
+
 	public int baseTier;
 
 	public int powerTier; // Transformer upgrades allow charging from energy crystals and lapotrons
@@ -49,6 +52,10 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 
 	public float drainFactor;
 	public float chargeFactor;
+
+	//For outside texture display
+	public int chargeLevel;
+	private int oldChargeLevel;
 
 	public TEChargingBench(int i)
 	{
@@ -438,7 +445,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			{
 				if (this.contents[i] != null)
 				{
-                	if (Utils.isDebug()) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
+					if (Utils.isDebug()) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
 					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
 					nbttagcompound1.setByte("Slot", (byte)i);
 					contents[i].writeToNBT(nbttagcompound1);
@@ -489,9 +496,13 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 	public void closeChest() {}
 
 	@Override
-	public void updateEntity()
+	public void updateEntity() //TODO Marked for easy access
 	{
-		if (ChargingBench.proxy.isClient()) return;
+		if (ChargingBench.proxy.isClient())
+		{
+//			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			return;
+		}
 
 		if (!initialized && worldObj != null)
 		{
@@ -505,6 +516,26 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			//			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
 			//			if (currentEnergy < 0) currentEnergy = 0;
 		}
+
+		/*
+		 * trigger this only when charge level passes where it would need to update
+		 * the client texture
+		 */
+		//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+
+		// Work done on a tick delay
+		if (tickTime == 0)
+		{
+			tickTime = tickDelay;
+			this.oldChargeLevel = this.chargeLevel;
+			this.chargeLevel = gaugeEnergyScaled(13);
+			if (this.oldChargeLevel != this.chargeLevel)
+			{
+				if (Utils.isDebug()) System.out.println("TE.oldChargeLevel: " + this.oldChargeLevel + "chargeLevel:" + this.chargeLevel); 
+				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			}
+		}
+		if(tickTime > 0) tickTime--;
 
 		// Work done every tick
 		drainPowerSource();
@@ -713,5 +744,38 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
 		}
 		super.invalidate();
+	}
+
+	//Networking stuff
+	@Override
+	public Packet250CustomPayload getAuxillaryInfoPacket()
+	{
+		if (Utils.isDebug()) System.out.println("te.getAuxillaryInfoPacket()");
+		return createExtraTEInfoPacket();
+	}
+
+	private Packet250CustomPayload createExtraTEInfoPacket()
+	{
+		if (Utils.isDebug()) System.out.println("te.createExtraTEInfoPacket");
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		DataOutputStream data = new DataOutputStream(bytes);
+		try
+		{
+			data.writeInt(1);
+			data.writeInt(this.xCoord);
+			data.writeInt(this.yCoord);
+			data.writeInt(this.zCoord);
+			data.writeInt(this.chargeLevel);
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = "ChargingBench"; // CHANNEL MAX 16 CHARS
+		packet.data = bytes.toByteArray();
+		packet.length = packet.data.length;
+		return packet;
 	}
 }
