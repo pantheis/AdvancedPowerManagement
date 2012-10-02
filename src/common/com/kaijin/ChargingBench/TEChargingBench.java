@@ -500,7 +500,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 	{
 		if (ChargingBench.proxy.isClient())
 		{
-//			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			//			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 			return;
 		}
 
@@ -523,19 +523,13 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 		 */
 		//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 
-		// Work done on a tick delay
-		if (tickTime == 0)
+		this.oldChargeLevel = this.chargeLevel;
+		this.chargeLevel = gaugeEnergyScaled(13);
+		if (this.oldChargeLevel != this.chargeLevel)
 		{
-			tickTime = tickDelay;
-			this.oldChargeLevel = this.chargeLevel;
-			this.chargeLevel = gaugeEnergyScaled(13);
-			if (this.oldChargeLevel != this.chargeLevel)
-			{
-				if (Utils.isDebug()) System.out.println("TE.oldChargeLevel: " + this.oldChargeLevel + "chargeLevel:" + this.chargeLevel); 
-				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-			}
+			if (Utils.isDebug()) System.out.println("TE.oldChargeLevel: " + this.oldChargeLevel + "chargeLevel:" + this.chargeLevel); 
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
-		if(tickTime > 0) tickTime--;
 
 		// Work done every tick
 		drainPowerSource();
@@ -761,7 +755,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 		DataOutputStream data = new DataOutputStream(bytes);
 		try
 		{
-			data.writeInt(1);
+			data.writeInt(0);
 			data.writeInt(this.xCoord);
 			data.writeInt(this.yCoord);
 			data.writeInt(this.zCoord);

@@ -87,6 +87,7 @@ public class ClientPacketHandler implements IPacketHandler
 			if (tile instanceof TEChargingBench)
 			{
 				((TEChargingBench)tile).chargeLevel = this.chargeLevel;
+				if (Utils.isDebug()) System.out.println("ClientPacketHandler.chargeLevel: " + this.chargeLevel);
 				world.markBlockNeedsUpdate(x, y, z);
 			}
 		}
