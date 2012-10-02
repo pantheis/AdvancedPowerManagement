@@ -61,6 +61,7 @@ public class ChargingBench
 	static ItemStack ic2storageUpg;
 
 	public static boolean isDebugging;
+	public static boolean armorShiftClickTweak;
 
 	@PreInit
 	public static void preInit(FMLPreInitializationEvent event)
@@ -70,6 +71,7 @@ public class ChargingBench
 			Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
 			configuration.load();
 			ChargingBenchBlockID = configuration.getOrCreateBlockIdProperty("ChargingBench", 2491).getInt();
+			armorShiftClickTweak = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("armorShiftClickTweak", configuration.CATEGORY_GENERAL, true).value));
 			isDebugging = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("debug", configuration.CATEGORY_GENERAL, false).value));
 			configuration.save();
 		}
