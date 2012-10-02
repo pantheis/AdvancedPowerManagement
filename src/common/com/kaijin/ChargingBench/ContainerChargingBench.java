@@ -340,12 +340,16 @@ public class ContainerChargingBench extends Container
 				{
 					if (original.getItem() instanceof ItemArmor && original.getItem() instanceof IElectricItem && !((Slot)this.inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
 					{
-						// Move electric armor from armor slots into main inventory
+						// Move electric armor from main inventory into armor slots
 						int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
 						if (!this.mergeItemStack(sourceStack, armorType, armorType + 1, false))
 						{
 							return null;
 						}
+					}
+					else
+					{
+						return null;
 					}
 				}
 			}
