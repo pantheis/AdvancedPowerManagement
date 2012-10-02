@@ -94,7 +94,7 @@ public class BlockChargingBench extends Block
 	@SideOnly(Side.CLIENT)
 	public int getBlockTexture(IBlockAccess blocks, int x, int y, int z, int side)
 	{
-		int meta = blocks.getBlockMetadata(x, y, z); 
+		int meta = blocks.getBlockMetadata(x, y, z);
 		TileEntity tile = blocks.getBlockTileEntity(x, y, z);
 		if (tile instanceof TEChargingBench)
 		{
@@ -106,9 +106,9 @@ public class BlockChargingBench extends Block
 				return 0;
 
 			case 1: // top
-					return this.baseTexture + meta;
+				return this.baseTexture + meta;
 			default:
-					return this.sideTexture + meta + chargeLevel;
+				return this.sideTexture + meta + chargeLevel;
 			}
 		}
 		else if (tile instanceof TEEmitter)
@@ -119,7 +119,7 @@ public class BlockChargingBench extends Block
 				return 0;
 
 			default:
-					return this.baseTexture + meta;
+				return this.baseTexture + meta;
 			}
 		}
 		//If we're here, something is wrong
@@ -157,10 +157,13 @@ public class BlockChargingBench extends Block
 	}
 
 	@Override
-	public boolean canConnectRedstone(IBlockAccess world, int X, int Y, int Z, int direction)
+	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int direction)
 	{
-		return true; // Will appear to connect to RedPower wires and such.
-		// Currently still causes redstone dust to appear to connect in some cases where it shouldn't; Not our fault.
+		if(world.getBlockMetadata(x, y, z) < 3)
+		{
+			return false;
+		}
+		return true;
 	}
 
 	@Override
