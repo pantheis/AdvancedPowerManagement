@@ -15,6 +15,7 @@ public class ContainerChargingBench extends Container
 {
 	private final int benchShiftClickRange = 17;
 	private final int playerInventoryStartSlot = 19;
+	private final int playerArmorStartSlot = 55;
 
 	public TEChargingBench tileentity;
 	public int currentEnergy;
@@ -302,21 +303,20 @@ public class ContainerChargingBench extends Container
 					return null;
 				}
 			}
-
-			// External Slots
-			// Move regular armor from armor slots into main inventory
-			else if (slotID >= 55 && slotID < 59)
+			else if (slotID >= playerArmorStartSlot && slotID < playerArmorStartSlot + 4)
 			{
+				// Player Armor Slots
 				if ((original.getItem() instanceof ItemArmor) && !(original.getItem() instanceof IElectricItem))
 				{
+					// Move regular armor from armor slots into main inventory
 					if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
 					{
 						return null;
 					}	
 				}
-				// Put electrical armor items from armor slots into bench
 				else if (!this.mergeItemStack(sourceStack, 0, benchShiftClickRange, false))
 				{
+					// Put electrical armor items from armor slots into bench
 					// if that fails, try to put them into our main inventory instead
 					if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement)
 					{
@@ -324,17 +324,33 @@ public class ContainerChargingBench extends Container
 					}
 				}
 			}
-
-			// Move regular armor from main inventory into armor slots
 			else if ((original.getItem() instanceof ItemArmor) && !(original.getItem() instanceof IElectricItem) && !((Slot)this.inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
 			{
+				// Move regular armor from main inventory into armor slots
 				int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
 				if (!this.mergeItemStack(sourceStack, armorType, armorType + 1, false))
 				{
 					return null;
 				}
 			}
-			
+			else
+			{
+				// Move stuff from anywhere not caught above to our charging bench inventory
+				if (!this.mergeItemStack(sourceStack, 0, benchShiftClickRange, false))
+				{
+					if (original.getItem() instanceof ItemArmor && original.getItem() instanceof IElectricItem && !((Slot)this.inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
+					{
+						// Move electric armor from armor slots into main inventory
+						int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
+						if (!this.mergeItemStack(sourceStack, armorType, armorType + 1, false))
+						{
+							return null;
+						}
+					}
+				}
+			}
+
+
 			/*
 			 * FIXME Need to fix having electric armor not move from player inventory into
 			 * open armor slots when charging bench is completely full. Currently electric
@@ -342,12 +358,6 @@ public class ContainerChargingBench extends Container
 			 * move to the charging bench if the bench has room, then move to open armor slots
 			 * if the armor slots have room, then do nothing.
 			 */
-			
-			// Move stuff from anywhere not caught above to our charging bench inventory
-			else if (!this.mergeItemStack(sourceStack, 0, benchShiftClickRange, false))
-			{
-				return null;
-			}
 
 			if (sourceStack.stackSize == 0)
 			{
