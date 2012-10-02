@@ -1,10 +1,12 @@
 package com.kaijin.ChargingBench;
 
+import ic2.api.IElectricItem;
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.ItemArmor;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
 import cpw.mods.fml.common.network.Player;
@@ -56,7 +58,7 @@ public class ContainerChargingBench extends Container
 		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.slotOutput, 130, topOffset + 54));
 
 		// Power source slot
-		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.slotPowerSource, 8, topOffset + 54));
+		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.slotPowerSource, 130, topOffset + 27));
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
@@ -71,6 +73,15 @@ public class ContainerChargingBench extends Container
 		for (yRow = 0; yRow < 9; ++yRow)
 		{
 			this.addSlotToContainer(new Slot(player, yRow, 8 + yRow * 18, topOffset + 134));
+		}
+
+		//TODO fix slot, needs a custom armor slot type, can't use SlotArmor as it is private, will
+		//need to make our own
+
+		// Player armor
+		for (yRow = 0; yRow < 4; ++yRow)
+		{
+			this.addSlotToContainer(new SlotPlayerArmor(player, player.getSizeInventory() - 1 - yRow, 8, topOffset + yRow * 18, yRow));
 		}
 	}
 
@@ -148,119 +159,119 @@ public class ContainerChargingBench extends Container
 			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 5 tileentity.adjustedChargeRate = " + value);
 			//this.tileentity.adjustedChargeRate = value;
 			break;
-			
+
 		default:
 			System.out.println("ContainerChargingBench.updateProgressBar - Warning: default case!");
 		}
 	}
 
-    /**
-     * Merges provided ItemStack with the first available one in the container/player inventory
-     */
+	/**
+	 * Merges provided ItemStack with the first available one in the container/player inventory
+	 */
 	@Override
-    protected boolean mergeItemStack(ItemStack stack, int startSlot, int endSlot, boolean reverseOrder)
-    {
-        boolean result = false;
-        int slotID = startSlot;
+	protected boolean mergeItemStack(ItemStack stack, int startSlot, int endSlot, boolean reverseOrder)
+	{
+		boolean result = false;
+		int slotID = startSlot;
 
-        if (reverseOrder)
-        {
-            slotID = endSlot - 1;
-        }
+		if (reverseOrder)
+		{
+			slotID = endSlot - 1;
+		}
 
-        Slot currentSlot;
-        ItemStack currentStack;
+		Slot currentSlot;
+		ItemStack currentStack;
 
-        if (stack.isStackable())
-        {
-            while (stack.stackSize > 0 && (!reverseOrder && slotID < endSlot || reverseOrder && slotID >= startSlot))
-            {
-                currentSlot = (Slot)this.inventorySlots.get(slotID);
-                currentStack = currentSlot.getStack();
+		if (stack.isStackable())
+		{
+			while (stack.stackSize > 0 && (!reverseOrder && slotID < endSlot || reverseOrder && slotID >= startSlot))
+			{
+				currentSlot = (Slot)this.inventorySlots.get(slotID);
+				currentStack = currentSlot.getStack();
 
-                if (currentStack != null && currentStack.itemID == stack.itemID
-                		&& (!stack.getHasSubtypes() || stack.getItemDamage() == currentStack.getItemDamage())
-                		&& ItemStack.func_77970_a(stack, currentStack) // func_77970_a = areItemStackTagCompoundsEqual
-                		&& currentSlot.isItemValid(stack))
-                {
-                    int limit = Math.min(stack.getMaxStackSize(), currentSlot.getSlotStackLimit());
-                    int sum = currentStack.stackSize + stack.stackSize;
-                    if (sum <= limit)
-                    {
-                        stack.stackSize = 0;
-                        currentStack.stackSize = sum;
-                        currentSlot.onSlotChanged();
-                        result = true;
-                    }
-                    else if (currentStack.stackSize < limit)
-                    {
-                    	int diff = limit - currentStack.stackSize;
-                        stack.stackSize -= diff;
-                        currentStack.stackSize = limit;
-                        currentSlot.onSlotChanged();
-                        result = true;
-                    }
-                }
+				if (currentStack != null && currentStack.itemID == stack.itemID
+						&& (!stack.getHasSubtypes() || stack.getItemDamage() == currentStack.getItemDamage())
+						&& ItemStack.func_77970_a(stack, currentStack) // func_77970_a = areItemStackTagCompoundsEqual
+						&& currentSlot.isItemValid(stack))
+				{
+					int limit = Math.min(stack.getMaxStackSize(), currentSlot.getSlotStackLimit());
+					int sum = currentStack.stackSize + stack.stackSize;
+					if (sum <= limit)
+					{
+						stack.stackSize = 0;
+						currentStack.stackSize = sum;
+						currentSlot.onSlotChanged();
+						result = true;
+					}
+					else if (currentStack.stackSize < limit)
+					{
+						int diff = limit - currentStack.stackSize;
+						stack.stackSize -= diff;
+						currentStack.stackSize = limit;
+						currentSlot.onSlotChanged();
+						result = true;
+					}
+				}
 
-                if (reverseOrder)
-                {
-                    --slotID;
-                }
-                else
-                {
-                    ++slotID;
-                }
-            }
-        }
+				if (reverseOrder)
+				{
+					--slotID;
+				}
+				else
+				{
+					++slotID;
+				}
+			}
+		}
 
-        if (stack.stackSize > 0)
-        {
-            if (reverseOrder)
-            {
-                slotID = endSlot - 1;
-            }
-            else
-            {
-                slotID = startSlot;
-            }
+		if (stack.stackSize > 0)
+		{
+			if (reverseOrder)
+			{
+				slotID = endSlot - 1;
+			}
+			else
+			{
+				slotID = startSlot;
+			}
 
-            while (!reverseOrder && slotID < endSlot || reverseOrder && slotID >= startSlot)
-            {
-                currentSlot = (Slot)this.inventorySlots.get(slotID);
-                currentStack = currentSlot.getStack();
+			while (!reverseOrder && slotID < endSlot || reverseOrder && slotID >= startSlot)
+			{
+				currentSlot = (Slot)this.inventorySlots.get(slotID);
+				currentStack = currentSlot.getStack();
 
-                if (currentStack == null && currentSlot.isItemValid(stack))
-                {
-                	int limit = currentSlot.getSlotStackLimit();
-                    if (stack.stackSize <= limit)
-                    {
-                    	currentSlot.putStack(stack.copy());
-                        currentSlot.onSlotChanged();
-                        stack.stackSize = 0;
-                        result = true;
-                        break;
-                    }
-                    else
-                    {
-                    	currentSlot.putStack(stack.splitStack(limit));
-                        currentSlot.onSlotChanged();
-                        result = true;
-                    }
-                }
+				if (currentStack == null && currentSlot.isItemValid(stack))
+				{
+					int limit = currentSlot.getSlotStackLimit();
+					if (stack.stackSize <= limit)
+					{
+						currentSlot.putStack(stack.copy());
+						currentSlot.onSlotChanged();
+						stack.stackSize = 0;
+						result = true;
+						break;
+					}
+					else
+					{
+						currentSlot.putStack(stack.splitStack(limit));
+						currentSlot.onSlotChanged();
+						result = true;
+					}
+				}
 
-                if (reverseOrder)
-                {
-                    --slotID;
-                }
-                else
-                {
-                    ++slotID;
-                }
-            }
-        }
+				if (reverseOrder)
+				{
+					--slotID;
+				}
+				else
+				{
+					++slotID;
+				}
+			}
+		}
 
-        return result;
-    }
+		return result;
+	}
 
 	@Override
 	public ItemStack transferStackInSlot(int slotID)
@@ -273,13 +284,66 @@ public class ContainerChargingBench extends Container
 			ItemStack sourceStack = slotclicked.getStack();
 			original = sourceStack.copy();
 
+			// Charging Bench Slots
 			if (slotID < playerInventoryStartSlot)
 			{
-				if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
+				// Look for electric armor to move into armor equipped slots from inside our charging bench
+				if (original.getItem() instanceof ItemArmor && original.getItem() instanceof IElectricItem && !((Slot)this.inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
+				{
+					int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
+					if (!this.mergeItemStack(sourceStack, armorType, armorType + 1, false))
+					{
+						return null;
+					}
+				}
+				// If there wasn't room, or it isn't armor, toss it into the player inventory
+				else if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
 				{
 					return null;
 				}
 			}
+
+			// External Slots
+			// Move regular armor from armor slots into main inventory
+			else if (slotID >= 55 && slotID < 59)
+			{
+				if ((original.getItem() instanceof ItemArmor) && !(original.getItem() instanceof IElectricItem))
+				{
+					if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
+					{
+						return null;
+					}	
+				}
+				// Put electrical armor items from armor slots into bench
+				else if (!this.mergeItemStack(sourceStack, 0, benchShiftClickRange, false))
+				{
+					// if that fails, try to put them into our main inventory instead
+					if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement)
+					{
+						return null;
+					}
+				}
+			}
+
+			// Move regular armor from main inventory into armor slots
+			else if ((original.getItem() instanceof ItemArmor) && !(original.getItem() instanceof IElectricItem) && !((Slot)this.inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
+			{
+				int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
+				if (!this.mergeItemStack(sourceStack, armorType, armorType + 1, false))
+				{
+					return null;
+				}
+			}
+			
+			/*
+			 * FIXME Need to fix having electric armor not move from player inventory into
+			 * open armor slots when charging bench is completely full. Currently electric
+			 * armor will only move from player inventory into charging bench. It needs to
+			 * move to the charging bench if the bench has room, then move to open armor slots
+			 * if the armor slots have room, then do nothing.
+			 */
+			
+			// Move stuff from anywhere not caught above to our charging bench inventory
 			else if (!this.mergeItemStack(sourceStack, 0, benchShiftClickRange, false))
 			{
 				return null;
@@ -299,170 +363,170 @@ public class ContainerChargingBench extends Container
 
 	@Override
 	public ItemStack slotClick(int slotID, int button, boolean shiftclick, EntityPlayer par4EntityPlayer)
-    {
-        ItemStack result = null;
+	{
+		ItemStack result = null;
 
-        if (Utils.isDebug() && ChargingBench.proxy.isServer()) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
+		if (Utils.isDebug() && ChargingBench.proxy.isServer()) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
 
-        if (button > 1)
-        {
-            return null;
-        }
-        else
-        {
-            if (button == 0 || button == 1)
-            {
-                InventoryPlayer invPlayer = par4EntityPlayer.inventory;
+		if (button > 1)
+		{
+			return null;
+		}
+		else
+		{
+			if (button == 0 || button == 1)
+			{
+				InventoryPlayer invPlayer = par4EntityPlayer.inventory;
 
-                if (slotID == -999) // Dropping items outside GUI, identical to vanilla behavior
-                {
-                    if (invPlayer.getItemStack() != null && slotID == -999)
-                    {
-                        if (button == 0)
-                        {
-                            par4EntityPlayer.dropPlayerItem(invPlayer.getItemStack());
-                            invPlayer.setItemStack((ItemStack)null);
-                        }
+				if (slotID == -999) // Dropping items outside GUI, identical to vanilla behavior
+				{
+					if (invPlayer.getItemStack() != null && slotID == -999)
+					{
+						if (button == 0)
+						{
+							par4EntityPlayer.dropPlayerItem(invPlayer.getItemStack());
+							invPlayer.setItemStack((ItemStack)null);
+						}
 
-                        if (button == 1)
-                        {
-                            par4EntityPlayer.dropPlayerItem(invPlayer.getItemStack().splitStack(1));
+						if (button == 1)
+						{
+							par4EntityPlayer.dropPlayerItem(invPlayer.getItemStack().splitStack(1));
 
-                            if (invPlayer.getItemStack().stackSize == 0)
-                            {
-                                invPlayer.setItemStack((ItemStack)null);
-                            }
-                        }
-                    }
-                }
-                else if (shiftclick)
-                {
-                    ItemStack original = this.transferStackInSlot(slotID);
+							if (invPlayer.getItemStack().stackSize == 0)
+							{
+								invPlayer.setItemStack((ItemStack)null);
+							}
+						}
+					}
+				}
+				else if (shiftclick)
+				{
+					ItemStack original = this.transferStackInSlot(slotID);
 
-                	// For crafting and other situations where a new stack could appear in the slot after each click; may be useful for output slot
-                    if (original != null)
-                    {
-                        int originalID = original.itemID;
-                        result = original.copy();
-                        Slot slot = (Slot)this.inventorySlots.get(slotID);
+					// For crafting and other situations where a new stack could appear in the slot after each click; may be useful for output slot
+					if (original != null)
+					{
+						int originalID = original.itemID;
+						result = original.copy();
+						Slot slot = (Slot)this.inventorySlots.get(slotID);
 
-                        if (slot != null && slot.getStack() != null && slot.getStack().itemID == originalID)
-                        {
-                            this.retrySlotClick(slotID, button, shiftclick, par4EntityPlayer);
-                        }
-                    }
-                }
-                else
-                {
-                    if (slotID < 0)
-                    {
-                        return null;
-                    }
+						if (slot != null && slot.getStack() != null && slot.getStack().itemID == originalID)
+						{
+							this.retrySlotClick(slotID, button, shiftclick, par4EntityPlayer);
+						}
+					}
+				}
+				else
+				{
+					if (slotID < 0)
+					{
+						return null;
+					}
 
-                    Slot slot = (Slot)this.inventorySlots.get(slotID);
+					Slot slot = (Slot)this.inventorySlots.get(slotID);
 
-                    if (slot != null)
-                    {
-                        ItemStack clickedStack = slot.getStack();
-                        ItemStack mouseStack = invPlayer.getItemStack();
+					if (slot != null)
+					{
+						ItemStack clickedStack = slot.getStack();
+						ItemStack mouseStack = invPlayer.getItemStack();
 
-                        if (clickedStack != null)
-                        {
-                        	if (Utils.isDebug()) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
-                            result = clickedStack.copy();
-                        }
+						if (clickedStack != null)
+						{
+							if (Utils.isDebug()) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
+							result = clickedStack.copy();
+						}
 
-                        int quantity;
+						int quantity;
 
-                        if (clickedStack == null)
-                        { // There's nothing in the slot, place the held item there if possible
-                            if (mouseStack != null && slot.isItemValid(mouseStack))
-                            {
-                                quantity = button == 0 ? mouseStack.stackSize : 1;
-                                if (quantity > slot.getSlotStackLimit()) quantity = slot.getSlotStackLimit();
+						if (clickedStack == null)
+						{ // There's nothing in the slot, place the held item there if possible
+							if (mouseStack != null && slot.isItemValid(mouseStack))
+							{
+								quantity = button == 0 ? mouseStack.stackSize : 1;
+								if (quantity > slot.getSlotStackLimit()) quantity = slot.getSlotStackLimit();
 
-                                ItemStack temp = mouseStack.splitStack(quantity); 
-                                slot.putStack(temp);
+								ItemStack temp = mouseStack.splitStack(quantity); 
+								slot.putStack(temp);
 
-                                if (mouseStack.stackSize == 0)
-                                {
-                                    invPlayer.setItemStack((ItemStack)null);
-                                }
-                            }
-                        }
-                        else if (mouseStack == null)
-                        { // Pick up what's in the slot
-                            quantity = button == 0 ? clickedStack.stackSize : (clickedStack.stackSize + 1) / 2;
-                            ItemStack remainder = slot.decrStackSize(quantity);
-                            invPlayer.setItemStack(remainder);
+								if (mouseStack.stackSize == 0)
+								{
+									invPlayer.setItemStack((ItemStack)null);
+								}
+							}
+						}
+						else if (mouseStack == null)
+						{ // Pick up what's in the slot
+							quantity = button == 0 ? clickedStack.stackSize : (clickedStack.stackSize + 1) / 2;
+							ItemStack remainder = slot.decrStackSize(quantity);
+							invPlayer.setItemStack(remainder);
 
-                            if (clickedStack.stackSize == 0)
-                            {
-                                slot.putStack((ItemStack)null);
-                            }
+							if (clickedStack.stackSize == 0)
+							{
+								slot.putStack((ItemStack)null);
+							}
 
-                            slot.onPickupFromSlot(invPlayer.getItemStack());
-                        }
-                        else if (slot.isItemValid(mouseStack))
-                        { // Both the mouse and the slot contain items, run this code if the item can be placed here 
-                            if (clickedStack.itemID == mouseStack.itemID && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.func_77970_a(clickedStack, mouseStack))
-                            {
-                                quantity = button == 0 ? mouseStack.stackSize : 1;
+							slot.onPickupFromSlot(invPlayer.getItemStack());
+						}
+						else if (slot.isItemValid(mouseStack))
+						{ // Both the mouse and the slot contain items, run this code if the item can be placed here 
+							if (clickedStack.itemID == mouseStack.itemID && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.func_77970_a(clickedStack, mouseStack))
+							{
+								quantity = button == 0 ? mouseStack.stackSize : 1;
 
-                                if (quantity > slot.getSlotStackLimit() - clickedStack.stackSize)
-                                {
-                                    quantity = slot.getSlotStackLimit() - clickedStack.stackSize;
-                                }
+								if (quantity > slot.getSlotStackLimit() - clickedStack.stackSize)
+								{
+									quantity = slot.getSlotStackLimit() - clickedStack.stackSize;
+								}
 
-                                if (quantity > mouseStack.getMaxStackSize() - clickedStack.stackSize)
-                                {
-                                    quantity = mouseStack.getMaxStackSize() - clickedStack.stackSize;
-                                }
+								if (quantity > mouseStack.getMaxStackSize() - clickedStack.stackSize)
+								{
+									quantity = mouseStack.getMaxStackSize() - clickedStack.stackSize;
+								}
 
-                                mouseStack.splitStack(quantity);
+								mouseStack.splitStack(quantity);
 
-                                if (mouseStack.stackSize == 0)
-                                {
-                                    invPlayer.setItemStack((ItemStack)null);
-                                }
+								if (mouseStack.stackSize == 0)
+								{
+									invPlayer.setItemStack((ItemStack)null);
+								}
 
-                                clickedStack.stackSize += quantity;
-                            }
-                            else if (mouseStack.stackSize <= slot.getSlotStackLimit())
-                            { // Exchange the items since they don't match
-                                slot.putStack(mouseStack);
-                                invPlayer.setItemStack(clickedStack);
-                            }
-                        }
-                        else if (clickedStack.itemID == mouseStack.itemID && mouseStack.getMaxStackSize() > 1 && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.func_77970_a(clickedStack, mouseStack))
-                        { // Both the mouse and the slot contain items, run this code if they match
-                            quantity = clickedStack.stackSize;
+								clickedStack.stackSize += quantity;
+							}
+							else if (mouseStack.stackSize <= slot.getSlotStackLimit())
+							{ // Exchange the items since they don't match
+								slot.putStack(mouseStack);
+								invPlayer.setItemStack(clickedStack);
+							}
+						}
+						else if (clickedStack.itemID == mouseStack.itemID && mouseStack.getMaxStackSize() > 1 && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.func_77970_a(clickedStack, mouseStack))
+						{ // Both the mouse and the slot contain items, run this code if they match
+							quantity = clickedStack.stackSize;
 
-                            if (quantity > 0 && quantity + mouseStack.stackSize <= mouseStack.getMaxStackSize())
-                            {
-                                mouseStack.stackSize += quantity;
-                                clickedStack = slot.decrStackSize(quantity);
+							if (quantity > 0 && quantity + mouseStack.stackSize <= mouseStack.getMaxStackSize())
+							{
+								mouseStack.stackSize += quantity;
+								clickedStack = slot.decrStackSize(quantity);
 
-                                if (clickedStack.stackSize == 0)
-                                {
-                                    slot.putStack((ItemStack)null);
-                                }
+								if (clickedStack.stackSize == 0)
+								{
+									slot.putStack((ItemStack)null);
+								}
 
-                                slot.onPickupFromSlot(invPlayer.getItemStack());
-                            }
-                        }
+								slot.onPickupFromSlot(invPlayer.getItemStack());
+							}
+						}
 
-                        slot.onSlotChanged();
+						slot.onSlotChanged();
 
-                    }
-                }
-            }
+					}
+				}
+			}
 
-            return result;
-        }
-    }
+			return result;
+		}
+	}
 
-    public boolean canInteractWith(EntityPlayer var1)
+	public boolean canInteractWith(EntityPlayer var1)
 	{
 		// if (Utils.isDebug()) System.out.println("ContainerChargingBench.canInteractWith");
 		return this.tileentity.isUseableByPlayer(var1);

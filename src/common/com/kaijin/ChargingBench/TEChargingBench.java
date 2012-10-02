@@ -25,7 +25,7 @@ import com.kaijin.ChargingBench.*;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
-public class TEChargingBench extends TileEntity implements IEnergySink, IWrenchable, IInventory, ISidedInventory
+public class TEChargingBench extends TileEntity implements IEnergySink, IInventory, ISidedInventory
 {
 	private ItemStack[] contents = new ItemStack[19];
 
@@ -188,37 +188,10 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 	}
 
 	@Override
-	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side)
-	{
-		return false;
-	}
-
-	@Override
-	public short getFacing()
-	{
-		return 0;
-	}
-
-	@Override
-	public void setFacing(short facing)	{}
-
-	@Override
-	public boolean wrenchCanRemove(EntityPlayer entityPlayer)
-	{
-		return true;
-	}
-
-	@Override
-	public float getWrenchDropRate()
-	{
-		return 1.0F;
-	}
-
-	@Override
 	public int getSizeInventory()
 	{
 		// Only input/output slots are accessible to machines
-		return 0;
+		return 3;
 	}
 
 	@Override
@@ -346,7 +319,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IWrencha
 
 		// Cap upgrades at sane quantities that won't result in negative energy storage and such.
 		if (ocCount > 64) ocCount = 64;
-		if (esCount > 204) esCount = 204;
+		if (esCount > 64) esCount = 64;
 		if (tfCount > 3) tfCount = 3;
 
 		// Recompute upgrade effects
