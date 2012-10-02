@@ -106,21 +106,9 @@ public class BlockChargingBench extends Block
 				return 0;
 
 			case 1: // top
-				switch (meta)
-				{
-				case 0: // mark 1
-				case 1: // mark 2
-				case 2: // mark 3
 					return this.baseTexture + meta;
-				}
 			default:
-				switch (meta)
-				{
-				case 0: // mark 1 32
-				case 1: // mark 2 33
-				case 2: // mark 3 34
 					return this.sideTexture + meta + chargeLevel;
-				}
 			}
 		}
 		else if (tile instanceof TEEmitter)
@@ -130,24 +118,8 @@ public class BlockChargingBench extends Block
 			case 0: // bottom
 				return 0;
 
-			case 1: // top
-				switch (meta)
-				{
-				case 3: // emitter 1
-				case 4: // emitter 2
-				case 5: // emitter 3
-				case 6: // emitter 4
-					return this.baseTexture + meta;
-				}
 			default:
-				switch (meta)
-				{
-				case 3: // emitter 1
-				case 4: // emitter 2
-				case 5: // emitter 3
-				case 6: // emitter 4
 					return this.baseTexture + meta;
-				}
 			}
 		}
 		//If we're here, something is wrong
@@ -164,32 +136,17 @@ public class BlockChargingBench extends Block
 			return 0;
 
 		case 1: // top
-			switch (meta)
-			{
-			case 0: // mark 1
-			case 1: // mark 2
-			case 2: // mark 3
-			case 3: // emitter 1
-			case 4: // emitter 2
-			case 5: // emitter 3
-			case 6: // emitter 4
-				return this.baseTexture + meta;
-			}
-		default:
-			switch (meta)
-			{
-			case 0: // mark 1 32
-			case 1: // mark 2 33
-			case 2: // mark 3 34
-				return this.sideTexture + meta;
+			return this.baseTexture + meta;
 
-			case 3: // emitter 1
-			case 4: // emitter 2
-			case 5: // emitter 3
-			case 6: // emitter 4
+		default:
+			if (meta < 3)
+			{
+				return this.sideTexture + meta;
+			}
+			else
+			{
 				return this.baseTexture + meta;
 			}
-			return 0; // if we're here, something is wrong
 		}
 	}
 
