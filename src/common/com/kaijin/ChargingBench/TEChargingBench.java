@@ -500,7 +500,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 	{
 		if (ChargingBench.proxy.isClient())
 		{
-			//			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 			return;
 		}
 
@@ -524,7 +523,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 		//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 
 		this.oldChargeLevel = this.chargeLevel;
-		this.chargeLevel = gaugeEnergyScaled(13);
+		this.chargeLevel = gaugeEnergyScaled(12);
 		if (this.oldChargeLevel != this.chargeLevel)
 		{
 			if (Utils.isDebug()) System.out.println("TE.oldChargeLevel: " + this.oldChargeLevel + "chargeLevel:" + this.chargeLevel); 
