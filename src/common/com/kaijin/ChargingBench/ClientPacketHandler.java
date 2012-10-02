@@ -22,7 +22,7 @@ public class ClientPacketHandler implements IPacketHandler
 	int x = 0;
 	int y = 0;
 	int z = 0;
-	int Metainfo = 0;
+	int chargeLevel = 0;
 
 	boolean snapshot = false;
 
@@ -48,14 +48,7 @@ public class ClientPacketHandler implements IPacketHandler
 	 *             byte 1: x location of TileEntity
 	 *             byte 2: y location of TileEntity
 	 *             byte 3: z location of TileEntity
-	 *             byte 4: boolean information, false = no valid snapshot, true = valid snapshot
-	 *         1=@Deprecated
-	 *             byte 1: x location of TileEntity
-	 *             byte 2: y location of TileEntity
-	 *             byte 3: z location of TileEntity
-	 *             byte 4: int "metadata", sync client TE rotation and lights with server
-	 *             
-	 * remaining bytes: data for packet
+	 *             byte 4: int, charge level for texture
 	 */
 
 	@Override
@@ -83,11 +76,19 @@ public class ClientPacketHandler implements IPacketHandler
 				this.x = stream.readInt();
 				this.y = stream.readInt();
 				this.z = stream.readInt();
-				this.Metainfo = stream.readInt();
+				this.chargeLevel = stream.readInt();
 			}
 			catch (Exception ex)
 			{
 				ex.printStackTrace();
+			}
+			World world = FMLClientHandler.instance().getClient().theWorld;
+			TileEntity tile = world.getBlockTileEntity(x, y, z);
+			if (tile instanceof TEChargingBench)
+			{
+				((TEChargingBench)tile).chargeLevel = this.chargeLevel;
+				if (Utils.isDebug()) System.out.println("ClientPacketHandler.chargeLevel: " + this.chargeLevel);
+				world.markBlockNeedsUpdate(x, y, z);
 			}
 		}
 	}

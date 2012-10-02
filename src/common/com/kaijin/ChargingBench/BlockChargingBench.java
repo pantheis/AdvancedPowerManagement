@@ -2,15 +2,21 @@ package com.kaijin.ChargingBench;
 
 import java.util.*;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 import net.minecraft.src.*;
+
 import com.kaijin.ChargingBench.*;
 import ic2.api.*;
 
 public class BlockChargingBench extends Block
 {
+	//base texture index
+	private int baseTexture = 16;
+	private int sideTexture = 32;
+
 	public BlockChargingBench(int i, int j, Material material)
 	{
 		super(i, j, material);
@@ -84,6 +90,71 @@ public class BlockChargingBench extends Block
 		return ChargingBench.proxy.BLOCK_PNG;
 	}
 
+	//Textures in the world
+	@SideOnly(Side.CLIENT)
+	public int getBlockTexture(IBlockAccess blocks, int x, int y, int z, int side)
+	{
+		int meta = blocks.getBlockMetadata(x, y, z); 
+		TileEntity tile = blocks.getBlockTileEntity(x, y, z);
+		if (tile instanceof TEChargingBench)
+		{
+			int chargeLevel = ((TEChargingBench)tile).chargeLevel * 16;
+			System.out.println("getBlockTexture(x:" +x +" y:" +y +" z:"+z + " side:" + side + " meta: "+meta + " charge: " + chargeLevel);
+			switch (side)
+			{
+			case 0: // bottom
+				return 0;
+
+			case 1: // top
+				switch (meta)
+				{
+				case 0: // mark 1
+				case 1: // mark 2
+				case 2: // mark 3
+					return this.baseTexture + meta;
+				}
+			default:
+				switch (meta)
+				{
+				case 0: // mark 1 32
+				case 1: // mark 2 33
+				case 2: // mark 3 34
+					return this.sideTexture + meta + chargeLevel;
+				}
+			}
+		}
+		else if (tile instanceof TEEmitter)
+		{
+			switch (side)
+			{
+			case 0: // bottom
+				return 0;
+
+			case 1: // top
+				switch (meta)
+				{
+				case 3: // emitter 1
+				case 4: // emitter 2
+				case 5: // emitter 3
+				case 6: // emitter 4
+					return this.baseTexture + meta;
+				}
+			default:
+				switch (meta)
+				{
+				case 3: // emitter 1
+				case 4: // emitter 2
+				case 5: // emitter 3
+				case 6: // emitter 4
+					return this.baseTexture + meta;
+				}
+			}
+		}
+		//If we're here, something is wrong
+		return side;
+	}
+
+	//Textures in your inventory
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int meta)
 	{
@@ -96,53 +167,27 @@ public class BlockChargingBench extends Block
 			switch (meta)
 			{
 			case 0: // mark 1
-				return 16;
-
 			case 1: // mark 2
-				return 17;
-
 			case 2: // mark 3
-				return 18;
-
 			case 3: // emitter 1
-				return 19;
-
 			case 4: // emitter 2
-				return 20;
-
 			case 5: // emitter 3
-				return 21;
-				
 			case 6: // emitter 4
-				return 22;
-
-			default: // something wrong?
-				return 0;
+				return this.baseTexture + meta;
 			}
-
-		default: // the rest of the sides
+		default:
 			switch (meta)
 			{
-			case 0: // mark 1
-				return 32;
-
-			case 1: // mark 2
-				return 33;
-
-			case 2: // mark 3
-				return 34;
+			case 0: // mark 1 32
+			case 1: // mark 2 33
+			case 2: // mark 3 34
+				return this.sideTexture + meta;
 
 			case 3: // emitter 1
-				return 19;
-
 			case 4: // emitter 2
-				return 20;
-
 			case 5: // emitter 3
-				return 21;
-				
 			case 6: // emitter 4
-				return 22;
+				return this.baseTexture + meta;
 			}
 			return 0; // if we're here, something is wrong
 		}
@@ -184,7 +229,7 @@ public class BlockChargingBench extends Block
 
 		case 5:
 			return new TEEmitter3();
-			
+
 		case 6:
 			return new TEEmitter4();
 
