@@ -99,7 +99,7 @@ public class BlockChargingBench extends Block
 		if (tile instanceof TEChargingBench)
 		{
 			int chargeLevel = ((TEChargingBench)tile).chargeLevel * 16;
-			System.out.println("getBlockTexture(x:" +x +" y:" +y +" z:"+z + " side:" + side + " meta: "+meta + " charge: " + chargeLevel);
+//			System.out.println("getBlockTexture(x:" +x +" y:" +y +" z:"+z + " side:" + side + " meta: "+meta + " charge: " + chargeLevel);
 			switch (side)
 			{
 			case 0: // bottom
