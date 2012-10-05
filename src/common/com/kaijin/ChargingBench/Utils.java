@@ -18,7 +18,6 @@ public class Utils
 
 	public static final String VERSION = "@VERSION@";
 	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
-	public static final String FULLVERSION = "@VERSION@.@BUILD_NUMBER@";
 	
 	/**
 	 * Returns a SHA-256 hex hash string of the string passed to it
