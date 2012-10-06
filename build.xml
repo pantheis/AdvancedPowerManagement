@@ -5,7 +5,7 @@
 	<property name="mod.name"            value="ChargingBench"/>
 	<property name="build.dir"           value="Charging Bench/build"/>
 	<property name="src.dir"             value="Charging Bench/src"/>
-	<property name="res.dir"             value="Charging Bnech/resources"/>
+	<property name="res.dir"             value="Charging Bench/resources"/>
 
 	<property name="download.dir"        value="download"/>
 	<property name="files.minecraft.dir" value="jars"/>
