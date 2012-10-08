@@ -20,7 +20,7 @@
 
 	<property name="mcp.version"         value="72"/>
 	<property name="forge.version"       value="4.1.1.251"/>
-	<property name="mymod.version"       value="1.3.2"/>
+	<property name="mymod.version"       value="1.0"/>
 	<property name="ic2.version"         value="IC2_1.106"/>
 
 	<available property="forge-exists" file="${download.dir}/minecraftforge-src-${forge.version}.zip"/>
