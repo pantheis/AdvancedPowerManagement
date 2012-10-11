@@ -125,10 +125,6 @@
 		<copy todir="${classes.dir}">
 			<fileset dir="${res.dir}/client">
 			</fileset>
-			<filterset>
-                <filter token="VERSION" value="${mymod.version.full}" />
-				<filter token="BUILD_NUMBER" value="${build.number}" />
-            </filterset>
 		</copy>		
 
 	</target>
