@@ -115,7 +115,7 @@ public class ChargingBench
 		proxy.load();
 		if (proxy.isServer())
 		{
-			FMLLog.getLogger().info ("ChargingBench loaded.");
+			FMLLog.getLogger().info ("ChargingBench " + Utils.VERSION + " loaded.");
 		}
 		if (isDebugging)
 		{

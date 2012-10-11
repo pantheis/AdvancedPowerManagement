@@ -115,7 +115,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 	@Override
 	public boolean demandsEnergy()
 	{
-		return this.currentEnergy < this.adjustedStorage;
+		return ((this.currentEnergy < this.adjustedStorage) && !receivingRedstoneSignal());
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 		dropContents();
 		ItemStack stack = new ItemStack(ChargingBench.ChargingBench, 1, this.baseTier - 1);
 		dropItem(stack);
-		worldObj.setBlockAndMetadataWithUpdate(xCoord, yCoord, zCoord, 0, 0, true);
+		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
 		this.invalidate();
 	}
 
@@ -509,13 +509,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			initialized = true;
 		}
 
-		if (isActive())
-		{
-			//redstone activation stuff here, if any
-			//			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
-			//			if (currentEnergy < 0) currentEnergy = 0;
-		}
-
 		/*
 		 * trigger this only when charge level passes where it would need to update
 		 * the client texture
@@ -530,6 +523,13 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
 
+		if (isActive())
+		{
+			//redstone activation stuff here, if any
+			//			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
+			//			if (currentEnergy < 0) currentEnergy = 0;
+		}
+		
 		// Work done every tick
 		drainPowerSource();
 		chargeItems();
