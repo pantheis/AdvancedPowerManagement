@@ -55,7 +55,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 
 	//For outside texture display
 	public int chargeLevel;
-	private int oldChargeLevel;
+	public boolean doingWork;
 
 	public TEChargingBench(int i)
 	{
@@ -100,64 +100,22 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 		return true;
 	}
 
-	@Override
+	// IC2 API functions
 	public boolean isAddedToEnergyNet()
 	{
 		return initialized;
 	}
 
-	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
 	{
 		return true;
 	}
 
-	@Override
 	public boolean demandsEnergy()
 	{
-		return ((this.currentEnergy < this.adjustedStorage) && !receivingRedstoneSignal());
+		return (this.currentEnergy < this.adjustedStorage && !receivingRedstoneSignal());
 	}
 
-	/**
-	 * This will cause the block to drop anything inside it, create a new item in the
-	 * world of its type, invalidate the tile entity, remove itself from the IC2
-	 * EnergyNet and clear the block space (set it to air)
-	 */
-	private void selfDestroy()
-	{
-		dropContents();
-		ItemStack stack = new ItemStack(ChargingBench.ChargingBench, 1, this.baseTier - 1);
-		dropItem(stack);
-		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
-		this.invalidate();
-	}
-
-	public void dropItem(ItemStack item)
-	{
-		// All this math just to slightly alter the start location of the items? Who cares? They spray in every direction anyway. Let's speed this up a little.
-		//		final double f1 = 0.7D;
-		//		final double f2 = 0.3D;
-		//		double dx = ((worldObj.rand.nextFloat() * f1) + f2) * 0.5D;
-		//		double dy = ((worldObj.rand.nextFloat() * f1) + f2) * 0.5D;
-		//		double dz = ((worldObj.rand.nextFloat() * f1) + f2) * 0.5D;
-		//		EntityItem entityitem = new EntityItem(worldObj, (double)xCoord + dx, (double)yCoord + dy, (double)zCoord + dz, item);
-		EntityItem entityitem = new EntityItem(worldObj, (double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D, item);
-		entityitem.delayBeforeCanPickup = 10;
-		worldObj.spawnEntityInWorld(entityitem);
-	}
-
-	public void dropContents()
-	{
-		ItemStack item;
-		int i;
-		for (i = 0; i < contents.length; ++i)
-		{
-			item = contents[i];
-			if (item != null && item.stackSize > 0) dropItem(item);
-		}
-	}
-
-	@Override
 	public int injectEnergy(Direction directionFrom, int supply)
 	{
 		int surplus = 0;
@@ -192,6 +150,38 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			}
 		}
 		return surplus;
+	}
+
+	/**
+	 * This will cause the block to drop anything inside it, create a new item in the
+	 * world of its type, invalidate the tile entity, remove itself from the IC2
+	 * EnergyNet and clear the block space (set it to air)
+	 */
+	private void selfDestroy()
+	{
+		dropContents();
+		ItemStack stack = new ItemStack(ChargingBench.ChargingBench, 1, this.baseTier - 1);
+		dropItem(stack);
+		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
+		this.invalidate();
+	}
+
+	public void dropItem(ItemStack item)
+	{
+		EntityItem entityitem = new EntityItem(worldObj, (double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D, item);
+		entityitem.delayBeforeCanPickup = 10;
+		worldObj.spawnEntityInWorld(entityitem);
+	}
+
+	public void dropContents()
+	{
+		ItemStack item;
+		int i;
+		for (i = 0; i < contents.length; ++i)
+		{
+			item = contents[i];
+			if (item != null && item.stackSize > 0) dropItem(item);
+		}
 	}
 
 	@Override
@@ -324,23 +314,38 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			}
 		}
 
-		// Cap upgrades at sane quantities that won't result in negative energy storage and such.
+		// Cap upgrades at sane quantities that won't result in negative energy storage from integer overflows and such.
 		if (ocCount > 64) ocCount = 64;
 		if (esCount > 64) esCount = 64;
 		if (tfCount > 3) tfCount = 3;
 
-		// Recompute upgrade effects
+		// Overclockers:
 		this.chargeFactor = (float)Math.pow(1.3F, ocCount); // 30% more power transferred to an item per overclocker, exponential.
 		this.drainFactor = (float)Math.pow(1.5F, ocCount); // 50% more power drained per overclocker, exponential. Yes, you waste power, that's how OCs work.
 
+		// Transformers:
 		this.powerTier = this.baseTier + tfCount; // Allows better energy storage items to be plugged into the battery slot of lower tier benches.
 		if (this.powerTier > 3) this.powerTier = 3;
 
-		this.adjustedStorage = this.baseStorage * (esCount + 10) / 10; // 10% additional storage per upgrade.
-		if (this.currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage; // If storage has decreased, lose any excess energy.
-
 		this.adjustedMaxInput = (int)Math.pow(2.0D, (double)(2 * (this.baseTier + tfCount) + 3));
 		if (this.adjustedMaxInput > 2048) this.adjustedMaxInput = 2048; // You can feed EV in with 1-4 TF upgrades, if you so desire.
+
+		// Energy Storage:
+		switch (this.baseTier)
+		{
+		case 1:
+			this.adjustedStorage = this.baseStorage + esCount * 10000; // LV: 25% additional storage per upgrade (10,000).
+			break;
+		case 2:
+			this.adjustedStorage = this.baseStorage + esCount * 60000; // MV: 10% additional storage per upgrade (60,000).
+			break;
+		case 3:
+			this.adjustedStorage = this.baseStorage + esCount * 500000; // HV: 5% additional storage per upgrade (500,000).
+			break;
+		default:
+			this.adjustedStorage = this.baseStorage; // This shouldn't ever happen, but just in case, it shouldn't crash it - storage upgrades just won't work.
+		}
+		if (this.currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage; // If storage has decreased, lose any excess energy.
 	}
 
 	public void onInventoryChanged(int slot)
@@ -375,6 +380,13 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 		super.onInventoryChanged();
 	}
 
+	public void onInventoryChanged()
+	{
+		// We're not sure what called this or what slot was altered, so make sure the upgrade effects are correct just in case and then pass the call on.
+		doUpgradeEffects();
+		super.onInventoryChanged();
+	}
+
 	public boolean isItemValid(int slot, ItemStack stack)
 	{
 		// Decide if the item is a valid IC2 electrical item
@@ -406,7 +418,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			baseMaxInput = nbttagcompound.getInteger("maxInput");
 			baseStorage = nbttagcompound.getInteger("baseStorage");
 			baseTier = nbttagcompound.getInteger("baseTier");
-			//baseChargeRate = nbttagcompound.getInteger("energyUsedPerTick");
 
 			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
 			NBTTagList nbttagextras = nbttagcompound.getTagList("remoteSnapshot");
@@ -445,7 +456,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			{
 				if (this.contents[i] != null)
 				{
-					if (Utils.isDebug()) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
+					//if (Utils.isDebug()) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
 					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
 					nbttagcompound1.setByte("Slot", (byte)i);
 					contents[i].writeToNBT(nbttagcompound1);
@@ -455,13 +466,11 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			nbttagcompound.setTag("Items", nbttaglist);
 
 			//write extra NBT stuff here
-
 			nbttagcompound.setInteger("currentEnergy", currentEnergy);
-			if (Utils.isDebug()) System.out.println("WriteNBT.CurrentEergy: " + this.currentEnergy);
+			//if (Utils.isDebug()) System.out.println("WriteNBT.CurrentEergy: " + this.currentEnergy);
 			nbttagcompound.setInteger("maxInput", baseMaxInput);
 			nbttagcompound.setInteger("baseStorage", baseStorage);
 			nbttagcompound.setInteger("baseTier", baseTier);
-			//nbttagcompound.setInteger("energyUsedPerTick", baseChargeRate);
 		}
 	}
 
@@ -509,32 +518,23 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			initialized = true;
 		}
 
-		/*
-		 * trigger this only when charge level passes where it would need to update
-		 * the client texture
-		 */
-		//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		boolean lastWorkState = this.doingWork;
+		this.doingWork = false;
 
-		this.oldChargeLevel = this.chargeLevel;
-		this.chargeLevel = gaugeEnergyScaled(12);
-		if (this.oldChargeLevel != this.chargeLevel)
-		{
-			if (Utils.isDebug()) System.out.println("TE.oldChargeLevel: " + this.oldChargeLevel + "chargeLevel:" + this.chargeLevel); 
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-		}
-
-		if (isActive())
-		{
-			//redstone activation stuff here, if any
-			//			if (Utils.isDebug()) System.out.println("updateEntity.CurrentEergy: " + this.currentEnergy);
-			//			if (currentEnergy < 0) currentEnergy = 0;
-		}
-		
 		// Work done every tick
 		drainPowerSource();
 		chargeItems();
 		moveOutputItems();
 		acceptInputItems();
+
+		// Trigger this only when charge level passes where it would need to update the client texture
+		int oldChargeLevel = this.chargeLevel;
+		this.chargeLevel = gaugeEnergyScaled(12);
+		if (oldChargeLevel != this.chargeLevel || lastWorkState != this.doingWork)
+		{
+			//if (Utils.isDebug()) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + this.chargeLevel); 
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		}
 	}
 
 	/**
@@ -556,8 +556,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			int emptyItemID = powerSource.getEmptyItemId();
 			int chargedItemID = powerSource.getChargedItemId();
 
-			//if (Utils.isDebug()) System.out.println("emptyItemID: " + emptyItemID + " chargedItemID: " + chargedItemID + " - stack.itemID: " + stack.itemID);
-
 			if (stack.itemID == chargedItemID)
 			{
 				if (powerSource.getTier() <= this.powerTier && powerSource.canProvideEnergy())
@@ -572,7 +570,16 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 						energyNeeded = itemTransferLimit;
 						// If we need less than it can transfer per tick, request only what we have room for so we don't waste power.
 					}
-					chargeReturned = ElectricItem.discharge(stack, energyNeeded, powerTier, false, false);
+
+					if (energyNeeded > 0)
+					{
+						chargeReturned = ElectricItem.discharge(stack, energyNeeded, powerTier, false, false);
+						// Add the energy we received to our current energy level,
+						this.currentEnergy += chargeReturned;
+						if (chargeReturned > 0) this.doingWork = true;
+						// and make sure that we didn't go over. If we somehow did, drop the excess.
+						if (this.currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage;
+					}
 				}
 
 				// Workaround for buggy IC2 API .discharge that automatically switches stack to emptyItemID but leaves a stackTagCompound on it, so it can't be stacked with never-used empties  
@@ -585,11 +592,61 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 				}
 			}
 		}
+	}
 
-		// Add the energy we received to our current energy level,
-		this.currentEnergy += chargeReturned;
-		// and make sure that we didn't go over. If we somehow did, drop the excess.
-		if (this.currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage;
+	/**
+	 * Look through all of the items in our main inventory and determine the current charge level,
+	 * maximum charge level and maximum base charge rate for each item. Increase maximum charge
+	 * rate for each item based on overclockers as appropriate, then, starting with the first slot
+	 * in the main inventory, transfer one tick worth of energy from our internal storage to the
+	 * item. Continue doing this for all items in the inventory until we reach the end of the main
+	 * inventory or run out of internal EU storage.
+	 */
+	private void chargeItems()
+	{
+		for (int i = ChargingBench.slotCharging; i < ChargingBench.slotCharging + 12; i++)
+		{
+			ItemStack stack = this.contents[i];
+			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
+			{
+				IElectricItem item = (IElectricItem)(stack.getItem());
+				if (item.getTier() <= this.baseTier)
+				{
+					int itemTransferLimit = item.getTransferLimit();
+					if (itemTransferLimit == 0) itemTransferLimit = this.baseMaxInput;
+					int adjustedTransferLimit = (int)Math.ceil(this.chargeFactor * itemTransferLimit);
+
+					int amountNeeded;
+					if (item.getChargedItemId() != item.getEmptyItemId() || stack.isStackable())
+					{
+						// Running stack.copy() on every item every tick would be a horrible thing for performance, but the workaround is needed
+						// for ElectricItem.charge adding stackTagCompounds for charge level to EmptyItemID batteries even when run in simulate mode.
+						// Limiting its use by what is hopefully a broad enough test to catch all cases where it's necessary in order to avoid problems.
+						// Using it for any item types listed as stackable and for any items where the charged and empty item IDs differ.
+						amountNeeded = ElectricItem.charge(stack.copy(), adjustedTransferLimit, powerTier, true, true);
+					}
+					else
+					{
+						amountNeeded = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, true);
+					}
+
+					int adjustedEnergyUse = (int)Math.ceil((this.drainFactor / this.chargeFactor) * amountNeeded);
+					if(adjustedEnergyUse <= this.currentEnergy && adjustedEnergyUse > 0)
+					{
+						// We don't need to do this with the current API, it's switching the ItemID for us. Just make sure we don't try to charge stacked batteries, as mentioned above!
+						//int chargedItemID = item.getChargedItemId();
+						//if (stack.itemID != chargedItemID)
+						//{
+						//	setInventorySlotContents(i, new ItemStack(chargedItemID, 1, 0));
+						//}
+						ElectricItem.charge(this.contents[i], adjustedTransferLimit, powerTier, true, false);
+						this.currentEnergy -= adjustedEnergyUse;
+						if (this.currentEnergy < 0) this.currentEnergy = 0;
+						this.doingWork = true;
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -644,67 +701,6 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 		}
 	}
 
-	/**
-	 * Look through all of the items in our main inventory and determine the current charge level,
-	 * maximum charge level and maximum base charge rate for each item. Increase maximum charge
-	 * rate for each item based on overclockers as appropriate, then, starting with the first slot
-	 * in the main inventory, transfer one tick worth of energy from our internal storage to the
-	 * item. Continue doing this for all items in the inventory until we reach the end of the main
-	 * inventory or run out of internal EU storage.
-	 */
-	private void chargeItems()
-	{
-		//int chargeTransferred = 0;
-
-		for(int i = ChargingBench.slotCharging; i < ChargingBench.slotCharging + 12; i++)
-		{
-			ItemStack stack = this.contents[i];
-			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
-			{
-				IElectricItem item = (IElectricItem)(stack.getItem());
-				if (item.getTier() <= this.baseTier)
-				{
-					int itemTransferLimit = item.getTransferLimit();
-					if (itemTransferLimit == 0) itemTransferLimit = this.baseMaxInput;
-					int adjustedTransferLimit = (int)Math.ceil(this.chargeFactor * itemTransferLimit);
-
-					int amountNeeded;
-					if (item.getChargedItemId() != item.getEmptyItemId() || stack.isStackable())
-					{
-						// Running stack.copy() on every item every tick would be a horrible thing for performance, but the workaround is needed
-						// for ElectricItem.charge adding stackTagCompounds for charge level to EmptyItemID batteries even when run in simulate mode.
-						// Limiting its use by what is hopefully a broad enough test to catch all cases where it's necessary in order to avoid problems.
-						// Using it for any item types listed as stackable and for any items where the charged and empty item IDs differ.
-						amountNeeded = ElectricItem.charge(stack.copy(), adjustedTransferLimit, powerTier, true, true);
-					}
-					else
-					{
-						amountNeeded = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, true);
-					}
-
-					int adjustedEnergyUse = (int)Math.ceil((this.drainFactor / this.chargeFactor) * amountNeeded);
-					if(adjustedEnergyUse <= this.currentEnergy && adjustedEnergyUse > 0)
-					{
-						// We don't need to do this with the current API, it's switching the ItemID for us. Just make sure we don't try to charge stacked batteries, as mentioned above!
-						//int chargedItemID = item.getChargedItemId();
-						//if (stack.itemID != chargedItemID)
-						//{
-						//	setInventorySlotContents(i, new ItemStack(chargedItemID, 1, 0));
-						//}
-						ElectricItem.charge(this.contents[i], adjustedTransferLimit, powerTier, true, false);
-						this.currentEnergy -= adjustedEnergyUse;
-						if (this.currentEnergy < 0) this.currentEnergy = 0;
-					}
-				}
-			}
-		}
-	}
-
-	public boolean isActive()
-	{
-		return currentEnergy > 0 && receivingRedstoneSignal();
-	}
-
 	boolean receivingRedstoneSignal()
 	{
 		return worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
@@ -716,17 +712,11 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 		{
 			return 0;
 		}
-		else
-		{
-			int result = currentEnergy * gaugeSize / adjustedStorage;
 
-			if (result > gaugeSize)
-			{
-				result = gaugeSize;
-			}
+		int result = this.currentEnergy * gaugeSize / this.adjustedStorage;
+		if (result > gaugeSize) result = gaugeSize;
 
-			return result;
-		}
+		return result;
 	}
 
 	@Override
@@ -743,13 +733,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 	@Override
 	public Packet250CustomPayload getAuxillaryInfoPacket()
 	{
-		if (Utils.isDebug()) System.out.println("te.getAuxillaryInfoPacket()");
-		return createExtraTEInfoPacket();
-	}
-
-	private Packet250CustomPayload createExtraTEInfoPacket()
-	{
-		if (Utils.isDebug()) System.out.println("te.createExtraTEInfoPacket");
+		//if (Utils.isDebug()) System.out.println("TE getAuxillaryInfoPacket()");
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		DataOutputStream data = new DataOutputStream(bytes);
 		try
@@ -759,6 +743,7 @@ public class TEChargingBench extends TileEntity implements IEnergySink, IInvento
 			data.writeInt(this.yCoord);
 			data.writeInt(this.zCoord);
 			data.writeInt(this.chargeLevel);
+			data.writeBoolean(this.doingWork);
 		}
 		catch(IOException e)
 		{
