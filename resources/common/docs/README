@@ -1,48 +1,50 @@
 Charging Bench @VERSION@
 
-Introducing the completely new Industrial Craft 2 Charging Bench!
+Introducing the completely new and improved Industrial Craft 2 Charging Bench!
 
 This mod adds a Charging Bench to Industrial Craft 2 which allows you to charge up to 12
 items simultaneously! The Charging Bench comes in three tiers with each tier capable of
 charging all items at its tier level and below, but not above. If you want to charge your
 Quantum armor you'll need to craft a HV version. :)
 
-
-Introducing the three tiers of Charging Bench available!
--------------------
-Due to advances in over-current circuit protection designs, the Charging Bench will not
-explode if exposed to higher than acceptable current but simply pop off onto the ground in a
-safe manner.
-
 LV Charging Bench
-- The LV Charging Bench has a maximum input energy of 32 EU/t, and a base energy storage
-  of 40,000 EU.
+- The low voltage charging bench has a maximum input energy of 32 EU/t, and a base energy
+  storage of 40,000 EU.
 
 MV Charging Bench
-- The MV Charging Bench has a maximum input energy of 128 EU/t, and a base energy storage
-  of 600,000 EU.
+- The medium voltage charging bench has a maximum input energy of 128 EU/t, and a base energy
+  storage of 600,000 EU.
 
 HV Charging Bench
-- The HV Charging Bench has a maximum input energy of 512 EU/t, and a base energy storage
-  of 10,000,000 EU.
+- The high voltage charging bench has a maximum input energy of 512 EU/t, and a base energy
+  storage of 10,000,000 EU.
 
-A charging bench will automatically place valid electrical items shift-clicked into
-it into the charging area if there is space free. Excess will be placed into the input slot.
-Once an item is done charging, it will be automatically moved to the output slot, if there is
-space, and another item from the input slot will be added to the main charging inventory.
+Due to advances in over-current circuit protection designs, the Charging Bench will not
+explode if exposed to higher than acceptable current but simply pop off onto the ground in a
+safe manner, ejecting any items it contained.
 
-In this way, you can shift-click a full stack of RE-Batteries into the Charging Bench, it will
-automatically unstack them, charge them and you can quickly collect them just by shift-clicking
-repeatedly on the output slot.
+A charging bench will automatically direct valid electrical items shift-clicked from your
+inventory into the charging area if there is space free. Excess will be placed into the input
+slot. Once an item is done charging, it will be automatically moved to the output slot, if
+there is space, and another item from the input slot will be added to the main charging area.
+In this way, you can shift-click a full stack of RE-Batteries into the Charging Bench, and it
+will automatically unstack and charge them. You can quickly and easily collect all of them by
+shift-clicking repeatedly on the output slot.
 
-A charging bench also includes direct access to your player's armor slots. If you're wearing
+A charging bench also allows easy access to your player's armor slots. If you're wearing
 electrical based armor, you can shift-click it directly from your armor slots into the bench.
-When it's done charging, simply shift-click it from the output slot and it will automatically
-equip it into the correct location. It doesn't get much easier than that!
+When it's done charging, simply shift-click it from the output slot (or the charging area, if
+you've let some other item loiter in the output slot) and it will automatically equip the
+armor in the correct location. It doesn't get much easier than that!
 
 And we're not done yet with the awesome features of this mod! Each charging bench now includes
-a "battery meter" on every side of the bench. You can see how much power you have available
-without even opening the GUI.
+a pair of indicators visible right on the outside of the bench. The storage meter lets you see
+just how much power is available for charging up your items, and the charging light lets you
+know if those energy-hungry items are done charging without even opening the GUI. You can toss
+in your quantum armor, lapotron crystals, mining laser, etc, and walk away, and with merely a
+glance across the room, you'll know when they're ready to be picked up! Even the battery slot
+is wired up, so that if you're filling a remote bench using items, you'll know when it's time
+to swap out the battery without having to stand around waiting for it to discharge completely.
 
 
 Available upgrades!
