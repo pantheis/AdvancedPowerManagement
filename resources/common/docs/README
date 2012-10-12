@@ -26,14 +26,23 @@ HV Charging Bench
 - The HV Charging Bench has a maximum input energy of 512 EU/t, and a base energy storage
   of 10,000,000 EU.
 
-All three charging benches will automatically place valid electrical items shift-clicked into
-them into the charging area if there is space free. Excess will be placed into the input slot.
+A charging bench will automatically place valid electrical items shift-clicked into
+it into the charging area if there is space free. Excess will be placed into the input slot.
 Once an item is done charging, it will be automatically moved to the output slot, if there is
 space, and another item from the input slot will be added to the main charging inventory.
 
 In this way, you can shift-click a full stack of RE-Batteries into the Charging Bench, it will
-automatically unstack them, charge them and you can quickly collect all of them by rapidly
-shift-clicking on the output slot!
+automatically unstack them, charge them and you can quickly collect them just by shift-clicking
+repeatedly on the output slot.
+
+A charging bench also includes direct access to your player's armor slots. If you're wearing
+electrical based armor, you can shift-click it directly from your armor slots into the bench.
+When it's done charging, simply shift-click it from the output slot and it will automatically
+equip it into the correct location. It doesn't get much easier than that!
+
+And we're not done yet with the awesome features of this mod! Each charging bench now includes
+a "battery meter" on every side of the bench. You can see how much power you have available
+without even opening the GUI.
 
 
 Available upgrades!
@@ -44,27 +53,37 @@ a very specific effect.
 - The transformer upgrade will allow the lower tier benches to accept higher input energy,
   including energy crystals, lappacks, and lapotrons in the power input slot.
 
-- The energy storage upgrade will increase the maximum energy storage of the device by 10%
-  of the base amount per upgrade. This will allow each energy storage upgrade to have the same
-  relative effect on each tier without making them overpowered or underpowered on any one tier.
+- The energy storage upgrade will increase the maximum energy storage of the device. The LV
+  bench now gains 10,000 EU per upgrade, the same amount the battery used to craft the upgrade
+  would be able to store. The MV bench gains 60,000 EU or 10% of its base storage capacity for
+  each upgrade installed. And the HV bench gains a whopping 500,000 EU capacity per upgrade!
 
-- The overclock upgrade is where the Charging Bench will really shine. By using quantum
+- The overclocker upgrade lets you push your Charging Bench to the limit. By using quantum
   tunneling technology, the Charging Bench is able to carefully manage the voltage and current
-  levels used to charge items and allow items to exceed their normally safe charge rates. Each
-  upgrade increases both the charge rate exponentially by 30% per overclocker, and the
-  resulting energy drain exponentially by 50% per overclocker. Yes, you waste power, but
-  that's the price you pay whenever you use overclockers.
+  levels used to charge items and allow items to safely exceed their normal charge rates. This
+  unfortunately has the same drawback that always accompanies the use of overclockers: The
+  amount of power consumed increases even as the time required to charge an item decreases.
+  Specifically, each upgrade increases the amount of energy transferred to an item per tick by
+  30% and the amount of energy drained from the bench's internal storage by 50%, growing
+  exponentially with every overclocker added. Since it's hard to do that kind of math in your
+  head, here's an example: Five overclockers approximately doubles the energy used to charge
+  any given item, but the time required to charge it is reduced by nearly 75%!
 
+  For those interested, the formulas for some useful values are:
+    Speed:           S = (1.3^x)
+    Time required:   T = 1/S
+    Energy consumed: E = (1.5^x)/S
+  where x is the number of overclockers. (Just multiply the normal values by S, T, or E.)
 
 There's more!!
 -------------------
-The Charging Benches Input, Output and Power slots are exposed to pipes/tubes! Input is on
-top, output is on bottom and the power slot is from any side. While the GUI restricts items
-placed into each of the slots to appropriate types there is no such restriction for pipe/tube
-access. It is up to the player to design their systems so that the wrong types of items don't
-get tossed onto the bench. But not to worry, there are no negative consequences to inserting
-incorrect items, aside from temporarily clogging up the slot; the bench simply will not do
-anything with items that it can't process.
+The Charging Bench's input, output and power slots are exposed to pipes, tubes, and other
+devices. Input is on top, output is on bottom and the power slot is from all sides. While the
+GUI restricts items placed into each of the slots to appropriate types there is no such
+restriction for pipe/tube access. It is up to the player to design their systems so that the
+wrong types of items don't get tossed onto the bench. But not to worry, there are no negative
+consequences to inserting incorrect items, aside from temporarily clogging up the slot; the
+bench simply will not do anything with items that it can't process.
 
 Valid electrical items placed into the charging bench via tubes will automatically be moved
 from the input slot to an available charging slot, then moved to the output slot once fully
