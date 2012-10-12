@@ -23,9 +23,7 @@ public class ClientPacketHandler implements IPacketHandler
 	int y = 0;
 	int z = 0;
 	int chargeLevel = 0;
-
-	boolean snapshot = false;
-
+	boolean working = false;
 
 	/*
 	 * Packet format:
@@ -54,7 +52,7 @@ public class ClientPacketHandler implements IPacketHandler
 	@Override
 	public void onPacketData(NetworkManager network, Packet250CustomPayload packet, Player player)
 	{
-		if (Utils.isDebug()) System.out.println("ClientPacketHandler.onPacketData");
+		//if (Utils.isDebug()) System.out.println("ClientPacketHandler onPacketData");
 		DataInputStream stream = new DataInputStream(new ByteArrayInputStream(packet.data));
 		//Read the first int to determine packet type
 		try
@@ -65,10 +63,8 @@ public class ClientPacketHandler implements IPacketHandler
 		{
 			ex.printStackTrace();
 		}
-		/*
-		 * each packet type needs to implement an if and then whatever other read functions it needs
-		 * complete with try/catch blocks
-		 */
+
+		// each packet type needs to implement an if and then whatever other read functions it needs complete with try/catch blocks
 		if (this.packetType == 0)
 		{
 			try
@@ -77,17 +73,20 @@ public class ClientPacketHandler implements IPacketHandler
 				this.y = stream.readInt();
 				this.z = stream.readInt();
 				this.chargeLevel = stream.readInt();
+				this.working = stream.readBoolean();
 			}
 			catch (Exception ex)
 			{
 				ex.printStackTrace();
 			}
+
 			World world = FMLClientHandler.instance().getClient().theWorld;
 			TileEntity tile = world.getBlockTileEntity(x, y, z);
 			if (tile instanceof TEChargingBench)
 			{
 				((TEChargingBench)tile).chargeLevel = this.chargeLevel;
-				if (Utils.isDebug()) System.out.println("ClientPacketHandler.chargeLevel: " + this.chargeLevel);
+				((TEChargingBench)tile).doingWork = this.working;
+				if (Utils.isDebug()) System.out.println("ClientPacketHandler chargeLevel: " + this.chargeLevel + " working: " + this.working);
 				world.markBlockNeedsUpdate(x, y, z);
 			}
 		}

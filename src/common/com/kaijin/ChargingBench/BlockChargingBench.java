@@ -98,8 +98,6 @@ public class BlockChargingBench extends Block
 		TileEntity tile = blocks.getBlockTileEntity(x, y, z);
 		if (tile instanceof TEChargingBench)
 		{
-			int chargeLevel = ((TEChargingBench)tile).chargeLevel * 16;
-//			System.out.println("getBlockTexture(x:" +x +" y:" +y +" z:"+z + " side:" + side + " meta: "+meta + " charge: " + chargeLevel);
 			switch (side)
 			{
 			case 0: // bottom
@@ -108,7 +106,9 @@ public class BlockChargingBench extends Block
 			case 1: // top
 				return this.baseTexture + meta;
 			default:
-				return this.sideTexture + meta + chargeLevel;
+				int chargeLevel = ((TEChargingBench)tile).chargeLevel * 16;
+				int working = ((TEChargingBench)tile).doingWork ? 3 : 0;
+				return this.sideTexture + meta + chargeLevel + working;
 			}
 		}
 		else if (tile instanceof TEEmitter)

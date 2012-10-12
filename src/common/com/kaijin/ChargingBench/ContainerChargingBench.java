@@ -27,10 +27,9 @@ public class ContainerChargingBench extends Container
 	{
 		if (Utils.isDebug()) System.out.println("ContainerChargingBench");
 		this.tileentity = tile;
-		this.currentEnergy = 0;
-		this.adjustedMaxInput = 0;
-		this.adjustedStorage = 0;
-		//this.adjustedChargeRate = 0;
+		this.currentEnergy = -1;
+		this.adjustedMaxInput = -1;
+		this.adjustedStorage = -1;
 
 		final int topOffset = 32; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
