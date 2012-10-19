@@ -39,10 +39,14 @@ clientPacketHandlerSpec = @SidedPacketHandler(channels = {"ChargingBench"}, pack
 serverPacketHandlerSpec = @SidedPacketHandler(channels = ("ChargingBench"), packetHandler = ServerPacketHandler.class))
 public class ChargingBench
 {
+	public static final String modNamePacked = "ChargingBench";
+	public static final String modNameSpaced = "Charging Bench";
+	public static final String emitterName = "Emitter";
+
 	@SidedProxy(clientSide = "com.kaijin.ChargingBench.ClientProxy", serverSide = "com.kaijin.ChargingBench.CommonProxy")
 	public static CommonProxy proxy; //This object will be populated with the class that you choose for the environment
 
-	@Instance("ChargingBench")
+	@Instance(modNamePacked)
 	public static ChargingBench instance; //The instance of the mod that will be defined, populated, and callable
 
 	static int ChargingBenchBlockID;
@@ -70,14 +74,14 @@ public class ChargingBench
 		{
 			Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
 			configuration.load();
-			ChargingBenchBlockID = configuration.getOrCreateBlockIdProperty("ChargingBench", 2491).getInt();
+			ChargingBenchBlockID = configuration.getOrCreateBlockIdProperty(modNamePacked, 2491).getInt();
 			armorShiftClickTweak = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("armorShiftClickTweak", configuration.CATEGORY_GENERAL, true).value));
 			isDebugging = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("debug", configuration.CATEGORY_GENERAL, false).value));
 			configuration.save();
 		}
 		catch (Exception var1)
 		{
-			System.out.println("[ChargingBench] Error while trying to access configuration!");
+			System.out.println("[" + modNamePacked + "] Error while trying to access configuration!");
 			throw new RuntimeException(var1);
 		}
 	}
@@ -88,38 +92,38 @@ public class ChargingBench
 	public void load(FMLInitializationEvent event)
 	{
 		ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("ChargingBench").setCreativeTab(CreativeTabs.tabDeco);
-		LanguageRegistry.addName(ChargingBench, "Charging Bench");
+		LanguageRegistry.addName(ChargingBench, modNameSpaced);
 		GameRegistry.registerBlock(ChargingBench, ItemChargingBench.class);
 
 		//Charging Bench blocks
-		GameRegistry.registerTileEntity(TEChargingBench1.class, "LV Charging Bench");
-		GameRegistry.registerTileEntity(TEChargingBench2.class, "MV Charging Bench");
-		GameRegistry.registerTileEntity(TEChargingBench3.class, "HV Charging Bench");
+		GameRegistry.registerTileEntity(TEChargingBench1.class, "LV " + modNameSpaced);
+		GameRegistry.registerTileEntity(TEChargingBench2.class, "MV " + modNameSpaced);
+		GameRegistry.registerTileEntity(TEChargingBench3.class, "HV " + modNameSpaced);
 		
-		LanguageRegistry.instance().addStringLocalization("blockChargingBench1.name", "LV Charging Bench");
-		LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "MV Charging Bench");
-		LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "HV Charging Bench");
+		LanguageRegistry.instance().addStringLocalization("blockChargingBench1.name", "LV " + modNameSpaced);
+		LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "MV " + modNameSpaced);
+		LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "HV " + modNameSpaced);
 		
 		//Emitter Blocks, emit 32, 128 or 512 EU/T
-		GameRegistry.registerTileEntity(TEEmitter1.class, "LV Emitter");
-		GameRegistry.registerTileEntity(TEEmitter2.class, "MV Emitter");
-		GameRegistry.registerTileEntity(TEEmitter3.class, "HV Emitter");
-		GameRegistry.registerTileEntity(TEEmitter4.class, "EV Emitter");
+		GameRegistry.registerTileEntity(TEEmitter1.class, "LV " + emitterName);
+		GameRegistry.registerTileEntity(TEEmitter2.class, "MV " + emitterName);
+		GameRegistry.registerTileEntity(TEEmitter3.class, "HV " + emitterName);
+		GameRegistry.registerTileEntity(TEEmitter4.class, "EV " + emitterName);
 		
-		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock1.name", "LV Emitter");
-		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock2.name", "MV Emitter");
-		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock3.name", "HV Emitter");
-		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock4.name", "EV Emitter");
+		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock1.name", "LV " + emitterName);
+		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock2.name", "MV " + emitterName);
+		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock3.name", "HV " + emitterName);
+		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock4.name", "EV " + emitterName);
 
 		NetworkRegistry.instance().registerGuiHandler(this.instance, proxy);
 		proxy.load();
 		if (proxy.isServer())
 		{
-			FMLLog.getLogger().info ("ChargingBench " + Utils.VERSION + " loaded.");
+			FMLLog.getLogger().info (modNameSpaced + " " + Utils.VERSION + " loaded.");
 		}
 		if (isDebugging)
 		{
-			FMLLog.getLogger().info("ChargingBench debugging enabled.");
+			FMLLog.getLogger().info(modNameSpaced + " debugging enabled.");
 		}
 
 		// For internal reference to verify items can be placed in inventory.
@@ -131,7 +135,6 @@ public class ChargingBench
 		ic2overclockerUpg.getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
 		ic2transformerUpg.getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
 		ic2storageUpg.getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
-
 	}
 
 	@PostInit
