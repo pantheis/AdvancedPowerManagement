@@ -58,7 +58,7 @@ public class GuiBatteryStation extends GuiContainer
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
 	{
-		int textureID = this.mc.renderEngine.getTexture(ChargingBench.proxy.GUI_PNG);
+		int textureID = this.mc.renderEngine.getTexture(ChargingBench.proxy.GUI2_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		this.mc.renderEngine.bindTexture(textureID);
 		int xLoc = (this.width - this.xSize) / 2;
