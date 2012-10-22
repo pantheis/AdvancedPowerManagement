@@ -25,9 +25,16 @@ import com.kaijin.ChargingBench.*;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
-public class TEChargingBench extends TECommonBench implements IEnergySink, IInventory, ISidedInventory
+public class TEBatteryStation extends TECommonBench implements IEnergySink, IInventory, ISidedInventory
 {
 	private ItemStack[] contents = new ItemStack[19];
+
+	private int tickTime;
+	private int tickDelay = 10;
+
+	public int baseTier;
+
+	public int powerTier; // Transformer upgrades allow charging from energy crystals and lapotrons
 
 	// Base values
 	public int baseMaxInput;
@@ -44,7 +51,11 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	public float drainFactor;
 	public float chargeFactor;
 
-	public TEChargingBench(int i)
+	//For outside texture display
+	public int chargeLevel;
+	public boolean doingWork;
+
+	public TEBatteryStation(int i)
 	{
 		//base tier = what we're passed, so 1, 2 or 3
 		this.baseTier = i;
@@ -85,6 +96,12 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	public boolean canUpdate()
 	{
 		return true;
+	}
+
+	// IC2 API functions
+	public boolean isAddedToEnergyNet()
+	{
+		return initialized;
 	}
 
 	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
@@ -149,6 +166,13 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	}
 
 	@Override
+	public void dropItem(ItemStack item)
+	{
+		EntityItem entityitem = new EntityItem(worldObj, (double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D, item);
+		entityitem.delayBeforeCanPickup = 10;
+		worldObj.spawnEntityInWorld(entityitem);
+	}
+
 	public void dropContents()
 	{
 		ItemStack item;
@@ -324,7 +348,6 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		if (this.currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage; // If storage has decreased, lose any excess energy.
 	}
 
-	@Override
 	public void onInventoryChanged(int slot)
 	{
 		if (slot == ChargingBench.slotInput || slot == ChargingBench.slotOutput)
@@ -677,7 +700,8 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 			}
 		}
 	}
-
+	
+	@Override
 	public int gaugeEnergyScaled(int gaugeSize)
 	{
 		if (this.currentEnergy <= 0)
@@ -691,6 +715,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		return result;
 	}
 
+
 	//Networking stuff
 	@Override
 	public Packet250CustomPayload getAuxillaryInfoPacket()
@@ -700,11 +725,10 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		DataOutputStream data = new DataOutputStream(bytes);
 		try
 		{
-			data.writeInt(0);
+			data.writeInt(1);
 			data.writeInt(this.xCoord);
 			data.writeInt(this.yCoord);
 			data.writeInt(this.zCoord);
-			data.writeInt(this.chargeLevel);
 			data.writeBoolean(this.doingWork);
 		}
 		catch(IOException e)

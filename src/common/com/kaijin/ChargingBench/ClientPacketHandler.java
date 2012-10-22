@@ -90,5 +90,29 @@ public class ClientPacketHandler implements IPacketHandler
 				world.markBlockNeedsUpdate(x, y, z);
 			}
 		}
+		if (this.packetType == 1)
+		{
+			try
+			{
+				this.x = stream.readInt();
+				this.y = stream.readInt();
+				this.z = stream.readInt();
+				this.working = stream.readBoolean();
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
+
+			World world = FMLClientHandler.instance().getClient().theWorld;
+			TileEntity tile = world.getBlockTileEntity(x, y, z);
+			if (tile instanceof TEBatteryStation)
+			{
+				((TEBatteryStation)tile).doingWork = this.working;
+				if (Utils.isDebug()) System.out.println("ClientPacketHandler working: " + this.working);
+				world.markBlockNeedsUpdate(x, y, z);
+			}
+		}
+
 	}
 }

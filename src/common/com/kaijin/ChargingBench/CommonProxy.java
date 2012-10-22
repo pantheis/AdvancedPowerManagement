@@ -67,14 +67,32 @@ public class CommonProxy implements IGuiHandler
 			return null;
 		}
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		if(ID == 1)
+		{
+			TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-		if (!(tile instanceof TEChargingBench))
+			if (!(tile instanceof TEChargingBench))
+			{
+				return null;
+			}
+
+			return new ContainerChargingBench(player.inventory, (TEChargingBench)tile);
+		}
+		else if(ID == 2)
+		{
+			TileEntity tile = world.getBlockTileEntity(x, y, z);
+
+			if (!(tile instanceof TEBatteryStation))
+			{
+				return null;
+			}
+
+			return new ContainerBatteryStation(player.inventory, (TEBatteryStation)tile);
+		}
+		else
 		{
 			return null;
 		}
-
-		return new ContainerChargingBench(player.inventory, (TEChargingBench)tile);
 	}
 
 	@Override
@@ -88,10 +106,26 @@ public class CommonProxy implements IGuiHandler
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-		if (!(tile instanceof TEChargingBench))
+		if (ID == 1)
+		{
+			if (!(tile instanceof TEChargingBench))
+			{
+				return null;
+			}
+			return new GuiChargingBench(player.inventory, (TEChargingBench)tile);
+		}
+		else if(ID == 2)
+		{
+			if (!(tile instanceof TEBatteryStation))
+			{
+				return null;
+			}
+			return new GuiBatteryStation(player.inventory, (TEBatteryStation)tile);
+
+		}
+		else
 		{
 			return null;
 		}
-		return new GuiChargingBench(player.inventory, (TEChargingBench)tile);
 	}
 }

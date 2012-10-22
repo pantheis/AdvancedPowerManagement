@@ -23,7 +23,7 @@ public class SlotChargeable extends Slot
 		if (stack != null && stack.getItem() instanceof IElectricItem)
 		{
 			IElectricItem item = (IElectricItem)(stack.getItem());
-			if (item.getTier() <= ((TEChargingBench)inventory).baseTier) return true;
+			if (item.getTier() <= ((TECommonBench)inventory).baseTier) return true;
 		}
 		return false;
 	}
@@ -41,9 +41,9 @@ public class SlotChargeable extends Slot
 	@Override
 	public void onSlotChanged()
 	{
-		if (this.inventory instanceof TEChargingBench)
+		if (this.inventory instanceof TECommonBench)
 		{
-			((TEChargingBench)this.inventory).onInventoryChanged(this.invIndex);
+			((TECommonBench)this.inventory).onInventoryChanged(this.invIndex);
 		}
 		else
 		{

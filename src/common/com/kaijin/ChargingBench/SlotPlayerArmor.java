@@ -45,9 +45,9 @@ class SlotPlayerArmor extends Slot
 	@Override
 	public void onSlotChanged()
 	{
-		if (this.inventory instanceof TEChargingBench)
+		if (this.inventory instanceof TECommonBench)
 		{
-			((TEChargingBench)this.inventory).onInventoryChanged(this.invIndex);
+			((TECommonBench)this.inventory).onInventoryChanged(this.invIndex);
 		}
 		else
 		{

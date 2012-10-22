@@ -24,7 +24,7 @@ public class BlockChargingBench extends Block
 
 	public void getSubBlocks(int blockID, CreativeTabs creativetabs, List list)
 	{
-		for (int i = 0; i < 7; ++i)
+		for (int i = 0; i < 10; ++i)
 		{
 			list.add(new ItemStack(blockID, 1, i));
 		}
@@ -77,6 +77,11 @@ public class BlockChargingBench extends Block
 				entityplayer.openGui(ChargingBench.instance, 1, world, x, y, z);
 				return true;
 			}
+			else if (meta == 7 || meta == 8 || meta == 9)
+			{
+				entityplayer.openGui(ChargingBench.instance, 2, world, x, y, z);
+				return true;
+			}
 			else
 			{
 				return false;
@@ -122,6 +127,21 @@ public class BlockChargingBench extends Block
 				return this.baseTexture + meta;
 			}
 		}
+		else if (tile instanceof TEBatteryStation) //FIXME fix textures
+		{
+			switch (side)
+			{
+			case 0: // bottom
+				return 0;
+
+			case 1: // top
+				return this.baseTexture + meta;
+			default:
+				int chargeLevel = ((TEBatteryStation)tile).chargeLevel * 16;
+				int working = ((TEBatteryStation)tile).doingWork ? 3 : 0;
+				return this.sideTexture + meta + chargeLevel + working;
+			}
+		}
 		//If we're here, something is wrong
 		return side;
 	}
@@ -143,6 +163,10 @@ public class BlockChargingBench extends Block
 			{
 				return this.sideTexture + meta;
 			}
+			else if(meta > 6)
+			{
+				return 1;//FIXME Fix texture for Discharging Bench
+			}
 			else
 			{
 				return this.baseTexture + meta;
@@ -159,10 +183,6 @@ public class BlockChargingBench extends Block
 	@Override
 	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int direction)
 	{
-		if(world.getBlockMetadata(x, y, z) < 3)
-		{
-			return false;
-		}
 		return true;
 	}
 
@@ -193,6 +213,15 @@ public class BlockChargingBench extends Block
 		case 6:
 			return new TEEmitter4();
 
+		case 7:
+			return new TEBatteryStation1();
+		
+		case 8:
+			return new TEBatteryStation2();
+		
+		case 9:
+			return new TEBatteryStation3();
+
 		default:
 			return null;
 		}
@@ -210,6 +239,9 @@ public class BlockChargingBench extends Block
 		case 4:
 		case 5:
 		case 6:
+		case 7:
+		case 8:
+		case 9:
 			return true;
 
 		default:
@@ -247,9 +279,14 @@ public class BlockChargingBench extends Block
 			{
 				tile.invalidate();
 			}
-			else if (tile instanceof TEChargingBench) 
+			else if (tile instanceof TECommonBench) 
 			{
-				((TEChargingBench)tile).dropContents();
+				((TECommonBench)tile).dropContents();
+				tile.invalidate();
+			}
+			else if (tile instanceof TEBatteryStation) 
+			{
+				((TEBatteryStation)tile).dropContents();
 				tile.invalidate();
 			}
 		}
