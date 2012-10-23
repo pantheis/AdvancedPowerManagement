@@ -27,7 +27,7 @@ public class SlotPowerSource extends Slot
     	if (stack != null && stack.getItem() instanceof IElectricItem)
     	{
     		IElectricItem item = (IElectricItem)(stack.getItem());
-    		if (item.canProvideEnergy() && item.getTier() <= ((TEChargingBench)inventory).powerTier) return true;
+    		if (item.canProvideEnergy() && item.getTier() <= ((TECommonBench)inventory).powerTier) return true;
     	}
         return false;
     }
@@ -45,9 +45,9 @@ public class SlotPowerSource extends Slot
 	@Override
     public void onSlotChanged()
     {
-    	if (this.inventory instanceof TEChargingBench)
+    	if (this.inventory instanceof TECommonBench)
     	{
-            ((TEChargingBench)this.inventory).onInventoryChanged(this.invIndex);
+            ((TECommonBench)this.inventory).onInventoryChanged(this.invIndex);
     	}
     	else
     	{

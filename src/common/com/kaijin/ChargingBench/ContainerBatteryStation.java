@@ -11,21 +11,21 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
 import cpw.mods.fml.common.network.Player;
 
-public class ContainerChargingBench extends Container
+public class ContainerBatteryStation extends Container
 {
 	private final int benchShiftClickRange = 17;
 	private final int playerInventoryStartSlot = 19;
 	private final int playerArmorStartSlot = 55;
 
-	public TEChargingBench tileentity;
+	public TEBatteryStation tileentity;
 	public int currentEnergy;
 	public int adjustedStorage;
 	//public short adjustedChargeRate;
 	public short adjustedMaxInput;
 
-	public ContainerChargingBench(InventoryPlayer player, TEChargingBench tile)
+	public ContainerBatteryStation(InventoryPlayer player, TEBatteryStation tile)
 	{
-		if (Utils.isDebug()) System.out.println("ContainerChargingBench");
+		if (Utils.isDebug()) System.out.println("ContainerBatteryStation");
 		this.tileentity = tile;
 		this.currentEnergy = -1;
 		this.adjustedMaxInput = -1;
@@ -41,24 +41,15 @@ public class ContainerChargingBench extends Container
 		{
 			for (xCol = 0; xCol < 3; ++xCol) // 3 columns across
 			{
-				this.addSlotToContainer(new SlotChargeable(tile, ChargingBench.CBslotCharging + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
+				this.addSlotToContainer(new SlotChargeable(tile, ChargingBench.BSslotPowerSource + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
 			}
 		}
 
-		// Upgrade slots (Overclocker, storage)
-		for (yRow = 0; yRow < 4; ++yRow) // 4 rows high
-		{
-			this.addSlotToContainer(new SlotMachineUpgrade(tile, ChargingBench.CBslotUpgrade + yRow, 152, topOffset + yRow * 18));
-		}
-
 		// Input Slot
-		this.addSlotToContainer(new SlotInput(tile, ChargingBench.CBslotInput, 130, topOffset));
+		this.addSlotToContainer(new SlotInput(tile, ChargingBench.BSslotInput, 130, topOffset));
 
 		// Output slot
-		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.CBslotOutput, 130, topOffset + 54));
-
-		// Power source slot
-		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.CBslotPowerSource, 130, topOffset + 27));
+		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.BSslotOutput, 130, topOffset + 54));
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
@@ -77,14 +68,10 @@ public class ContainerChargingBench extends Container
 
 		//TODO fix slot, needs a custom armor slot type, can't use SlotArmor as it is private, will
 		//need to make our own
-
-		// Player armor
-		for (yRow = 0; yRow < 4; ++yRow)
-		{
-			this.addSlotToContainer(new SlotPlayerArmor(player, player.getSizeInventory() - 1 - yRow, 8, topOffset + yRow * 18, yRow));
-		}
 	}
 
+	//The following is not needed, but being left for now for reference
+/*
 	@Override
 	public void updateCraftingResults()
 	{
@@ -122,7 +109,7 @@ public class ContainerChargingBench extends Container
 		this.adjustedMaxInput = (short)this.tileentity.adjustedMaxInput;
 		//this.adjustedChargeRate = (short)this.tileentity.adjustedChargeRate;
 	}
-
+	
 	@Override
 	public void updateProgressBar(int param, int value)
 	{
@@ -161,10 +148,11 @@ public class ContainerChargingBench extends Container
 			break;
 
 		default:
-			System.out.println("ContainerChargingBench.updateProgressBar - Warning: default case!");
+			System.out.println("ContainerDischargingBench.updateProgressBar - Warning: default case!");
 		}
 	}
 
+*/
 	/**
 	 * Merges provided ItemStack with the first available one in the container/player inventory
 	 */
@@ -274,7 +262,7 @@ public class ContainerChargingBench extends Container
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(int slotID)
+	public ItemStack transferStackInSlot(int slotID) //FIXME needs updating for BatteryStation
 	{
 		ItemStack original = null;
 		Slot slotclicked = (Slot)this.inventorySlots.get(slotID);
@@ -379,7 +367,7 @@ public class ContainerChargingBench extends Container
 	{
 		ItemStack result = null;
 
-		if (Utils.isDebug() && ChargingBench.proxy.isServer()) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
+		if (Utils.isDebug() && ChargingBench.proxy.isServer()) System.out.println("ContainerBatteryStation.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
 
 		if (button > 1)
 		{
