@@ -20,7 +20,7 @@ import net.minecraftforge.common.Configuration;
 
 public class CommonProxy implements IGuiHandler
 {
-	public static String ITEM_PNG = "/com/kaijin/ChargingBench/textures/ChargingBench.png";
+	public static String ITEM_PNG = "/com/kaijin/ChargingBench/textures/ChargingBenchItems.png";
 	public static String BLOCK_PNG = "/com/kaijin/ChargingBench/textures/ChargingBench.png";
 	public static String GUI_PNG = "/com/kaijin/ChargingBench/textures/GUIChargingBench2.png";
 
