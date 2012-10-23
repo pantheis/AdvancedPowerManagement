@@ -23,6 +23,7 @@ public class ItemChargingBench extends ItemBlock
 
     public String getItemNameIS(ItemStack var1)
     {
+    	//TODO Use an array to store the name strings (faster lookup)
     	// if (Utils.isDebug()) System.out.println("ItemChargingBench.getItemNameIS");
         int var2 = var1.getItemDamage();
 
@@ -42,6 +43,13 @@ public class ItemChargingBench extends ItemBlock
                 return "blockEmitterBlock3";
             case 6:
                 return "blockEmitterBlock4";
+            case 7:
+                return "blockBatteryStation1";
+            case 8:
+            	return "blockBatteryStation2";
+            case 9:
+            	return "blockBatteryStation3";
+
             default:
                 return null;
         }
