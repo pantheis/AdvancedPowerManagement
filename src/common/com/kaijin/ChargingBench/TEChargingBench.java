@@ -175,6 +175,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		for (i = 0; i < contents.length; ++i)
 		{
 			item = contents[i];
+			contents[i] = null;
 			if (item != null && item.stackSize > 0) dropItem(item);
 		}
 	}

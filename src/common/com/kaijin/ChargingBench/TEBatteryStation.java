@@ -105,6 +105,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		for (i = 0; i < contents.length; ++i)
 		{
 			item = contents[i];
+			contents[i] = null;
 			if (item != null && item.stackSize > 0) dropItem(item);
 		}
 	}
