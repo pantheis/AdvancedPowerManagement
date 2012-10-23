@@ -604,7 +604,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		for (int i = ChargingBench.CBslotCharging; i < ChargingBench.CBslotCharging + 12; i++)
 		{
 			ItemStack stack = this.contents[i];
-			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
+			if (this.currentEnergy > 0 && stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				IElectricItem item = (IElectricItem)(stack.getItem());
 				if (item.getTier() <= this.baseTier)
@@ -628,8 +628,14 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 					}
 
 					int adjustedEnergyUse = (int)Math.ceil((this.drainFactor / this.chargeFactor) * amountNeeded);
-					if(adjustedEnergyUse <= this.currentEnergy && adjustedEnergyUse > 0)
+					if (adjustedEnergyUse > 0)
 					{
+						if (adjustedEnergyUse > this.currentEnergy)
+						{
+							// Allow that last trickle of energy to be transferred out of the bench 
+							adjustedTransferLimit = (adjustedTransferLimit * this.currentEnergy) / adjustedEnergyUse;
+							adjustedEnergyUse = this.currentEnergy;
+						}
 						// We don't need to do this with the current API, it's switching the ItemID for us. Just make sure we don't try to charge stacked batteries, as mentioned above!
 						//int chargedItemID = item.getChargedItemId();
 						//if (stack.itemID != chargedItemID)
