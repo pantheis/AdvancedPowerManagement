@@ -32,12 +32,10 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	// Base values
 	public int baseMaxInput;
 	public int baseStorage;
-	//public int baseChargeRate;
 
 	// Adjustable values that need communicating via container
 	public int adjustedMaxInput;
 	public int adjustedStorage;
-	//public int adjustedChargeRate;
 
 	public int currentEnergy;
 
@@ -51,7 +49,6 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		initializeBaseValues();
 
 		//setup Adjusted variables to = defaults, we'll be adjusting them in entityUpdate
-		//this.adjustedChargeRate = this.baseChargeRate;
 		this.adjustedMaxInput = this.baseMaxInput;
 		this.adjustedStorage = this.baseStorage;
 
