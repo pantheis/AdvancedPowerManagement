@@ -72,6 +72,14 @@ public class ChargingBench
 	static final int CBinventorySize = 19;
 	static final int BSinventorySize = 14;
 
+	static ItemStack componentCopperCable;
+	static ItemStack componentGoldCable;
+	static ItemStack componentIronCable;
+	static ItemStack componentBatBox;
+	static ItemStack componentMFE;
+	static ItemStack componentMFSU;
+	static ItemStack componentCircuit;
+
 	static ItemStack ic2overclockerUpg;
 	static ItemStack ic2transformerUpg;
 	static ItemStack ic2storageUpg;
@@ -137,10 +145,10 @@ public class ChargingBench
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock4.name", "EV " + emitterName);
 
 		ItemBenchTools = new ItemBenchTools(ItemBenchToolsID).setItemName(toolkitName);
-		LanguageRegistry.instance().addStringLocalization("benchTools.toolkit.name", toolkitName);
-		LanguageRegistry.instance().addStringLocalization("benchTools.LV-kit.name", "LV " + componentsName);
-		LanguageRegistry.instance().addStringLocalization("benchTools.MV-kit.name", "MV " + componentsName);
-		LanguageRegistry.instance().addStringLocalization("benchTools.HV-kit.name", "HV " + componentsName);
+		LanguageRegistry.instance().addStringLocalization("item.benchTools.toolkit.name", toolkitName);
+		LanguageRegistry.instance().addStringLocalization("item.benchTools.LV-kit.name", "LV " + componentsName);
+		LanguageRegistry.instance().addStringLocalization("item.benchTools.MV-kit.name", "MV " + componentsName);
+		LanguageRegistry.instance().addStringLocalization("item.benchTools.HV-kit.name", "HV " + componentsName);
 
 		NetworkRegistry.instance().registerGuiHandler(this.instance, proxy);
 		proxy.load();
@@ -152,6 +160,18 @@ public class ChargingBench
 		{
 			FMLLog.getLogger().info(modNameSpaced + " debugging enabled.");
 		}
+
+		// For returning charging benches and deconstructing them
+		componentCopperCable = Items.getItem("insulatedCopperCableItem").copy();
+		componentCopperCable.stackSize = 3;
+		componentGoldCable = Items.getItem("doubleInsulatedGoldCableItem").copy();
+		componentGoldCable.stackSize = 3;
+		componentIronCable = Items.getItem("trippleInsulatedIronCableItem").copy();
+		componentIronCable.stackSize = 3;
+		componentBatBox = Items.getItem("batBox").copy();
+		componentMFE = Items.getItem("mfeUnit").copy();
+		componentMFSU = Items.getItem("mfsUnit").copy();
+		componentCircuit = Items.getItem("electronicCircuit").copy();
 
 		// For internal reference to verify items can be placed in inventory.
 		ic2overclockerUpg = Items.getItem("overclockerUpgrade").copy();
@@ -182,5 +202,15 @@ public class ChargingBench
 
 		// Bench Toolkit recipe
 		GameRegistry.addRecipe(new ItemStack(ItemBenchTools, 1, 0), new Object[] {" I ", "S S", 'I', Item.ingotIron, 'S', Item.stick});
+
+		// LV, MV, HV Charging Bench Components recipes
+		GameRegistry.addShapelessRecipe(new ItemStack(ItemBenchTools, 1, 1), new ItemStack(ItemBenchTools, 1, 0), new ItemStack(ChargingBench, 1, 0));
+		GameRegistry.addShapelessRecipe(new ItemStack(ItemBenchTools, 1, 2), new ItemStack(ItemBenchTools, 1, 0), new ItemStack(ChargingBench, 1, 1));
+		GameRegistry.addShapelessRecipe(new ItemStack(ItemBenchTools, 1, 3), new ItemStack(ItemBenchTools, 1, 0), new ItemStack(ChargingBench, 1, 2));
+
+		// LV, MV, HV Charging Bench reassembly recipes
+		GameRegistry.addShapelessRecipe(new ItemStack(ChargingBench, 1, 0), new ItemStack(ItemBenchTools, 1, 0), new ItemStack(ItemBenchTools, 1, 1));
+		GameRegistry.addShapelessRecipe(new ItemStack(ChargingBench, 1, 1), new ItemStack(ItemBenchTools, 1, 0), new ItemStack(ItemBenchTools, 1, 2));
+		GameRegistry.addShapelessRecipe(new ItemStack(ChargingBench, 1, 2), new ItemStack(ItemBenchTools, 1, 0), new ItemStack(ItemBenchTools, 1, 3));
 	}
 }

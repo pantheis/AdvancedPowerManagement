@@ -22,7 +22,7 @@ public class CommonProxy implements IGuiHandler
 {
 	public static final String ITEM_PNG = "/com/kaijin/ChargingBench/textures/ChargingBenchItems.png";
 	public static final String BLOCK_PNG = "/com/kaijin/ChargingBench/textures/ChargingBench.png";
-	public static final String GUI1_PNG = "/com/kaijin/ChargingBench/textures/GUIChargingBench.png";
+	public static final String GUI1_PNG = "/com/kaijin/ChargingBench/textures/GUIChargingBench1.png";
 	public static final String GUI2_PNG = "/com/kaijin/ChargingBench/textures/GUIChargingBench2.png";
 
 	public void load()
