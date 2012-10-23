@@ -32,8 +32,7 @@ public class ItemBenchTools extends Item
     @SideOnly(Side.CLIENT)
     public int getIconFromDamage(int par1)
     {
-        int var2 = MathHelper.clamp_int(par1, 0, 3);
-        return 240 + var2;
+        return MathHelper.clamp_int(par1, 0, 3);
     }
 
 	@Override
