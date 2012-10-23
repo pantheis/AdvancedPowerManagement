@@ -41,24 +41,15 @@ public class ContainerBatteryStation extends Container
 		{
 			for (xCol = 0; xCol < 3; ++xCol) // 3 columns across
 			{
-				this.addSlotToContainer(new SlotChargeable(tile, ChargingBench.slotCharging + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
+				this.addSlotToContainer(new SlotChargeable(tile, ChargingBench.BSslotPowerSource + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
 			}
 		}
 
-		// Upgrade slots (Overclocker, storage)
-		for (yRow = 0; yRow < 4; ++yRow) // 4 rows high
-		{
-			this.addSlotToContainer(new SlotMachineUpgrade(tile, ChargingBench.slotUpgrade + yRow, 152, topOffset + yRow * 18));
-		}
-
 		// Input Slot
-		this.addSlotToContainer(new SlotInput(tile, ChargingBench.slotInput, 130, topOffset));
+		this.addSlotToContainer(new SlotInput(tile, ChargingBench.BSslotInput, 130, topOffset));
 
 		// Output slot
-		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.slotOutput, 130, topOffset + 54));
-
-		// Power source slot
-		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.slotPowerSource, 130, topOffset + 27));
+		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.BSslotOutput, 130, topOffset + 54));
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
@@ -77,14 +68,10 @@ public class ContainerBatteryStation extends Container
 
 		//TODO fix slot, needs a custom armor slot type, can't use SlotArmor as it is private, will
 		//need to make our own
-
-		// Player armor
-		for (yRow = 0; yRow < 4; ++yRow)
-		{
-			this.addSlotToContainer(new SlotPlayerArmor(player, player.getSizeInventory() - 1 - yRow, 8, topOffset + yRow * 18, yRow));
-		}
 	}
 
+	//The following is not needed, but being left for now for reference
+/*
 	@Override
 	public void updateCraftingResults()
 	{
@@ -122,7 +109,7 @@ public class ContainerBatteryStation extends Container
 		this.adjustedMaxInput = (short)this.tileentity.adjustedMaxInput;
 		//this.adjustedChargeRate = (short)this.tileentity.adjustedChargeRate;
 	}
-
+	
 	@Override
 	public void updateProgressBar(int param, int value)
 	{
@@ -165,6 +152,7 @@ public class ContainerBatteryStation extends Container
 		}
 	}
 
+*/
 	/**
 	 * Merges provided ItemStack with the first available one in the container/player inventory
 	 */
@@ -274,7 +262,7 @@ public class ContainerBatteryStation extends Container
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(int slotID)
+	public ItemStack transferStackInSlot(int slotID) //FIXME needs updating for BatteryStation
 	{
 		ItemStack original = null;
 		Slot slotclicked = (Slot)this.inventorySlots.get(slotID);

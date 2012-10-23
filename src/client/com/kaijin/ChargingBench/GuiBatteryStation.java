@@ -44,6 +44,8 @@ public class GuiBatteryStation extends GuiContainer
 		// Draw tier and title
 		this.fontRenderer.drawString(type + " Battery Station", 43, 7, 4210752);
 
+//Not needed, left for reference
+/*
 		// Compute strings for current and max storage
 		String s1 = (Integer.toString(tile.currentEnergy));
 		String s2 = (Integer.toString(tile.adjustedStorage));
@@ -53,6 +55,7 @@ public class GuiBatteryStation extends GuiContainer
 		this.fontRenderer.drawString(s2, 93, 20, 4210752);
 		// Draw separator		
 		this.fontRenderer.drawString(" / ", 80, 20, 4210752);
+*/
 	}
 
 	@Override
@@ -65,6 +68,8 @@ public class GuiBatteryStation extends GuiContainer
 		int yLoc = (this.height - this.ySize) / 2;
 		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, this.xSize, this.ySize);
 
+//Not needed, left for reference
+/*
 		if (this.tile.currentEnergy > 0)
 		{
 			// Make each box light up all at once like a LED instead of gradually using barLength = this.tile.gaugeEnergyScaled(66); 
@@ -72,5 +77,6 @@ public class GuiBatteryStation extends GuiContainer
 			if (barLength > 0) barLength++;
 			this.drawTexturedModalRect(xLoc + 32, yLoc + 100 - barLength, 176, 66 - barLength, 66, barLength);
 		}
+*/
 	}
 }

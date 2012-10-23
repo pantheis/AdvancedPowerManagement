@@ -22,7 +22,6 @@ public abstract class TECommonBench extends TileEntity
 	 * EnergyNet and clear the block space (set it to air)
 	 */
 	protected abstract void selfDestroy();
-	abstract int gaugeEnergyScaled(int gaugeSize);
 	public abstract void onInventoryChanged(int slot);
 	public abstract void dropContents();
 

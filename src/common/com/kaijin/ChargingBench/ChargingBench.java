@@ -53,13 +53,18 @@ public class ChargingBench
 	static int ChargingBenchBlockID;
 
 	// Constants for use in multiple classes
-	static final int slotInput = 0;
-	static final int slotOutput = 1;
-	static final int slotPowerSource = 2;
-	static final int slotCharging = 3;
-	static final int slotUpgrade = 15;
+	static final int CBslotInput = 0;
+	static final int CBslotOutput = 1;
+	static final int CBslotPowerSource = 2;
+	static final int CBslotCharging = 3;
+	static final int CBslotUpgrade = 15;
 
-	static final int inventorySize = 19;
+	static final int BSslotInput = 0;
+	static final int BSslotOutput = 1;
+	static final int BSslotPowerSource = 2;
+	
+	static final int CBinventorySize = 19;
+	static final int BSinventorySize = 14;
 
 	static ItemStack ic2overclockerUpg;
 	static ItemStack ic2transformerUpg;
