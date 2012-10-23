@@ -361,14 +361,14 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		this.doingWork = false;
 
 		// Work done every tick
-		drainPowerSource();
-		emitEnergy();
+		//drainPowerSource();
+		//emitEnergy();
 		moveOutputItems();
 		acceptInputItems();
 
 		// Trigger this only when charge level passes where it would need to update the client texture
 		int oldChargeLevel = this.chargeLevel;
-		this.chargeLevel = gaugeEnergyScaled(12);
+		//this.chargeLevel = gaugeEnergyScaled(12);
 		if (oldChargeLevel != this.chargeLevel || lastWorkState != this.doingWork)
 		{
 			//if (Utils.isDebug()) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + this.chargeLevel); 
@@ -381,7 +381,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	 * Fix javadoc
 	 * @return 
 	 */
-	private void drainPowerSource()
+/*	private void drainPowerSource()
 	{
 		int chargeReturned = 0;
 
@@ -430,7 +430,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			}
 		}
 	}
-
+*/
 	/**
 	 * Look through all of the items in our main inventory and determine the current charge level,
 	 * maximum charge level and maximum base charge rate for each item. Increase maximum charge
@@ -439,7 +439,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	 * item. Continue doing this for all items in the inventory until we reach the end of the main
 	 * inventory or run out of internal EU storage.
 	 */
-	private void chargeItems()
+/*	private void chargeItems()
 	{
 		for (int i = ChargingBench.BSslotPowerSource; i < ChargingBench.BSslotPowerSource + 12; i++)
 		{
@@ -485,7 +485,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			}
 		}
 	}
-
+*/
 	/**
 	 * First, check the output slot to see if it's empty. If so, look to see if there are any fully 
 	 * charged items in the main inventory. Move the first fully charged item to the output slot.

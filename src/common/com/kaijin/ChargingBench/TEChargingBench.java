@@ -48,7 +48,22 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	{
 		//base tier = what we're passed, so 1, 2 or 3
 		this.baseTier = i;
-		if (Utils.isDebug()) System.out.println("BaseTier: " + this.baseTier);
+		initializeBaseValues();
+
+		//setup Adjusted variables to = defaults, we'll be adjusting them in entityUpdate
+		//this.adjustedChargeRate = this.baseChargeRate;
+		this.adjustedMaxInput = this.baseMaxInput;
+		this.adjustedStorage = this.baseStorage;
+
+		this.powerTier = this.baseTier;
+
+		this.drainFactor = 1.0F;
+		this.chargeFactor = 1.0F;
+	}
+
+	protected void initializeBaseValues()
+	{
+		if (Utils.isDebug()) System.out.println("Initializing - BaseTier: " + this.baseTier);
 
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
 		this.baseMaxInput = (int)Math.pow(2.0D, (double)(2 * this.baseTier + 3));
@@ -69,16 +84,23 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 			this.baseStorage = 0;
 		}
 		if (Utils.isDebug()) System.out.println("BaseStorage: " + this.baseStorage);
+	}
 
-		//setup Adjusted variables to = defaults, we'll be adjusting them in entityUpdate
-		//this.adjustedChargeRate = this.baseChargeRate;
-		this.adjustedMaxInput = this.baseMaxInput;
-		this.adjustedStorage = this.baseStorage;
-
-		this.powerTier = this.baseTier;
-
-		this.drainFactor = 1.0F;
-		this.chargeFactor = 1.0F;
+	/**
+	 * Called to upgrade (or downgrade) a charging bench to a certain tier.
+	 * @param newTier The tier to replace the charging bench with, based on the component item used
+	 * @return the original tier of the charging bench, for creating the correct component item
+	 */
+	public int swapBenchComponents(int newTier)
+	{
+		int oldTier = baseTier;
+		baseTier = newTier;
+		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newTier - 1);
+		initializeBaseValues();
+		doUpgradeEffects();
+		this.chargeLevel = gaugeEnergyScaled(12);
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		return oldTier;
 	}
 
 	@Override
@@ -582,7 +604,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		for (int i = ChargingBench.CBslotCharging; i < ChargingBench.CBslotCharging + 12; i++)
 		{
 			ItemStack stack = this.contents[i];
-			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
+			if (this.currentEnergy > 0 && stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				IElectricItem item = (IElectricItem)(stack.getItem());
 				if (item.getTier() <= this.baseTier)
@@ -606,8 +628,14 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 					}
 
 					int adjustedEnergyUse = (int)Math.ceil((this.drainFactor / this.chargeFactor) * amountNeeded);
-					if(adjustedEnergyUse <= this.currentEnergy && adjustedEnergyUse > 0)
+					if (adjustedEnergyUse > 0)
 					{
+						if (adjustedEnergyUse > this.currentEnergy)
+						{
+							// Allow that last trickle of energy to be transferred out of the bench 
+							adjustedTransferLimit = (adjustedTransferLimit * this.currentEnergy) / adjustedEnergyUse;
+							adjustedEnergyUse = this.currentEnergy;
+						}
 						// We don't need to do this with the current API, it's switching the ItemID for us. Just make sure we don't try to charge stacked batteries, as mentioned above!
 						//int chargedItemID = item.getChargedItemId();
 						//if (stack.itemID != chargedItemID)
