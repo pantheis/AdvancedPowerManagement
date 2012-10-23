@@ -42,6 +42,9 @@ public class ChargingBench
 	public static final String modNamePacked = "ChargingBench";
 	public static final String modNameSpaced = "Charging Bench";
 	public static final String emitterName = "Emitter";
+	public static final String benchToolsName = "BenchTools";
+	public static final String toolkitName = "Charging Bench Toolkit";
+	public static final String componentsName = modNameSpaced + " Components";
 
 	@SidedProxy(clientSide = "com.kaijin.ChargingBench.ClientProxy", serverSide = "com.kaijin.ChargingBench.CommonProxy")
 	public static CommonProxy proxy; //This object will be populated with the class that you choose for the environment
@@ -50,6 +53,8 @@ public class ChargingBench
 	public static ChargingBench instance; //The instance of the mod that will be defined, populated, and callable
 
 	static int ChargingBenchBlockID;
+
+	static int ItemBenchToolsID;
 
 	// Constants for use in multiple classes
 	static final int slotInput = 0;
@@ -74,6 +79,7 @@ public class ChargingBench
 		{
 			Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
 			configuration.load();
+			ItemBenchToolsID = configuration.getOrCreateIntProperty(benchToolsName, configuration.CATEGORY_ITEM, 22499).getInt();
 			ChargingBenchBlockID = configuration.getOrCreateBlockIdProperty(modNamePacked, 2491).getInt();
 			armorShiftClickTweak = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("armorShiftClickTweak", configuration.CATEGORY_GENERAL, true).value));
 			isDebugging = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("debug", configuration.CATEGORY_GENERAL, false).value));
@@ -87,12 +93,13 @@ public class ChargingBench
 	}
 
 	public static Block ChargingBench;
+	public static Item ItemBenchTools;
 
 	@Init
 	public void load(FMLInitializationEvent event)
 	{
 		ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("ChargingBench").setCreativeTab(CreativeTabs.tabDeco);
-		LanguageRegistry.addName(ChargingBench, modNameSpaced);
+		//LanguageRegistry.addName(ChargingBench, modNameSpaced);
 		GameRegistry.registerBlock(ChargingBench, ItemChargingBench.class);
 
 		//Charging Bench blocks
@@ -104,7 +111,7 @@ public class ChargingBench
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "MV " + modNameSpaced);
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "HV " + modNameSpaced);
 		
-		//Emitter Blocks, emit 32, 128 or 512 EU/T
+		//Emitter Blocks, emit 32, 128, 512, or 2048 EU/tick
 		GameRegistry.registerTileEntity(TEEmitter1.class, "LV " + emitterName);
 		GameRegistry.registerTileEntity(TEEmitter2.class, "MV " + emitterName);
 		GameRegistry.registerTileEntity(TEEmitter3.class, "HV " + emitterName);
@@ -114,6 +121,12 @@ public class ChargingBench
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock2.name", "MV " + emitterName);
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock3.name", "HV " + emitterName);
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock4.name", "EV " + emitterName);
+
+		ItemBenchTools = new ItemBenchTools(ItemBenchToolsID).setItemName(toolkitName);
+		LanguageRegistry.instance().addStringLocalization("benchTools.toolkit.name", toolkitName);
+		LanguageRegistry.instance().addStringLocalization("benchTools.LV-kit.name", "LV " + componentsName);
+		LanguageRegistry.instance().addStringLocalization("benchTools.MV-kit.name", "MV " + componentsName);
+		LanguageRegistry.instance().addStringLocalization("benchTools.HV-kit.name", "HV " + componentsName);
 
 		NetworkRegistry.instance().registerGuiHandler(this.instance, proxy);
 		proxy.load();
@@ -146,5 +159,7 @@ public class ChargingBench
 		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("batBox")});
 		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("doubleInsulatedGoldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mfeUnit")});
 		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("trippleInsulatedIronCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mfsUnit")});
+
+		GameRegistry.addRecipe(new ItemStack(ItemBenchTools, 1, 0), new Object[] {" I ", "S S", 'I', Item.ingotIron, 'S', Item.stick});
 	}
 }
