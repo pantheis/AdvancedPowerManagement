@@ -716,7 +716,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 
 	//Networking stuff
 	@Override
-	public Packet250CustomPayload getAuxillaryInfoPacket()
+	public Packet250CustomPayload getDescriptionPacket()
 	{
 		//if (Utils.isDebug()) System.out.println("TE getAuxillaryInfoPacket()");
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();

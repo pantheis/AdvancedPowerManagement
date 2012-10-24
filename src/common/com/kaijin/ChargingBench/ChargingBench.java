@@ -111,7 +111,7 @@ public class ChargingBench
 	@Init
 	public void load(FMLInitializationEvent event)
 	{
-		ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("ChargingBench").setCreativeTab(CreativeTabs.tabDeco);
+		ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("ChargingBench").setCreativeTab(CreativeTabs.tabDecorations);
 		//LanguageRegistry.addName(ChargingBench, modNameSpaced);
 		GameRegistry.registerBlock(ChargingBench, ItemChargingBench.class);
 
@@ -180,9 +180,9 @@ public class ChargingBench
 
 		//TODO Remove this code when updating to MC 1.4, IC2 fixes this in future versions
 		// Also adding them to the creative inventory, since current IC2 version doesn't.
-		ic2overclockerUpg.getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
-		ic2transformerUpg.getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
-		ic2storageUpg.getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
+		ic2overclockerUpg.getItem().setCreativeTab(CreativeTabs.tabMisc);
+		ic2transformerUpg.getItem().setCreativeTab(CreativeTabs.tabMisc);
+		ic2storageUpg.getItem().setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@PostInit

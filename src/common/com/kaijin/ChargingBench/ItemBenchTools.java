@@ -18,7 +18,7 @@ public class ItemBenchTools extends Item
 		super(par1);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
-        this.setTabToDisplayOn(CreativeTabs.tabMisc);
+        this.setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@Override
