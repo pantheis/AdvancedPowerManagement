@@ -12,6 +12,7 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
@@ -27,8 +28,6 @@ import cpw.mods.fml.common.asm.SideOnly;
 
 public class TEBatteryStation extends TECommonBench implements IEnergySource, IInventory, ISidedInventory
 {
-	private ItemStack[] contents = new ItemStack[19];
-
 	private int tickTime;
 	private int tickDelay = 10;
 
@@ -36,14 +35,18 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	// Base values
 	public int baseMaxOutput;
+	public int currentEnergy;
 
 	//For outside texture display
 	public boolean doingWork;
 
 	public TEBatteryStation(int i)
 	{
+		contents = new ItemStack[14];
+
 		//base tier = what we're passed, so 1, 2 or 3
 		this.baseTier = i;
+		this.powerTier = i;
 		if (Utils.isDebug()) System.out.println("BaseTier: " + this.baseTier);
 
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
@@ -51,14 +54,22 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		if (Utils.isDebug()) System.out.println("BaseMaxOutput: " + this.baseMaxOutput);
 	}
 
+	// IC2 API functions
+	public boolean isAddedToEnergyNet()
+	{
+		return initialized;
+	}
+
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, Direction direction) {
+	public boolean emitsEnergyTo(TileEntity receiver, Direction direction)
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public int getMaxEnergyOutput() {
+	public int getMaxEnergyOutput()
+	{
 		// TODO Auto-generated method stub
 		return this.baseMaxOutput;
 	}
@@ -67,12 +78,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	public boolean canUpdate()
 	{
 		return true;
-	}
-
-	// IC2 API functions
-	public boolean isAddedToEnergyNet()
-	{
-		return initialized;
 	}
 
 	/**
@@ -90,157 +95,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		this.invalidate();
 	}
 
-	@Override
-	public void dropItem(ItemStack item)
-	{
-		EntityItem entityitem = new EntityItem(worldObj, (double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D, item);
-		entityitem.delayBeforeCanPickup = 10;
-		worldObj.spawnEntityInWorld(entityitem);
-	}
-
-	public void dropContents()
-	{
-		ItemStack item;
-		int i;
-		for (i = 0; i < contents.length; ++i)
-		{
-			item = contents[i];
-			contents[i] = null;
-			if (item != null && item.stackSize > 0) dropItem(item);
-		}
-	}
-
-	@Override
-	public int getSizeInventory()
-	{
-		// Only input/output slots are accessible to machines
-		return 3;
-	}
-
-	@Override
-	public int getStartInventorySide(ForgeDirection side)
-	{
-		switch (side)
-		{
-		case UP:
-			return ChargingBench.BSslotInput;
-		case DOWN:
-			return ChargingBench.BSslotOutput;
-		default:
-			return ChargingBench.BSslotPowerSource;
-		}
-	}
-
-	@Override
-	public int getSizeInventorySide(ForgeDirection side)
-	{
-		// Each side accesses a single slot
-		return 1;
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int i)
-	{
-		return contents[i];
-	}
-
-	@Override
-	public ItemStack decrStackSize(int slot, int amount)
-	{
-		if (this.contents[slot] != null)
-		{
-			ItemStack output;
-
-			if (this.contents[slot].stackSize <= amount)
-			{
-				output = this.contents[slot];
-				this.contents[slot] = null;
-				this.onInventoryChanged(slot);
-				return output;
-			}
-			else
-			{
-				output = this.contents[slot].splitStack(amount);
-
-				if (this.contents[slot].stackSize == 0)
-				{
-					this.contents[slot] = null;
-				}
-				this.onInventoryChanged(slot);
-				return output;
-			}
-		}
-		else
-		{
-			return null;
-		}
-	}
-
-	public ItemStack getStackInSlotOnClosing(int slot)
-	{
-		if (this.contents[slot] == null)
-		{
-			return null;
-		}
-
-		ItemStack stack = this.contents[slot];
-		this.contents[slot] = null;
-		return stack;
-	}
-
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack itemstack)
-	{
-		this.contents[slot] = itemstack;
-
-		if (Utils.isDebug() && itemstack != null)
-		{
-			if (ChargingBench.proxy.isServer())
-			{
-				System.out.println("Server assigned stack tag: " + itemstack.stackTagCompound);
-				if (itemstack.stackTagCompound != null) System.out.println("     " + itemstack.stackTagCompound.getTags().toString());
-			}
-			if (ChargingBench.proxy.isClient())
-			{
-				System.out.println("Client assigned stack tag: " + itemstack.stackTagCompound);
-				if (itemstack.stackTagCompound != null) System.out.println("     " + itemstack.stackTagCompound.getTags().toString());
-			}
-		}
-		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit())
-		{
-			itemstack.stackSize = getInventoryStackLimit();
-		}
-		this.onInventoryChanged(slot);
-	}
-
-	public void onInventoryChanged(int slot)
-	{
-		if (slot == ChargingBench.BSslotInput || slot == ChargingBench.BSslotOutput)
-		{
-			// Move item from input to output if not valid. (Wrong tier or not electric item.)
-			if (contents[ChargingBench.BSslotInput] != null && contents[ChargingBench.BSslotOutput] == null)
-			{
-				if (!isItemValid(ChargingBench.BSslotInput, contents[ChargingBench.BSslotInput]))
-				{
-					contents[ChargingBench.BSslotOutput] = contents[ChargingBench.BSslotInput];
-					contents[ChargingBench.BSslotInput] = null;
-				}
-			}
-		}
-		else if (slot >= ChargingBench.BSslotPowerSource && slot < ChargingBench.BSslotPowerSource + 12)
-		{
-			// Make sure it's not fully charged already? Not sure, full items will be output in updateEntity
-
-		}
-		super.onInventoryChanged();
-	}
-
-	public void onInventoryChanged()
-	{
-		// We're not sure what called this or what slot was altered, so make sure the upgrade effects are correct just in case and then pass the call on.
-		super.onInventoryChanged();
-	}
-
 	public boolean isItemValid(int slot, ItemStack stack)
 	{
 		// Decide if the item is a valid IC2 electrical item
@@ -248,9 +102,11 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		{
 			IElectricItem item = (IElectricItem)(stack.getItem());
 			// Is the item appropriate for this slot?
-			if (slot == ChargingBench.BSslotPowerSource && slot < ChargingBench.BSslotPowerSource + 12 && item.canProvideEnergy() && item.getTier() <= this.powerTier) return true;
-			if (slot == ChargingBench.BSslotInput && item.getTier() <= baseTier) return true;
 			if (slot == ChargingBench.BSslotOutput) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
+			if (item.canProvideEnergy() && item.getTier() <= this.powerTier)
+			{
+				if ((slot >= ChargingBench.BSslotPowerSourceStart && slot < ChargingBench.BSslotPowerSourceStart + 12) || slot == ChargingBench.BSslotInput) return true;
+			}
 		}
 		return false; 
 	}
@@ -316,35 +172,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 
 	@Override
-	public String getInvName()
-	{
-		return "BatteryStation";
-	}
-
-	@Override
-	public int getInventoryStackLimit()
-	{
-		return 64;
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer)
-	{
-		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this)
-		{
-			return false;
-		}
-
-		return entityplayer.getDistanceSq((double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D) <= 64D;
-	}
-
-	@Override
-	public void openChest() {}
-
-	@Override
-	public void closeChest() {}
-
-	@Override
 	public void updateEntity() //TODO Marked for easy access
 	{
 		if (ChargingBench.proxy.isClient())
@@ -358,157 +185,130 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			initialized = true;
 		}
 
-		boolean lastWorkState = this.doingWork;
-		this.doingWork = false;
+		boolean lastWorkState = doingWork;
+		doingWork = false;
 
 		// Work done every tick
 		//drainPowerSource();
-		//emitEnergy();
+		emitEnergy();
 		moveOutputItems();
 		acceptInputItems();
 
 		// Trigger this only when charge level passes where it would need to update the client texture
-		int oldChargeLevel = this.chargeLevel;
+		int oldChargeLevel = chargeLevel;
 		//this.chargeLevel = gaugeEnergyScaled(12);
-		if (oldChargeLevel != this.chargeLevel || lastWorkState != this.doingWork)
+		if (oldChargeLevel != chargeLevel || lastWorkState != doingWork)
 		{
 			//if (Utils.isDebug()) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + this.chargeLevel); 
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
 	}
 
-	//FIXME
-	/**
-	 * Fix javadoc
-	 * @return 
-	 */
-/*	private void drainPowerSource()
+	private void emitEnergy()
 	{
-		int chargeReturned = 0;
-
-		ItemStack stack = getStackInSlot(ChargingBench.BSslotPowerSource);
-		if (stack != null && stack.getItem() instanceof IElectricItem && this.currentEnergy < this.adjustedStorage)
-		{
-			IElectricItem powerSource = (IElectricItem)(stack.getItem());
-
-			int emptyItemID = powerSource.getEmptyItemId();
-			int chargedItemID = powerSource.getChargedItemId();
-
-			if (stack.itemID == chargedItemID)
-			{
-				if (powerSource.getTier() <= this.powerTier && powerSource.canProvideEnergy())
-				{
-					int itemTransferLimit = powerSource.getTransferLimit();
-					int energyNeeded = this.adjustedStorage - this.currentEnergy;
-
-					// Test if the amount of energy we have room for is greater than what the item can transfer per tick.
-					if (energyNeeded > itemTransferLimit)
-					{
-						// If so, request the max it can transfer per tick.
-						energyNeeded = itemTransferLimit;
-						// If we need less than it can transfer per tick, request only what we have room for so we don't waste power.
-					}
-
-					if (energyNeeded > 0)
-					{
-						chargeReturned = ElectricItem.discharge(stack, energyNeeded, powerTier, false, false);
-						// Add the energy we received to our current energy level,
-						this.currentEnergy += chargeReturned;
-						if (chargeReturned > 0) this.doingWork = true;
-						// and make sure that we didn't go over. If we somehow did, drop the excess.
-						if (this.currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage;
-					}
-				}
-
-				// Workaround for buggy IC2 API .discharge that automatically switches stack to emptyItemID but leaves a stackTagCompound on it, so it can't be stacked with never-used empties  
-				if (chargedItemID != emptyItemID && ElectricItem.discharge(stack, 1, powerTier, false, true) == 0)
-				{
-					if (Utils.isDebug()) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
-					setInventorySlotContents(ChargingBench.BSslotPowerSource, new ItemStack(emptyItemID, 1, 0));
-					//ItemStack newStack = new ItemStack(emptyItemID, 1, 0);
-					//contents[ChargingBench.slotPowerSource] = newStack;
-				}
-			}
-		}
+		int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, currentEnergy);
+		currentEnergy = surplus;
 	}
-*/
-	/**
-	 * Look through all of the items in our main inventory and determine the current charge level,
-	 * maximum charge level and maximum base charge rate for each item. Increase maximum charge
-	 * rate for each item based on overclockers as appropriate, then, starting with the first slot
-	 * in the main inventory, transfer one tick worth of energy from our internal storage to the
-	 * item. Continue doing this for all items in the inventory until we reach the end of the main
-	 * inventory or run out of internal EU storage.
-	 */
-/*	private void chargeItems()
+
+	//TODO test this
+	private void drainPowerSource()
 	{
-		for (int i = ChargingBench.BSslotPowerSource; i < ChargingBench.BSslotPowerSource + 12; i++)
+		for (int i = ChargingBench.BSslotPowerSourceStart; i < ChargingBench.BSslotPowerSourceStart + 12; i++)
 		{
+			if (currentEnergy >= baseMaxOutput) return;
+
 			ItemStack stack = this.contents[i];
 			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				IElectricItem item = (IElectricItem)(stack.getItem());
-				if (item.getTier() <= this.baseTier)
+				if (item.getTier() <= this.powerTier && item.canProvideEnergy())
 				{
-					int itemTransferLimit = item.getTransferLimit();
-					if (itemTransferLimit == 0) itemTransferLimit = this.baseMaxOutput;
-					int adjustedTransferLimit = (int)Math.ceil(this.chargeFactor * itemTransferLimit);
+					int emptyItemID = item.getEmptyItemId();
+					int chargedItemID = item.getChargedItemId();
 
-					int amountNeeded;
-					if (item.getChargedItemId() != item.getEmptyItemId() || stack.isStackable())
+					if (stack.itemID == chargedItemID)
 					{
-						// Running stack.copy() on every item every tick would be a horrible thing for performance, but the workaround is needed
-						// for ElectricItem.charge adding stackTagCompounds for charge level to EmptyItemID batteries even when run in simulate mode.
-						// Limiting its use by what is hopefully a broad enough test to catch all cases where it's necessary in order to avoid problems.
-						// Using it for any item types listed as stackable and for any items where the charged and empty item IDs differ.
-						amountNeeded = ElectricItem.charge(stack.copy(), adjustedTransferLimit, powerTier, true, true);
-					}
-					else
-					{
-						amountNeeded = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, true);
-					}
+						int transferLimit = item.getTransferLimit();
+						int amountNeeded = baseMaxOutput - currentEnergy;
+						if (transferLimit == 0) transferLimit = this.baseMaxOutput;
+						if (transferLimit > amountNeeded) transferLimit = amountNeeded;
 
-					int adjustedEnergyUse = (int)Math.ceil((this.drainFactor / this.chargeFactor) * amountNeeded);
-					if(adjustedEnergyUse <= this.currentEnergy && adjustedEnergyUse > 0)
-					{
-						// We don't need to do this with the current API, it's switching the ItemID for us. Just make sure we don't try to charge stacked batteries, as mentioned above!
-						//int chargedItemID = item.getChargedItemId();
-						//if (stack.itemID != chargedItemID)
-						//{
-						//	setInventorySlotContents(i, new ItemStack(chargedItemID, 1, 0));
-						//}
-						ElectricItem.charge(this.contents[i], adjustedTransferLimit, powerTier, true, false);
-						this.currentEnergy -= adjustedEnergyUse;
-						if (this.currentEnergy < 0) this.currentEnergy = 0;
-						this.doingWork = true;
+						int chargeReturned = ElectricItem.discharge(stack, transferLimit, powerTier, false, false);
+						// Add the energy we received to our current energy level
+						if (chargeReturned > 0)
+						{
+							this.currentEnergy += chargeReturned;
+							this.doingWork = true;
+						}
+
+						// Workaround for buggy IC2 API .discharge that automatically switches stack to emptyItemID but leaves a stackTagCompound on it, so it can't be stacked with never-used empties  
+						if (chargedItemID != emptyItemID && (chargeReturned < transferLimit || ElectricItem.discharge(stack, 1, powerTier, false, true) == 0))
+						{
+							if (Utils.isDebug()) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
+							setInventorySlotContents(i, new ItemStack(emptyItemID, 1, 0));
+						}
 					}
 				}
 			}
 		}
 	}
-*/
+
 	/**
 	 * First, check the output slot to see if it's empty. If so, look to see if there are any fully 
-	 * charged items in the main inventory. Move the first fully charged item to the output slot.
+	 * DIScharged items in the main inventory. Move the first empty item to the output slot.
+	 * If output slot contains stackable empties, check for matching empties to add to that stack.
 	 */
 	private void moveOutputItems()
 	{
-		ItemStack stack = contents[ChargingBench.BSslotOutput];
-		if (stack == null)
+		rejectInvalidInput();
+
+		ItemStack outputStack = contents[ChargingBench.BSslotOutput];
+		if (outputStack == null || (outputStack.isStackable() && outputStack.stackSize < outputStack.getMaxStackSize()))
 		{
-			// Output slot is empty. Try to find a fully charged item to move there.
-			for (int slot = ChargingBench.BSslotPowerSource; slot < ChargingBench.BSslotPowerSource + 12; ++slot)
+			// Output slot could receive item(s). Try to find something to move there.
+			for (int slot = ChargingBench.BSslotPowerSourceStart; slot < ChargingBench.BSslotPowerSourceStart + 12; ++slot)
 			{
 				ItemStack currentStack = contents[slot];
 				if (currentStack != null && currentStack.getItem() instanceof IElectricItem)
 				{
-					// Test if the item is fully charged (cannot accept any more power).
-					if (ElectricItem.charge(currentStack.copy(), 1, baseTier, false, true) == 0)
+					IElectricItem powerSource = (IElectricItem)(currentStack.getItem());
+					if (powerSource.getTier() <= this.powerTier) // && powerSource.canProvideEnergy()
 					{
-						contents[ChargingBench.BSslotOutput] = currentStack;
-						contents[slot] = null;
-						this.onInventoryChanged();
-						break;
+						int emptyItemID = powerSource.getEmptyItemId();
+						int chargedItemID = powerSource.getChargedItemId();
+						if (emptyItemID != chargedItemID)
+						{
+							if (currentStack.itemID == emptyItemID)
+							{
+								// Pick Me
+								if (outputStack == null)
+								{
+									contents[ChargingBench.BSslotOutput] = currentStack;
+									contents[slot] = null;
+								}
+								else
+								{
+									// We already know the stack isn't full yet
+									contents[ChargingBench.BSslotOutput].stackSize++;
+									contents[slot].stackSize--;
+									if (contents[slot].stackSize < 1) contents[slot] = null;
+								}
+								this.onInventoryChanged();
+								break;
+							}
+						}
+						else if (outputStack == null)
+						{
+							boolean empty = ElectricItem.discharge(currentStack, 1, powerTier, true, true) == 0;
+							if (empty)
+							{
+								// Pick Me
+								contents[ChargingBench.BSslotOutput] = currentStack;
+								contents[slot] = null;
+								this.onInventoryChanged();
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -517,17 +317,18 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	/**
 	 * Check to see if there are any items in the input slot. If so, check to see if there are any
-	 * free charging slots. If so, move one from the input slot to a free charging slot. Do not
-	 * move more than one, if the stack contains more.
+	 * free discharging slots. If so, move one from the input slot to a free discharging slot.
 	 */
 	private void acceptInputItems()
 	{
 		ItemStack stack = contents[ChargingBench.BSslotInput];
-		if (stack != null && stack.getItem() instanceof IElectricItem)
+		if (stack == null || !(stack.getItem() instanceof IElectricItem)) return;
+		
+		IElectricItem item = (IElectricItem)stack.getItem();
+		if (item.canProvideEnergy())
 		{
-			// Input slot contains something electrical. If possible, move one of it into the charging area.
-			IElectricItem item = (IElectricItem)(stack.getItem());
-			for (int slot = ChargingBench.BSslotPowerSource; slot < ChargingBench.BSslotPowerSource + 12; ++slot)
+			// Input slot contains a power source. If possible, move one of it into the discharging area.
+			for (int slot = ChargingBench.BSslotPowerSourceStart; slot < ChargingBench.BSslotPowerSourceStart + 12; ++slot)
 			{
 				if (contents[slot] == null)
 				{
@@ -538,7 +339,20 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			}
 		}
 	}
-	
+
+	private void rejectInvalidInput()
+	{
+		// Move item from input to output if not valid. (Wrong tier or not electric item.)
+		if (contents[ChargingBench.BSslotInput] != null && contents[ChargingBench.BSslotOutput] == null)
+		{
+			if (!isItemValid(ChargingBench.BSslotInput, contents[ChargingBench.BSslotInput]))
+			{
+				contents[ChargingBench.BSslotOutput] = contents[ChargingBench.BSslotInput];
+				contents[ChargingBench.BSslotInput] = null;
+			}
+		}
+	}
+
 	//Networking stuff
 	@Override
 	public Packet250CustomPayload getAuxillaryInfoPacket()
@@ -564,5 +378,52 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		packet.data = bytes.toByteArray();
 		packet.length = packet.data.length;
 		return packet;
+	}
+
+	// ISidedInventory
+
+	@Override
+	public int getStartInventorySide(ForgeDirection side)
+	{
+		switch (side)
+		{
+		case UP:
+		case DOWN:
+			return ChargingBench.BSslotInput;
+		default:
+			return ChargingBench.BSslotOutput;
+		}
+	}
+
+	@Override
+	public int getSizeInventorySide(ForgeDirection side)
+	{
+		// Each side accesses a single slot
+		return 1;
+	}
+
+	// IInventory
+
+	@Override
+	public int getSizeInventory()
+	{
+		// Only input/output slots are accessible to machines
+		return 2;
+	}
+
+	@Override
+	public String getInvName()
+	{
+		return "BatteryStation";
+	}
+
+	@Override
+	public void onInventoryChanged(int slot)
+	{
+		if (slot == ChargingBench.BSslotInput || slot == ChargingBench.BSslotOutput)
+		{
+			rejectInvalidInput();
+		}
+		super.onInventoryChanged();
 	}
 }

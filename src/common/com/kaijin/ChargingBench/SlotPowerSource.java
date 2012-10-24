@@ -9,7 +9,6 @@ import net.minecraft.src.Slot;
 public class SlotPowerSource extends Slot
 {
 	public int invIndex;
-	public int chargeTier;
 
 	public SlotPowerSource(IInventory inv, int index, int xpos, int ypos)
 	{

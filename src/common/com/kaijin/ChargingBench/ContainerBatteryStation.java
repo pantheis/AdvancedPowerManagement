@@ -41,12 +41,12 @@ public class ContainerBatteryStation extends Container
 		{
 			for (xCol = 0; xCol < 3; ++xCol) // 3 columns across
 			{
-				this.addSlotToContainer(new SlotChargeable(tile, ChargingBench.BSslotPowerSource + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
+				this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.BSslotPowerSourceStart + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
 			}
 		}
 
 		// Input Slot
-		this.addSlotToContainer(new SlotInput(tile, ChargingBench.BSslotInput, 130, topOffset));
+		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.BSslotInput, 130, topOffset));
 
 		// Output slot
 		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.BSslotOutput, 130, topOffset + 54));
@@ -65,9 +65,6 @@ public class ContainerBatteryStation extends Container
 		{
 			this.addSlotToContainer(new Slot(player, yRow, 8 + yRow * 18, topOffset + 134));
 		}
-
-		//TODO fix slot, needs a custom armor slot type, can't use SlotArmor as it is private, will
-		//need to make our own
 	}
 
 	//The following is not needed, but being left for now for reference

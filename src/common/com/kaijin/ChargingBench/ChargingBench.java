@@ -67,7 +67,7 @@ public class ChargingBench
 
 	static final int BSslotInput = 0;
 	static final int BSslotOutput = 1;
-	static final int BSslotPowerSource = 2;
+	static final int BSslotPowerSourceStart = 2;
 	
 	static final int CBinventorySize = 19;
 	static final int BSinventorySize = 14;
