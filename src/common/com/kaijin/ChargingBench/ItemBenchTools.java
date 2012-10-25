@@ -19,7 +19,7 @@ public class ItemBenchTools extends Item
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
         this.setMaxStackSize(1);
-        this.setTabToDisplayOn(CreativeTabs.tabMisc);
+        this.setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class ItemBenchTools extends Item
 
     public ItemStack getContainerItemStack(ItemStack itemStack)
     {
-    	if (itemStack.getItemDamage() == 0) return itemStack;
+    	if (itemStack.getItemDamage() == 0) return new ItemStack(ChargingBench.ItemBenchTools, 1, 0);
         return null;
     }
 
