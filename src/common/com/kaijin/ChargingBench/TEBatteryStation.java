@@ -55,6 +55,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	}
 
 	// IC2 API functions
+
 	public boolean isAddedToEnergyNet()
 	{
 		return initialized;
@@ -63,14 +64,12 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public boolean emitsEnergyTo(TileEntity receiver, Direction direction)
 	{
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public int getMaxEnergyOutput()
 	{
-		// TODO Auto-generated method stub
 		return this.baseMaxOutput;
 	}
 	
@@ -215,7 +214,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 //		if (Utils.isDebug()) System.out.println("postEmit-currentEnergy: " + currentEnergy);
 	}
 
-	//TODO test this
 	private void drainPowerSource()
 	{
 		for (int i = ChargingBench.BSslotPowerSourceStart; i < ChargingBench.BSslotPowerSourceStart + 12; i++)
@@ -273,8 +271,10 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		if (outputStack == null || (outputStack.isStackable() && outputStack.stackSize < outputStack.getMaxStackSize()))
 		{
 			// Output slot could receive item(s). Try to find something to move there.
-			for (int slot = ChargingBench.BSslotPowerSourceStart; slot < ChargingBench.BSslotPowerSourceStart + 12; ++slot)
+			for (int slot = 0; slot < contents.length; ++slot)
 			{
+				if (slot == ChargingBench.BSslotOutput) continue;
+
 				ItemStack currentStack = contents[slot];
 				if (currentStack != null && currentStack.getItem() instanceof IElectricItem)
 				{
