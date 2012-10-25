@@ -189,7 +189,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		doingWork = false;
 
 		// Work done every tick
-		//drainPowerSource();
+		drainPowerSource();
 		emitEnergy();
 		moveOutputItems();
 		acceptInputItems();
