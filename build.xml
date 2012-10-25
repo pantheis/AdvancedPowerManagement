@@ -9,8 +9,9 @@
 
 	<property name="download.dir"        value="download"/>
 	<property name="files.minecraft.dir" value="jars"/>
+	<property name="clean_mcp"           value="clean"/>
     
-    <property name="clean.name"          value="mcp72_f411251_clean.zip"/>
+    <property name="clean.name"          value="mcp72_f435318_clean.zip"/>
 
 	<property name="classes.dir"         value="${build.dir}/classes"/>
 	<property name="jar.dir"             value="${build.dir}/dist"/>
@@ -21,13 +22,13 @@
 	<property name="mcpsrc.dir"          value="${mcp.dir}/src/minecraft"/>
 
 	<property name="mcp.version"         value="72"/>
-	<property name="forge.version"       value="4.1.1.251"/>
+	<property name="forge.version"       value="4.3.5.318"/>
 	<property name="mymod.version"       value="1.0"/>
     <property name="ic2.version"         value="IC2_1.106"/>
 
-	<available property="forge-exists" file="${download.dir}/${clean.name}"/>
+	<available property="forge-exists" file="${clean_mcp}/${clean.name}"/>
     <target name="abort" unless="forge-exists">
-        <echo message="${clean.name} does not exist!" />
+        <fail message="${clean.name} does not exist!" />
     </target>
 
 	<mkdir dir="${download.dir}"/>
@@ -57,7 +58,7 @@
 
 		<!-- Unzip them -->
 		<unzip dest="${build.dir}">
-			<fileset dir="${download.dir}">
+			<fileset dir="${clean_mcp}">
 				<include name="${clean.name}"/>
 			</fileset>
 		</unzip>
@@ -65,15 +66,6 @@
 		<!-- Copy MyMod source -->
 		<copy todir="${mcpsrc.dir}">
 			<fileset dir="${src.dir}/common">
-			</fileset>
-			<filterset>
-                <filter token="VERSION" value="${mymod.version.full}" />
-				<filter token="BUILD_NUMBER" value="${build.number}" />
-            </filterset>
-			
-		</copy>
-		<copy todir="${mcpsrc.dir}">
-			<fileset dir="${src.dir}/client">
 			</fileset>
 			<filterset>
                 <filter token="VERSION" value="${mymod.version.full}" />
@@ -118,7 +110,6 @@
                 <filter token="VERSION" value="${mymod.version.full}" />
 				<filter token="BUILD_NUMBER" value="${build.number}" />
             </filterset>
-
 		</copy>
 
 		<!-- Copy client resources -->
@@ -137,6 +128,6 @@
 	</target>
 
 	<!-- Default target to run -->
-	<target name="main" depends="initialize-version,clean,package"/>
+	<target name="main" depends="abort,initialize-version,clean,package"/>
 
 </project>
