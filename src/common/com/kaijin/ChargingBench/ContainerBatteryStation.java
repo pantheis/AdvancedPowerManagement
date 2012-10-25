@@ -14,7 +14,7 @@ import cpw.mods.fml.common.network.Player;
 public class ContainerBatteryStation extends Container
 {
 	private final int benchShiftClickRange = 17;
-	private final int playerInventoryStartSlot = 19;
+	private final int playerInventoryStartSlot = 14;
 	private final int playerArmorStartSlot = 55;
 
 	public TEBatteryStation tileentity;

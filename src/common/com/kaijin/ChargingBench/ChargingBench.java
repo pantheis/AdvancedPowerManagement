@@ -98,9 +98,9 @@ public class ChargingBench implements ICraftingHandler
 		{
 			Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
 			configuration.load();
-			ItemBenchToolsID = configuration.getItem(benchToolsName, configuration.CATEGORY_ITEM, 22499).getInt();
+			ItemBenchToolsID = configuration.getItem(configuration.CATEGORY_ITEM, benchToolsName, 22499).getInt();
 			ChargingBenchBlockID = configuration.getBlock(modNamePacked, 2491).getInt();
-			isDebugging = Boolean.parseBoolean((configuration.get("debug", configuration.CATEGORY_GENERAL, false).value));
+			isDebugging = Boolean.parseBoolean((configuration.get(configuration.CATEGORY_GENERAL, "debug",  false).value));
 			configuration.save();
 		}
 		catch (Exception var1)
