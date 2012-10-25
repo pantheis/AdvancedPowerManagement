@@ -27,8 +27,6 @@ import cpw.mods.fml.common.asm.SideOnly;
 
 public class TEChargingBench extends TECommonBench implements IEnergySink, IInventory, ISidedInventory
 {
-	private ItemStack[] contents = new ItemStack[19];
-
 	// Base values
 	public int baseMaxInput;
 	public int baseStorage;
@@ -44,6 +42,8 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 
 	public TEChargingBench(int i)
 	{
+		this.contents = new ItemStack[19];
+
 		//base tier = what we're passed, so 1, 2 or 3
 		this.baseTier = i;
 		initializeBaseValues();
@@ -167,121 +167,6 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		this.invalidate();
 	}
 
-	@Override
-	public void dropContents()
-	{
-		ItemStack item;
-		int i;
-		for (i = 0; i < contents.length; ++i)
-		{
-			item = contents[i];
-			if (item != null && item.stackSize > 0) dropItem(item);
-		}
-	}
-
-	@Override
-	public int getSizeInventory()
-	{
-		// Only input/output slots are accessible to machines
-		return 3;
-	}
-
-	@Override
-	public int getStartInventorySide(ForgeDirection side)
-	{
-		switch (side)
-		{
-		case UP:
-			return ChargingBench.CBslotInput;
-		case DOWN:
-			return ChargingBench.CBslotOutput;
-		default:
-			return ChargingBench.CBslotPowerSource;
-		}
-	}
-
-	@Override
-	public int getSizeInventorySide(ForgeDirection side)
-	{
-		// Each side accesses a single slot
-		return 1;
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int i)
-	{
-		return contents[i];
-	}
-
-	@Override
-	public ItemStack decrStackSize(int slot, int amount)
-	{
-		if (this.contents[slot] != null)
-		{
-			ItemStack output;
-
-			if (this.contents[slot].stackSize <= amount)
-			{
-				output = this.contents[slot];
-				this.contents[slot] = null;
-				this.onInventoryChanged(slot);
-				return output;
-			}
-			else
-			{
-				output = this.contents[slot].splitStack(amount);
-
-				if (this.contents[slot].stackSize == 0)
-				{
-					this.contents[slot] = null;
-				}
-				this.onInventoryChanged(slot);
-				return output;
-			}
-		}
-		else
-		{
-			return null;
-		}
-	}
-
-	public ItemStack getStackInSlotOnClosing(int slot)
-	{
-		if (this.contents[slot] == null)
-		{
-			return null;
-		}
-
-		ItemStack stack = this.contents[slot];
-		this.contents[slot] = null;
-		return stack;
-	}
-
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack itemstack)
-	{
-		this.contents[slot] = itemstack;
-
-		if (Utils.isDebug() && itemstack != null)
-		{
-			if (ChargingBench.proxy.isServer())
-			{
-				System.out.println("Server assigned stack tag: " + itemstack.stackTagCompound);
-				if (itemstack.stackTagCompound != null) System.out.println("     " + itemstack.stackTagCompound.getTags().toString());
-			}
-			if (ChargingBench.proxy.isClient())
-			{
-				System.out.println("Client assigned stack tag: " + itemstack.stackTagCompound);
-				if (itemstack.stackTagCompound != null) System.out.println("     " + itemstack.stackTagCompound.getTags().toString());
-			}
-		}
-		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit())
-		{
-			itemstack.stackSize = getInventoryStackLimit();
-		}
-		this.onInventoryChanged(slot);
-	}
-
 	public void doUpgradeEffects()
 	{
 		// Count our upgrades
@@ -341,46 +226,6 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 			this.adjustedStorage = this.baseStorage; // This shouldn't ever happen, but just in case, it shouldn't crash it - storage upgrades just won't work.
 		}
 		if (this.currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage; // If storage has decreased, lose any excess energy.
-	}
-
-	@Override
-	public void onInventoryChanged(int slot)
-	{
-		if (slot == ChargingBench.CBslotInput || slot == ChargingBench.CBslotOutput)
-		{
-			// Move item from input to output if not valid. (Wrong tier or not electric item.)
-			if (contents[ChargingBench.CBslotInput] != null && contents[ChargingBench.CBslotOutput] == null)
-			{
-				if (!isItemValid(ChargingBench.CBslotInput, contents[ChargingBench.CBslotInput]))
-				{
-					contents[ChargingBench.CBslotOutput] = contents[ChargingBench.CBslotInput];
-					contents[ChargingBench.CBslotInput] = null;
-				}
-			}
-		}
-		else if (slot >= ChargingBench.CBslotUpgrade && slot < ChargingBench.CBslotUpgrade + 4)
-		{
-			// One of the upgrade slots was touched, so we need to recalculate.
-			doUpgradeEffects();
-		}
-		else if (slot >= ChargingBench.CBslotCharging && slot < ChargingBench.CBslotCharging + 12)
-		{
-			// Make sure it's not fully charged already? Not sure, full items will be output in updateEntity
-
-		}
-		else if (slot == ChargingBench.CBslotPowerSource)
-		{
-			// Perhaps eject the item if it's not valid? No, just leave it alone. 
-			// If machinery added it the player can figure out the problem by trying to remove and replace it and realizing it won't fit.
-		}
-		super.onInventoryChanged();
-	}
-
-	public void onInventoryChanged()
-	{
-		// We're not sure what called this or what slot was altered, so make sure the upgrade effects are correct just in case and then pass the call on.
-		doUpgradeEffects();
-		super.onInventoryChanged();
 	}
 
 	public boolean isItemValid(int slot, ItemStack stack)
@@ -467,36 +312,6 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 			nbttagcompound.setInteger("baseTier", baseTier);
 		}
 	}
-
-
-	@Override
-	public String getInvName()
-	{
-		return "ChargingBench";
-	}
-
-	@Override
-	public int getInventoryStackLimit()
-	{
-		return 64;
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer)
-	{
-		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this)
-		{
-			return false;
-		}
-
-		return entityplayer.getDistanceSq((double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D) <= 64D;
-	}
-
-	@Override
-	public void openChest() {}
-
-	@Override
-	public void closeChest() {}
 
 	@Override
 	public void updateEntity() //TODO Marked for easy access
@@ -716,7 +531,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 
 	//Networking stuff
 	@Override
-	public Packet250CustomPayload getAuxillaryInfoPacket()
+	public Packet250CustomPayload getDescriptionPacket()
 	{
 		//if (Utils.isDebug()) System.out.println("TE getAuxillaryInfoPacket()");
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -741,4 +556,84 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		packet.length = packet.data.length;
 		return packet;
 	}
+
+	// ISidedInventory
+
+	@Override
+	public int getStartInventorySide(ForgeDirection side)
+	{
+		switch (side)
+		{
+		case UP:
+			return ChargingBench.CBslotInput;
+		case DOWN:
+			return ChargingBench.CBslotOutput;
+		default:
+			return ChargingBench.CBslotPowerSource;
+		}
+	}
+
+	@Override
+	public int getSizeInventorySide(ForgeDirection side)
+	{
+		// Each side accesses a single slot
+		return 1;
+	}
+
+	// IInventory
+
+	@Override
+	public int getSizeInventory()
+	{
+		// Only input/output slots are accessible to machines
+		return 3;
+	}
+
+	@Override
+	public String getInvName()
+	{
+		return "ChargingBench";
+	}
+
+	@Override
+	public void onInventoryChanged(int slot)
+	{
+		if (slot == ChargingBench.CBslotInput || slot == ChargingBench.CBslotOutput)
+		{
+			// Move item from input to output if not valid. (Wrong tier or not electric item.)
+			if (contents[ChargingBench.CBslotInput] != null && contents[ChargingBench.CBslotOutput] == null)
+			{
+				if (!isItemValid(ChargingBench.CBslotInput, contents[ChargingBench.CBslotInput]))
+				{
+					contents[ChargingBench.CBslotOutput] = contents[ChargingBench.CBslotInput];
+					contents[ChargingBench.CBslotInput] = null;
+				}
+			}
+		}
+		else if (slot >= ChargingBench.CBslotUpgrade && slot < ChargingBench.CBslotUpgrade + 4)
+		{
+			// One of the upgrade slots was touched, so we need to recalculate.
+			doUpgradeEffects();
+		}
+		else if (slot >= ChargingBench.CBslotCharging && slot < ChargingBench.CBslotCharging + 12)
+		{
+			// Make sure it's not fully charged already? Not sure, full items will be output in updateEntity
+
+		}
+		else if (slot == ChargingBench.CBslotPowerSource)
+		{
+			// Perhaps eject the item if it's not valid? No, just leave it alone. 
+			// If machinery added it the player can figure out the problem by trying to remove and replace it and realizing it won't fit.
+		}
+		super.onInventoryChanged();
+	}
+
+	@Override
+	public void onInventoryChanged()
+	{
+		// We're not sure what called this or what slot was altered, so make sure the upgrade effects are correct just in case and then pass the call on.
+		doUpgradeEffects();
+		super.onInventoryChanged();
+	}
+
 }

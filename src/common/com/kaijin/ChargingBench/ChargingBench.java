@@ -5,6 +5,8 @@ import java.io.File;
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
@@ -18,6 +20,7 @@ import com.kaijin.ChargingBench.*;
 import ic2.api.*;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.SidedProxy;
@@ -37,7 +40,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,
 clientPacketHandlerSpec = @SidedPacketHandler(channels = {"ChargingBench"}, packetHandler = ClientPacketHandler.class),
 serverPacketHandlerSpec = @SidedPacketHandler(channels = ("ChargingBench"), packetHandler = ServerPacketHandler.class))
-public class ChargingBench
+public class ChargingBench implements ICraftingHandler
 {
 	public static final String modNamePacked = "ChargingBench";
 	public static final String modNameSpaced = "Charging Bench";
@@ -54,9 +57,11 @@ public class ChargingBench
 	@Instance(modNamePacked)
 	public static ChargingBench instance; //The instance of the mod that will be defined, populated, and callable
 
-	static int ChargingBenchBlockID;
+	public static Block ChargingBench;
+	public static Item ItemBenchTools;
 
-	static int ItemBenchToolsID;
+	public static int ChargingBenchBlockID;
+	public static int ItemBenchToolsID;
 
 	// Constants for use in multiple classes
 	static final int CBslotInput = 0;
@@ -67,7 +72,7 @@ public class ChargingBench
 
 	static final int BSslotInput = 0;
 	static final int BSslotOutput = 1;
-	static final int BSslotPowerSource = 2;
+	static final int BSslotPowerSourceStart = 2;
 	
 	static final int CBinventorySize = 19;
 	static final int BSinventorySize = 14;
@@ -93,9 +98,9 @@ public class ChargingBench
 		{
 			Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
 			configuration.load();
-			ItemBenchToolsID = configuration.getOrCreateIntProperty(benchToolsName, configuration.CATEGORY_ITEM, 22499).getInt();
-			ChargingBenchBlockID = configuration.getOrCreateBlockIdProperty(modNamePacked, 2491).getInt();
-			isDebugging = Boolean.parseBoolean((configuration.getOrCreateBooleanProperty("debug", configuration.CATEGORY_GENERAL, false).value));
+			ItemBenchToolsID = configuration.getItem(configuration.CATEGORY_ITEM, benchToolsName, 22499).getInt();
+			ChargingBenchBlockID = configuration.getBlock(modNamePacked, 2491).getInt();
+			isDebugging = Boolean.parseBoolean((configuration.get(configuration.CATEGORY_GENERAL, "debug",  false).value));
 			configuration.save();
 		}
 		catch (Exception var1)
@@ -105,13 +110,12 @@ public class ChargingBench
 		}
 	}
 
-	public static Block ChargingBench;
-	public static Item ItemBenchTools;
-
 	@Init
 	public void load(FMLInitializationEvent event)
 	{
-		ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("ChargingBench").setCreativeTab(CreativeTabs.tabDeco);
+		GameRegistry.registerCraftingHandler(this);
+
+		ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("ChargingBench").setCreativeTab(CreativeTabs.tabDecorations);
 		//LanguageRegistry.addName(ChargingBench, modNameSpaced);
 		GameRegistry.registerBlock(ChargingBench, ItemChargingBench.class);
 
@@ -180,9 +184,9 @@ public class ChargingBench
 
 		//TODO Remove this code when updating to MC 1.4, IC2 fixes this in future versions
 		// Also adding them to the creative inventory, since current IC2 version doesn't.
-		ic2overclockerUpg.getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
-		ic2transformerUpg.getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
-		ic2storageUpg.getItem().setTabToDisplayOn(CreativeTabs.tabMisc);
+		ic2overclockerUpg.getItem().setCreativeTab(CreativeTabs.tabMisc);
+		ic2transformerUpg.getItem().setCreativeTab(CreativeTabs.tabMisc);
+		ic2storageUpg.getItem().setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@PostInit
@@ -213,4 +217,23 @@ public class ChargingBench
 		GameRegistry.addShapelessRecipe(new ItemStack(ChargingBench, 1, 1), new ItemStack(ItemBenchTools, 1, 0), new ItemStack(ItemBenchTools, 1, 2));
 		GameRegistry.addShapelessRecipe(new ItemStack(ChargingBench, 1, 2), new ItemStack(ItemBenchTools, 1, 0), new ItemStack(ItemBenchTools, 1, 3));
 	}
+
+	// ICraftingHandler
+
+	@Override
+	public void onCrafting(EntityPlayer player, ItemStack item, IInventory craftMatrix)
+	{
+		int max = craftMatrix.getSizeInventory();
+		for (int i=0; i < max; i++)
+		{        	
+			ItemStack stack = craftMatrix.getStackInSlot(i);
+			if(stack != null && stack.getItem() == ItemBenchTools && stack.getItemDamage() == 0)
+			{				
+				stack.stackSize++;
+			}
+		}
+	}
+
+	@Override
+	public void onSmelting(EntityPlayer player, ItemStack item) {}
 }
