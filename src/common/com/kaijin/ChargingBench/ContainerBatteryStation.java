@@ -13,14 +13,13 @@ import cpw.mods.fml.common.network.Player;
 
 public class ContainerBatteryStation extends Container
 {
-	private final int benchShiftClickRange = 17;
+	private final int shiftClickRange = 13;
 	private final int playerInventoryStartSlot = 14;
 	private final int playerArmorStartSlot = 55;
 
 	public TEBatteryStation tileentity;
+
 	public int currentEnergy;
-	public int adjustedStorage;
-	//public short adjustedChargeRate;
 	public short adjustedMaxInput;
 
 	public ContainerBatteryStation(InventoryPlayer player, TEBatteryStation tile)
@@ -29,14 +28,13 @@ public class ContainerBatteryStation extends Container
 		this.tileentity = tile;
 		this.currentEnergy = -1;
 		this.adjustedMaxInput = -1;
-		this.adjustedStorage = -1;
 
 		final int topOffset = 32; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
 		int xCol;
 		int yRow;
 
-		// Input charging slots
+		// Discharging slots
 		for (yRow = 0; yRow < 4; ++yRow) // 4 rows high
 		{
 			for (xCol = 0; xCol < 3; ++xCol) // 3 columns across
@@ -259,7 +257,7 @@ public class ContainerBatteryStation extends Container
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(int slotID) //FIXME needs updating for BatteryStation
+	public ItemStack transferStackInSlot(int slotID)
 	{
 		ItemStack original = null;
 		Slot slotclicked = (Slot)this.inventorySlots.get(slotID);
@@ -269,83 +267,22 @@ public class ContainerBatteryStation extends Container
 			ItemStack sourceStack = slotclicked.getStack();
 			original = sourceStack.copy();
 
-			// Charging Bench Slots
 			if (slotID < playerInventoryStartSlot)
 			{
-				// Look for electric armor to move into armor equipped slots from inside our charging bench
-				if (original.getItem() instanceof ItemArmor && original.getItem() instanceof IElectricItem && !((Slot)this.inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
-				{
-					int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
-					if (!this.mergeItemStack(sourceStack, armorType, armorType + 1, false))
-					{
-						return null;
-					}
-				}
-				// If there wasn't room, or it isn't armor, toss it into the player inventory
-				else if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
-				{
-					return null;
-				}
-			}
-			else if (slotID >= playerArmorStartSlot && slotID < playerArmorStartSlot + 4)
-			{
-				// Player Armor Slots
-				if ((original.getItem() instanceof ItemArmor) && !(original.getItem() instanceof IElectricItem))
-				{
-					// Move regular armor from armor slots into main inventory
-					if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
-					{
-						return null;
-					}	
-				}
-				else if (!this.mergeItemStack(sourceStack, 0, benchShiftClickRange, false))
-				{
-					// Put electrical armor items from armor slots into bench
-					// if that fails, try to put them into our main inventory instead
-					if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement)
-					{
-						return null;
-					}
-				}
-			}
-			else if ((original.getItem() instanceof ItemArmor) && !(original.getItem() instanceof IElectricItem) && !((Slot)this.inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
-			{
-				// Move regular armor from main inventory into armor slots
-				int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
-				if (!this.mergeItemStack(sourceStack, armorType, armorType + 1, false))
+				// Move stuff to the player's inventory
+				if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), true))
 				{
 					return null;
 				}
 			}
 			else
 			{
-				// Move stuff from anywhere not caught above to our charging bench inventory
-				if (!this.mergeItemStack(sourceStack, 0, benchShiftClickRange, false))
+				// Move stuff to the battery station's inventory
+				if (!this.mergeItemStack(sourceStack, 0, shiftClickRange, false))
 				{
-					if (original.getItem() instanceof ItemArmor && original.getItem() instanceof IElectricItem && !((Slot)this.inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
-					{
-						// Move electric armor from main inventory into armor slots
-						int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
-						if (!this.mergeItemStack(sourceStack, armorType, armorType + 1, false))
-						{
-							return null;
-						}
-					}
-					else
-					{
-						return null;
-					}
+					return null;
 				}
 			}
-
-
-			/*
-			 * FIXME Need to fix having electric armor not move from player inventory into
-			 * open armor slots when charging bench is completely full. Currently electric
-			 * armor will only move from player inventory into charging bench. It needs to
-			 * move to the charging bench if the bench has room, then move to open armor slots
-			 * if the armor slots have room, then do nothing.
-			 */
 
 			if (sourceStack.stackSize == 0)
 			{
