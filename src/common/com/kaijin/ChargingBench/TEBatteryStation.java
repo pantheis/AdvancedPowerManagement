@@ -189,8 +189,11 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		doingWork = false;
 
 		// Work done every tick
-		drainPowerSource();
-		emitEnergy();
+		if(!receivingRedstoneSignal())
+		{
+			drainPowerSource();
+			emitEnergy();
+		}
 		moveOutputItems();
 		acceptInputItems();
 
@@ -206,10 +209,10 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	private void emitEnergy()
 	{
-		if (Utils.isDebug()) System.out.println("preEmit-currentEnergy: " + currentEnergy);
+//		if (Utils.isDebug()) System.out.println("preEmit-currentEnergy: " + currentEnergy);
 		int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, currentEnergy);
 		currentEnergy = surplus;
-		if (Utils.isDebug()) System.out.println("postEmit-currentEnergy: " + currentEnergy);
+//		if (Utils.isDebug()) System.out.println("postEmit-currentEnergy: " + currentEnergy);
 	}
 
 	//TODO test this
@@ -217,7 +220,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	{
 		for (int i = ChargingBench.BSslotPowerSourceStart; i < ChargingBench.BSslotPowerSourceStart + 12; i++)
 		{
-			if (Utils.isDebug()) System.out.println("currentEnergy: " + currentEnergy + " baseMaxOutput: " + baseMaxOutput);
+//			if (Utils.isDebug()) System.out.println("currentEnergy: " + currentEnergy + " baseMaxOutput: " + baseMaxOutput);
 			if (currentEnergy >= baseMaxOutput) return;
 
 			ItemStack stack = this.contents[i];
