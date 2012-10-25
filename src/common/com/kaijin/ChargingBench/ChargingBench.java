@@ -5,6 +5,8 @@ import java.io.File;
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
@@ -18,6 +20,7 @@ import com.kaijin.ChargingBench.*;
 import ic2.api.*;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.SidedProxy;
@@ -37,7 +40,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,
 clientPacketHandlerSpec = @SidedPacketHandler(channels = {"ChargingBench"}, packetHandler = ClientPacketHandler.class),
 serverPacketHandlerSpec = @SidedPacketHandler(channels = ("ChargingBench"), packetHandler = ServerPacketHandler.class))
-public class ChargingBench
+public class ChargingBench implements ICraftingHandler
 {
 	public static final String modNamePacked = "ChargingBench";
 	public static final String modNameSpaced = "Charging Bench";
@@ -54,9 +57,11 @@ public class ChargingBench
 	@Instance(modNamePacked)
 	public static ChargingBench instance; //The instance of the mod that will be defined, populated, and callable
 
-	static int ChargingBenchBlockID;
+	public static Block ChargingBench;
+	public static Item ItemBenchTools;
 
-	static int ItemBenchToolsID;
+	public static int ChargingBenchBlockID;
+	public static int ItemBenchToolsID;
 
 	// Constants for use in multiple classes
 	static final int CBslotInput = 0;
@@ -105,12 +110,11 @@ public class ChargingBench
 		}
 	}
 
-	public static Block ChargingBench;
-	public static Item ItemBenchTools;
-
 	@Init
 	public void load(FMLInitializationEvent event)
 	{
+		GameRegistry.registerCraftingHandler(this);
+
 		ChargingBench = new BlockChargingBench(ChargingBenchBlockID, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("ChargingBench").setCreativeTab(CreativeTabs.tabDecorations);
 		//LanguageRegistry.addName(ChargingBench, modNameSpaced);
 		GameRegistry.registerBlock(ChargingBench, ItemChargingBench.class);
@@ -213,4 +217,23 @@ public class ChargingBench
 		GameRegistry.addShapelessRecipe(new ItemStack(ChargingBench, 1, 1), new ItemStack(ItemBenchTools, 1, 0), new ItemStack(ItemBenchTools, 1, 2));
 		GameRegistry.addShapelessRecipe(new ItemStack(ChargingBench, 1, 2), new ItemStack(ItemBenchTools, 1, 0), new ItemStack(ItemBenchTools, 1, 3));
 	}
+
+	// ICraftingHandler
+
+	@Override
+	public void onCrafting(EntityPlayer player, ItemStack item, IInventory craftMatrix)
+	{
+		int max = craftMatrix.getSizeInventory();
+		for (int i=0; i < max; i++)
+		{        	
+			ItemStack stack = craftMatrix.getStackInSlot(i);
+			if(stack != null && stack.getItem() == ItemBenchTools && stack.getItemDamage() == 0)
+			{				
+				stack.stackSize++;
+			}
+		}
+	}
+
+	@Override
+	public void onSmelting(EntityPlayer player, ItemStack item) {}
 }
