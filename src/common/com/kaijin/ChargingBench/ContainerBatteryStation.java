@@ -19,7 +19,7 @@ public class ContainerBatteryStation extends Container
 
 	public ContainerBatteryStation(InventoryPlayer player, TEBatteryStation tile)
 	{
-		if (Utils.isDebug()) System.out.println("ContainerBatteryStation");
+		//if (Utils.isDebug()) System.out.println("ContainerBatteryStation");
 		this.tileentity = tile;
 		this.currentEnergy = -1;
 		this.adjustedMaxInput = -1;
@@ -296,7 +296,7 @@ public class ContainerBatteryStation extends Container
 	{
 		ItemStack result = null;
 
-		if (Utils.isDebug() && ChargingBench.proxy.isServer()) System.out.println("ContainerBatteryStation.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
+		//if (Utils.isDebug() && ChargingBench.proxy.isServer()) System.out.println("ContainerBatteryStation.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
 
 		if (button > 1)
 		{
@@ -362,7 +362,7 @@ public class ContainerBatteryStation extends Container
 
 						if (clickedStack != null)
 						{
-							if (Utils.isDebug()) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
+							//if (Utils.isDebug()) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
 							result = clickedStack.copy();
 						}
 

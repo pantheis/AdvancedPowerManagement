@@ -20,7 +20,7 @@ public class TEEmitter extends TileEntity implements IEnergySource
 				
 		//base tier = what we're passed, so 1, 2 or 3 (or 4)
 
-		if (Utils.isDebug()) System.out.println("BaseTier: " + this.baseTier + " ;baseOutput: " + outputRate);
+		//if (Utils.isDebug()) System.out.println("BaseTier: " + this.baseTier + " ;baseOutput: " + outputRate);
 	}
 
 	@Override
