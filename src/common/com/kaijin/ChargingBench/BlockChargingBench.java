@@ -264,7 +264,7 @@ public class BlockChargingBench extends Block
 		return this.blockID;
 	}
 
-	protected int damageDropped(int meta)
+	public int damageDropped(int meta)
 	{
 		if (Utils.isDebug()) System.out.println("BlockChargingBench.damageDropped");
 		return meta;

@@ -274,7 +274,7 @@ public class ContainerChargingBench extends Container
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(int slotID)
+	public ItemStack func_82846_b(EntityPlayer p, int slotID)
 	{
 		ItemStack original = null;
 		Slot slotclicked = (Slot)this.inventorySlots.get(slotID);
@@ -375,7 +375,7 @@ public class ContainerChargingBench extends Container
 	}
 
 	@Override
-	public ItemStack slotClick(int slotID, int button, boolean shiftclick, EntityPlayer par4EntityPlayer)
+	public ItemStack slotClick(int slotID, int button, int shiftclick, EntityPlayer par4EntityPlayer)
 	{
 		ItemStack result = null;
 
@@ -412,9 +412,9 @@ public class ContainerChargingBench extends Container
 						}
 					}
 				}
-				else if (shiftclick)
+				else if (shiftclick == 1)
 				{
-					ItemStack original = this.transferStackInSlot(slotID);
+					ItemStack original = this.func_82846_b(par4EntityPlayer, slotID);
 
 					// For crafting and other situations where a new stack could appear in the slot after each click; may be useful for output slot
 					if (original != null)
@@ -425,7 +425,7 @@ public class ContainerChargingBench extends Container
 
 						if (slot != null && slot.getStack() != null && slot.getStack().itemID == originalID)
 						{
-							this.retrySlotClick(slotID, button, shiftclick, par4EntityPlayer);
+							this.retrySlotClick(slotID, button, true, par4EntityPlayer);
 						}
 					}
 				}
@@ -478,7 +478,7 @@ public class ContainerChargingBench extends Container
 								slot.putStack((ItemStack)null);
 							}
 
-							slot.onPickupFromSlot(invPlayer.getItemStack());
+							slot.func_82870_a(par4EntityPlayer, invPlayer.getItemStack());
 						}
 						else if (slot.isItemValid(mouseStack))
 						{ // Both the mouse and the slot contain items, run this code if the item can be placed here 
@@ -525,7 +525,7 @@ public class ContainerChargingBench extends Container
 									slot.putStack((ItemStack)null);
 								}
 
-								slot.onPickupFromSlot(invPlayer.getItemStack());
+								slot.func_82870_a(par4EntityPlayer, invPlayer.getItemStack());
 							}
 						}
 

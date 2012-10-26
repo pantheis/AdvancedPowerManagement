@@ -51,7 +51,7 @@ public class ServerPacketHandler implements IPacketHandler
 	 */
 	
 	@Override
-	public void onPacketData(NetworkManager network, Packet250CustomPayload packet, Player player)
+	public void onPacketData(INetworkManager network, Packet250CustomPayload packet, Player player)
 	{
 		if (Utils.isDebug()) System.out.println("ServerPacketHandler.onPacketData");
 		DataInputStream stream = new DataInputStream(new ByteArrayInputStream(packet.data));
