@@ -36,6 +36,8 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	public int adjustedStorage;
 
 	public int currentEnergy;
+	//For outside texture display
+	protected int chargeLevel;
 
 	public float drainFactor;
 	public float chargeFactor;
