@@ -25,7 +25,8 @@ public class GuiBatteryStation extends GuiContainer
 
 	}
 
-	protected void drawGuiContainerForegroundLayer()
+	@Override
+	protected void drawGuiContainerForegroundLayer(int x, int y)
 	{
 		String type = "";
 		switch(tile.baseTier)

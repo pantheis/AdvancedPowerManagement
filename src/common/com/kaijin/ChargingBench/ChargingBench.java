@@ -181,12 +181,6 @@ public class ChargingBench implements ICraftingHandler
 		ic2overclockerUpg = Items.getItem("overclockerUpgrade").copy();
 		ic2transformerUpg = Items.getItem("transformerUpgrade").copy();
 		ic2storageUpg = Items.getItem("energyStorageUpgrade").copy();
-
-		//TODO Remove this code when updating to MC 1.4, IC2 fixes this in future versions
-		// Also adding them to the creative inventory, since current IC2 version doesn't.
-		ic2overclockerUpg.getItem().setCreativeTab(CreativeTabs.tabMisc);
-		ic2transformerUpg.getItem().setCreativeTab(CreativeTabs.tabMisc);
-		ic2storageUpg.getItem().setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@PostInit
