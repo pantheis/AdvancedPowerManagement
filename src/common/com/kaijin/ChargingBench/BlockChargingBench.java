@@ -135,12 +135,12 @@ public class BlockChargingBench extends Block
 				return 0;
 
 			case 1: // top
-				return 0 + (meta-5);
+				return meta + 9; // 16 + meta - 7;
 			default:
 				//int chargeLevel = ((TEBatteryStation)tile).chargeLevel * 16;
-				//int working = ((TEBatteryStation)tile).doingWork ? 3 : 0;
+				int working = ((TEBatteryStation)tile).doingWork ? 3 : 0;
 				//return this.sideTexture + meta + chargeLevel + working;
-				return 0 + (meta-5);
+				return meta - 5 + working;
 			}
 		}
 		//If we're here, something is wrong
@@ -163,18 +163,18 @@ public class BlockChargingBench extends Block
 			}
 			else
 			{
-				return 0 + (meta-5);//FIXME Fix texture for Discharging Bench
+				return meta + 9; //FIXME Fix texture for Discharging Bench
 			}
 			
 
-		default:
+		default: // side
 			if (meta < 3)
 			{
 				return this.sideTexture + meta;
 			}
-			else if(meta > 6)
+			else if (meta > 6)
 			{
-				return 0 + (meta-5);//FIXME Fix texture for Discharging Bench
+				return meta - 5; //FIXME Fix texture for Discharging Bench
 			}
 			else
 			{
