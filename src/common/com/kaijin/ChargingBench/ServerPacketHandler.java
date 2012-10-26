@@ -51,7 +51,7 @@ public class ServerPacketHandler implements IPacketHandler
 	@Override
 	public void onPacketData(INetworkManager network, Packet250CustomPayload packet, Player player)
 	{
-		if (Utils.isDebug()) System.out.println("ServerPacketHandler.onPacketData");
+		//if (Utils.isDebug()) System.out.println("ServerPacketHandler.onPacketData");
 		DataInputStream stream = new DataInputStream(new ByteArrayInputStream(packet.data));
 		//Read the first int to determine packet type
 		try
