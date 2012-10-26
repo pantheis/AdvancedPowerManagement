@@ -5,15 +5,7 @@
 
 package com.kaijin.ChargingBench;
 
-import java.io.File;
-
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import net.minecraft.src.*;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.Configuration;
 
 public class ClientProxy extends CommonProxy
 {

@@ -8,12 +8,10 @@ package com.kaijin.ChargingBench;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
-import com.kaijin.ChargingBench.*;
-import net.minecraft.src.*;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
-import cpw.mods.fml.common.network.*;
+import net.minecraft.src.INetworkManager;
+import net.minecraft.src.Packet250CustomPayload;
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.Player;
 
 public class ServerPacketHandler implements IPacketHandler
 {

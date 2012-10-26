@@ -1,30 +1,23 @@
 package com.kaijin.ChargingBench;
 
+import ic2.api.Direction;
+import ic2.api.ElectricItem;
+import ic2.api.EnergyNet;
+import ic2.api.IElectricItem;
+import ic2.api.IEnergySource;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.*;
 
-import ic2.api.*;
-import net.minecraft.src.Chunk;
-import net.minecraft.src.Container;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
-import net.minecraft.src.InventoryPlayer;
-import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
-import com.kaijin.ChargingBench.*;
-
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
 
 public class TEBatteryStation extends TECommonBench implements IEnergySource, IInventory, ISidedInventory
 {

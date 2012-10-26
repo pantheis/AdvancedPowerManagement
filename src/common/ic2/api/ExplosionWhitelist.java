@@ -1,6 +1,7 @@
 package ic2.api;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.minecraft.src.Block;
 

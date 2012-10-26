@@ -1,6 +1,11 @@
 package com.kaijin.ChargingBench;
 
-import net.minecraft.src.*;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.GuiButton;
+import net.minecraft.src.GuiContainer;
+import net.minecraft.src.IInventory;
+import net.minecraft.src.InventoryPlayer;
+
 import org.lwjgl.opengl.GL11;
 
 public class GuiChargingBench extends GuiContainer

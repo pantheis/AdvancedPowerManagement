@@ -1,15 +1,20 @@
 package com.kaijin.ChargingBench;
 
-import java.util.*;
+import ic2.api.Items;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLLog;
+import java.util.List;
+import java.util.Random;
+
+import net.minecraft.src.Block;
+import net.minecraft.src.CreativeTabs;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.Material;
+import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
-import net.minecraft.src.*;
-
-import com.kaijin.ChargingBench.*;
-import ic2.api.*;
 
 public class BlockChargingBench extends Block
 {
