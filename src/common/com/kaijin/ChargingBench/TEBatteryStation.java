@@ -208,6 +208,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		{
 			int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, baseMaxOutput);
 			currentEnergy += surplus - baseMaxOutput; // Zero or negative
+			if (surplus < baseMaxOutput) doingWork = true;
 		}
 		//if (Utils.isDebug()) System.out.println("postEmit-currentEnergy: " + currentEnergy);
 	}
