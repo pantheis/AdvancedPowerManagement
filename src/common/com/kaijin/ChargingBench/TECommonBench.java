@@ -17,7 +17,6 @@ public abstract class TECommonBench extends TileEntity implements IInventory
 	public int powerTier; // Transformer upgrades allow charging from energy crystals and lapotrons
 
 	//For outside texture display
-	protected int chargeLevel;
 	protected boolean doingWork;
 
 	boolean receivingRedstoneSignal()
