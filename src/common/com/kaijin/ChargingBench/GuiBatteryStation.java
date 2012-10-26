@@ -1,6 +1,11 @@
 package com.kaijin.ChargingBench;
 
-import net.minecraft.src.*;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.GuiButton;
+import net.minecraft.src.GuiContainer;
+import net.minecraft.src.IInventory;
+import net.minecraft.src.InventoryPlayer;
+
 import org.lwjgl.opengl.GL11;
 
 public class GuiBatteryStation extends GuiContainer
@@ -25,7 +30,8 @@ public class GuiBatteryStation extends GuiContainer
 
 	}
 
-	protected void drawGuiContainerForegroundLayer()
+	@Override
+	protected void drawGuiContainerForegroundLayer(int x, int y)
 	{
 		String type = "";
 		switch(tile.baseTier)

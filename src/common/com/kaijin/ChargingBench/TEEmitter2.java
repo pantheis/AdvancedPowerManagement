@@ -1,6 +1,5 @@
 package com.kaijin.ChargingBench;
 
-import com.kaijin.ChargingBench.*;
 
 public class TEEmitter2 extends TEEmitter
 {

@@ -1,38 +1,28 @@
 package com.kaijin.ChargingBench;
 
-import java.io.File;
-
+import ic2.api.Items;
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
-
-import com.kaijin.ChargingBench.*;
-
-import ic2.api.*;
-
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
@@ -181,12 +171,6 @@ public class ChargingBench implements ICraftingHandler
 		ic2overclockerUpg = Items.getItem("overclockerUpgrade").copy();
 		ic2transformerUpg = Items.getItem("transformerUpgrade").copy();
 		ic2storageUpg = Items.getItem("energyStorageUpgrade").copy();
-
-		//TODO Remove this code when updating to MC 1.4, IC2 fixes this in future versions
-		// Also adding them to the creative inventory, since current IC2 version doesn't.
-		ic2overclockerUpg.getItem().setCreativeTab(CreativeTabs.tabMisc);
-		ic2transformerUpg.getItem().setCreativeTab(CreativeTabs.tabMisc);
-		ic2storageUpg.getItem().setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@PostInit

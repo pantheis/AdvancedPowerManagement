@@ -1,8 +1,6 @@
 package com.kaijin.ChargingBench;
 
-import ic2.api.Items;
 import net.minecraft.src.IInventory;
-import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
 

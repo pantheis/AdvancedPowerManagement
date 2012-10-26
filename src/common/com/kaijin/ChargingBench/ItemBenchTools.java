@@ -1,13 +1,17 @@
 package com.kaijin.ChargingBench;
 
-import ic2.api.Items;
-
 import java.util.List;
 
+import net.minecraft.src.CreativeTabs;
+import net.minecraft.src.EntityItem;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.MathHelper;
+import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
-
-import net.minecraft.src.*;
 
 public class ItemBenchTools extends Item
 {

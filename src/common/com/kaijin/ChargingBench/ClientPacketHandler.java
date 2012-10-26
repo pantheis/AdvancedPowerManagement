@@ -8,13 +8,13 @@ package com.kaijin.ChargingBench;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
-import com.kaijin.ChargingBench.*;
-
-import net.minecraft.src.*;
+import net.minecraft.src.INetworkManager;
+import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
-import cpw.mods.fml.common.network.*;
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.Player;
 
 public class ClientPacketHandler implements IPacketHandler
 {
@@ -50,7 +50,7 @@ public class ClientPacketHandler implements IPacketHandler
 	 */
 
 	@Override
-	public void onPacketData(NetworkManager network, Packet250CustomPayload packet, Player player)
+	public void onPacketData(INetworkManager network, Packet250CustomPayload packet, Player player)
 	{
 		//if (Utils.isDebug()) System.out.println("ClientPacketHandler onPacketData");
 		DataInputStream stream = new DataInputStream(new ByteArrayInputStream(packet.data));

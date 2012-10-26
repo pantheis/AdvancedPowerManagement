@@ -1,7 +1,6 @@
 package com.kaijin.ChargingBench;
 
 import ic2.api.IElectricItem;
-import cpw.mods.fml.common.Mod.Item;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
