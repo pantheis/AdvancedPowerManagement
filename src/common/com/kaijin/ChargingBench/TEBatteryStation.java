@@ -173,10 +173,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public void updateEntity() //TODO Marked for easy access
 	{
-		if (ChargingBench.proxy.isClient())
-		{
-			return;
-		}
+		if (ChargingBench.proxy.isClient()) return;
 
 		if (!initialized && worldObj != null)
 		{
@@ -196,10 +193,8 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		moveOutputItems();
 		acceptInputItems();
 
-		// Trigger this only when charge level passes where it would need to update the client texture
-		int oldChargeLevel = chargeLevel;
-		//this.chargeLevel = gaugeEnergyScaled(12);
-		if (oldChargeLevel != chargeLevel || lastWorkState != doingWork)
+		// Trigger this only when it would need to update the client texture
+		if (lastWorkState != doingWork)
 		{
 			//if (Utils.isDebug()) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + this.chargeLevel); 
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
@@ -208,24 +203,27 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	private void emitEnergy()
 	{
-//		if (Utils.isDebug()) System.out.println("preEmit-currentEnergy: " + currentEnergy);
-		int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, currentEnergy);
-		currentEnergy = surplus;
-//		if (Utils.isDebug()) System.out.println("postEmit-currentEnergy: " + currentEnergy);
+		//if (Utils.isDebug()) System.out.println("preEmit-currentEnergy: " + currentEnergy);
+		if (currentEnergy >= baseMaxOutput)
+		{
+			int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, baseMaxOutput);
+			currentEnergy += surplus - baseMaxOutput; // Zero or negative
+		}
+		//if (Utils.isDebug()) System.out.println("postEmit-currentEnergy: " + currentEnergy);
 	}
 
 	private void drainPowerSource()
 	{
 		for (int i = ChargingBench.BSslotPowerSourceStart; i < ChargingBench.BSslotPowerSourceStart + 12; i++)
 		{
-//			if (Utils.isDebug()) System.out.println("currentEnergy: " + currentEnergy + " baseMaxOutput: " + baseMaxOutput);
-			if (currentEnergy >= baseMaxOutput) return;
+			//if (Utils.isDebug()) System.out.println("currentEnergy: " + currentEnergy + " baseMaxOutput: " + baseMaxOutput);
+			if (currentEnergy >= baseMaxOutput) break;
 
-			ItemStack stack = this.contents[i];
+			ItemStack stack = contents[i];
 			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				IElectricItem item = (IElectricItem)(stack.getItem());
-				if (item.getTier() <= this.powerTier && item.canProvideEnergy())
+				if (item.getTier() <= powerTier && item.canProvideEnergy())
 				{
 					int emptyItemID = item.getEmptyItemId();
 					int chargedItemID = item.getChargedItemId();
@@ -233,17 +231,16 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 					if (stack.itemID == chargedItemID)
 					{
 						int transferLimit = item.getTransferLimit();
-						int amountNeeded = baseMaxOutput - currentEnergy;
-						if (transferLimit == 0) transferLimit = this.baseMaxOutput;
-						if (transferLimit > amountNeeded) transferLimit = amountNeeded;
+						//int amountNeeded = baseMaxOutput - currentEnergy;
+						if (transferLimit == 0) transferLimit = baseMaxOutput;
+						//if (transferLimit > amountNeeded) transferLimit = amountNeeded;
 
 						int chargeReturned = ElectricItem.discharge(stack, transferLimit, powerTier, false, false);
-						// Add the energy we received to our current energy level
-						if (Utils.isDebug()) System.out.println("transferLimit:" + transferLimit + " amountNeeded:" + amountNeeded + " chargeReturned:" + chargeReturned);
 						if (chargeReturned > 0)
 						{
-							this.currentEnergy += chargeReturned;
-							this.doingWork = true;
+							// Add the energy we received to our current energy level
+							currentEnergy += chargeReturned;
+							doingWork = true;
 						}
 
 						// Workaround for buggy IC2 API .discharge that automatically switches stack to emptyItemID but leaves a stackTagCompound on it, so it can't be stacked with never-used empties  
