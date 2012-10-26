@@ -23,7 +23,7 @@ public class ContainerChargingBench extends Container
 
 	public ContainerChargingBench(InventoryPlayer player, TEChargingBench tile)
 	{
-		if (Utils.isDebug()) System.out.println("ContainerChargingBench");
+		//if (Utils.isDebug()) System.out.println("ContainerChargingBench");
 		this.tileentity = tile;
 		this.currentEnergy = -1;
 		this.adjustedMaxInput = -1;
@@ -351,15 +351,6 @@ public class ContainerChargingBench extends Container
 				}
 			}
 
-
-			/*
-			 * FIXME Need to fix having electric armor not move from player inventory into
-			 * open armor slots when charging bench is completely full. Currently electric
-			 * armor will only move from player inventory into charging bench. It needs to
-			 * move to the charging bench if the bench has room, then move to open armor slots
-			 * if the armor slots have room, then do nothing.
-			 */
-
 			if (sourceStack.stackSize == 0)
 			{
 				slotclicked.putStack((ItemStack)null);
@@ -377,7 +368,7 @@ public class ContainerChargingBench extends Container
 	{
 		ItemStack result = null;
 
-		if (Utils.isDebug() && ChargingBench.proxy.isServer()) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
+		// if (Utils.isDebug() && ChargingBench.proxy.isServer()) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
 
 		if (button > 1)
 		{
@@ -443,7 +434,7 @@ public class ContainerChargingBench extends Container
 
 						if (clickedStack != null)
 						{
-							if (Utils.isDebug()) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
+							//if (Utils.isDebug()) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
 							result = clickedStack.copy();
 						}
 

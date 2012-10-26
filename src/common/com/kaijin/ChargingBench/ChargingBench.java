@@ -176,7 +176,7 @@ public class ChargingBench implements ICraftingHandler
 	@PostInit
 	public void modsLoaded(FMLPostInitializationEvent event)
 	{
-		if (Utils.isDebug()) System.out.println("ChargingBench.modsLoaded");
+		//if (Utils.isDebug()) System.out.println("ChargingBench.modsLoaded");
 
 		// New and improved recipes for a new and improved ChargingBench
 		GameRegistry.addRecipe(new ItemStack(ChargingBench, 1, 0), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("batBox")});

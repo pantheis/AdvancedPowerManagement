@@ -40,11 +40,11 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		//base tier = what we're passed, so 1, 2 or 3
 		this.baseTier = i;
 		this.powerTier = i;
-		if (Utils.isDebug()) System.out.println("BaseTier: " + this.baseTier);
+		//if (Utils.isDebug()) System.out.println("BaseTier: " + this.baseTier);
 
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
 		this.baseMaxOutput = (int)Math.pow(2.0D, (double)(2 * this.baseTier + 3));
-		if (Utils.isDebug()) System.out.println("BaseMaxOutput: " + this.baseMaxOutput);
+		//if (Utils.isDebug()) System.out.println("BaseMaxOutput: " + this.baseMaxOutput);
 	}
 
 	// IC2 API functions
@@ -240,7 +240,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 						// Workaround for buggy IC2 API .discharge that automatically switches stack to emptyItemID but leaves a stackTagCompound on it, so it can't be stacked with never-used empties  
 						if (chargedItemID != emptyItemID && (chargeReturned < transferLimit || ElectricItem.discharge(stack, 1, powerTier, false, true) == 0))
 						{
-							if (Utils.isDebug()) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
+							//if (Utils.isDebug()) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
 							setInventorySlotContents(i, new ItemStack(emptyItemID, 1, 0));
 						}
 					}

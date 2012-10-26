@@ -56,11 +56,11 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 
 	protected void initializeBaseValues()
 	{
-		if (Utils.isDebug()) System.out.println("Initializing - BaseTier: " + this.baseTier);
+		//if (Utils.isDebug()) System.out.println("Initializing - BaseTier: " + this.baseTier);
 
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
 		this.baseMaxInput = (int)Math.pow(2.0D, (double)(2 * this.baseTier + 3));
-		if (Utils.isDebug()) System.out.println("BaseMaxInput: " + this.baseMaxInput);
+		//if (Utils.isDebug()) System.out.println("BaseMaxInput: " + this.baseMaxInput);
 
 		switch(baseTier)
 		{
@@ -76,7 +76,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		default:
 			this.baseStorage = 0;
 		}
-		if (Utils.isDebug()) System.out.println("BaseStorage: " + this.baseStorage);
+		//if (Utils.isDebug()) System.out.println("BaseStorage: " + this.baseStorage);
 	}
 
 	/**
@@ -251,7 +251,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 
 			// Read extra NBT stuff here
 			currentEnergy = nbttagcompound.getInteger("currentEnergy");
-			if (Utils.isDebug()) System.out.println("ReadNBT.CurrentEergy: " + this.currentEnergy);
+			//if (Utils.isDebug()) System.out.println("ReadNBT.CurrentEergy: " + this.currentEnergy);
 			baseMaxInput = nbttagcompound.getInteger("maxInput");
 			baseStorage = nbttagcompound.getInteger("baseStorage");
 			baseTier = nbttagcompound.getInteger("baseTier");
@@ -390,7 +390,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 				// Workaround for buggy IC2 API .discharge that automatically switches stack to emptyItemID but leaves a stackTagCompound on it, so it can't be stacked with never-used empties  
 				if (chargedItemID != emptyItemID && ElectricItem.discharge(stack, 1, powerTier, false, true) == 0)
 				{
-					if (Utils.isDebug()) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
+					//if (Utils.isDebug()) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
 					setInventorySlotContents(ChargingBench.CBslotPowerSource, new ItemStack(emptyItemID, 1, 0));
 					//ItemStack newStack = new ItemStack(emptyItemID, 1, 0);
 					//contents[ChargingBench.slotPowerSource] = newStack;

@@ -86,7 +86,7 @@ public class ClientPacketHandler implements IPacketHandler
 			{
 				((TEChargingBench)tile).chargeLevel = this.chargeLevel;
 				((TEChargingBench)tile).doingWork = this.working;
-				if (Utils.isDebug()) System.out.println("ClientPacketHandler chargeLevel: " + this.chargeLevel + " working: " + this.working);
+				//if (Utils.isDebug()) System.out.println("ClientPacketHandler chargeLevel: " + this.chargeLevel + " working: " + this.working);
 				world.markBlockNeedsUpdate(x, y, z);
 			}
 		}
@@ -109,7 +109,7 @@ public class ClientPacketHandler implements IPacketHandler
 			if (tile instanceof TEBatteryStation)
 			{
 				((TEBatteryStation)tile).doingWork = this.working;
-				if (Utils.isDebug()) System.out.println("ClientPacketHandler working: " + this.working);
+				//if (Utils.isDebug()) System.out.println("ClientPacketHandler working: " + this.working);
 				world.markBlockNeedsUpdate(x, y, z);
 			}
 		}

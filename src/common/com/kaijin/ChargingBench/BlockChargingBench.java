@@ -53,9 +53,8 @@ public class BlockChargingBench extends Block
 
 			if (entityplayer.isSneaking() || currentEquippedItemID == wrench.itemID || currentEquippedItemID == electricWrench.itemID)
 			{
-				if (Utils.isDebug()) System.out.println("Block.world.isRemote.isSneaking");
-				// Prevent GUI popup when sneaking
-				// This allows you to sneak place things directly on the charging bench
+				// Prevent GUI popup when sneaking - this allows you to sneak place things directly on the charging bench
+				//if (Utils.isDebug()) System.out.println("Block.world.isRemote.isSneaking");
 				return false;
 			}
 		}
@@ -75,7 +74,7 @@ public class BlockChargingBench extends Block
 				// This allows you to sneak place things directly on the charging bench
 				return false;
 			}
-			if (Utils.isDebug()) System.out.println("BlockChargingBench.BlockActivated");
+			//if (Utils.isDebug()) System.out.println("BlockChargingBench.BlockActivated");
 			int meta = world.getBlockMetadata(x, y, z);
 			if (meta == 0 || meta == 1 || meta == 2)
 			{
@@ -132,7 +131,7 @@ public class BlockChargingBench extends Block
 				return this.baseTexture + meta;
 			}
 		}
-		else if (tile instanceof TEBatteryStation) //FIXME fix textures
+		else if (tile instanceof TEBatteryStation)
 		{
 			switch (side)
 			{
@@ -142,9 +141,7 @@ public class BlockChargingBench extends Block
 			case 1: // top
 				return meta + 9; // 16 + meta - 7;
 			default:
-				//int chargeLevel = ((TEBatteryStation)tile).chargeLevel * 16;
 				int working = ((TEBatteryStation)tile).doingWork ? 3 : 0;
-				//return this.sideTexture + meta + chargeLevel + working;
 				return meta - 5 + working;
 			}
 		}
@@ -168,7 +165,7 @@ public class BlockChargingBench extends Block
 			}
 			else
 			{
-				return meta + 9; //FIXME Fix texture for Discharging Bench
+				return meta + 9;
 			}
 			
 
@@ -179,7 +176,7 @@ public class BlockChargingBench extends Block
 			}
 			else if (meta > 6)
 			{
-				return meta - 5; //FIXME Fix texture for Discharging Bench
+				return meta - 5;
 			}
 			else
 			{
@@ -203,7 +200,7 @@ public class BlockChargingBench extends Block
 	@Override
 	public TileEntity createTileEntity(World world, int metadata)
 	{
-		if (Utils.isDebug()) System.out.println("BlockChargingBench.createTileEntity");
+		//if (Utils.isDebug()) System.out.println("BlockChargingBench.createTileEntity");
 		switch (metadata)
 		{
 		case 0:
@@ -265,13 +262,13 @@ public class BlockChargingBench extends Block
 
 	public int idDropped(int var1, Random var2, int var3)
 	{
-		if (Utils.isDebug()) System.out.println("BlockChargingBench.idDropped");
+		//if (Utils.isDebug()) System.out.println("BlockChargingBench.idDropped");
 		return this.blockID;
 	}
 
 	public int damageDropped(int meta)
 	{
-		if (Utils.isDebug()) System.out.println("BlockChargingBench.damageDropped");
+		//if (Utils.isDebug()) System.out.println("BlockChargingBench.damageDropped");
 		return meta;
 	}
 
@@ -279,7 +276,7 @@ public class BlockChargingBench extends Block
 	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int par1)
 	{
 		preDestroyBlock(world, x, y, z);
-		if (Utils.isDebug()) System.out.println("BlockChargingBench.onBlockDestroyedByPlayer");
+		//if (Utils.isDebug()) System.out.println("BlockChargingBench.onBlockDestroyedByPlayer");
 		super.onBlockDestroyedByPlayer(world, x, y, z, par1);
 	}
 

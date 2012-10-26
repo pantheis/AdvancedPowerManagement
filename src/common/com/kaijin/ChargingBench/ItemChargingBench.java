@@ -6,51 +6,31 @@ import net.minecraft.src.ItemStack;
 
 public class ItemChargingBench extends ItemBlock
 {
-    public ItemChargingBench(int var1)
-    {
-    	super(var1);
-    	if (Utils.isDebug()) System.out.println("ItemChargingBench");
-        this.setMaxDamage(0);
-        this.setHasSubtypes(true);
-    }
+	protected static final String[] itemNames = new String[] {"blockChargingBench1", "blockChargingBench2", "blockChargingBench3",
+		"blockEmitterBlock1", "blockEmitterBlock2", "blockEmitterBlock3", "blockEmitterBlock4",
+		"blockBatteryStation1", "blockBatteryStation2", "blockBatteryStation3"};
 
-    public int getMetadata(int meta)
-    {
-    	if (Utils.isDebug()) System.out.println("ItemChargingBench.getMetadata");
-        return meta;
-    }
+	public ItemChargingBench(int var1)
+	{
+		super(var1);
+		//if (Utils.isDebug()) System.out.println("ItemChargingBench");
+		this.setMaxDamage(0);
+		this.setHasSubtypes(true);
+	}
 
-    public String getItemNameIS(ItemStack var1)
-    {
-    	//TODO Use an array to store the name strings (faster lookup)
-    	// if (Utils.isDebug()) System.out.println("ItemChargingBench.getItemNameIS");
-        int var2 = var1.getItemDamage();
+	public int getMetadata(int meta)
+	{
+		//if (Utils.isDebug()) System.out.println("ItemChargingBench.getMetadata");
+		return meta;
+	}
 
-        switch (var2)
-        {
-            case 0:
-                return "blockChargingBench1";
-            case 1:
-                return "blockChargingBench2";
-            case 2:
-                return "blockChargingBench3";
-            case 3:
-                return "blockEmitterBlock1";
-            case 4:
-                return "blockEmitterBlock2";
-            case 5:
-                return "blockEmitterBlock3";
-            case 6:
-                return "blockEmitterBlock4";
-            case 7:
-                return "blockBatteryStation1";
-            case 8:
-            	return "blockBatteryStation2";
-            case 9:
-            	return "blockBatteryStation3";
+	public String getItemNameIS(ItemStack var1)
+	{
+		// if (Utils.isDebug()) System.out.println("ItemChargingBench.getItemNameIS");
+		int var2 = var1.getItemDamage();
 
-            default:
-                return null;
-        }
-    }
+		if (var2 >= 0 && var2 <= 9) return itemNames[var2];
+
+		return null;
+	}
 }

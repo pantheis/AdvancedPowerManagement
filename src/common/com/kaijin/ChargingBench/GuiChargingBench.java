@@ -20,7 +20,7 @@ public class GuiChargingBench extends GuiContainer
 	public GuiChargingBench(InventoryPlayer player, TEChargingBench tile)
 	{
 		super(new ContainerChargingBench(player, tile));
-		if (Utils.isDebug()) System.out.println("GuiChargingBench");
+		//if (Utils.isDebug()) System.out.println("GuiChargingBench");
 		this.tile = tile;
 		/** The X size of the inventory window in pixels. */
 		xSize = 176;
