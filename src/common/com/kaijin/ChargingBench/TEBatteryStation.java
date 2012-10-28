@@ -25,6 +25,7 @@ import net.minecraftforge.common.ISidedInventory;
 
 public class TEBatteryStation extends TECommonBench implements IEnergySource, IInventory, ISidedInventory
 {
+	// No references to these variables found. What are they for?
 	private int tickTime;
 	private int tickDelay = 10;
 
@@ -33,6 +34,8 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	// Base values
 	public int baseMaxOutput;
 	public int currentEnergy;
+
+	private boolean invChanged;
 
 	//For outside texture display
 	public boolean doingWork;
@@ -180,15 +183,23 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 		boolean lastWorkState = doingWork;
 		doingWork = false;
+		invChanged = false;
 
-		// Work done every tick
+		// Work done only when not redstone powered 
 		if(!receivingRedstoneSignal())
 		{
 			drainPowerSource();
 			emitEnergy();
 		}
+		// Work done every tick
 		moveOutputItems();
+		repositionItems();
 		acceptInputItems();
+
+		if (invChanged)
+		{
+			this.onInventoryChanged(); // This doesn't need to be called multiple times, so it gets flagged to happen here if needed.
+		}
 
 		// Trigger this only when it would need to update the client texture
 		if (lastWorkState != doingWork)
@@ -295,7 +306,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 									contents[slot].stackSize--;
 									if (contents[slot].stackSize < 1) contents[slot] = null;
 								}
-								this.onInventoryChanged();
+								invChanged = true;
 								break;
 							}
 						}
@@ -307,13 +318,38 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 								// Pick Me
 								contents[ChargingBench.BSslotOutput] = currentStack;
 								contents[slot] = null;
-								this.onInventoryChanged();
+								invChanged = true;
 								break;
 							}
 						}
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Adjust positions of items in inventory to preserve FIFO order where possible.
+	 */
+	private void repositionItems()
+	{
+		final int lastIndex = ChargingBench.BSslotPowerSourceStart + 11;
+		int vacancy = ChargingBench.BSslotPowerSourceStart;
+		while (vacancy < lastIndex && contents[vacancy] != null)
+		{
+			vacancy++;
+		}
+		int hunt = vacancy + 1;
+		while (vacancy < lastIndex && hunt <= lastIndex) // Mix of < and <= is not an error: Avoids needing +1 or -1 added to something.
+		{
+			if (contents[vacancy] == null && contents[hunt] != null)
+			{
+				contents[vacancy] = contents[hunt];
+				contents[hunt] = null;
+				invChanged = true;
+				vacancy++;
+			}
+			hunt++;
 		}
 	}
 
@@ -351,6 +387,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			{
 				contents[ChargingBench.BSslotOutput] = contents[ChargingBench.BSslotInput];
 				contents[ChargingBench.BSslotInput] = null;
+				invChanged = true;
 			}
 		}
 	}
