@@ -33,20 +33,20 @@ public class ContainerBatteryStation extends Container
 		int xCol;
 		int yRow;
 
-		// Discharging slots
-		for (yRow = 0; yRow < 4; ++yRow) // 4 rows high
+		// Discharging slots, in reverse order
+		for (yRow = 3; yRow >= 0; yRow--) // 4 rows high
 		{
-			for (xCol = 0; xCol < 3; ++xCol) // 3 columns across
+			for (xCol = 2; xCol >= 0; xCol--) // 3 columns across
 			{
-				this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.BSslotPowerSourceStart + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
+				this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.BSslotPowerSourceStart + 11 - xCol - 3 * yRow, 62 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
 			}
 		}
 
 		// Input Slot
-		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.BSslotInput, 130, topOffset));
+		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.BSslotInput, 17, topOffset));
 
 		// Output slot
-		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.BSslotOutput, 130, topOffset + 54));
+		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.BSslotOutput, 143, topOffset + 54));
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
@@ -255,6 +255,9 @@ public class ContainerBatteryStation extends Container
 		return result;
 	}
 
+	/**
+	 * transferStackInSlot with a new signature, not yet mapped to the proper method name
+	 */
 	@Override
 	public ItemStack func_82846_b(EntityPlayer p, int slotID)
 	{
