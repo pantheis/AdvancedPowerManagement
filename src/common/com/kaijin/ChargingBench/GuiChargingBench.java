@@ -84,7 +84,7 @@ public class GuiChargingBench extends GuiContainer
 			// Make each box light up all at once like a LED instead of gradually using barLength = this.tile.gaugeEnergyScaled(66); 
 			int barLength = 5 * this.tile.gaugeEnergyScaled(13);
 			if (barLength > 0) barLength++;
-			this.drawTexturedModalRect(xLoc + 32, yLoc + 100 - barLength, 176, 66 - barLength, 66, barLength);
+			this.drawTexturedModalRect(xLoc + 32, yLoc + 100 - barLength, 176, 66 - barLength, 12, barLength);
 		}
 	}
 }
