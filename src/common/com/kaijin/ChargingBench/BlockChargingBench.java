@@ -241,23 +241,7 @@ public class BlockChargingBench extends Block
 	@Override
 	public boolean hasTileEntity(int metadata)
 	{
-		switch (metadata)
-		{
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-		case 8:
-		case 9:
-			return true;
-
-		default:
-			return false;
-		}
+		return metadata >= 0 && metadata <= ChargingBench.lastMetaValue;
 	}
 
 	public int idDropped(int var1, Random var2, int var3)

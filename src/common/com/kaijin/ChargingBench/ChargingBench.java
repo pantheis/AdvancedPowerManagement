@@ -54,6 +54,8 @@ public class ChargingBench implements ICraftingHandler
 	public static int ItemBenchToolsID;
 
 	// Constants for use in multiple classes
+	public static final int lastMetaValue = 9;
+
 	static final int CBslotInput = 0;
 	static final int CBslotOutput = 1;
 	static final int CBslotPowerSource = 2;
