@@ -56,33 +56,33 @@ public class GuiChargingBench extends GuiContainer
 		default:
 		}
 		// Draw tier and title
-		this.fontRenderer.drawString(type + " Charging Bench", 43, 7, 4210752);
+		fontRenderer.drawString(type + " Charging Bench", 43, 7, 4210752);
 
 		// Compute strings for current and max storage
 		String s1 = (Integer.toString(tile.currentEnergy));
 		String s2 = (Integer.toString(tile.adjustedStorage));
 		// Draw Right-aligned current energy number
-		this.fontRenderer.drawString(s1, (80 - this.fontRenderer.getStringWidth(s1)), 20, 4210752);
+		fontRenderer.drawString(s1, (80 - fontRenderer.getStringWidth(s1)), 20, 4210752);
 		// Draw left-aligned max energy number
-		this.fontRenderer.drawString(s2, 93, 20, 4210752);
+		fontRenderer.drawString(s2, 93, 20, 4210752);
 		// Draw separator		
-		this.fontRenderer.drawString(" / ", 80, 20, 4210752);
+		fontRenderer.drawString(" / ", 80, 20, 4210752);
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
 	{
-		int textureID = this.mc.renderEngine.getTexture(ChargingBench.proxy.GUI1_PNG);
+		int textureID = mc.renderEngine.getTexture(ChargingBench.proxy.GUI1_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		this.mc.renderEngine.bindTexture(textureID);
-		int xLoc = (this.width - this.xSize) / 2;
-		int yLoc = (this.height - this.ySize) / 2;
-		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, this.xSize, this.ySize);
+		mc.renderEngine.bindTexture(textureID);
+		int xLoc = (width - xSize) / 2;
+		int yLoc = (height - ySize) / 2;
+		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
-		if (this.tile.currentEnergy > 0)
+		if (tile.currentEnergy > 0)
 		{
-			// Make each box light up all at once like a LED instead of gradually using barLength = this.tile.gaugeEnergyScaled(66); 
-			int barLength = 5 * this.tile.gaugeEnergyScaled(13);
+			// Make each box light up all at once like a LED instead of gradually using barLength = tile.gaugeEnergyScaled(66); 
+			int barLength = 5 * tile.gaugeEnergyScaled(13);
 			if (barLength > 0) barLength++;
 			this.drawTexturedModalRect(xLoc + 32, yLoc + 100 - barLength, 176, 66 - barLength, 12, barLength);
 		}
