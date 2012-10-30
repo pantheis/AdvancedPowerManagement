@@ -3,6 +3,9 @@ package com.kaijin.ChargingBench;
 import ic2.api.Direction;
 import ic2.api.EnergyNet;
 import ic2.api.IEnergySource;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 
 public class TEEmitter extends TileEntity implements IEnergySource
@@ -12,15 +15,56 @@ public class TEEmitter extends TileEntity implements IEnergySource
 	public int baseTier;
 	public int outputRate;
 
-	public TEEmitter(int i)
+	public TEEmitter() // Default constructor used only when loading tile entity from world save
 	{
-		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-		this.baseTier = i;
-		this.outputRate = (int)Math.pow(2.0D, (double)(2* this.baseTier + 3));
-				
-		//base tier = what we're passed, so 1, 2 or 3 (or 4)
+		super();
+		// Do nothing else; Creating the inventory array and loading previous values will be handled in NBT read method momentarily. 
+	}
 
-		//if (Utils.isDebug()) System.out.println("BaseTier: " + this.baseTier + " ;baseOutput: " + outputRate);
+	public TEEmitter(int i) // Constructor used when placing a new tile entity, to set up correct parameters
+	{
+		super();
+
+		//base tier = what we're passed, so 1, 2 or 3 (or 4)
+		baseTier = i;
+
+		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
+		outputRate = (int)Math.pow(2.0D, (double)(2* this.baseTier + 3));
+	}
+
+	/**
+	 * Reads a tile entity from NBT.
+	 */
+	public void readFromNBT(NBTTagCompound nbttagcompound)
+	{
+		if (!ChargingBench.proxy.isClient())
+		{
+			super.readFromNBT(nbttagcompound);
+
+			if (Utils.isDebug()) System.out.println("Em ID: " + nbttagcompound.getString("id"));
+
+			baseTier = nbttagcompound.getInteger("baseTier");
+			if (baseTier == 0)
+			{
+				// Prevent old emitters from failing to initialize properly if they were placed before they had NBT data
+				baseTier = worldObj.getBlockMetadata(xCoord, yCoord, zCoord) - 2;
+			}
+
+			//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
+			outputRate = (int)Math.pow(2.0D, (double)(2* this.baseTier + 3));
+		}
+	}
+
+	/**
+	 * Writes a tile entity to NBT.
+	 */
+	public void writeToNBT(NBTTagCompound nbttagcompound)
+	{
+		if (!ChargingBench.proxy.isClient())
+		{
+			super.writeToNBT(nbttagcompound);
+			nbttagcompound.setInteger("baseTier", baseTier);
+		}
 	}
 
 	@Override

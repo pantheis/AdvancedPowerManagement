@@ -36,18 +36,28 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	//For outside texture display
 	public boolean doingWork;
 
-	public TEBatteryStation(int i)
+	public TEBatteryStation() // Default constructor used only when loading tile entity from world save
 	{
+		super();
+		// Do nothing else; Creating the inventory array and loading previous values will be handled in NBT read method momentarily. 
+	}
+
+	public TEBatteryStation(int i) // Constructor used when placing a new tile entity, to set up correct parameters
+	{
+		super();
 		contents = new ItemStack[14];
 
 		//base tier = what we're passed, so 1, 2 or 3
-		this.baseTier = i;
-		this.powerTier = i;
-		//if (Utils.isDebug()) System.out.println("BaseTier: " + this.baseTier);
+		baseTier = i;
+		initializeValues();
+	}
 
-		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-		this.baseMaxOutput = (int)Math.pow(2.0D, (double)(2 * this.baseTier + 3));
-		//if (Utils.isDebug()) System.out.println("BaseMaxOutput: " + this.baseMaxOutput);
+	private void initializeValues()
+	{
+		powerTier = baseTier;
+
+		//Output math = 32 for tier 1, 128 for tier 2, 512 for tier 3
+		baseMaxOutput = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
 	}
 
 	// IC2 API functions
@@ -111,17 +121,17 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	 */
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
-		if(!ChargingBench.proxy.isClient())
+		if (!ChargingBench.proxy.isClient())
 		{
 			super.readFromNBT(nbttagcompound);
 
-			// Read extra NBT stuff here
+			if (Utils.isDebug()) System.out.println("BS ID: " + nbttagcompound.getString("id"));
+
 			baseTier = nbttagcompound.getInteger("baseTier");
 
-			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-			contents = new ItemStack[ChargingBench.BSinventorySize];
-
 			// Our inventory
+			contents = new ItemStack[ChargingBench.BSinventorySize];
+			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
 			for (int i = 0; i < nbttaglist.tagCount(); ++i)
 			{
 				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
@@ -132,6 +142,9 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 					contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
 				}
 			}
+
+			// We can calculate these, no need to save/load them.
+			initializeValues();
 		}
 	}
 
@@ -140,9 +153,11 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	 */
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		if(!ChargingBench.proxy.isClient())
+		if (!ChargingBench.proxy.isClient())
 		{
 			super.writeToNBT(nbttagcompound);
+
+			nbttagcompound.setInteger("baseTier", baseTier);
 
 			// Our inventory
 			NBTTagList nbttaglist = new NBTTagList();
@@ -158,10 +173,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 				}
 			}
 			nbttagcompound.setTag("Items", nbttaglist);
-
-			//write extra NBT stuff here
-			//if (Utils.isDebug()) System.out.println("WriteNBT.CurrentEergy: " + this.currentEnergy);
-			nbttagcompound.setInteger("baseTier", baseTier);
 		}
 	}
 

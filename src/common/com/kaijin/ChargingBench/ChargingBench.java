@@ -111,29 +111,32 @@ public class ChargingBench implements ICraftingHandler
 		//LanguageRegistry.addName(ChargingBench, modNameSpaced);
 		GameRegistry.registerBlock(ChargingBench, ItemChargingBench.class);
 
-		//Charging Bench blocks
-		GameRegistry.registerTileEntity(TEChargingBench1.class, "LV " + modNameSpaced);
-		GameRegistry.registerTileEntity(TEChargingBench2.class, "MV " + modNameSpaced);
-		GameRegistry.registerTileEntity(TEChargingBench3.class, "HV " + modNameSpaced);
+		// Charging Bench
+		GameRegistry.registerTileEntity(TEChargingBench.class, "LV " + modNameSpaced); // Legacy mappings for backward compatibility - we didn't know wtf we were doing when we started this mod :)
+		GameRegistry.registerTileEntity(TEChargingBench.class, "MV " + modNameSpaced); // Legacy
+		GameRegistry.registerTileEntity(TEChargingBench.class, "HV " + modNameSpaced); // Legacy
+		GameRegistry.registerTileEntity(TEChargingBench.class, "kaijin.chargingBench"); // Proper mapping
 
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench1.name", "LV " + modNameSpaced);
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "MV " + modNameSpaced);
 		LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "HV " + modNameSpaced);
 
-		//Discharging Bench blocks
-		GameRegistry.registerTileEntity(TEBatteryStation1.class, "LV " + dischargerName);
-		GameRegistry.registerTileEntity(TEBatteryStation2.class, "MV " + dischargerName);
-		GameRegistry.registerTileEntity(TEBatteryStation3.class, "HV " + dischargerName);
+		// Battery Station
+		GameRegistry.registerTileEntity(TEBatteryStation.class, "LV " + dischargerName); // Legacy mappings
+		GameRegistry.registerTileEntity(TEBatteryStation.class, "MV " + dischargerName); // Legacy
+		GameRegistry.registerTileEntity(TEBatteryStation.class, "HV " + dischargerName); // Legacy
+		GameRegistry.registerTileEntity(TEBatteryStation.class, "kaijin.batteryStation"); // Proper mapping
 
 		LanguageRegistry.instance().addStringLocalization("blockBatteryStation1.name", "LV " + dischargerName);
 		LanguageRegistry.instance().addStringLocalization("blockBatteryStation2.name", "MV " + dischargerName);
 		LanguageRegistry.instance().addStringLocalization("blockBatteryStation3.name", "HV " + dischargerName);
 
-		//Emitter Blocks, emit 32, 128 or 512 EU/T
-		GameRegistry.registerTileEntity(TEEmitter1.class, "LV " + emitterName);
-		GameRegistry.registerTileEntity(TEEmitter2.class, "MV " + emitterName);
-		GameRegistry.registerTileEntity(TEEmitter3.class, "HV " + emitterName);
-		GameRegistry.registerTileEntity(TEEmitter4.class, "EV " + emitterName);
+		// Emitter
+		GameRegistry.registerTileEntity(TEEmitter.class, "LV " + emitterName); // Legacy mappings
+		GameRegistry.registerTileEntity(TEEmitter.class, "MV " + emitterName); // Legacy
+		GameRegistry.registerTileEntity(TEEmitter.class, "HV " + emitterName); // Legacy
+		GameRegistry.registerTileEntity(TEEmitter.class, "EV " + emitterName); // Legacy
+		GameRegistry.registerTileEntity(TEEmitter.class, "kaijin.emitter"); // Proper mapping
 
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock1.name", "LV " + emitterName);
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock2.name", "MV " + emitterName);
