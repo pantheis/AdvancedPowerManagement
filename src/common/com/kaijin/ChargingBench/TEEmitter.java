@@ -47,7 +47,15 @@ public class TEEmitter extends TileEntity implements IEnergySource
 			if (baseTier == 0)
 			{
 				// Prevent old emitters from failing to initialize properly if they were placed before they had NBT data
-				baseTier = worldObj.getBlockMetadata(xCoord, yCoord, zCoord) - 2;
+				if (worldObj.getBlockId(xCoord, yCoord, zCoord) == ChargingBench.ChargingBenchBlockID)
+				{
+					baseTier = worldObj.getBlockMetadata(xCoord, yCoord, zCoord) - 2;
+				}
+				else
+				{
+					// Just in case there's a stale tile entity somehow...
+					this.invalidate();
+				}
 			}
 
 			//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
