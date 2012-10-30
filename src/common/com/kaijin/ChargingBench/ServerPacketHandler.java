@@ -56,7 +56,7 @@ public class ServerPacketHandler implements IPacketHandler
 		//Read the first int to determine packet type
 		try
 		{
-			this.packetType = stream.readInt();
+			packetType = stream.readInt();
 		}
 		catch (Exception ex)
 		{
@@ -66,28 +66,28 @@ public class ServerPacketHandler implements IPacketHandler
 		 * each packet type needs to implement an if and then whatever other read functions it needs
 		 * complete with try/catch blocks
 		 */
-		if (this.packetType == 0)
+		if (packetType == 0)
 		{
 			try
 			{
-				this.x = stream.readInt();
-				this.y = stream.readInt();
-				this.z = stream.readInt();
-				this.snapshot = stream.readBoolean();
+				x = stream.readInt();
+				y = stream.readInt();
+				z = stream.readInt();
+				snapshot = stream.readBoolean();
 			}
 			catch (Exception ex)
 			{
 				ex.printStackTrace();
 			}
 		}
-		if (this.packetType == 1)
+		if (packetType == 1)
 		{
 			try
 			{
-				this.x = stream.readInt();
-				this.y = stream.readInt();
-				this.z = stream.readInt();
-				this.rotateRequest = stream.readBoolean();
+				x = stream.readInt();
+				y = stream.readInt();
+				z = stream.readInt();
+				rotateRequest = stream.readBoolean();
 			}
 			catch (Exception ex)
 			{

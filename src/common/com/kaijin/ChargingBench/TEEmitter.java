@@ -14,7 +14,7 @@ import net.minecraft.src.TileEntity;
 
 public class TEEmitter extends TileEntity implements IEnergySource
 {
-	private boolean initialized;
+	protected boolean initialized;
 
 	public int baseTier;
 	public int outputRate;
@@ -33,35 +33,29 @@ public class TEEmitter extends TileEntity implements IEnergySource
 		baseTier = i;
 
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-		outputRate = (int)Math.pow(2.0D, (double)(2* this.baseTier + 3));
+		outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
 	}
 
 	/**
 	 * Reads a tile entity from NBT.
 	 */
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
 		if (!ChargingBench.proxy.isClient())
 		{
 			super.readFromNBT(nbttagcompound);
-
-			if (Utils.isDebug()) System.out.println("Em ID: " + nbttagcompound.getString("id"));
-
 			baseTier = nbttagcompound.getInteger("baseTier");
-			if (baseTier == 0)
-			{
-				// Prevent old emitters from failing to initialize properly if they were placed before they had NBT data
-				baseTier = worldObj.getBlockMetadata(xCoord, yCoord, zCoord) - 2;
-			}
 
 			//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-			outputRate = (int)Math.pow(2.0D, (double)(2* this.baseTier + 3));
+			outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
 		}
 	}
 
 	/**
 	 * Writes a tile entity to NBT.
 	 */
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
 		if (!ChargingBench.proxy.isClient())
@@ -86,28 +80,42 @@ public class TEEmitter extends TileEntity implements IEnergySource
 	@Override
 	public void updateEntity()
 	{
-		if (ChargingBench.proxy.isClient())
+		if (ChargingBench.proxy.isClient()) return;
+
+		if (!initialized)
 		{
-			return;
-		}
-		if (!initialized && worldObj != null)
-		{
+			if (worldObj == null) return;
+
+			// Prevent old emitters from misbehaving if they were placed before they saved their tier in NBT data
+			if (baseTier == 0)
+			{
+				if (Utils.isDebug()) System.out.println("baseTier is zero!");
+				if (worldObj.getBlockId(xCoord, yCoord, zCoord) == ChargingBench.ChargingBenchBlockID)
+				{
+					baseTier = worldObj.getBlockMetadata(xCoord, yCoord, zCoord) - 2;
+					outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
+					if (Utils.isDebug()) System.out.println("baseTier is now: " + baseTier);
+					if (Utils.isDebug()) System.out.println("output is now: " + outputRate);
+				}
+				else
+				{
+					// Just in case there's a stale tile entity somehow...
+					this.invalidate();
+					return;
+				}
+			}
+
 			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
-		if (isActive())
+
+		if (receivingRedstoneSignal())
 		{
 			EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, outputRate);
 		}
-
 	}
 
-	public boolean isActive()
-	{
-		return receivingRedstoneSignal();
-	}
-
-	boolean receivingRedstoneSignal()
+	protected boolean receivingRedstoneSignal()
 	{
 		return worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 	}
