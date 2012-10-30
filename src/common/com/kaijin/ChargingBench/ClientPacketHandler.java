@@ -57,7 +57,7 @@ public class ClientPacketHandler implements IPacketHandler
 		//Read the first int to determine packet type
 		try
 		{
-			this.packetType = stream.readInt();
+			packetType = stream.readInt();
 		}
 		catch (Exception ex)
 		{
@@ -65,15 +65,15 @@ public class ClientPacketHandler implements IPacketHandler
 		}
 
 		// each packet type needs to implement an if and then whatever other read functions it needs complete with try/catch blocks
-		if (this.packetType == 0)
+		if (packetType == 0)
 		{
 			try
 			{
-				this.x = stream.readInt();
-				this.y = stream.readInt();
-				this.z = stream.readInt();
-				this.chargeLevel = stream.readInt();
-				this.working = stream.readBoolean();
+				x = stream.readInt();
+				y = stream.readInt();
+				z = stream.readInt();
+				chargeLevel = stream.readInt();
+				working = stream.readBoolean();
 			}
 			catch (Exception ex)
 			{
@@ -90,14 +90,14 @@ public class ClientPacketHandler implements IPacketHandler
 				world.markBlockNeedsUpdate(x, y, z);
 			}
 		}
-		if (this.packetType == 1)
+		if (packetType == 1)
 		{
 			try
 			{
-				this.x = stream.readInt();
-				this.y = stream.readInt();
-				this.z = stream.readInt();
-				this.working = stream.readBoolean();
+				x = stream.readInt();
+				y = stream.readInt();
+				z = stream.readInt();
+				working = stream.readBoolean();
 			}
 			catch (Exception ex)
 			{
