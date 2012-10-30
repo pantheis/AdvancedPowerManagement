@@ -33,7 +33,7 @@ public class ItemChargingBench extends ItemBlock
 		// if (Utils.isDebug()) System.out.println("ItemChargingBench.getItemNameIS");
 		int var2 = var1.getItemDamage();
 
-		if (var2 >= 0 && var2 <= 9) return itemNames[var2];
+		if (var2 >= 0 && var2 <= ChargingBench.lastMetaValue) return itemNames[var2];
 
 		return null;
 	}

@@ -40,8 +40,15 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	public float drainFactor;
 	public float chargeFactor;
 
-	public TEChargingBench(int i)
+	public TEChargingBench() // Default constructor used only when loading tile entity from world save
 	{
+		super();
+		// Do nothing else; Creating the inventory array and loading previous values will be handled in NBT read method momentarily.
+	}
+	
+	public TEChargingBench(int i) // Constructor used when placing a new tile entity, to set up correct parameters
+	{
+		super();
 		this.contents = new ItemStack[19];
 
 		//base tier = what we're passed, so 1, 2 or 3
@@ -247,23 +254,21 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	/**
 	 * Reads a tile entity from NBT.
 	 */
-	public void readFromNBT(NBTTagCompound nbttagcompound)
+	public void readFromNBT(NBTTagCompound nbttagcompound) // TODO Fix this
 	{
-		if(!ChargingBench.proxy.isClient())
+		if (!ChargingBench.proxy.isClient())
 		{
 			super.readFromNBT(nbttagcompound);
 
-			// Read extra NBT stuff here
+			if (Utils.isDebug()) System.out.println("CB ID: " + nbttagcompound.getString("id"));
+
+			baseTier = nbttagcompound.getInteger("baseTier");
 			currentEnergy = nbttagcompound.getInteger("currentEnergy");
 			//if (Utils.isDebug()) System.out.println("ReadNBT.CurrentEergy: " + this.currentEnergy);
-			baseMaxInput = nbttagcompound.getInteger("maxInput");
-			baseStorage = nbttagcompound.getInteger("baseStorage");
-			baseTier = nbttagcompound.getInteger("baseTier");
-
-			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-			contents = new ItemStack[ChargingBench.CBinventorySize];
 
 			// Our inventory
+			contents = new ItemStack[ChargingBench.CBinventorySize];
+			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
 			for (int i = 0; i < nbttaglist.tagCount(); ++i)
 			{
 				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
@@ -276,6 +281,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 			}
 
 			// We can calculate these, no need to save/load them.
+			initializeBaseValues();
 			doUpgradeEffects();
 		}
 	}
@@ -285,9 +291,13 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	 */
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		if(!ChargingBench.proxy.isClient())
+		if (!ChargingBench.proxy.isClient())
 		{
 			super.writeToNBT(nbttagcompound);
+
+			nbttagcompound.setInteger("baseTier", baseTier);
+			nbttagcompound.setInteger("currentEnergy", currentEnergy);
+			//if (Utils.isDebug()) System.out.println("WriteNBT.CurrentEergy: " + this.currentEnergy);
 
 			// Our inventory
 			NBTTagList nbttaglist = new NBTTagList();
@@ -303,13 +313,6 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 				}
 			}
 			nbttagcompound.setTag("Items", nbttaglist);
-
-			//write extra NBT stuff here
-			nbttagcompound.setInteger("currentEnergy", currentEnergy);
-			//if (Utils.isDebug()) System.out.println("WriteNBT.CurrentEergy: " + this.currentEnergy);
-			nbttagcompound.setInteger("maxInput", baseMaxInput);
-			nbttagcompound.setInteger("baseStorage", baseStorage);
-			nbttagcompound.setInteger("baseTier", baseTier);
 		}
 	}
 
