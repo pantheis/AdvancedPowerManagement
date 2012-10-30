@@ -19,8 +19,8 @@ import cpw.mods.fml.common.asm.SideOnly;
 public class BlockChargingBench extends Block
 {
 	//base texture index
-	private int baseTexture = 16;
-	private int sideTexture = 32;
+	private final int baseTexture = 16;
+	private final int sideTexture = 32;
 
 	public BlockChargingBench(int i, int j, Material material)
 	{
@@ -113,11 +113,11 @@ public class BlockChargingBench extends Block
 				return 0;
 
 			case 1: // top
-				return this.baseTexture + meta;
+				return baseTexture + meta;
 			default:
 				int chargeLevel = ((TEChargingBench)tile).chargeLevel * 16;
 				int working = ((TEChargingBench)tile).doingWork ? 3 : 0;
-				return this.sideTexture + meta + chargeLevel + working;
+				return sideTexture + meta + chargeLevel + working;
 			}
 		}
 		else if (tile instanceof TEEmitter)
@@ -128,7 +128,7 @@ public class BlockChargingBench extends Block
 				return 0;
 
 			default:
-				return this.baseTexture + meta;
+				return baseTexture + meta;
 			}
 		}
 		else if (tile instanceof TEBatteryStation)
@@ -161,7 +161,7 @@ public class BlockChargingBench extends Block
 		case 1: // top
 			if (meta < 7)
 			{
-				return this.baseTexture + meta;				
+				return baseTexture + meta;				
 			}
 			else
 			{
@@ -172,7 +172,7 @@ public class BlockChargingBench extends Block
 		default: // side
 			if (meta < 3)
 			{
-				return this.sideTexture + meta;
+				return sideTexture + meta;
 			}
 			else if (meta > 6)
 			{
@@ -180,7 +180,7 @@ public class BlockChargingBench extends Block
 			}
 			else
 			{
-				return this.baseTexture + meta;
+				return baseTexture + meta;
 			}
 		}
 	}
@@ -247,7 +247,7 @@ public class BlockChargingBench extends Block
 	public int idDropped(int var1, Random var2, int var3)
 	{
 		//if (Utils.isDebug()) System.out.println("BlockChargingBench.idDropped");
-		return this.blockID;
+		return blockID;
 	}
 
 	public int damageDropped(int meta)

@@ -24,10 +24,10 @@ public class ContainerChargingBench extends Container
 	public ContainerChargingBench(InventoryPlayer player, TEChargingBench tile)
 	{
 		//if (Utils.isDebug()) System.out.println("ContainerChargingBench");
-		this.tileentity = tile;
-		this.currentEnergy = -1;
-		this.adjustedMaxInput = -1;
-		this.adjustedStorage = -1;
+		tileentity = tile;
+		currentEnergy = -1;
+		adjustedMaxInput = -1;
+		adjustedStorage = -1;
 
 		final int topOffset = 32; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
@@ -89,36 +89,36 @@ public class ContainerChargingBench extends Container
 		// if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateCraftingResults");
 		super.updateCraftingResults();
 
-		for (int crafterIndex = 0; crafterIndex < this.crafters.size(); ++crafterIndex)
+		for (int crafterIndex = 0; crafterIndex < crafters.size(); ++crafterIndex)
 		{
-			ICrafting crafter = (ICrafting)this.crafters.get(crafterIndex);
+			ICrafting crafter = (ICrafting)crafters.get(crafterIndex);
 
-			if (this.currentEnergy != this.tileentity.currentEnergy)
+			if (this.currentEnergy != tileentity.currentEnergy)
 			{
-				crafter.updateCraftingInventoryInfo(this, 0, this.tileentity.currentEnergy & 65535);
-				crafter.updateCraftingInventoryInfo(this, 1, this.tileentity.currentEnergy >>> 16);
+				crafter.updateCraftingInventoryInfo(this, 0, tileentity.currentEnergy & 65535);
+				crafter.updateCraftingInventoryInfo(this, 1, tileentity.currentEnergy >>> 16);
 			}
 
-			if (this.adjustedMaxInput != this.tileentity.adjustedMaxInput)
+			if (this.adjustedMaxInput != tileentity.adjustedMaxInput)
 			{
-				crafter.updateCraftingInventoryInfo(this, 2, this.tileentity.adjustedMaxInput);
+				crafter.updateCraftingInventoryInfo(this, 2, tileentity.adjustedMaxInput);
 			}
 
-			if (this.adjustedStorage != this.tileentity.adjustedStorage)
+			if (this.adjustedStorage != tileentity.adjustedStorage)
 			{
-				crafter.updateCraftingInventoryInfo(this, 3, this.tileentity.adjustedStorage & 65535);
-				crafter.updateCraftingInventoryInfo(this, 4, this.tileentity.adjustedStorage >>> 16);
+				crafter.updateCraftingInventoryInfo(this, 3, tileentity.adjustedStorage & 65535);
+				crafter.updateCraftingInventoryInfo(this, 4, tileentity.adjustedStorage >>> 16);
 			}
 
-			//if (this.adjustedChargeRate != this.tileentity.adjustedChargeRate)
+			//if (this.adjustedChargeRate != tileentity.adjustedChargeRate)
 			//{
-			//	crafter.updateCraftingInventoryInfo(this, 5, this.tileentity.adjustedChargeRate);
+			//	crafter.updateCraftingInventoryInfo(this, 5, tileentity.adjustedChargeRate);
 			//}
 		}
-		this.currentEnergy = this.tileentity.currentEnergy;
-		this.adjustedStorage = this.tileentity.adjustedStorage;
-		this.adjustedMaxInput = (short)this.tileentity.adjustedMaxInput;
-		//this.adjustedChargeRate = (short)this.tileentity.adjustedChargeRate;
+		this.currentEnergy = tileentity.currentEnergy;
+		this.adjustedStorage = tileentity.adjustedStorage;
+		this.adjustedMaxInput = (short)tileentity.adjustedMaxInput;
+		//this.adjustedChargeRate = (short)tileentity.adjustedChargeRate;
 	}
 
 	@Override
@@ -129,33 +129,33 @@ public class ContainerChargingBench extends Container
 		switch (param)
 		{
 		case 0:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & -65536) + " | " + value);
-			this.tileentity.currentEnergy = this.tileentity.currentEnergy & -65536 | value;
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (tileentity.currentEnergy & -65536) + " | " + value);
+			tileentity.currentEnergy = tileentity.currentEnergy & -65536 | value;
 			break;
 
 		case 1:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & 65535) + " | " + (value << 16));
-			this.tileentity.currentEnergy = this.tileentity.currentEnergy & 65535 | (value << 16);
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (tileentity.currentEnergy & 65535) + " | " + (value << 16));
+			tileentity.currentEnergy = tileentity.currentEnergy & 65535 | (value << 16);
 			break;
 
 		case 2:
 			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 2 tileentity.adjustedMaxInput = " + value);
-			this.tileentity.adjustedMaxInput = value;
+			tileentity.adjustedMaxInput = value;
 			break;
 
 		case 3:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & -65536) + " | " + value);
-			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & -65536 | value;
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (tileentity.adjustedStorage & -65536) + " | " + value);
+			tileentity.adjustedStorage = tileentity.adjustedStorage & -65536 | value;
 			break;
 
 		case 4:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & 65535) + " | " + (value << 16));
-			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & 65535 | (value << 16);
+			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (tileentity.adjustedStorage & 65535) + " | " + (value << 16));
+			tileentity.adjustedStorage = tileentity.adjustedStorage & 65535 | (value << 16);
 			break;
 
 		case 5:
 			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 5 tileentity.adjustedChargeRate = " + value);
-			//this.tileentity.adjustedChargeRate = value;
+			//tileentity.adjustedChargeRate = value;
 			break;
 
 		default:
@@ -184,7 +184,7 @@ public class ContainerChargingBench extends Container
 		{
 			while (stack.stackSize > 0 && (!reverseOrder && slotID < endSlot || reverseOrder && slotID >= startSlot))
 			{
-				currentSlot = (Slot)this.inventorySlots.get(slotID);
+				currentSlot = (Slot)inventorySlots.get(slotID);
 				currentStack = currentSlot.getStack();
 
 				if (currentStack != null && currentStack.itemID == stack.itemID
@@ -235,7 +235,7 @@ public class ContainerChargingBench extends Container
 
 			while (!reverseOrder && slotID < endSlot || reverseOrder && slotID >= startSlot)
 			{
-				currentSlot = (Slot)this.inventorySlots.get(slotID);
+				currentSlot = (Slot)inventorySlots.get(slotID);
 				currentStack = currentSlot.getStack();
 
 				if (currentStack == null && currentSlot.isItemValid(stack))
@@ -275,7 +275,7 @@ public class ContainerChargingBench extends Container
 	public ItemStack func_82846_b(EntityPlayer p, int slotID)
 	{
 		ItemStack original = null;
-		Slot slotclicked = (Slot)this.inventorySlots.get(slotID);
+		Slot slotclicked = (Slot)inventorySlots.get(slotID);
 
 		if (slotclicked != null && slotclicked.getHasStack())
 		{
@@ -286,7 +286,7 @@ public class ContainerChargingBench extends Container
 			if (slotID < playerInventoryStartSlot)
 			{
 				// Look for electric armor to move into armor equipped slots from inside our charging bench
-				if (original.getItem() instanceof ItemArmor && original.getItem() instanceof IElectricItem && !((Slot)this.inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
+				if (original.getItem() instanceof ItemArmor && original.getItem() instanceof IElectricItem && !((Slot)inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
 				{
 					int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
 					if (!this.mergeItemStack(sourceStack, armorType, armorType + 1, false))
@@ -295,7 +295,7 @@ public class ContainerChargingBench extends Container
 					}
 				}
 				// If there wasn't room, or it isn't armor, toss it into the player inventory
-				else if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
+				else if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
 				{
 					return null;
 				}
@@ -306,7 +306,7 @@ public class ContainerChargingBench extends Container
 				if ((original.getItem() instanceof ItemArmor) && !(original.getItem() instanceof IElectricItem))
 				{
 					// Move regular armor from armor slots into main inventory
-					if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
+					if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
 					{
 						return null;
 					}	
@@ -315,13 +315,13 @@ public class ContainerChargingBench extends Container
 				{
 					// Put electrical armor items from armor slots into bench
 					// if that fails, try to put them into our main inventory instead
-					if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), false)) // False to not use the stupid reverse order item placement)
+					if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, inventorySlots.size(), false)) // False to not use the stupid reverse order item placement)
 					{
 						return null;
 					}
 				}
 			}
-			else if ((original.getItem() instanceof ItemArmor) && !(original.getItem() instanceof IElectricItem) && !((Slot)this.inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
+			else if ((original.getItem() instanceof ItemArmor) && !(original.getItem() instanceof IElectricItem) && !((Slot)inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
 			{
 				// Move regular armor from main inventory into armor slots
 				int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
@@ -335,7 +335,7 @@ public class ContainerChargingBench extends Container
 				// Move stuff from anywhere not caught above to our charging bench inventory
 				if (!this.mergeItemStack(sourceStack, 0, benchShiftClickRange, false))
 				{
-					if (original.getItem() instanceof ItemArmor && original.getItem() instanceof IElectricItem && !((Slot)this.inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
+					if (original.getItem() instanceof ItemArmor && original.getItem() instanceof IElectricItem && !((Slot)inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
 					{
 						// Move electric armor from main inventory into armor slots
 						int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
@@ -410,7 +410,7 @@ public class ContainerChargingBench extends Container
 					{
 						int originalID = original.itemID;
 						result = original.copy();
-						Slot slot = (Slot)this.inventorySlots.get(slotID);
+						Slot slot = (Slot)inventorySlots.get(slotID);
 
 						if (slot != null && slot.getStack() != null && slot.getStack().itemID == originalID)
 						{
@@ -425,7 +425,7 @@ public class ContainerChargingBench extends Container
 						return null;
 					}
 
-					Slot slot = (Slot)this.inventorySlots.get(slotID);
+					Slot slot = (Slot)inventorySlots.get(slotID);
 
 					if (slot != null)
 					{
@@ -531,6 +531,6 @@ public class ContainerChargingBench extends Container
 	public boolean canInteractWith(EntityPlayer var1)
 	{
 		// if (Utils.isDebug()) System.out.println("ContainerChargingBench.canInteractWith");
-		return this.tileentity.isUseableByPlayer(var1);
+		return tileentity.isUseableByPlayer(var1);
 	}
 }

@@ -45,45 +45,45 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	public TEChargingBench(int i) // Constructor used when placing a new tile entity, to set up correct parameters
 	{
 		super();
-		this.contents = new ItemStack[19];
+		contents = new ItemStack[19];
 
 		//base tier = what we're passed, so 1, 2 or 3
-		this.baseTier = i;
+		baseTier = i;
 		initializeBaseValues();
 
 		//setup Adjusted variables to = defaults, we'll be adjusting them in entityUpdate
-		this.adjustedMaxInput = this.baseMaxInput;
-		this.adjustedStorage = this.baseStorage;
+		adjustedMaxInput = baseMaxInput;
+		adjustedStorage = baseStorage;
 
-		this.powerTier = this.baseTier;
+		powerTier = baseTier;
 
-		this.drainFactor = 1.0F;
-		this.chargeFactor = 1.0F;
+		drainFactor = 1.0F;
+		chargeFactor = 1.0F;
 	}
 
 	protected void initializeBaseValues()
 	{
-		//if (Utils.isDebug()) System.out.println("Initializing - BaseTier: " + this.baseTier);
+		//if (Utils.isDebug()) System.out.println("Initializing - BaseTier: " + baseTier);
 
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-		this.baseMaxInput = (int)Math.pow(2.0D, (double)(2 * this.baseTier + 3));
-		//if (Utils.isDebug()) System.out.println("BaseMaxInput: " + this.baseMaxInput);
+		baseMaxInput = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
+		//if (Utils.isDebug()) System.out.println("BaseMaxInput: " + baseMaxInput);
 
 		switch(baseTier)
 		{
 		case 1:
-			this.baseStorage = 40000;
+			baseStorage = 40000;
 			break;
 		case 2:
-			this.baseStorage = 600000;
+			baseStorage = 600000;
 			break;
 		case 3:
-			this.baseStorage = 10000000;
+			baseStorage = 10000000;
 			break;
 		default:
-			this.baseStorage = 0;
+			baseStorage = 0;
 		}
-		//if (Utils.isDebug()) System.out.println("BaseStorage: " + this.baseStorage);
+		//if (Utils.isDebug()) System.out.println("BaseStorage: " + baseStorage);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newTier - 1);
 		initializeBaseValues();
 		doUpgradeEffects();
-		this.chargeLevel = gaugeEnergyScaled(12);
+		chargeLevel = gaugeEnergyScaled(12);
 		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		return oldTier;
 	}
@@ -116,7 +116,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 
 	public boolean demandsEnergy()
 	{
-		return (this.currentEnergy < this.adjustedStorage && !receivingRedstoneSignal());
+		return (currentEnergy < adjustedStorage && !receivingRedstoneSignal());
 	}
 
 	public int injectEnergy(Direction directionFrom, int supply)
@@ -140,14 +140,14 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 			}
 			else
 			{
-				this.currentEnergy += supply;
+				currentEnergy += supply;
 				// check if our current energy level is now over the max energy level
 				if (currentEnergy > adjustedStorage)
 				{
 					//if so, our surplus to return is equal to that amount over
 					surplus = currentEnergy - adjustedStorage;
 					//and set our current energy level TO our max energy level
-					this.currentEnergy = adjustedStorage;
+					currentEnergy = adjustedStorage;
 				}
 				//surplus may be zero or greater here
 			}
@@ -164,7 +164,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	protected void selfDestroy()
 	{
 		dropContents();
-		ItemStack stack = new ItemStack(ChargingBench.ChargingBench, 1, this.baseTier - 1);
+		ItemStack stack = new ItemStack(ChargingBench.ChargingBench, 1, baseTier - 1);
 		dropItem(stack);
 		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
 		this.invalidate();
@@ -179,7 +179,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		int esCount = 0;
 		for (int i = ChargingBench.CBslotUpgrade; i < ChargingBench.CBslotUpgrade + 4; ++i)
 		{
-			stack = this.contents[i];
+			stack = contents[i];
 			if (stack != null)
 			{
 				if (stack.isItemEqual(ChargingBench.ic2overclockerUpg))
@@ -203,32 +203,32 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		if (tfCount > 3) tfCount = 3;
 
 		// Overclockers:
-		this.chargeFactor = (float)Math.pow(1.3F, ocCount); // 30% more power transferred to an item per overclocker, exponential.
-		this.drainFactor = (float)Math.pow(1.5F, ocCount); // 50% more power drained per overclocker, exponential. Yes, you waste power, that's how OCs work.
+		chargeFactor = (float)Math.pow(1.3F, ocCount); // 30% more power transferred to an item per overclocker, exponential.
+		drainFactor = (float)Math.pow(1.5F, ocCount); // 50% more power drained per overclocker, exponential. Yes, you waste power, that's how OCs work.
 
 		// Transformers:
-		this.powerTier = this.baseTier + tfCount; // Allows better energy storage items to be plugged into the battery slot of lower tier benches.
-		if (this.powerTier > 3) this.powerTier = 3;
+		powerTier = baseTier + tfCount; // Allows better energy storage items to be plugged into the battery slot of lower tier benches.
+		if (powerTier > 3) powerTier = 3;
 
-		this.adjustedMaxInput = (int)Math.pow(2.0D, (double)(2 * (this.baseTier + tfCount) + 3));
-		if (this.adjustedMaxInput > 2048) this.adjustedMaxInput = 2048; // You can feed EV in with 1-4 TF upgrades, if you so desire.
+		adjustedMaxInput = (int)Math.pow(2.0D, (double)(2 * (baseTier + tfCount) + 3));
+		if (adjustedMaxInput > 2048) adjustedMaxInput = 2048; // You can feed EV in with 1-4 TF upgrades, if you so desire.
 
 		// Energy Storage:
-		switch (this.baseTier)
+		switch (baseTier)
 		{
 		case 1:
-			this.adjustedStorage = this.baseStorage + esCount * 10000; // LV: 25% additional storage per upgrade (10,000).
+			adjustedStorage = baseStorage + esCount * 10000; // LV: 25% additional storage per upgrade (10,000).
 			break;
 		case 2:
-			this.adjustedStorage = this.baseStorage + esCount * 60000; // MV: 10% additional storage per upgrade (60,000).
+			adjustedStorage = baseStorage + esCount * 60000; // MV: 10% additional storage per upgrade (60,000).
 			break;
 		case 3:
-			this.adjustedStorage = this.baseStorage + esCount * 500000; // HV: 5% additional storage per upgrade (500,000).
+			adjustedStorage = baseStorage + esCount * 500000; // HV: 5% additional storage per upgrade (500,000).
 			break;
 		default:
-			this.adjustedStorage = this.baseStorage; // This shouldn't ever happen, but just in case, it shouldn't crash it - storage upgrades just won't work.
+			adjustedStorage = baseStorage; // This shouldn't ever happen, but just in case, it shouldn't crash it - storage upgrades just won't work.
 		}
-		if (this.currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage; // If storage has decreased, lose any excess energy.
+		if (currentEnergy > adjustedStorage) currentEnergy = adjustedStorage; // If storage has decreased, lose any excess energy.
 	}
 
 	public boolean isItemValid(int slot, ItemStack stack)
@@ -238,7 +238,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		{
 			IElectricItem item = (IElectricItem)(stack.getItem());
 			// Is the item appropriate for this slot?
-			if (slot == ChargingBench.CBslotPowerSource && item.canProvideEnergy() && item.getTier() <= this.powerTier) return true;
+			if (slot == ChargingBench.CBslotPowerSource && item.canProvideEnergy() && item.getTier() <= powerTier) return true;
 			if (slot >= ChargingBench.CBslotCharging && slot < ChargingBench.CBslotCharging + 12 && item.getTier() <= baseTier) return true;
 			if (slot >= ChargingBench.CBslotUpgrade && slot < ChargingBench.CBslotUpgrade + 4 && (stack.isItemEqual(ChargingBench.ic2overclockerUpg) || stack.isItemEqual(ChargingBench.ic2transformerUpg) || stack.isItemEqual(ChargingBench.ic2storageUpg))) return true;
 			if (slot == ChargingBench.CBslotInput && item.getTier() <= baseTier) return true;
@@ -260,7 +260,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 
 			baseTier = nbttagcompound.getInteger("baseTier");
 			currentEnergy = nbttagcompound.getInteger("currentEnergy");
-			//if (Utils.isDebug()) System.out.println("ReadNBT.CurrentEergy: " + this.currentEnergy);
+			//if (Utils.isDebug()) System.out.println("ReadNBT.CurrentEergy: " + currentEnergy);
 
 			// Our inventory
 			contents = new ItemStack[ChargingBench.CBinventorySize];
@@ -293,13 +293,13 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 
 			nbttagcompound.setInteger("baseTier", baseTier);
 			nbttagcompound.setInteger("currentEnergy", currentEnergy);
-			//if (Utils.isDebug()) System.out.println("WriteNBT.CurrentEergy: " + this.currentEnergy);
+			//if (Utils.isDebug()) System.out.println("WriteNBT.CurrentEergy: " + currentEnergy);
 
 			// Our inventory
 			NBTTagList nbttaglist = new NBTTagList();
 			for (int i = 0; i < contents.length; ++i)
 			{
-				if (this.contents[i] != null)
+				if (contents[i] != null)
 				{
 					//if (Utils.isDebug()) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
 					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
@@ -326,8 +326,8 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 			initialized = true;
 		}
 
-		boolean lastWorkState = this.doingWork;
-		this.doingWork = false;
+		boolean lastWorkState = doingWork;
+		doingWork = false;
 
 		// Work done every tick
 		drainPowerSource();
@@ -336,11 +336,11 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		acceptInputItems();
 
 		// Trigger this only when charge level passes where it would need to update the client texture
-		int oldChargeLevel = this.chargeLevel;
-		this.chargeLevel = gaugeEnergyScaled(12);
-		if (oldChargeLevel != this.chargeLevel || lastWorkState != this.doingWork)
+		int oldChargeLevel = chargeLevel;
+		chargeLevel = gaugeEnergyScaled(12);
+		if (oldChargeLevel != chargeLevel || lastWorkState != doingWork)
 		{
-			//if (Utils.isDebug()) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + this.chargeLevel); 
+			//if (Utils.isDebug()) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + chargeLevel); 
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
 	}
@@ -357,7 +357,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		int chargeReturned = 0;
 
 		ItemStack stack = getStackInSlot(ChargingBench.CBslotPowerSource);
-		if (stack != null && stack.getItem() instanceof IElectricItem && this.currentEnergy < this.adjustedStorage)
+		if (stack != null && stack.getItem() instanceof IElectricItem && currentEnergy < adjustedStorage)
 		{
 			IElectricItem powerSource = (IElectricItem)(stack.getItem());
 
@@ -366,10 +366,10 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 
 			if (stack.itemID == chargedItemID)
 			{
-				if (powerSource.getTier() <= this.powerTier && powerSource.canProvideEnergy())
+				if (powerSource.getTier() <= powerTier && powerSource.canProvideEnergy())
 				{
 					int itemTransferLimit = powerSource.getTransferLimit();
-					int energyNeeded = this.adjustedStorage - this.currentEnergy;
+					int energyNeeded = adjustedStorage - currentEnergy;
 
 					// Test if the amount of energy we have room for is greater than what the item can transfer per tick.
 					if (energyNeeded > itemTransferLimit)
@@ -383,10 +383,10 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 					{
 						chargeReturned = ElectricItem.discharge(stack, energyNeeded, powerTier, false, false);
 						// Add the energy we received to our current energy level,
-						this.currentEnergy += chargeReturned;
-						if (chargeReturned > 0) this.doingWork = true;
+						currentEnergy += chargeReturned;
+						if (chargeReturned > 0) doingWork = true;
 						// and make sure that we didn't go over. If we somehow did, drop the excess.
-						if (this.currentEnergy > this.adjustedStorage) this.currentEnergy = this.adjustedStorage;
+						if (currentEnergy > adjustedStorage) currentEnergy = adjustedStorage;
 					}
 				}
 
@@ -414,15 +414,15 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	{
 		for (int i = ChargingBench.CBslotCharging; i < ChargingBench.CBslotCharging + 12; i++)
 		{
-			ItemStack stack = this.contents[i];
-			if (this.currentEnergy > 0 && stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
+			ItemStack stack = contents[i];
+			if (currentEnergy > 0 && stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				IElectricItem item = (IElectricItem)(stack.getItem());
-				if (item.getTier() <= this.baseTier)
+				if (item.getTier() <= baseTier)
 				{
 					int itemTransferLimit = item.getTransferLimit();
-					if (itemTransferLimit == 0) itemTransferLimit = this.baseMaxInput;
-					int adjustedTransferLimit = (int)Math.ceil(this.chargeFactor * itemTransferLimit);
+					if (itemTransferLimit == 0) itemTransferLimit = baseMaxInput;
+					int adjustedTransferLimit = (int)Math.ceil(chargeFactor * itemTransferLimit);
 
 					int amountNeeded;
 					if (item.getChargedItemId() != item.getEmptyItemId() || stack.isStackable())
@@ -438,14 +438,14 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 						amountNeeded = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, true);
 					}
 
-					int adjustedEnergyUse = (int)Math.ceil((this.drainFactor / this.chargeFactor) * amountNeeded);
+					int adjustedEnergyUse = (int)Math.ceil((drainFactor / chargeFactor) * amountNeeded);
 					if (adjustedEnergyUse > 0)
 					{
-						if (adjustedEnergyUse > this.currentEnergy)
+						if (adjustedEnergyUse > currentEnergy)
 						{
 							// Allow that last trickle of energy to be transferred out of the bench 
-							adjustedTransferLimit = (adjustedTransferLimit * this.currentEnergy) / adjustedEnergyUse;
-							adjustedEnergyUse = this.currentEnergy;
+							adjustedTransferLimit = (adjustedTransferLimit * currentEnergy) / adjustedEnergyUse;
+							adjustedEnergyUse = currentEnergy;
 						}
 						// We don't need to do this with the current API, it's switching the ItemID for us. Just make sure we don't try to charge stacked batteries, as mentioned above!
 						//int chargedItemID = item.getChargedItemId();
@@ -453,10 +453,10 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 						//{
 						//	setInventorySlotContents(i, new ItemStack(chargedItemID, 1, 0));
 						//}
-						ElectricItem.charge(this.contents[i], adjustedTransferLimit, powerTier, true, false);
-						this.currentEnergy -= adjustedEnergyUse;
-						if (this.currentEnergy < 0) this.currentEnergy = 0;
-						this.doingWork = true;
+						ElectricItem.charge(contents[i], adjustedTransferLimit, powerTier, true, false);
+						currentEnergy -= adjustedEnergyUse;
+						if (currentEnergy < 0) currentEnergy = 0;
+						doingWork = true;
 					}
 				}
 			}
@@ -517,12 +517,12 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 
 	public int gaugeEnergyScaled(int gaugeSize)
 	{
-		if (this.currentEnergy <= 0)
+		if (currentEnergy <= 0)
 		{
 			return 0;
 		}
 
-		int result = this.currentEnergy * gaugeSize / this.adjustedStorage;
+		int result = currentEnergy * gaugeSize / adjustedStorage;
 		if (result > gaugeSize) result = gaugeSize;
 
 		return result;
@@ -538,11 +538,11 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		try
 		{
 			data.writeInt(0);
-			data.writeInt(this.xCoord);
-			data.writeInt(this.yCoord);
-			data.writeInt(this.zCoord);
-			data.writeInt(this.chargeLevel);
-			data.writeBoolean(this.doingWork);
+			data.writeInt(xCoord);
+			data.writeInt(yCoord);
+			data.writeInt(zCoord);
+			data.writeInt(chargeLevel);
+			data.writeBoolean(doingWork);
 		}
 		catch(IOException e)
 		{

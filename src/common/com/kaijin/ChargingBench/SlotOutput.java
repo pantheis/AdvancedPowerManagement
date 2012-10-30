@@ -11,7 +11,7 @@ public class SlotOutput extends Slot
 	public SlotOutput(IInventory inv, int index, int xpos, int ypos)
 	{
 		super(inv, index, xpos, ypos);
-		this.invIndex = index;
+		invIndex = index;
 	}
 
     /**
@@ -27,13 +27,13 @@ public class SlotOutput extends Slot
 	@Override
     public void onSlotChanged()
     {
-    	if (this.inventory instanceof TECommonBench)
+    	if (inventory instanceof TECommonBench)
     	{
-            ((TECommonBench)this.inventory).onInventoryChanged(this.invIndex);
+            ((TECommonBench)inventory).onInventoryChanged(invIndex);
     	}
     	else
     	{
-            this.inventory.onInventoryChanged();
+            inventory.onInventoryChanged();
     	}
     }
 }

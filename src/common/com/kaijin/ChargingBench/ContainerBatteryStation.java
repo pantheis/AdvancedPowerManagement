@@ -20,9 +20,9 @@ public class ContainerBatteryStation extends Container
 	public ContainerBatteryStation(InventoryPlayer player, TEBatteryStation tile)
 	{
 		//if (Utils.isDebug()) System.out.println("ContainerBatteryStation");
-		this.tileentity = tile;
-		this.currentEnergy = -1;
-		this.adjustedMaxInput = -1;
+		tileentity = tile;
+		currentEnergy = -1;
+		adjustedMaxInput = -1;
 
 		final int topOffset = 32; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
@@ -164,7 +164,7 @@ public class ContainerBatteryStation extends Container
 		{
 			while (stack.stackSize > 0 && (!reverseOrder && slotID < endSlot || reverseOrder && slotID >= startSlot))
 			{
-				currentSlot = (Slot)this.inventorySlots.get(slotID);
+				currentSlot = (Slot)inventorySlots.get(slotID);
 				currentStack = currentSlot.getStack();
 
 				if (currentStack != null && currentStack.itemID == stack.itemID
@@ -215,7 +215,7 @@ public class ContainerBatteryStation extends Container
 
 			while (!reverseOrder && slotID < endSlot || reverseOrder && slotID >= startSlot)
 			{
-				currentSlot = (Slot)this.inventorySlots.get(slotID);
+				currentSlot = (Slot)inventorySlots.get(slotID);
 				currentStack = currentSlot.getStack();
 
 				if (currentStack == null && currentSlot.isItemValid(stack))
@@ -258,7 +258,7 @@ public class ContainerBatteryStation extends Container
 	public ItemStack func_82846_b(EntityPlayer p, int slotID)
 	{
 		ItemStack original = null;
-		Slot slotclicked = (Slot)this.inventorySlots.get(slotID);
+		Slot slotclicked = (Slot)inventorySlots.get(slotID);
 
 		if (slotclicked != null && slotclicked.getHasStack())
 		{
@@ -268,7 +268,7 @@ public class ContainerBatteryStation extends Container
 			if (slotID < playerInventoryStartSlot)
 			{
 				// Move stuff to the player's inventory
-				if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), true))
+				if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, inventorySlots.size(), true))
 				{
 					return null;
 				}
@@ -341,7 +341,7 @@ public class ContainerBatteryStation extends Container
 					{
 						int originalID = original.itemID;
 						result = original.copy();
-						Slot slot = (Slot)this.inventorySlots.get(slotID);
+						Slot slot = (Slot)inventorySlots.get(slotID);
 
 						if (slot != null && slot.getStack() != null && slot.getStack().itemID == originalID)
 						{
@@ -356,7 +356,7 @@ public class ContainerBatteryStation extends Container
 						return null;
 					}
 
-					Slot slot = (Slot)this.inventorySlots.get(slotID);
+					Slot slot = (Slot)inventorySlots.get(slotID);
 
 					if (slot != null)
 					{
@@ -462,6 +462,6 @@ public class ContainerBatteryStation extends Container
 	public boolean canInteractWith(EntityPlayer var1)
 	{
 		// if (Utils.isDebug()) System.out.println("ContainerChargingBench.canInteractWith");
-		return this.tileentity.isUseableByPlayer(var1);
+		return tileentity.isUseableByPlayer(var1);
 	}
 }

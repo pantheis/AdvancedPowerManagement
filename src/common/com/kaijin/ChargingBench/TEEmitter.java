@@ -29,7 +29,7 @@ public class TEEmitter extends TileEntity implements IEnergySource
 		baseTier = i;
 
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-		outputRate = (int)Math.pow(2.0D, (double)(2* this.baseTier + 3));
+		outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class TEEmitter extends TileEntity implements IEnergySource
 			}
 
 			//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-			outputRate = (int)Math.pow(2.0D, (double)(2* this.baseTier + 3));
+			outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
 		}
 	}
 
