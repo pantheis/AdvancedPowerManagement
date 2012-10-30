@@ -119,6 +119,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	/**
 	 * Reads a tile entity from NBT.
 	 */
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
 		if (!ChargingBench.proxy.isClient())
@@ -151,6 +152,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	/**
 	 * Writes a tile entity to NBT.
 	 */
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
 		if (!ChargingBench.proxy.isClient())

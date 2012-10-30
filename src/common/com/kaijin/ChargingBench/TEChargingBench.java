@@ -250,7 +250,8 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	/**
 	 * Reads a tile entity from NBT.
 	 */
-	public void readFromNBT(NBTTagCompound nbttagcompound) // TODO Fix this
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
 		if (!ChargingBench.proxy.isClient())
 		{
@@ -285,6 +286,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	/**
 	 * Writes a tile entity to NBT.
 	 */
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
 		if (!ChargingBench.proxy.isClient())
