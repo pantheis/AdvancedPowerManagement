@@ -80,7 +80,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public int getMaxEnergyOutput()
 	{
-		return this.baseMaxOutput;
+		return baseMaxOutput;
 	}
 	
 	@Override
@@ -98,7 +98,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	protected void selfDestroy()
 	{
 		dropContents();
-		ItemStack stack = new ItemStack(ChargingBench.ChargingBench, 1, this.baseTier - 1);
+		ItemStack stack = new ItemStack(ChargingBench.ChargingBench, 1, baseTier - 1);
 		dropItem(stack);
 		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
 		this.invalidate();
@@ -112,7 +112,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			IElectricItem item = (IElectricItem)(stack.getItem());
 			// Is the item appropriate for this slot?
 			if (slot == ChargingBench.BSslotOutput) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
-			if (item.canProvideEnergy() && item.getTier() <= this.powerTier)
+			if (item.canProvideEnergy() && item.getTier() <= powerTier)
 			{
 				if ((slot >= ChargingBench.BSslotPowerSourceStart && slot < ChargingBench.BSslotPowerSourceStart + 12) || slot == ChargingBench.BSslotInput) return true;
 			}
@@ -123,6 +123,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	/**
 	 * Reads a tile entity from NBT.
 	 */
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
 		if (!ChargingBench.proxy.isClient())
@@ -155,6 +156,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	/**
 	 * Writes a tile entity to NBT.
 	 */
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
 		if (!ChargingBench.proxy.isClient())
@@ -167,7 +169,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			NBTTagList nbttaglist = new NBTTagList();
 			for (int i = 0; i < contents.length; ++i)
 			{
-				if (this.contents[i] != null)
+				if (contents[i] != null)
 				{
 					//if (Utils.isDebug()) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
 					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
@@ -215,7 +217,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		// Trigger this only when it would need to update the client texture
 		if (lastWorkState != doingWork)
 		{
-			//if (Utils.isDebug()) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + this.chargeLevel); 
+			//if (Utils.isDebug()) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + chargeLevel); 
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
 	}
@@ -296,7 +298,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 				if (currentStack != null && currentStack.getItem() instanceof IElectricItem)
 				{
 					IElectricItem powerSource = (IElectricItem)(currentStack.getItem());
-					if (powerSource.getTier() <= this.powerTier) // && powerSource.canProvideEnergy()
+					if (powerSource.getTier() <= powerTier) // && powerSource.canProvideEnergy()
 					{
 						int emptyItemID = powerSource.getEmptyItemId();
 						int chargedItemID = powerSource.getChargedItemId();
@@ -413,10 +415,10 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		try
 		{
 			data.writeInt(1);
-			data.writeInt(this.xCoord);
-			data.writeInt(this.yCoord);
-			data.writeInt(this.zCoord);
-			data.writeBoolean(this.doingWork);
+			data.writeInt(xCoord);
+			data.writeInt(yCoord);
+			data.writeInt(zCoord);
+			data.writeBoolean(doingWork);
 		}
 		catch(IOException e)
 		{
