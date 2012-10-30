@@ -208,34 +208,34 @@ public class BlockChargingBench extends Block
 		switch (metadata)
 		{
 		case 0:
-			return new TEChargingBench1();
+			return new TEChargingBench(1);
 
 		case 1:
-			return new TEChargingBench2();
+			return new TEChargingBench(2);
 
 		case 2:
-			return new TEChargingBench3();
+			return new TEChargingBench(3);
 
 		case 3:
-			return new TEEmitter1();
+			return new TEEmitter(1);
 
 		case 4:
-			return new TEEmitter2();
+			return new TEEmitter(2);
 
 		case 5:
-			return new TEEmitter3();
+			return new TEEmitter(3);
 
 		case 6:
-			return new TEEmitter4();
+			return new TEEmitter(4);
 
 		case 7:
-			return new TEBatteryStation1();
+			return new TEBatteryStation(1);
 
 		case 8:
-			return new TEBatteryStation2();
+			return new TEBatteryStation(2);
 
 		case 9:
-			return new TEBatteryStation3();
+			return new TEBatteryStation(3);
 
 		default:
 			return null;
@@ -245,23 +245,7 @@ public class BlockChargingBench extends Block
 	@Override
 	public boolean hasTileEntity(int metadata)
 	{
-		switch (metadata)
-		{
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-		case 8:
-		case 9:
-			return true;
-
-		default:
-			return false;
-		}
+		return metadata >= 0 && metadata <= ChargingBench.lastMetaValue;
 	}
 
 	public int idDropped(int var1, Random var2, int var3)
