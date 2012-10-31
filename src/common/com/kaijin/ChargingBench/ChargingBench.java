@@ -1,5 +1,9 @@
 package com.kaijin.ChargingBench;
 
+import com.kaijin.StorageMonitor.ItemStorageLinkCard;
+import com.kaijin.StorageMonitor.ItemStorageLinkCardCreator;
+import com.kaijin.StorageMonitor.TEStorageMonitor1;
+
 import ic2.api.Items;
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
@@ -49,12 +53,18 @@ public class ChargingBench implements ICraftingHandler
 
 	public static Block blockChargingBench;
 	public static Item itemBenchTools;
+	public static Item itemStorageLinkCard;
+	public static Item itemStorageLinkCardCreator;
 
 	public static int blockChargingBenchID;
 	public static int itemBenchToolsID;
+	public static int itemStorageLinkCardID;
+	public static int itemStorageLinkCardCreatorID;
 
 	// Constants for use in multiple classes
-	public static final int lastMetaValue = 9;
+	public static final String packetChannel = "ChargingBench"; // CHANNEL MAX 16 CHARS
+
+	public static final int lastMetaValue = 11;
 
 	static final int cbSlotInput = 0;
 	static final int cbSlotOutput = 1;
@@ -84,6 +94,9 @@ public class ChargingBench implements ICraftingHandler
 	static ItemStack ic2transformerUpg;
 	static ItemStack ic2storageUpg;
 
+	public static int ic2WrenchID;
+	public static int ic2ElectricWrenchID;
+
 	public static boolean isDebugging;
 
 	@PreInit
@@ -93,8 +106,10 @@ public class ChargingBench implements ICraftingHandler
 		{
 			Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
 			configuration.load();
-			itemBenchToolsID = configuration.getItem(configuration.CATEGORY_ITEM, benchToolsName, 22499).getInt();
 			blockChargingBenchID = configuration.getBlock(modNamePacked, 2491).getInt();
+			itemBenchToolsID = configuration.getItem(configuration.CATEGORY_ITEM, benchToolsName, 22499).getInt();
+			itemStorageLinkCardID = configuration.getItem(configuration.CATEGORY_ITEM, "LinkCard", 22495).getInt();
+			itemStorageLinkCardCreatorID = configuration.getItem(configuration.CATEGORY_ITEM, "LinkCardCreator", 22496).getInt();
 			isDebugging = Boolean.parseBoolean((configuration.get(configuration.CATEGORY_GENERAL, "debug",  false).value));
 			configuration.save();
 		}
@@ -134,6 +149,11 @@ public class ChargingBench implements ICraftingHandler
 		LanguageRegistry.instance().addStringLocalization("blockBatteryStation2.name", "MV " + dischargerName);
 		LanguageRegistry.instance().addStringLocalization("blockBatteryStation3.name", "HV " + dischargerName);
 
+		// Storage Monitor
+		GameRegistry.registerTileEntity(TEStorageMonitor.class, "kaijin.storageMonitor");
+
+		LanguageRegistry.instance().addStringLocalization("blockStorageMonitor.name", "Storage Monitor");
+
 		// Emitter
 		GameRegistry.registerTileEntity(TEEmitter.class, "LV " + emitterName); // Legacy mappings
 		GameRegistry.registerTileEntity(TEEmitter.class, "MV " + emitterName); // Legacy
@@ -146,11 +166,18 @@ public class ChargingBench implements ICraftingHandler
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock3.name", "HV " + emitterName);
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock4.name", "EV " + emitterName);
 
+		// Items
 		itemBenchTools = new ItemBenchTools(itemBenchToolsID).setItemName(toolkitName);
 		LanguageRegistry.instance().addStringLocalization("item.benchTools.toolkit.name", toolkitName);
 		LanguageRegistry.instance().addStringLocalization("item.benchTools.LV-kit.name", "LV " + componentsName);
 		LanguageRegistry.instance().addStringLocalization("item.benchTools.MV-kit.name", "MV " + componentsName);
 		LanguageRegistry.instance().addStringLocalization("item.benchTools.HV-kit.name", "HV " + componentsName);
+
+		itemStorageLinkCard = new ItemStorageLinkCard(itemStorageLinkCardID).setItemName("Energy-Link Card");
+		LanguageRegistry.addName(itemStorageLinkCard, "Energy-Link Card");
+		
+		itemStorageLinkCardCreator = new ItemStorageLinkCardCreator(itemStorageLinkCardCreatorID).setItemName("Link-Card Creator");
+		LanguageRegistry.addName(itemStorageLinkCardCreator, "Link-Card Creator");
 
 		NetworkRegistry.instance().registerGuiHandler(this.instance, proxy);
 		proxy.load();
@@ -179,22 +206,30 @@ public class ChargingBench implements ICraftingHandler
 		ic2overclockerUpg = Items.getItem("overclockerUpgrade").copy();
 		ic2transformerUpg = Items.getItem("transformerUpgrade").copy();
 		ic2storageUpg = Items.getItem("energyStorageUpgrade").copy();
-	}
+
+		ic2WrenchID = Items.getItem("wrench").itemID;
+		ic2ElectricWrenchID = Items.getItem("electricWrench").itemID;
+}
 
 	@PostInit
 	public void modsLoaded(FMLPostInitializationEvent event)
 	{
 		//if (Utils.isDebug()) System.out.println("ChargingBench.modsLoaded");
 
-		// New and improved recipes for a new and improved ChargingBench
+		// Charging Bench recipes
 		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1, 0), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("batBox")});
 		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1, 1), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("doubleInsulatedGoldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mfeUnit")});
 		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1, 2), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("trippleInsulatedIronCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mfsUnit")});
 
-		// Discharging Bench recipes
-		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1, 7), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("lvTransformer")});
-		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1, 8), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("doubleInsulatedGoldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mvTransformer")});
-		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1, 9), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("trippleInsulatedIronCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("hvTransformer")});
+		// Battery Station recipes
+		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1,  8), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("lvTransformer")});
+		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1,  9), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("doubleInsulatedGoldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mvTransformer")});
+		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1, 10), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("trippleInsulatedIronCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("hvTransformer")});
+
+		// Storage Monitor recipes
+		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1, 11), new Object[] {"U U", "CUC", "U U", 'U', Items.getItem("insulatedCopperCableItem"), 'C', Items.getItem("electronicCircuit")});
+
+		GameRegistry.addRecipe(new ItemStack(itemStorageLinkCardCreator, 1, 0), new Object[] {"U  ", " C ", "  V", 'U', Items.getItem("insulatedCopperCableItem"), 'C', Items.getItem("electronicCircuit"), 'V', Item.paper});
 
 		// Bench Toolkit recipe
 		GameRegistry.addRecipe(new ItemStack(itemBenchTools, 1, 0), new Object[] {" I ", "S S", 'I', Item.ingotIron, 'S', Item.stick});

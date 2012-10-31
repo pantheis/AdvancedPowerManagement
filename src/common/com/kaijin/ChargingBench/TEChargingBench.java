@@ -531,6 +531,14 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	}
 
 	//Networking stuff
+
+	public void receiveDescriptionData(int charge, boolean work)
+	{
+		chargeLevel = charge;
+		doingWork = work;
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+	}
+
 	@Override
 	public Packet250CustomPayload getDescriptionPacket()
 	{
@@ -552,7 +560,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		}
 
 		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = "ChargingBench"; // CHANNEL MAX 16 CHARS
+		packet.channel = ChargingBench.packetChannel; // CHANNEL MAX 16 CHARS
 		packet.data = bytes.toByteArray();
 		packet.length = packet.data.length;
 		return packet;

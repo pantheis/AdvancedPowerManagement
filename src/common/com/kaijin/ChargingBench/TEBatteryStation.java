@@ -178,7 +178,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		}
 	}
 
-
 	@Override
 	public void updateEntity() //TODO Marked for easy access
 	{
@@ -402,6 +401,13 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	}
 
 	//Networking stuff
+
+	public void receiveDescriptionData(boolean workState)
+	{
+		doingWork = workState;
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+	}
+
 	@Override
 	public Packet250CustomPayload getDescriptionPacket()
 	{
@@ -422,7 +428,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		}
 
 		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = "ChargingBench"; // CHANNEL MAX 16 CHARS
+		packet.channel = ChargingBench.packetChannel; // CHANNEL MAX 16 CHARS
 		packet.data = bytes.toByteArray();
 		packet.length = packet.data.length;
 		return packet;

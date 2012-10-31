@@ -29,8 +29,9 @@ public class BlockChargingBench extends Block
 
 	public void getSubBlocks(int blockID, CreativeTabs creativetabs, List list)
 	{
-		for (int i = 0; i < 10; ++i)
+		for (int i = 0; i <= ChargingBench.lastMetaValue; ++i)
 		{
+			if (i == 7) continue; //TODO Adjustable Emitter goes here, take this line out once it's added.
 			list.add(new ItemStack(blockID, 1, i));
 		}
 	}
@@ -39,36 +40,29 @@ public class BlockChargingBench extends Block
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
 	{
 		int currentEquippedItemID = 0;
-		ItemStack wrench = Items.getItem("wrench"); // TODO These do not need to be retrieved every time the function is run. Create constants.
-		ItemStack electricWrench = Items.getItem("electricWrench");
 
-		if(world.isRemote)
+		if (world.isRemote)
 		{
-			// Prevent GUI pop-up
-			//NPE catch, do not try to get the name of a null item
 			if (entityplayer.getCurrentEquippedItem() != null)
 			{
 				currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
 			}
 
-			if (entityplayer.isSneaking() || currentEquippedItemID == wrench.itemID || currentEquippedItemID == electricWrench.itemID)
+			if (entityplayer.isSneaking() || currentEquippedItemID == ChargingBench.ic2WrenchID || currentEquippedItemID == ChargingBench.ic2ElectricWrenchID)
 			{
 				// Prevent GUI popup when sneaking - this allows you to sneak place things directly on the charging bench
 				//if (Utils.isDebug()) System.out.println("Block.world.isRemote.isSneaking");
 				return false;
 			}
 		}
-
 		else if (ChargingBench.proxy.isServer())
 		{
-			// Prevent GUI pop-up
-			//NPE catch, do not try to get the name of a null item
 			if (entityplayer.getCurrentEquippedItem() != null)
 			{
 				currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
 			}
 
-			if (entityplayer.isSneaking() || currentEquippedItemID == wrench.itemID || currentEquippedItemID == electricWrench.itemID)
+			if (entityplayer.isSneaking() || currentEquippedItemID == ChargingBench.ic2WrenchID || currentEquippedItemID == ChargingBench.ic2ElectricWrenchID)
 			{
 				// Prevent GUI popup when sneaking
 				// This allows you to sneak place things directly on the charging bench
@@ -76,12 +70,12 @@ public class BlockChargingBench extends Block
 			}
 			//if (Utils.isDebug()) System.out.println("BlockChargingBench.BlockActivated");
 			int meta = world.getBlockMetadata(x, y, z);
-			if (meta == 0 || meta == 1 || meta == 2)
+			if (meta >= 0 && meta <= 2)
 			{
 				entityplayer.openGui(ChargingBench.instance, 1, world, x, y, z);
 				return true;
 			}
-			else if (meta == 7 || meta == 8 || meta == 9)
+			else if (meta >= 8 && meta <= 10)
 			{
 				entityplayer.openGui(ChargingBench.instance, 2, world, x, y, z);
 				return true;
@@ -105,7 +99,7 @@ public class BlockChargingBench extends Block
 	{
 		int meta = blocks.getBlockMetadata(x, y, z);
 		TileEntity tile = blocks.getBlockTileEntity(x, y, z);
-		if (tile instanceof TEChargingBench)
+		if (tile instanceof TEChargingBench) // TODO What's faster, TE instanceof tests or block metadata comparisons? We probably want to switch. 
 		{
 			switch (side)
 			{
@@ -114,6 +108,7 @@ public class BlockChargingBench extends Block
 
 			case 1: // top
 				return baseTexture + meta;
+
 			default:
 				int chargeLevel = ((TEChargingBench)tile).chargeLevel * 16;
 				int working = ((TEChargingBench)tile).doingWork ? 3 : 0;
@@ -139,10 +134,11 @@ public class BlockChargingBench extends Block
 				return 0;
 
 			case 1: // top
-				return meta + 9; // 16 + meta - 7;
+				return meta + 8; // 16 + meta - 8 = 16 through 18
+
 			default:
 				int working = ((TEBatteryStation)tile).doingWork ? 3 : 0;
-				return meta - 5 + working;
+				return meta - 6 + working; // = 2 through 7
 			}
 		}
 		//If we're here, something is wrong
@@ -159,28 +155,35 @@ public class BlockChargingBench extends Block
 			return 0;
 
 		case 1: // top
-			if (meta < 7)
+			if (meta < 8) // CB or emitter tops
 			{
 				return baseTexture + meta;				
 			}
-			else
+			else // Battery Station top
 			{
-				return meta + 9;
+				return meta + 8;
 			}
-			
 
 		default: // side
-			if (meta < 3)
+			if (meta < 3) // Charging Bench
 			{
 				return sideTexture + meta;
 			}
-			else if (meta > 6)
+			else if (meta < 7) // Emitters
+			{
+				return baseTexture + meta;
+			}
+			else if (meta == 7) //TODO Adjustable Emitter goes here. Can it share the previous calculation?
+			{
+				return baseTexture + meta;
+			}
+			else if (meta < 11) // Battery Station
 			{
 				return meta - 5;
 			}
-			else
+			else //TODO Storage Monitor
 			{
-				return baseTexture + meta;
+				return 0; 
 			}
 		}
 	}
@@ -225,13 +228,18 @@ public class BlockChargingBench extends Block
 			return new TEEmitter(4);
 
 		case 7:
+			return null; //TODO TEEmitterAdjustable goes here.
+		case 8:
 			return new TEBatteryStation(1);
 
-		case 8:
+		case 9:
 			return new TEBatteryStation(2);
 
-		case 9:
+		case 10:
 			return new TEBatteryStation(3);
+
+		case 11:
+			return new TEStorageMonitor();
 
 		default:
 			return null;
