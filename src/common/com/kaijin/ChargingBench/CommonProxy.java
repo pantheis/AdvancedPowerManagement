@@ -18,10 +18,14 @@ import cpw.mods.fml.common.network.Player;
 
 public class CommonProxy implements IGuiHandler
 {
-	public static final String ITEM_PNG = "/com/kaijin/ChargingBench/textures/ChargingBenchItems.png";
-	public static final String BLOCK_PNG = "/com/kaijin/ChargingBench/textures/ChargingBench.png";
-	public static final String GUI1_PNG = "/com/kaijin/ChargingBench/textures/GUIChargingBench.png";
-	public static final String GUI2_PNG = "/com/kaijin/ChargingBench/textures/GUIBatteryStation.png";
+	public static final String VERSION = "@VERSION@";
+	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
+
+	public static final String ITEM_PNG    = "/com/kaijin/ChargingBench/textures/ChargingBenchItems.png";
+	public static final String BLOCK_PNG   = "/com/kaijin/ChargingBench/textures/ChargingBench.png";
+	public static final String GUI1_PNG    = "/com/kaijin/ChargingBench/textures/GUIChargingBench.png";
+	public static final String GUI2_PNG    = "/com/kaijin/ChargingBench/textures/GUIBatteryStation.png";
+	public static final String GUI3_PNG    = "/com/kaijin/ChargingBench/textures/GUIStorageMonitor.png";
 
 	public void load()
 	{
@@ -30,22 +34,12 @@ public class CommonProxy implements IGuiHandler
 
 	public boolean isClient()
 	{
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		if (side == Side.CLIENT)
-		{
-			return true;
-		}
-		return false;
+		return FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT;
 	}
 
 	public boolean isServer()
 	{
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		if (side == Side.SERVER)
-		{
-			return true;
-		}
-		return false;
+		return FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER;
 	}
 
 	public static void sendPacketToPlayer(Packet250CustomPayload packet, EntityPlayerMP player)
@@ -59,73 +53,48 @@ public class CommonProxy implements IGuiHandler
 	}
 
 	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world,
-			int x, int y, int z) 
+	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) 
 	{
-		if (!world.blockExists(x, y, z))
-		{
-			return null;
-		}
-
-		if(ID == 1)
-		{
-			TileEntity tile = world.getBlockTileEntity(x, y, z);
-
-			if (!(tile instanceof TEChargingBench))
-			{
-				return null;
-			}
-
-			return new ContainerChargingBench(player.inventory, (TEChargingBench)tile);
-		}
-		else if(ID == 2)
-		{
-			TileEntity tile = world.getBlockTileEntity(x, y, z);
-
-			if (!(tile instanceof TEBatteryStation))
-			{
-				return null;
-			}
-
-			return new ContainerBatteryStation(player.inventory, (TEBatteryStation)tile);
-		}
-		else
-		{
-			return null;
-		}
-	}
-
-	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world,
-			int x, int y, int z) 
-	{
-		if (!world.blockExists(x, y, z))
-		{
-			return null;
-		}
+		if (!world.blockExists(x, y, z)) return null;
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-		if (ID == 1)
+		if (ID == 1 && tile instanceof TEChargingBench)
 		{
-			if (!(tile instanceof TEChargingBench))
-			{
-				return null;
-			}
+			return new ContainerChargingBench(player.inventory, (TEChargingBench)tile);
+		}
+		else if (ID == 2 && tile instanceof TEBatteryStation)
+		{
+			return new ContainerBatteryStation(player.inventory, (TEBatteryStation)tile);
+		}
+		else if (ID == 3 && tile instanceof TEStorageMonitor)
+		{
+			return new ContainerStorageMonitor(player.inventory, (TEStorageMonitor)tile);
+		}
+
+		return null;
+	}
+
+	@Override
+	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) 
+	{
+		if (!world.blockExists(x, y, z)) return null;
+
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+
+		if (ID == 1 && tile instanceof TEChargingBench)
+		{
 			return new GuiChargingBench(player.inventory, (TEChargingBench)tile);
 		}
-		else if(ID == 2)
+		else if (ID == 2 && tile instanceof TEBatteryStation)
 		{
-			if (!(tile instanceof TEBatteryStation))
-			{
-				return null;
-			}
 			return new GuiBatteryStation(player.inventory, (TEBatteryStation)tile);
-
 		}
-		else
+		else if (ID == 3 && tile instanceof TEStorageMonitor)
 		{
-			return null;
+			return new GuiStorageMonitor(player.inventory, (TEStorageMonitor)tile);
 		}
+
+		return null;
 	}
 }

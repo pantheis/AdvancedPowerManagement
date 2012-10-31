@@ -23,7 +23,7 @@ public class ContainerBatteryStation extends Container
 
 	public ContainerBatteryStation(InventoryPlayer player, TEBatteryStation tile)
 	{
-		//if (Utils.isDebug()) System.out.println("ContainerBatteryStation");
+		//if (ChargingBench.isDebugging) System.out.println("ContainerBatteryStation");
 		tileentity = tile;
 		currentEnergy = -1;
 		adjustedMaxInput = -1;
@@ -38,15 +38,15 @@ public class ContainerBatteryStation extends Container
 		{
 			for (xCol = 2; xCol >= 0; xCol--) // 3 columns across
 			{
-				this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.BSslotPowerSourceStart + 11 - xCol - 3 * yRow, 62 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
+				this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.bsSlotPowerSourceStart + 11 - xCol - 3 * yRow, 62 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
 			}
 		}
 
 		// Input Slot
-		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.BSslotInput, 17, topOffset));
+		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.bsSlotInput, 17, topOffset));
 
 		// Output slot
-		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.BSslotOutput, 143, topOffset + 54));
+		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.bsSlotOutput, 143, topOffset + 54));
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
@@ -69,7 +69,7 @@ public class ContainerBatteryStation extends Container
 	@Override
 	public void updateCraftingResults()
 	{
-		// if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateCraftingResults");
+		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateCraftingResults");
 		super.updateCraftingResults();
 
 		for (int crafterIndex = 0; crafterIndex < this.crafters.size(); ++crafterIndex)
@@ -112,32 +112,32 @@ public class ContainerBatteryStation extends Container
 		switch (param)
 		{
 		case 0:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & -65536) + " | " + value);
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & -65536) + " | " + value);
 			this.tileentity.currentEnergy = this.tileentity.currentEnergy & -65536 | value;
 			break;
 
 		case 1:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & 65535) + " | " + (value << 16));
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & 65535) + " | " + (value << 16));
 			this.tileentity.currentEnergy = this.tileentity.currentEnergy & 65535 | (value << 16);
 			break;
 
 		case 2:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 2 tileentity.adjustedMaxInput = " + value);
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 2 tileentity.adjustedMaxInput = " + value);
 			this.tileentity.adjustedMaxInput = value;
 			break;
 
 		case 3:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & -65536) + " | " + value);
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & -65536) + " | " + value);
 			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & -65536 | value;
 			break;
 
 		case 4:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & 65535) + " | " + (value << 16));
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & 65535) + " | " + (value << 16));
 			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & 65535 | (value << 16);
 			break;
 
 		case 5:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 5 tileentity.adjustedChargeRate = " + value);
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 5 tileentity.adjustedChargeRate = " + value);
 			//this.tileentity.adjustedChargeRate = value;
 			break;
 
@@ -303,7 +303,7 @@ public class ContainerBatteryStation extends Container
 	{
 		ItemStack result = null;
 
-		//if (Utils.isDebug() && ChargingBench.proxy.isServer()) System.out.println("ContainerBatteryStation.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
+		//if (ChargingBench.isDebugging && ChargingBench.proxy.isServer()) System.out.println("ContainerBatteryStation.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
 
 		if (button > 1)
 		{
@@ -369,7 +369,7 @@ public class ContainerBatteryStation extends Container
 
 						if (clickedStack != null)
 						{
-							//if (Utils.isDebug()) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
+							//if (ChargingBench.isDebugging) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
 							result = clickedStack.copy();
 						}
 
@@ -465,7 +465,7 @@ public class ContainerBatteryStation extends Container
 
 	public boolean canInteractWith(EntityPlayer var1)
 	{
-		// if (Utils.isDebug()) System.out.println("ContainerChargingBench.canInteractWith");
+		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.canInteractWith");
 		return tileentity.isUseableByPlayer(var1);
 	}
 }

@@ -4,63 +4,41 @@
  ******************************************************************************/
 package com.kaijin.ChargingBench;
 
-import ic2.api.IElectricItem;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.InventoryPlayer;
-import net.minecraft.src.ItemArmor;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
 
-public class ContainerChargingBench extends Container
+public class ContainerStorageMonitor extends Container
 {
-	private final int benchShiftClickRange = 17;
-	private final int playerInventoryStartSlot = 19;
-	private final int playerArmorStartSlot = 55;
+	private final int playerInventoryStartSlot = 1;
 
-	public TEChargingBench tileentity;
-	public int currentEnergy;
-	public int adjustedStorage;
-	//public short adjustedChargeRate;
-	public short adjustedMaxInput;
+	public TEStorageMonitor te;
+	public int energyStored;
+	public int energyCapacity;
+	public float lowerBoundary;
+	public float upperBoundary;
 
-	public ContainerChargingBench(InventoryPlayer player, TEChargingBench tile)
+	public ContainerStorageMonitor(InventoryPlayer player, TEStorageMonitor tile)
 	{
-		//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench");
-		tileentity = tile;
-		currentEnergy = -1;
-		adjustedMaxInput = -1;
-		adjustedStorage = -1;
+		if (ChargingBench.isDebugging) System.out.println("ContainerStorageMonitor");
+		this.te = tile;
+		this.energyStored = -1;
+		this.energyCapacity = -1;
+		this.lowerBoundary = -1.0F;
+		this.upperBoundary = -1.0F;
 
 		final int topOffset = 32; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
 		int xCol;
 		int yRow;
 
-		// Input charging slots
-		for (yRow = 0; yRow < 4; ++yRow) // 4 rows high
-		{
-			for (xCol = 0; xCol < 3; ++xCol) // 3 columns across
-			{
-				this.addSlotToContainer(new SlotChargeable(tile, ChargingBench.cbSlotCharging + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
-			}
-		}
-
-		// Upgrade slots (Overclocker, storage)
-		for (yRow = 0; yRow < 4; ++yRow) // 4 rows high
-		{
-			this.addSlotToContainer(new SlotMachineUpgrade(tile, ChargingBench.cbSlotUpgrade + yRow, 152, topOffset + yRow * 18));
-		}
-
-		// Input Slot
-		this.addSlotToContainer(new SlotInput(tile, ChargingBench.cbSlotInput, 130, topOffset));
-
-		// Output slot
-		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.cbSlotOutput, 130, topOffset + 54));
-
-		// Power source slot
-		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.cbSlotPowerSource, 130, topOffset + 27));
+		// Link Card slot
+		this.addSlotToContainer(new SlotLinkCard(tile, ChargingBench.smSlotUniversal, 8, 9));
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
@@ -77,14 +55,6 @@ public class ContainerChargingBench extends Container
 			this.addSlotToContainer(new Slot(player, yRow, 8 + yRow * 18, topOffset + 134));
 		}
 
-		//TODO fix slot, needs a custom armor slot type, can't use SlotArmor as it is private, will
-		//need to make our own
-
-		// Player armor
-		for (yRow = 0; yRow < 4; ++yRow)
-		{
-			this.addSlotToContainer(new SlotPlayerArmor(player, player.getSizeInventory() - 1 - yRow, 8, topOffset + yRow * 18, yRow));
-		}
 	}
 
 	@Override
@@ -97,34 +67,34 @@ public class ContainerChargingBench extends Container
 		{
 			ICrafting crafter = (ICrafting)crafters.get(crafterIndex);
 
-			if (this.currentEnergy != tileentity.currentEnergy)
+			if (this.energyStored != te.energyStored)
 			{
-				crafter.updateCraftingInventoryInfo(this, 0, tileentity.currentEnergy & 65535);
-				crafter.updateCraftingInventoryInfo(this, 1, tileentity.currentEnergy >>> 16);
+				crafter.updateCraftingInventoryInfo(this, 0, te.energyStored & 65535);
+				crafter.updateCraftingInventoryInfo(this, 1, te.energyStored >>> 16);
 			}
 
-			if (this.adjustedMaxInput != tileentity.adjustedMaxInput)
+			if (this.energyCapacity != te.energyCapacity)
 			{
-				crafter.updateCraftingInventoryInfo(this, 2, tileentity.adjustedMaxInput);
+				crafter.updateCraftingInventoryInfo(this, 2, te.energyCapacity & 65535);
+				crafter.updateCraftingInventoryInfo(this, 3, te.energyCapacity >>> 16);
 			}
 
-			if (this.adjustedStorage != tileentity.adjustedStorage)
+			if (this.lowerBoundary != te.lowerBoundary)
 			{
-				crafter.updateCraftingInventoryInfo(this, 3, tileentity.adjustedStorage & 65535);
-				crafter.updateCraftingInventoryInfo(this, 4, tileentity.adjustedStorage >>> 16);
+				crafter.updateCraftingInventoryInfo(this, 4, te.lowerBoundaryBits);
 			}
-
-			//if (this.adjustedChargeRate != tileentity.adjustedChargeRate)
-			//{
-			//	crafter.updateCraftingInventoryInfo(this, 5, tileentity.adjustedChargeRate);
-			//}
+			if (this.upperBoundary != te.upperBoundary)
+			{
+				crafter.updateCraftingInventoryInfo(this, 5, te.upperBoundaryBits);
+			}
 		}
-		this.currentEnergy = tileentity.currentEnergy;
-		this.adjustedStorage = tileentity.adjustedStorage;
-		this.adjustedMaxInput = (short)tileentity.adjustedMaxInput;
-		//this.adjustedChargeRate = (short)tileentity.adjustedChargeRate;
+		this.energyStored = te.energyStored;
+		this.energyCapacity = te.energyCapacity;
+		this.lowerBoundary = te.lowerBoundary;
+		this.upperBoundary = te.upperBoundary;
 	}
-
+	
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void updateProgressBar(int param, int value)
 	{
@@ -133,33 +103,34 @@ public class ContainerChargingBench extends Container
 		switch (param)
 		{
 		case 0:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (tileentity.currentEnergy & -65536) + " | " + value);
-			tileentity.currentEnergy = tileentity.currentEnergy & -65536 | value;
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & -65536) + " | " + value);
+			te.energyStored = te.energyStored & -65536 | value;
 			break;
 
 		case 1:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (tileentity.currentEnergy & 65535) + " | " + (value << 16));
-			tileentity.currentEnergy = tileentity.currentEnergy & 65535 | (value << 16);
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & 65535) + " | " + (value << 16));
+			te.energyStored = te.energyStored & 65535 | (value << 16);
 			break;
 
 		case 2:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 2 tileentity.adjustedMaxInput = " + value);
-			tileentity.adjustedMaxInput = value;
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & -65536) + " | " + value);
+			te.energyCapacity = te.energyCapacity & -65536 | value;
 			break;
 
 		case 3:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (tileentity.adjustedStorage & -65536) + " | " + value);
-			tileentity.adjustedStorage = tileentity.adjustedStorage & -65536 | value;
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & 65535) + " | " + (value << 16));
+			te.energyCapacity = te.energyCapacity & 65535 | (value << 16);
 			break;
 
+			//FIXME? elaborate dance to transmit two floats via 4 shorts, maybe can be done better
 		case 4:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (tileentity.adjustedStorage & 65535) + " | " + (value << 16));
-			tileentity.adjustedStorage = tileentity.adjustedStorage & 65535 | (value << 16);
+			te.lowerBoundaryBits = value;
+			te.lowerBoundary = (float)te.lowerBoundaryBits / 100.0F;
 			break;
 
 		case 5:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 5 tileentity.adjustedChargeRate = " + value);
-			//tileentity.adjustedChargeRate = value;
+			te.upperBoundaryBits = value;
+			te.upperBoundary = (float)te.upperBoundaryBits / 100.0F;
 			break;
 
 		default:
@@ -276,83 +247,26 @@ public class ContainerChargingBench extends Container
 	}
 
 	@Override
-	public ItemStack func_82846_b(EntityPlayer p, int slotID)
+	public ItemStack func_82846_b(EntityPlayer p, int par1)
 	{
 		ItemStack original = null;
-		Slot slotclicked = (Slot)inventorySlots.get(slotID);
+		Slot slotclicked = (Slot)inventorySlots.get(par1);
 
 		if (slotclicked != null && slotclicked.getHasStack())
 		{
 			ItemStack sourceStack = slotclicked.getStack();
 			original = sourceStack.copy();
 
-			// Charging Bench Slots
-			if (slotID < playerInventoryStartSlot)
+			if (par1 < playerInventoryStartSlot)
 			{
-				// Look for electric armor to move into armor equipped slots from inside our charging bench
-				if (original.getItem() instanceof ItemArmor && original.getItem() instanceof IElectricItem && !((Slot)inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
-				{
-					int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
-					if (!this.mergeItemStack(sourceStack, armorType, armorType + 1, false))
-					{
-						return null;
-					}
-				}
-				// If there wasn't room, or it isn't armor, toss it into the player inventory
-				else if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
+				if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, inventorySlots.size(), true))
 				{
 					return null;
 				}
 			}
-			else if (slotID >= playerArmorStartSlot && slotID < playerArmorStartSlot + 4)
+			else if (!this.mergeItemStack(sourceStack, 0, playerInventoryStartSlot, false))
 			{
-				// Player Armor Slots
-				if ((original.getItem() instanceof ItemArmor) && !(original.getItem() instanceof IElectricItem))
-				{
-					// Move regular armor from armor slots into main inventory
-					if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, inventorySlots.size(), false)) // False to not use the stupid reverse order item placement
-					{
-						return null;
-					}	
-				}
-				else if (!this.mergeItemStack(sourceStack, 0, benchShiftClickRange, false))
-				{
-					// Put electrical armor items from armor slots into bench
-					// if that fails, try to put them into our main inventory instead
-					if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, inventorySlots.size(), false)) // False to not use the stupid reverse order item placement)
-					{
-						return null;
-					}
-				}
-			}
-			else if ((original.getItem() instanceof ItemArmor) && !(original.getItem() instanceof IElectricItem) && !((Slot)inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
-			{
-				// Move regular armor from main inventory into armor slots
-				int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
-				if (!this.mergeItemStack(sourceStack, armorType, armorType + 1, false))
-				{
-					return null;
-				}
-			}
-			else
-			{
-				// Move stuff from anywhere not caught above to our charging bench inventory
-				if (!this.mergeItemStack(sourceStack, 0, benchShiftClickRange, false))
-				{
-					if (original.getItem() instanceof ItemArmor && original.getItem() instanceof IElectricItem && !((Slot)inventorySlots.get(55 + ((ItemArmor)original.getItem()).armorType)).getHasStack())
-					{
-						// Move electric armor from main inventory into armor slots
-						int armorType = 55 + ((ItemArmor)original.getItem()).armorType;
-						if (!this.mergeItemStack(sourceStack, armorType, armorType + 1, false))
-						{
-							return null;
-						}
-					}
-					else
-					{
-						return null;
-					}
-				}
+				return null;
 			}
 
 			if (sourceStack.stackSize == 0)
@@ -372,7 +286,7 @@ public class ContainerChargingBench extends Container
 	{
 		ItemStack result = null;
 
-		// if (ChargingBench.isDebugging && ChargingBench.proxy.isServer()) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
+		if (ChargingBench.isDebugging && ChargingBench.proxy.isServer()) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
 
 		if (button > 1)
 		{
@@ -429,7 +343,7 @@ public class ContainerChargingBench extends Container
 						return null;
 					}
 
-					Slot slot = (Slot)inventorySlots.get(slotID);
+					Slot slot = (Slot)this.inventorySlots.get(slotID);
 
 					if (slot != null)
 					{
@@ -438,7 +352,7 @@ public class ContainerChargingBench extends Container
 
 						if (clickedStack != null)
 						{
-							//if (ChargingBench.isDebugging) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
+							if (ChargingBench.isDebugging) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
 							result = clickedStack.copy();
 						}
 
@@ -523,11 +437,9 @@ public class ContainerChargingBench extends Container
 						}
 
 						slot.onSlotChanged();
-
 					}
 				}
 			}
-
 			return result;
 		}
 	}
@@ -535,6 +447,6 @@ public class ContainerChargingBench extends Container
 	public boolean canInteractWith(EntityPlayer var1)
 	{
 		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.canInteractWith");
-		return tileentity.isUseableByPlayer(var1);
+		return this.te.isUseableByPlayer(var1);
 	}
 }

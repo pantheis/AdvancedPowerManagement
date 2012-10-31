@@ -22,95 +22,101 @@ public class ClientPacketHandler implements IPacketHandler
 	int x = 0;
 	int y = 0;
 	int z = 0;
-	int chargeLevel = 0;
-	boolean working = false;
 
 	/*
 	 * Packet format:
-	 * byte 0: Packet Type
-	 *     Currently available packet types
-	 *         Client:
-	 *         0=
-	 *             byte 1: x location of TileEntity
-	 *             byte 2: y location of TileEntity
-	 *             byte 3: z location of TileEntity
-	 *             byte 4: boolean request, false = clear snapshot, true = take snapshot
-	 *         1=
-	 *             byte 1: x location of TileEntity
-	 *             byte 2: y location of TileEntity
-	 *             byte 3: z location of TileEntity
-	 *             byte 4: boolean request, false = not used, true = rotate request
+	 * 0: byte  Packet Type
+	 * 1: int   x location of TileEntity
+	 * 2: int   y location of TileEntity
+	 * 3: int   z location of TileEntity
+	 *  
+	 * Currently available packet types
 	 *         
-	 *         Server:
-	 *         0=
-	 *             byte 1: x location of TileEntity
-	 *             byte 2: y location of TileEntity
-	 *             byte 3: z location of TileEntity
-	 *             byte 4: int, charge level for texture
+	 * Server-to-Client:
+	 * 0 = Charging Bench description packet
+	 *     4: int      charge level for texture
+	 *     5: boolean  activity state for texture
+	 * 
+	 * 1 = Battery Station description packet
+	 *     4: boolean  activity state for texture
+	 *
+	 * 2 = Storage Monitor description packet
+	 *     4: int      charge level for texture
+	 *     5: boolean  power state for texture
+	 *     6: boolean  valid state for texture
+	 *
 	 */
 
 	@Override
 	public void onPacketData(INetworkManager network, Packet250CustomPayload packet, Player player)
 	{
-		//if (Utils.isDebug()) System.out.println("ClientPacketHandler onPacketData");
 		DataInputStream stream = new DataInputStream(new ByteArrayInputStream(packet.data));
-		//Read the first int to determine packet type
+		// Determine packet type and coordinates of affected tile entity 
+		packetType = -1;
 		try
 		{
 			packetType = stream.readInt();
+			x = stream.readInt();
+			y = stream.readInt();
+			z = stream.readInt();
 		}
 		catch (Exception ex)
 		{
 			ex.printStackTrace();
+			return;
 		}
+		if (packetType < 0) return;
+
+		World world = FMLClientHandler.instance().getClient().theWorld;
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
 		// each packet type needs to implement an if and then whatever other read functions it needs complete with try/catch blocks
 		if (packetType == 0)
 		{
 			try
 			{
-				x = stream.readInt();
-				y = stream.readInt();
-				z = stream.readInt();
-				chargeLevel = stream.readInt();
-				working = stream.readBoolean();
+				int chargeLevel = stream.readInt();
+				boolean doingWork = stream.readBoolean();
+				if (tile instanceof TEChargingBench)
+				{
+					((TEChargingBench)tile).receiveDescriptionData(chargeLevel, doingWork);
+				}
 			}
 			catch (Exception ex)
 			{
 				ex.printStackTrace();
 			}
-
-			World world = FMLClientHandler.instance().getClient().theWorld;
-			TileEntity tile = world.getBlockTileEntity(x, y, z);
-			if (tile instanceof TEChargingBench)
-			{
-				((TEChargingBench)tile).chargeLevel = this.chargeLevel;
-				((TEChargingBench)tile).doingWork = this.working;
-				//if (Utils.isDebug()) System.out.println("ClientPacketHandler chargeLevel: " + this.chargeLevel + " working: " + this.working);
-				world.markBlockNeedsUpdate(x, y, z);
-			}
 		}
-		if (packetType == 1)
+		else if (packetType == 1)
 		{
 			try
 			{
-				x = stream.readInt();
-				y = stream.readInt();
-				z = stream.readInt();
-				working = stream.readBoolean();
+				boolean working = stream.readBoolean();
+				if (tile instanceof TEBatteryStation)
+				{
+					((TEBatteryStation)tile).receiveDescriptionData(working);
+				}
 			}
 			catch (Exception ex)
 			{
 				ex.printStackTrace();
 			}
-
-			World world = FMLClientHandler.instance().getClient().theWorld;
-			TileEntity tile = world.getBlockTileEntity(x, y, z);
-			if (tile instanceof TEBatteryStation)
+		}
+		else if (packetType == 2)
+		{
+			try
 			{
-				((TEBatteryStation)tile).doingWork = this.working;
-				//if (Utils.isDebug()) System.out.println("ClientPacketHandler working: " + this.working);
-				world.markBlockNeedsUpdate(x, y, z);
+				int chargeLevel = stream.readInt();
+				boolean isPowering = stream.readBoolean();
+				boolean blockState = stream.readBoolean();
+				if (tile instanceof TEStorageMonitor)
+				{
+					((TEStorageMonitor)tile).receiveDescriptionData(chargeLevel, isPowering, blockState);
+				}
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
 			}
 		}
 

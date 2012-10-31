@@ -1,4 +1,5 @@
 Introducing the completely new and improved Industrial Craft 2 Charging Bench!
+-------------------
 
 This mod adds a Charging Bench to Industrial Craft 2 which allows you to charge up to 12
 items simultaneously! The Charging Bench comes in three tiers with each tier capable of
@@ -9,15 +10,36 @@ LV Charging Bench
 - The low voltage charging bench has a maximum input energy of 32 EU/t, and a base energy
   storage of 40,000 EU.
 
+- Crafting recipe:
+  1 Batbox
+  3 Insulated Copper Cable
+  1 Electronic Circuit
+  4 Wooden Planks
+
 MV Charging Bench
 - The medium voltage charging bench has a maximum input energy of 128 EU/t, and a base energy
   storage of 600,000 EU.
+
+- Crafting recipe:
+  1 MFE
+  3 2x Insulated Gold Cable
+  1 Electronic Circuit
+  4 Wooden Planks
 
 HV Charging Bench
 - The high voltage charging bench has a maximum input energy of 512 EU/t, and a base energy
   storage of 10,000,000 EU.
 
-Due to advances in over-current circuit protection designs, the Charging Bench will not
+- Crafting recipe:
+  1 MFSU
+  3 4x Insulated HV (Iron) Cable
+  1 Electronic Circuit
+  4 Wooden Planks
+
+Features common to all Charging Benches
+-------------------
+
+Due to advances in over-current circuit protection designs, a Charging Bench will not
 explode if exposed to higher than acceptable current but simply pop off onto the ground in a
 safe manner, ejecting any items it contained.
 
@@ -29,11 +51,11 @@ In this way, you can shift-click a full stack of RE-Batteries into the Charging 
 will automatically unstack and charge them. You can quickly and easily collect all of them by
 shift-clicking repeatedly on the output slot.
 
-A charging bench also allows easy access to your player's armor slots. If you're wearing
-electrical based armor, you can shift-click it directly from your armor slots into the bench.
-When it's done charging, simply shift-click it from the output slot (or the charging area, if
-you've let some other item loiter in the output slot) and it will automatically equip the
-armor in the correct location. It doesn't get much easier than that!
+While using a charging bench, you will have easy access to your equipped armor slots. If you
+are wearing electrical armor, you can shift-click it directly from your armor slots into the
+bench. When it's done charging, simply shift-click it from the output slot (or the charging
+area, if you've let some other item loiter in the output slot) and it will automatically equip
+the armor in the correct location. It doesn't get much easier than that!
 
 And we're not done yet with the awesome features of this mod! Each charging bench now includes
 a pair of indicators visible right on the outside of the bench. The storage meter lets you see
@@ -89,14 +111,95 @@ Valid electrical items placed into the charging bench via tubes will automatical
 from the input slot to an available charging slot, then moved to the output slot once fully
 charged. In this way, you can easily automate recharging of items!
 
+Battery Stations
+-------------------
+Sure, a charging bench lets you fill up a lot of items at the same time with ease, but what
+if you want to do the opposite and drain power from a lot of items? That's what the brand new
+Battery Station allows you to do!
 
-Emitters? Wha?
+The battery station comes in the same three tiers as the charging bench, but where the bench
+is crafted with an energy storage unit, the battery station requires a transformer instead.
+
+LV Battery Station
+- The low voltage battery station outputs energy in 32 EU packets, and can drain RE-batteries
+  and other tier 1 power source items like the batpack.
+
+- Crafting recipe:
+  1 LV-Transformer
+  3 Insulated Copper Cable
+  1 Electronic Circuit
+  4 Wooden Planks
+
+MV Battery Station
+- The medium voltage battery station outputs energy in 128 EU packets, and can drain energy
+  crystals and other tier 2 power source items like the lappack, plus tier 1 power sources.
+
+- Crafting recipe:
+  1 MV-Transformer
+  3 2x Insulated Gold Cable
+  1 Electronic Circuit
+  4 Wooden Planks
+
+HV Battery Station
+- The high voltage battery station outputs energy in 512 EU packets, and can drain lapotron
+  crystals and other tier 3 power source items, as well as all lower tier power sources.
+
+- Crafting recipe:
+  1 HV-Transformer
+  3 4x Insulated HV (Iron) Cable
+  1 Electronic Circuit
+  4 Wooden Planks
+
+Features of the Battery Station
+-------------------
+
+Each battery station will output one packet of energy every tick, if it's able to drain enough
+EU from the items in its inventory. Remember that different energy storage items have different
+transfer rates, so a single battery in a HV Battery Station will not allow it to provide power
+every tick. It will take multiple ticks for the station to drain sufficient EU from one battery
+into its buffer.
+
+To avoid potential problems with excessive energy loss over cabling, a battery station will
+never transmit a packet of EU less than its rated output. Instead it carries over the buffered
+EU from one tick to the next until it has enough EU stored to output a full packet.
+
+A battery station can drain multiple items at once, if it doesn't get enough energy from the
+first item to be able to emit EU (but it will only drain the minimum number of items needed for
+it to be able to send one packet per tick). This allows a MV (or HV) battery station to run at
+maximum efficiency even if supplied only with charged RE-batteries (and/or energy crystals)
+instead of the more expensive lapotron crystals.
+
+The battery station supports automation features much like the charging bench! It will move
+full batteries, crystals, or other storage devices from its input slot to its discharging area,
+and empty items to its output slot. When an item is removed from the discharging area the other
+items present will be advanced automatically, so that newly added items will not 'cut in line'.
+That is to say, the battery station operates in a FIFO (First-In, First-Out) manner, as long as
+you don't rearrange items within its inventory manually, of course. ;) Like the charging bench,
+you can use pipes, tubes, machines, or other methods to automatically add and remove electrical
+items capable of being used as a power source. In concert with a charging bench, you can even
+create systems to automatically transport EU from one location to another, storing it in items
+to avoid the inefficiency and material expense of long cable runs.
+
+The input slot is accessed from the top or bottom of a battery station, and the output slot is
+accessed from any side. Note that this layout is different from the charging bench, because the
+battery station only has two slots that need to be accessible. Cabling to accept the EU output
+from the battery station may be attached to any face (top, bottom, or sides), or the station
+may be placed directly adjacent to the machines you want it to power.
+
+Finally, the battery station has two more features similar to those of the charging bench. One
+is an activity indicator light, which will be lit while it is draining items or sending out EU.
+The other is that a redstone signal will deactivate the battery station, preventing it from
+performing those actions at all.
+
+
+Emitters? What's this?
 -------------------
 Originally created for testing purposes, we have added these Emitter blocks to the creative
 inventory as a bonus for people playing in creative mode or wanting to test electrical builds
-without having to constantly spawn lapotron crystals and MFSUs. 
+without having to constantly spawn lapotron crystals and MFSUs.
 
-There are four versions available.
+There are four versions available. They have no crafting recipes, and must be acquired from
+the creative inventory or via tools like NEI.
 
 LV Emitter
 -  Emits LV current (32 EU/t) when powered by redstone
