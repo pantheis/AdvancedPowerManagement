@@ -51,31 +51,6 @@ public class ItemBenchTools extends Item
 		return false;
 	}
 
-    /**
-     * If this returns true, after a recipe involving this item is crafted the container item will be added to the
-     * player's inventory instead of remaining in the crafting grid.
-     */
-/*	public boolean doesContainerItemLeaveCraftingGrid(ItemStack par1ItemStack)
-	{
-		return false;
-	}
-
-	public ItemStack getContainerItemStack(ItemStack itemStack)
-	{
-		if (itemStack.getItemDamage() == 0) return new ItemStack(ChargingBench.ItemBenchTools, 1, 0);
-		return null;
-	}
-
-	public Item getContainerItem()
-	{
-		return this;
-	}
-
-	public boolean hasContainerItem()
-	{
-		return false;
-	}
-*/
 	public String getItemNameIS(ItemStack par1ItemStack)
 	{
 		int meta = MathHelper.clamp_int(par1ItemStack.getItemDamage(), 0, 3);
