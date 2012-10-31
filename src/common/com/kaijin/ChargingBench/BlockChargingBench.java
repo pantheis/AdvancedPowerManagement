@@ -5,10 +5,8 @@
 package com.kaijin.ChargingBench;
 
 import ic2.api.Items;
-
 import java.util.List;
 import java.util.Random;
-
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
@@ -17,6 +15,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
@@ -33,8 +32,9 @@ public class BlockChargingBench extends Block
 
 	public void getSubBlocks(int blockID, CreativeTabs creativetabs, List list)
 	{
-		for (int i = 0; i < 10; ++i)
+		for (int i = 0; i <= ChargingBench.lastMetaValue; ++i)
 		{
+			if (i == 7) continue; //TODO Adjustable Emitter goes here, take this line out once it's added.
 			list.add(new ItemStack(blockID, 1, i));
 		}
 	}
@@ -43,51 +43,50 @@ public class BlockChargingBench extends Block
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
 	{
 		int currentEquippedItemID = 0;
-		ItemStack wrench = Items.getItem("wrench");
-		ItemStack electricWrench = Items.getItem("electricWrench");
 
-		if(world.isRemote)
+		if (world.isRemote)
 		{
-			// Prevent GUI pop-up
-			//NPE catch, do not try to get the name of a null item
 			if (entityplayer.getCurrentEquippedItem() != null)
 			{
 				currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
 			}
 
-			if (entityplayer.isSneaking() || currentEquippedItemID == wrench.itemID || currentEquippedItemID == electricWrench.itemID)
+			if (entityplayer.isSneaking() || currentEquippedItemID == ChargingBench.ic2WrenchID || currentEquippedItemID == ChargingBench.ic2ElectricWrenchID)
 			{
 				// Prevent GUI popup when sneaking - this allows you to sneak place things directly on the charging bench
-				//if (Utils.isDebug()) System.out.println("Block.world.isRemote.isSneaking");
+				//if (ChargingBench.isDebugging) System.out.println("Block.world.isRemote.isSneaking");
 				return false;
 			}
 		}
-
 		else if (ChargingBench.proxy.isServer())
 		{
-			// Prevent GUI pop-up
-			//NPE catch, do not try to get the name of a null item
 			if (entityplayer.getCurrentEquippedItem() != null)
 			{
 				currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
 			}
 
-			if (entityplayer.isSneaking() || currentEquippedItemID == wrench.itemID || currentEquippedItemID == electricWrench.itemID)
+			if (entityplayer.isSneaking() || currentEquippedItemID == ChargingBench.ic2WrenchID || currentEquippedItemID == ChargingBench.ic2ElectricWrenchID)
 			{
 				// Prevent GUI popup when sneaking
 				// This allows you to sneak place things directly on the charging bench
 				return false;
 			}
-			//if (Utils.isDebug()) System.out.println("BlockChargingBench.BlockActivated");
+			//if (ChargingBench.isDebugging) System.out.println("BlockChargingBench.BlockActivated");
 			int meta = world.getBlockMetadata(x, y, z);
-			if (meta == 0 || meta == 1 || meta == 2)
+			if (meta >= 0 && meta <= 2)
 			{
 				entityplayer.openGui(ChargingBench.instance, 1, world, x, y, z);
 				return true;
 			}
-			else if (meta == 7 || meta == 8 || meta == 9)
+			else if (meta >= 8 && meta <= 10)
 			{
 				entityplayer.openGui(ChargingBench.instance, 2, world, x, y, z);
+				return true;
+			}
+			else if (meta == 11)
+			{
+				System.out.println("Storage Monitor Block Activated");
+				entityplayer.openGui(ChargingBench.instance, 3, world, x, y, z);
 				return true;
 			}
 			else
@@ -107,9 +106,9 @@ public class BlockChargingBench extends Block
 	@SideOnly(Side.CLIENT)
 	public int getBlockTexture(IBlockAccess blocks, int x, int y, int z, int side)
 	{
-		int meta = blocks.getBlockMetadata(x, y, z);
+		final int meta = blocks.getBlockMetadata(x, y, z);
 		TileEntity tile = blocks.getBlockTileEntity(x, y, z);
-		if (tile instanceof TEChargingBench)
+		if (tile instanceof TEChargingBench) // TODO What's faster, TE instanceof tests or block metadata comparisons? We probably want to switch. 
 		{
 			switch (side)
 			{
@@ -118,9 +117,10 @@ public class BlockChargingBench extends Block
 
 			case 1: // top
 				return baseTexture + meta;
+
 			default:
-				int chargeLevel = ((TEChargingBench)tile).chargeLevel * 16;
-				int working = ((TEChargingBench)tile).doingWork ? 3 : 0;
+				final int chargeLevel = ((TEChargingBench)tile).chargeLevel * 16;
+				final int working = ((TEChargingBench)tile).doingWork ? 3 : 0;
 				return sideTexture + meta + chargeLevel + working;
 			}
 		}
@@ -143,14 +143,36 @@ public class BlockChargingBench extends Block
 				return 0;
 
 			case 1: // top
-				return meta + 9; // 16 + meta - 7;
+				return meta + 8; // 16 + meta - 8 = 16 through 18
+
 			default:
-				int working = ((TEBatteryStation)tile).doingWork ? 3 : 0;
-				return meta - 5 + working;
+				final int working = ((TEBatteryStation)tile).doingWork ? 3 : 0;
+				return meta - 6 + working; // = 2 through 7
 			}
 		}
+		else if (tile instanceof TEStorageMonitor)
+		{
+			switch (side)
+			{
+			case 0: // bottom
+				return 15;
+
+			case 1: // top
+				return 14;
+
+			default:
+				if (((TEStorageMonitor)tile).blockState)
+				{
+					final int chargeLevel = ((TEStorageMonitor)tile).chargeLevel * 16;
+					final int isPowering = ((TEStorageMonitor)tile).isPowering ? 1 : 0;
+					return 30 + isPowering + chargeLevel;
+				}
+				else return 238;
+			}
+		}
+
 		//If we're here, something is wrong
-		return side;
+		return 0;
 	}
 
 	//Textures in your inventory
@@ -160,33 +182,57 @@ public class BlockChargingBench extends Block
 		switch (i)
 		{
 		case 0: // bottom
-			return 0;
+			return meta < 11 ? 0 : 15;
 
 		case 1: // top
-			if (meta < 7)
+			if (meta < 8) // CB or emitter tops
 			{
 				return baseTexture + meta;				
 			}
+			else if (meta < 11) // Battery Station top
+			{
+				return meta + 8;
+			}
 			else
 			{
-				return meta + 9;
+				return 14;
 			}
-			
 
 		default: // side
-			if (meta < 3)
+			if (meta < 3) // Charging Bench
 			{
 				return sideTexture + meta;
 			}
-			else if (meta > 6)
+			else if (meta < 7) // Emitters
+			{
+				return baseTexture + meta;
+			}
+			else if (meta == 7) //TODO Adjustable Emitter goes here. Can it share the previous calculation?
+			{
+				return baseTexture + meta;
+			}
+			else if (meta < 11) // Battery Station
 			{
 				return meta - 5;
 			}
 			else
 			{
-				return baseTexture + meta;
+				return 238; 
 			}
 		}
+	}
+
+	@Override
+	public boolean isPoweringTo(IBlockAccess block, int x, int y, int z, int side)
+	{
+		TileEntity tile = block.getBlockTileEntity(x, y, z);
+		return tile instanceof TEStorageMonitor && ((TEStorageMonitor)tile).isPowering;
+	}
+
+	@Override
+	public boolean isIndirectlyPoweringTo(IBlockAccess block, int x, int y, int z, int side)
+	{
+		return false;
 	}
 
 	@Override
@@ -202,9 +248,21 @@ public class BlockChargingBench extends Block
 	}
 
 	@Override
+	public boolean isBlockNormalCube(World world, int x, int y, int z)
+	{
+		return false;
+	}
+
+	@Override
+	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side)
+	{
+		return true;
+	}
+
+	@Override
 	public TileEntity createTileEntity(World world, int metadata)
 	{
-		//if (Utils.isDebug()) System.out.println("BlockChargingBench.createTileEntity");
+		//if (ChargingBench.isDebugging) System.out.println("BlockChargingBench.createTileEntity");
 		switch (metadata)
 		{
 		case 0:
@@ -229,13 +287,18 @@ public class BlockChargingBench extends Block
 			return new TEEmitter(4);
 
 		case 7:
+			return null; //TODO TEEmitterAdjustable goes here.
+		case 8:
 			return new TEBatteryStation(1);
 
-		case 8:
+		case 9:
 			return new TEBatteryStation(2);
 
-		case 9:
+		case 10:
 			return new TEBatteryStation(3);
+
+		case 11:
+			return new TEStorageMonitor();
 
 		default:
 			return null;
@@ -250,13 +313,13 @@ public class BlockChargingBench extends Block
 
 	public int idDropped(int var1, Random var2, int var3)
 	{
-		//if (Utils.isDebug()) System.out.println("BlockChargingBench.idDropped");
+		//if (ChargingBench.isDebugging) System.out.println("BlockChargingBench.idDropped");
 		return blockID;
 	}
 
 	public int damageDropped(int meta)
 	{
-		//if (Utils.isDebug()) System.out.println("BlockChargingBench.damageDropped");
+		//if (ChargingBench.isDebugging) System.out.println("BlockChargingBench.damageDropped");
 		return meta;
 	}
 
@@ -264,7 +327,7 @@ public class BlockChargingBench extends Block
 	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int par1)
 	{
 		preDestroyBlock(world, x, y, z);
-		//if (Utils.isDebug()) System.out.println("BlockChargingBench.onBlockDestroyedByPlayer");
+		//if (ChargingBench.isDebugging) System.out.println("BlockChargingBench.onBlockDestroyedByPlayer");
 		super.onBlockDestroyedByPlayer(world, x, y, z, par1);
 	}
 
