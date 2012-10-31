@@ -36,7 +36,6 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 	private boolean tileLoaded;
 
-	public int baseTier;
 	public int energyStored;
 	public int energyCapacity;
 	public int chargeLevel;
@@ -45,12 +44,68 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	public boolean blockState;
 
 	public int[] targetCoords = new int[3];
-
 	public TileEntity targetTile;
 
 	public TEStorageMonitor()
 	{
 		super();
+	}
+
+	/**
+	 * Reads a tile entity from NBT.
+	 */
+	public void readFromNBT(NBTTagCompound nbttagcompound)
+	{
+		if (!ChargingBench.proxy.isClient())
+		{
+			super.readFromNBT(nbttagcompound);
+
+			// State info to remember
+			isPowering = nbttagcompound.getBoolean("isPowering");
+
+			// Our inventory
+			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
+			contents = new ItemStack[ChargingBench.smInventorySize];
+			for (int i = 0; i < nbttaglist.tagCount(); ++i)
+			{
+				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
+				int j = nbttagcompound1.getByte("Slot") & 255;
+
+				if (j >= 0 && j < contents.length)
+				{
+					contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Writes a tile entity to NBT.
+	 */
+	public void writeToNBT(NBTTagCompound nbttagcompound)
+	{
+		if (!ChargingBench.proxy.isClient())
+		{
+			super.writeToNBT(nbttagcompound);
+
+			// State info to remember
+			nbttagcompound.setBoolean("isPowering", isPowering);
+
+			// Our inventory
+			NBTTagList nbttaglist = new NBTTagList();
+			for (int i = 0; i < contents.length; ++i)
+			{
+				if (contents[i] != null)
+				{
+					//if (ChargingBench.isDebugging) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
+					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+					nbttagcompound1.setByte("Slot", (byte)i);
+					contents[i].writeToNBT(nbttagcompound1);
+					nbttaglist.appendTag(nbttagcompound1);
+				}
+			}
+			nbttagcompound.setTag("Items", nbttaglist);
+		}
 	}
 
 	@Override
@@ -67,7 +122,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	private void selfDestroy()
 	{
 		dropContents();
-		ItemStack stack = new ItemStack(ChargingBench.blockChargingBench, 1, 10);
+		ItemStack stack = new ItemStack(ChargingBench.blockChargingBench, 1, 11);
 		dropItem(stack);
 		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
 		this.invalidate();
@@ -91,12 +146,217 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 		}
 	}
 	
-	@Override
-	public int getSizeInventory()
+	public boolean isItemValid(int slot, ItemStack stack)
 	{
-		// Only input/output slots are accessible to machines
-		return 1;
+		// Decide if the item is valid to place in a slot  
+		return stack != null && stack.getItem() instanceof ItemStorageLinkCard; 
 	}
+
+	/**
+	 * Runs once on tile entity load to make sure all of our internals are setup correctly
+	 */
+	private void onLoad()
+	{
+		if (!ChargingBench.proxy.isClient())
+		{
+			tileLoaded = true;
+			checkInventory();
+			if (targetCoords != null)
+			{
+				TileEntity tile = worldObj.getBlockTileEntity(targetCoords[0], targetCoords[1], targetCoords[2]);
+				if (tile instanceof IEnergyStorage)
+				{
+					energyStored = ((IEnergyStorage)tile).getStored();
+					energyCapacity = ((IEnergyStorage)tile).getCapacity();
+					blockState = true;
+				}
+				else
+				{
+					energyStored = -1;
+					energyCapacity = -1;
+					blockState = false;
+				}
+			}
+			chargeLevel = gaugeEnergyScaled(12);
+			lowerBoundaryBits = (int)(lowerBoundary * 100.0F); 
+			upperBoundaryBits = (int)(upperBoundary * 100.0F);
+
+			if (energyCapacity > 0) // Avoid divide by zero and also test if the remote energy storage is valid
+			{
+				updateRedstone();
+			}
+			else if (isPowering) // If we're emitting redstone at this point, we need to shut it off
+			{
+				isPowering = false;
+				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
+			}
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		}
+	}
+
+	@Override
+	public void updateEntity() //TODO Marked for easy access
+	{
+		if (ChargingBench.proxy.isClient()) return;
+
+		if (!tileLoaded)
+		{
+			onLoad();
+		}
+
+		// Delayed work
+		if (tickTime > 0)
+		{
+			tickTime--;
+		}
+		else
+		{
+			tickTime = tickDelay;
+			if (targetCoords != null)
+			{
+				TileEntity tile = worldObj.getBlockTileEntity(targetCoords[0], targetCoords[1], targetCoords[2]);
+				if (tile instanceof IEnergyStorage)
+				{
+					// if (ChargingBench.isDebugging) System.out.println("updateEntity - check energy level of remote block");
+					energyStored = ((IEnergyStorage)tile).getStored();
+					energyCapacity = ((IEnergyStorage)tile).getCapacity();
+					if (!blockState)
+					{
+						worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+					}
+					blockState = true;
+				}
+				else
+				{
+					energyStored = -1;
+					energyCapacity = -1;
+					if (blockState)
+					{
+						worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+					}
+					blockState = false;
+				}
+			}
+
+			if (energyCapacity > 0) // Avoid divide by zero and also test if the remote energy storage is valid
+			{
+				updateRedstone();
+			}
+			else if (isPowering) // If we're emitting redstone at this point, we need to shut it off
+			{
+				isPowering = false;
+				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
+			}
+
+			// Trigger this only when charge level passes where it would need to update the client texture
+			int oldChargeLevel = chargeLevel;
+			chargeLevel = gaugeEnergyScaled(12);
+			if (oldChargeLevel != chargeLevel)
+			{
+				//if (ChargingBench.isDebugging) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + chargeLevel); 
+				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			}
+		}
+	}
+
+	private void updateRedstone()
+	{
+		float chargePercent = (float)energyStored / energyCapacity;
+		//if (ChargingBench.isDebugging) System.out.println("chargePercent:" + chargePercent);
+		if (chargePercent < lowerBoundary && isPowering == false)
+		{
+			isPowering = true;
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		}
+		if (chargePercent > upperBoundary && isPowering == true)
+		{
+			isPowering = false;
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		}
+	}
+
+	private void checkInventory()
+	{
+		ItemStack item = getStackInSlot(ChargingBench.smSlotUniversal);
+		if (item == null || !(item.getItem() instanceof ItemStorageLinkCard))
+		{
+			targetCoords = null;
+			energyCapacity = -1;
+			energyStored = -1;
+			blockState = false;
+		}
+		else
+		{
+			targetCoords = ItemCardBase.getCoordinates(item);
+		}
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+	}
+
+	boolean receivingRedstoneSignal()
+	{
+		return worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+	}
+
+	public int gaugeEnergyScaled(int gaugeSize)
+	{
+		if (energyStored <= 0 || energyCapacity <= 0)
+		{
+			return 0;
+		}
+
+		int result = energyStored * gaugeSize / energyCapacity;
+		if (result > gaugeSize) result = gaugeSize;
+
+		return result;
+	}
+
+//	@Override
+//	public void invalidate()
+//	{
+//		super.invalidate();
+//	}
+
+	//Networking stuff
+
+	public void receiveDescriptionData(int charge, boolean power, boolean state)
+	{
+		chargeLevel = charge;
+		isPowering = power;
+		blockState = state;
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+	}
+	
+	@Override
+	public Packet250CustomPayload getDescriptionPacket()
+	{
+		//if (ChargingBench.isDebugging) System.out.println("TEStorageMonitor.getDescriptionPacket()");
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		DataOutputStream data = new DataOutputStream(bytes);
+		try
+		{
+			data.writeInt(2); // Packet ID for Storage Monitor
+			data.writeInt(xCoord);
+			data.writeInt(yCoord);
+			data.writeInt(zCoord);
+			data.writeInt(chargeLevel);
+			data.writeBoolean(isPowering);
+			data.writeBoolean(blockState);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = ChargingBench.packetChannel; // CHANNEL MAX 16 CHARS
+		packet.data = bytes.toByteArray();
+		packet.length = packet.data.length;
+		return packet;
+	}
+
+	// ISidedInventory
 
 	@Override
 	public int getStartInventorySide(ForgeDirection side)
@@ -130,6 +390,15 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 		return 1;
 	}
 
+	// IInventory
+
+	@Override
+	public int getSizeInventory()
+	{
+		// Only input/output slots are accessible to machines
+		return 1;
+	}
+
 	@Override
 	public ItemStack getStackInSlot(int i)
 	{
@@ -139,24 +408,24 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	@Override
 	public ItemStack decrStackSize(int slot, int amount)
 	{
-		if (this.contents[slot] != null)
+		if (contents[slot] != null)
 		{
 			ItemStack output;
 
-			if (this.contents[slot].stackSize <= amount)
+			if (contents[slot].stackSize <= amount)
 			{
-				output = this.contents[slot];
-				this.contents[slot] = null;
+				output = contents[slot];
+				contents[slot] = null;
 				this.onInventoryChanged(slot);
 				return output;
 			}
 			else
 			{
-				output = this.contents[slot].splitStack(amount);
+				output = contents[slot].splitStack(amount);
 
-				if (this.contents[slot].stackSize == 0)
+				if (contents[slot].stackSize == 0)
 				{
-					this.contents[slot] = null;
+					contents[slot] = null;
 				}
 				this.onInventoryChanged(slot);
 				return output;
@@ -170,20 +439,20 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 	public ItemStack getStackInSlotOnClosing(int slot)
 	{
-		if (this.contents[slot] == null)
+		if (contents[slot] == null)
 		{
 			return null;
 		}
 
-		ItemStack stack = this.contents[slot];
-		this.contents[slot] = null;
+		ItemStack stack = contents[slot];
+		contents[slot] = null;
 		return stack;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack itemstack)
 	{
-		this.contents[slot] = itemstack;
+		contents[slot] = itemstack;
 
 		if (ChargingBench.isDebugging && itemstack != null)
 		{
@@ -207,91 +476,16 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 	public void onInventoryChanged(int slot)
 	{
-		if (ChargingBench.isDebugging) System.out.println("TE.onInventoryChanged.slot.checkInventory()");
-		checkInventory();
-		super.onInventoryChanged();
+		this.onInventoryChanged();
 	}
 
 	@Override
 	public void onInventoryChanged()
 	{
-		// We're not sure what called this or what slot was altered, so make sure the upgrade effects are correct just in case and then pass the call on.
-		if (ChargingBench.isDebugging) System.out.println("TE.onInventoryChanged.checkInventory()");
+		if (ChargingBench.isDebugging) System.out.println("TEStorageMonitor.onInventoryChanged");
+		checkInventory();
 		super.onInventoryChanged();
 	}
-
-	public boolean isItemValid(int slot, ItemStack stack)
-	{
-		// Decide if the item is a valid IC2 electrical item
-		if (stack != null && stack.getItem() instanceof ItemStorageLinkCard)
-		{
-			return true;
-		}
-		return false; 
-	}
-
-	/**
-	 * Reads a tile entity from NBT.
-	 */
-	public void readFromNBT(NBTTagCompound nbttagcompound)
-	{
-		if (!ChargingBench.proxy.isClient())
-		{
-			super.readFromNBT(nbttagcompound);
-
-			// Read extra NBT stuff here
-			baseTier = nbttagcompound.getInteger("baseTier");
-			isPowering = nbttagcompound.getBoolean("isPowering");
-			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-
-			contents = new ItemStack[ChargingBench.smInventorySize];
-
-			// Our inventory
-			for (int i = 0; i < nbttaglist.tagCount(); ++i)
-			{
-				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
-				int j = nbttagcompound1.getByte("Slot") & 255;
-
-				if (j >= 0 && j < contents.length)
-				{
-					contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-				}
-			}
-
-			// We can calculate these, no need to save/load them.
-		}
-	}
-
-	/**
-	 * Writes a tile entity to NBT.
-	 */
-	public void writeToNBT(NBTTagCompound nbttagcompound)
-	{
-		if (!ChargingBench.proxy.isClient())
-		{
-			super.writeToNBT(nbttagcompound);
-
-			// Our inventory
-			NBTTagList nbttaglist = new NBTTagList();
-			for (int i = 0; i < contents.length; ++i)
-			{
-				if (this.contents[i] != null)
-				{
-					//if (ChargingBench.isDebugging) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
-					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-					nbttagcompound1.setByte("Slot", (byte)i);
-					contents[i].writeToNBT(nbttagcompound1);
-					nbttaglist.appendTag(nbttagcompound1);
-				}
-			}
-			nbttagcompound.setTag("Items", nbttaglist);
-
-			//write extra NBT stuff here
-			nbttagcompound.setInteger("baseTier", baseTier);
-			nbttagcompound.setBoolean("isPowering", isPowering);
-		}
-	}
-
 
 	@Override
 	public String getInvName()
@@ -321,215 +515,4 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 	@Override
 	public void closeChest() {}
-
-	/**
-	 * Runs once on tile entity load to make sure all of our internals are setup correctly
-	 */
-	private void onLoad()
-	{
-		if (!ChargingBench.proxy.isClient())
-		{
-			tileLoaded = true;
-			checkInventory();
-			if (targetCoords != null)
-			{
-				TileEntity tile = worldObj.getBlockTileEntity(targetCoords[0], targetCoords[1], targetCoords[2]);
-				if (tile instanceof IEnergyStorage)
-				{
-					//				if (ChargingBench.isDebugging) System.out.println("updateEntity - check energy level of remote block");
-					this.energyStored = ((IEnergyStorage)tile).getStored();
-					this.energyCapacity = ((IEnergyStorage)tile).getCapacity();
-					this.blockState = true;
-				}
-				else
-				{
-					this.energyStored = -1;
-					this.energyCapacity = -1;
-					this.blockState = false;
-				}
-			}
-			int oldChargeLevel = this.chargeLevel;
-			this.chargeLevel = gaugeEnergyScaled(12);
-			lowerBoundaryBits = (int)(this.lowerBoundary * 100.0F); 
-			upperBoundaryBits = (int)(this.upperBoundary * 100.0F);
-
-			if (this.energyCapacity > 0) // Avoid divide by zero and also test if the remote energy storage is valid
-			{
-				updateRedstone();
-			}
-			else if (isPowering) // If we're emitting redstone at this point, we need to shut it off
-			{
-				this.isPowering = false;
-				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
-			}
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-		}
-	}
-
-	@Override
-	public void updateEntity() //TODO Marked for easy access
-	{
-		if (ChargingBench.proxy.isClient())
-		{
-			return;
-		}
-
-		if (!tileLoaded)
-		{
-			onLoad();
-		}
-
-		// Work done every tick
-
-		// Delayed work
-		if (tickTime == 0)
-		{
-			tickTime = tickDelay;
-			if (targetCoords != null)
-			{
-				TileEntity tile = worldObj.getBlockTileEntity(targetCoords[0], targetCoords[1], targetCoords[2]);
-				if (tile instanceof IEnergyStorage)
-				{
-					// if (ChargingBench.isDebugging) System.out.println("updateEntity - check energy level of remote block");
-					this.energyStored = ((IEnergyStorage)tile).getStored();
-					this.energyCapacity = ((IEnergyStorage)tile).getCapacity();
-					blockState = true;
-				}
-				else
-				{
-					this.energyStored = -1;
-					this.energyCapacity = -1;
-					if (blockState)
-					{
-						worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-					}
-					this.blockState = false;
-				}
-			}
-
-			// Trigger this only when charge level passes where it would need to update the client texture
-			int oldChargeLevel = this.chargeLevel;
-			this.chargeLevel = gaugeEnergyScaled(12);
-			
-			if (this.energyCapacity > 0) // Avoid divide by zero and also test if the remote energy storage is valid
-			{
-				updateRedstone();
-			}
-			else if (isPowering) // If we're emitting redstone at this point, we need to shut it off
-			{
-				this.isPowering = false;
-				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
-			}
-
-			if (oldChargeLevel != this.chargeLevel)
-			{
-				//if (ChargingBench.isDebugging) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + this.chargeLevel); 
-				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-			}
-		}
-		else if (tickTime > 0)
-		{
-			tickTime--;
-		}
-	}
-
-	private void updateRedstone()
-	{
-		// TODO Auto-generated method stub
-		float chargePercent = 0.00F;
-		chargePercent = (float)this.energyStored / this.energyCapacity;
-		if (ChargingBench.isDebugging) System.out.println("chargePercent:" + chargePercent);
-		if (chargePercent < this.lowerBoundary && this.isPowering == false)
-		{
-			this.isPowering = true;
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-			
-		}
-		if (chargePercent > this.upperBoundary && this.isPowering == true)
-		{
-			this.isPowering = false;
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-		}
-	}
-
-	private void checkInventory()//FIXME correct constant block updates
-	{
-		ItemStack item = getStackInSlot(ChargingBench.smSlotUniversal);
-		if (item == null || !(item.getItem() instanceof ItemStorageLinkCard))
-		{
-			targetCoords = null;
-			this.energyCapacity = -1;
-			this.energyStored = -1;
-			blockState = false;
-		}
-		else
-		{
-			targetCoords = ItemCardBase.getCoordinates(item);
-		}
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-	}
-
-	boolean receivingRedstoneSignal()
-	{
-		return worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
-	}
-
-	public int gaugeEnergyScaled(int gaugeSize)
-	{
-		if (this.energyStored <= 0 || this.energyCapacity <= 0)
-		{
-			return 0;
-		}
-
-		int result = this.energyStored * gaugeSize / this.energyCapacity;
-		if (result > gaugeSize) result = gaugeSize;
-
-		return result;
-	}
-
-	@Override
-	public void invalidate()
-	{
-		super.invalidate();
-	}
-
-	//Networking stuff
-
-	public void receiveDescriptionData(int charge, boolean power, boolean state)
-	{
-		chargeLevel = charge;
-		isPowering = power;
-		blockState = state;
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-	}
-	
-	@Override
-	public Packet250CustomPayload getDescriptionPacket()
-	{
-		if (ChargingBench.isDebugging) System.out.println("TE getAuxillaryInfoPacket()");
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		DataOutputStream data = new DataOutputStream(bytes);
-		try
-		{
-			data.writeInt(2);
-			data.writeInt(this.xCoord);
-			data.writeInt(this.yCoord);
-			data.writeInt(this.zCoord);
-			data.writeInt(this.chargeLevel);
-			data.writeBoolean(this.isPowering);
-			data.writeBoolean(this.blockState);
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ChargingBench.packetChannel; // CHANNEL MAX 16 CHARS
-		packet.data = bytes.toByteArray();
-		packet.length = packet.data.length;
-		return packet;
-	}
 }

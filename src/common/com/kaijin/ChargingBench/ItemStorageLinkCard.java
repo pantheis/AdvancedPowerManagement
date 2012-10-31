@@ -4,11 +4,16 @@
  ******************************************************************************/
 package com.kaijin.ChargingBench;
 
+import ic2.api.IEnergyStorage;
+
 import java.util.List;
 
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
@@ -48,6 +53,22 @@ public class ItemStorageLinkCard extends ItemCardBase
 			}
 			String hint = String.format(HINT_TEMPLATE, coordinates[0], coordinates[1], coordinates[2]);
 			info.add(hint);
+		}
+	}
+
+	/**
+	 * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
+	 * @return The ItemStack to replace it with.
+	 */
+	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
+	{
+		if (player.isSneaking())
+		{
+			return new ItemStack(ChargingBench.itemStorageLinkCardCreator);
+		}
+		else
+		{
+			return stack;
 		}
 	}
 }

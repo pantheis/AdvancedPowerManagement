@@ -36,15 +36,14 @@ public class ItemStorageLinkCardCreator extends ItemCardBase
 	{
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-		if (!(tile instanceof IEnergyStorage) || !(entityplayer instanceof EntityPlayerMP))
+		if (entityplayer instanceof EntityPlayerMP && tile instanceof IEnergyStorage)
 		{
-			return false;
+			if (ChargingBench.isDebugging) System.out.println("Clicked on X:" + x + " Y:" + y + " Z:" + z);
+			ItemStack newcard = new ItemStack(ChargingBench.itemStorageLinkCard);
+			setCoordinates(newcard, x, y, z);
+			entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = newcard;
+			return true;
 		}
-
-		if (ChargingBench.isDebugging) System.out.println("Clicked on X:" + x + " Y:" + y + " Z:" + z);
-		ItemStack newcard = new ItemStack(ChargingBench.itemStorageLinkCard);
-		setCoordinates(newcard, x, y, z);
-		entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = newcard;
-		return true;
+		return false;
 	}
 }
