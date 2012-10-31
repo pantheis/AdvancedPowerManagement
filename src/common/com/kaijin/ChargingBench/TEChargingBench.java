@@ -5,6 +5,7 @@ import ic2.api.ElectricItem;
 import ic2.api.EnergyNet;
 import ic2.api.IElectricItem;
 import ic2.api.IEnergySink;
+import ic2.api.IEnergyStorage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -19,7 +20,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 
-public class TEChargingBench extends TECommonBench implements IEnergySink, IInventory, ISidedInventory
+public class TEChargingBench extends TECommonBench implements IEnergySink, IEnergyStorage, IInventory, ISidedInventory
 {
 	// Base values
 	public int baseMaxInput;
@@ -109,16 +110,23 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		return true;
 	}
 
+	// IC2 API stuff
+
+	// IEnergySink
+	
+	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
 	{
 		return true;
 	}
 
+	@Override
 	public boolean demandsEnergy()
 	{
 		return (currentEnergy < adjustedStorage && !receivingRedstoneSignal());
 	}
 
+	@Override
 	public int injectEnergy(Direction directionFrom, int supply)
 	{
 		int surplus = 0;
@@ -154,6 +162,43 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		}
 		return surplus;
 	}
+
+	// IEnergyStorage
+
+	/**
+	 * Get the amount of energy currently stored in the block.
+	 * 
+	 * @return Energy stored in the block
+	 */
+	@Override
+	public int getStored()
+	{
+		return currentEnergy;
+	}
+	
+	/**
+	 * Get the maximum amount of energy the block can store.
+	 * 
+	 * @return Maximum energy stored
+	 */
+	@Override
+	public int getCapacity()
+	{
+		return adjustedStorage;
+	}
+	
+	/**
+	 * Get the block's energy output.
+	 * 
+	 * @return Energy output in EU/t
+	 */
+	@Override
+	public int getOutput()
+	{
+		return 0;
+	}
+
+	// End IC2 API
 
 	/**
 	 * This will cause the block to drop anything inside it, create a new item in the
