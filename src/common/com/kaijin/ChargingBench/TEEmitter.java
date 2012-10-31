@@ -86,7 +86,7 @@ public class TEEmitter extends TileEntity implements IEnergySource
 			if (baseTier == 0)
 			{
 				if (Utils.isDebug()) System.out.println("baseTier is zero!");
-				if (worldObj.getBlockId(xCoord, yCoord, zCoord) == ChargingBench.ChargingBenchBlockID)
+				if (worldObj.getBlockId(xCoord, yCoord, zCoord) == ChargingBench.blockChargingBenchID)
 				{
 					baseTier = worldObj.getBlockMetadata(xCoord, yCoord, zCoord) - 2;
 					outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));

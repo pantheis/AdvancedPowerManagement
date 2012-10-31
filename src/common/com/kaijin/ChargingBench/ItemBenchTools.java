@@ -100,7 +100,7 @@ public class ItemBenchTools extends Item
 		if (ChargingBench.proxy.isClient()) return false;
 	
 		// Test if the target is a charging bench and the item is a component kit. If so, do the upgrade and return true.
-		if (world.getBlockId(x, y, z) != ChargingBench.ChargingBenchBlockID || stack.getItemDamage() < 1 || stack.getItemDamage() > 3 || player == null)
+		if (world.getBlockId(x, y, z) != ChargingBench.blockChargingBenchID || stack.getItemDamage() < 1 || stack.getItemDamage() > 3 || player == null)
 		{
 	        return false;
 		}
@@ -112,7 +112,7 @@ public class ItemBenchTools extends Item
 		}
 	
 		int recoveredTier = ((TEChargingBench)tile).swapBenchComponents(stack.getItemDamage());
-		generateItemStack(new ItemStack(ChargingBench.ItemBenchTools, 1, recoveredTier), player);
+		generateItemStack(new ItemStack(ChargingBench.itemBenchTools, 1, recoveredTier), player);
 		stack.stackSize--;
 		return true;
 	}

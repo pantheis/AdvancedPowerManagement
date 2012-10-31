@@ -94,7 +94,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	protected void selfDestroy()
 	{
 		dropContents();
-		ItemStack stack = new ItemStack(ChargingBench.ChargingBench, 1, baseTier - 1);
+		ItemStack stack = new ItemStack(ChargingBench.blockChargingBench, 1, baseTier - 1);
 		dropItem(stack);
 		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
 		this.invalidate();
@@ -107,10 +107,10 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		{
 			IElectricItem item = (IElectricItem)(stack.getItem());
 			// Is the item appropriate for this slot?
-			if (slot == ChargingBench.BSslotOutput) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
+			if (slot == ChargingBench.bsSlotOutput) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
 			if (item.canProvideEnergy() && item.getTier() <= powerTier)
 			{
-				if ((slot >= ChargingBench.BSslotPowerSourceStart && slot < ChargingBench.BSslotPowerSourceStart + 12) || slot == ChargingBench.BSslotInput) return true;
+				if ((slot >= ChargingBench.bsSlotPowerSourceStart && slot < ChargingBench.bsSlotPowerSourceStart + 12) || slot == ChargingBench.bsSlotInput) return true;
 			}
 		}
 		return false; 
@@ -131,7 +131,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			baseTier = nbttagcompound.getInteger("baseTier");
 
 			// Our inventory
-			contents = new ItemStack[ChargingBench.BSinventorySize];
+			contents = new ItemStack[ChargingBench.bsInventorySize];
 			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
 			for (int i = 0; i < nbttaglist.tagCount(); ++i)
 			{
@@ -232,7 +232,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	private void drainPowerSource()
 	{
-		for (int i = ChargingBench.BSslotPowerSourceStart; i < ChargingBench.BSslotPowerSourceStart + 12; i++)
+		for (int i = ChargingBench.bsSlotPowerSourceStart; i < ChargingBench.bsSlotPowerSourceStart + 12; i++)
 		{
 			//if (Utils.isDebug()) System.out.println("currentEnergy: " + currentEnergy + " baseMaxOutput: " + baseMaxOutput);
 			if (currentEnergy >= baseMaxOutput) break;
@@ -282,13 +282,13 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	{
 		rejectInvalidInput();
 
-		ItemStack outputStack = contents[ChargingBench.BSslotOutput];
+		ItemStack outputStack = contents[ChargingBench.bsSlotOutput];
 		if (outputStack == null || (outputStack.isStackable() && outputStack.stackSize < outputStack.getMaxStackSize()))
 		{
 			// Output slot could receive item(s). Try to find something to move there.
 			for (int slot = 0; slot < contents.length; ++slot)
 			{
-				if (slot == ChargingBench.BSslotOutput) continue;
+				if (slot == ChargingBench.bsSlotOutput) continue;
 
 				ItemStack currentStack = contents[slot];
 				if (currentStack != null && currentStack.getItem() instanceof IElectricItem)
@@ -305,13 +305,13 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 								// Pick Me
 								if (outputStack == null)
 								{
-									contents[ChargingBench.BSslotOutput] = currentStack;
+									contents[ChargingBench.bsSlotOutput] = currentStack;
 									contents[slot] = null;
 								}
 								else
 								{
 									// We already know the stack isn't full yet
-									contents[ChargingBench.BSslotOutput].stackSize++;
+									contents[ChargingBench.bsSlotOutput].stackSize++;
 									contents[slot].stackSize--;
 									if (contents[slot].stackSize < 1) contents[slot] = null;
 								}
@@ -325,7 +325,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 							if (empty)
 							{
 								// Pick Me
-								contents[ChargingBench.BSslotOutput] = currentStack;
+								contents[ChargingBench.bsSlotOutput] = currentStack;
 								contents[slot] = null;
 								invChanged = true;
 								break;
@@ -342,8 +342,8 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	 */
 	private void repositionItems()
 	{
-		final int lastIndex = ChargingBench.BSslotPowerSourceStart + 11;
-		int vacancy = ChargingBench.BSslotPowerSourceStart;
+		final int lastIndex = ChargingBench.bsSlotPowerSourceStart + 11;
+		int vacancy = ChargingBench.bsSlotPowerSourceStart;
 		while (vacancy < lastIndex && contents[vacancy] != null)
 		{
 			vacancy++;
@@ -368,19 +368,19 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	 */
 	private void acceptInputItems()
 	{
-		ItemStack stack = contents[ChargingBench.BSslotInput];
+		ItemStack stack = contents[ChargingBench.bsSlotInput];
 		if (stack == null || !(stack.getItem() instanceof IElectricItem)) return;
 		
 		IElectricItem item = (IElectricItem)stack.getItem();
 		if (item.canProvideEnergy())
 		{
 			// Input slot contains a power source. If possible, move one of it into the discharging area.
-			for (int slot = ChargingBench.BSslotPowerSourceStart; slot < ChargingBench.BSslotPowerSourceStart + 12; ++slot)
+			for (int slot = ChargingBench.bsSlotPowerSourceStart; slot < ChargingBench.bsSlotPowerSourceStart + 12; ++slot)
 			{
 				if (contents[slot] == null)
 				{
 					// Grab one unit from input and move it to the selected slot.
-					contents[slot] = decrStackSize(ChargingBench.BSslotInput, 1);
+					contents[slot] = decrStackSize(ChargingBench.bsSlotInput, 1);
 					break;
 				}
 			}
@@ -390,12 +390,12 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	private void rejectInvalidInput()
 	{
 		// Move item from input to output if not valid. (Wrong tier or not electric item.)
-		if (contents[ChargingBench.BSslotInput] != null && contents[ChargingBench.BSslotOutput] == null)
+		if (contents[ChargingBench.bsSlotInput] != null && contents[ChargingBench.bsSlotOutput] == null)
 		{
-			if (!isItemValid(ChargingBench.BSslotInput, contents[ChargingBench.BSslotInput]))
+			if (!isItemValid(ChargingBench.bsSlotInput, contents[ChargingBench.bsSlotInput]))
 			{
-				contents[ChargingBench.BSslotOutput] = contents[ChargingBench.BSslotInput];
-				contents[ChargingBench.BSslotInput] = null;
+				contents[ChargingBench.bsSlotOutput] = contents[ChargingBench.bsSlotInput];
+				contents[ChargingBench.bsSlotInput] = null;
 				invChanged = true;
 			}
 		}
@@ -437,9 +437,9 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		{
 		case UP:
 		case DOWN:
-			return ChargingBench.BSslotInput;
+			return ChargingBench.bsSlotInput;
 		default:
-			return ChargingBench.BSslotOutput;
+			return ChargingBench.bsSlotOutput;
 		}
 	}
 
@@ -468,7 +468,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public void onInventoryChanged(int slot)
 	{
-		if (slot == ChargingBench.BSslotInput || slot == ChargingBench.BSslotOutput)
+		if (slot == ChargingBench.bsSlotInput || slot == ChargingBench.bsSlotOutput)
 		{
 			rejectInvalidInput();
 		}
