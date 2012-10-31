@@ -51,31 +51,6 @@ public class ItemBenchTools extends Item
 		return false;
 	}
 
-    /**
-     * If this returns true, after a recipe involving this item is crafted the container item will be added to the
-     * player's inventory instead of remaining in the crafting grid.
-     */
-/*	public boolean doesContainerItemLeaveCraftingGrid(ItemStack par1ItemStack)
-	{
-		return false;
-	}
-
-	public ItemStack getContainerItemStack(ItemStack itemStack)
-	{
-		if (itemStack.getItemDamage() == 0) return new ItemStack(ChargingBench.ItemBenchTools, 1, 0);
-		return null;
-	}
-
-	public Item getContainerItem()
-	{
-		return this;
-	}
-
-	public boolean hasContainerItem()
-	{
-		return false;
-	}
-*/
 	public String getItemNameIS(ItemStack par1ItemStack)
 	{
 		int meta = MathHelper.clamp_int(par1ItemStack.getItemDamage(), 0, 3);
@@ -104,7 +79,7 @@ public class ItemBenchTools extends Item
 		if (ChargingBench.proxy.isClient()) return false;
 	
 		// Test if the target is a charging bench and the item is a component kit. If so, do the upgrade and return true.
-		if (world.getBlockId(x, y, z) != ChargingBench.ChargingBenchBlockID || stack.getItemDamage() < 1 || stack.getItemDamage() > 3 || player == null)
+		if (world.getBlockId(x, y, z) != ChargingBench.blockChargingBenchID || stack.getItemDamage() < 1 || stack.getItemDamage() > 3 || player == null)
 		{
 	        return false;
 		}
@@ -116,7 +91,7 @@ public class ItemBenchTools extends Item
 		}
 	
 		int recoveredTier = ((TEChargingBench)tile).swapBenchComponents(stack.getItemDamage());
-		generateItemStack(new ItemStack(ChargingBench.ItemBenchTools, 1, recoveredTier), player);
+		generateItemStack(new ItemStack(ChargingBench.itemBenchTools, 1, recoveredTier), player);
 		stack.stackSize--;
 		return true;
 	}
