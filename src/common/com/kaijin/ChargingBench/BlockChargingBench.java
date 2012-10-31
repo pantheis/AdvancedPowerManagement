@@ -213,7 +213,7 @@ public class BlockChargingBench extends Block
 			}
 			else if (meta < 11) // Battery Station
 			{
-				return meta - 5;
+				return meta - 6;
 			}
 			else
 			{
