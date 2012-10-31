@@ -39,7 +39,7 @@ public class BlockChargingBench extends Block
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
 	{
 		int currentEquippedItemID = 0;
-		ItemStack wrench = Items.getItem("wrench");
+		ItemStack wrench = Items.getItem("wrench"); // TODO These do not need to be retrieved every time the function is run. Create constants.
 		ItemStack electricWrench = Items.getItem("electricWrench");
 
 		if(world.isRemote)
