@@ -63,11 +63,11 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 
 	protected void initializeBaseValues()
 	{
-		//if (Utils.isDebug()) System.out.println("Initializing - BaseTier: " + baseTier);
+		//if (ChargingBench.isDebugging) System.out.println("Initializing - BaseTier: " + baseTier);
 
 		//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
 		baseMaxInput = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
-		//if (Utils.isDebug()) System.out.println("BaseMaxInput: " + baseMaxInput);
+		//if (ChargingBench.isDebugging) System.out.println("BaseMaxInput: " + baseMaxInput);
 
 		switch(baseTier)
 		{
@@ -83,7 +83,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		default:
 			baseStorage = 0;
 		}
-		//if (Utils.isDebug()) System.out.println("BaseStorage: " + baseStorage);
+		//if (ChargingBench.isDebugging) System.out.println("BaseStorage: " + baseStorage);
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		if (ChargingBench.proxy.isServer())
 		{
 			// if supply is greater than the max we can take per tick
-			if(supply > adjustedMaxInput)
+			if (supply > adjustedMaxInput)
 			{
 				//If the supplied EU is over the baseMaxInput, we're getting
 				//supplied higher than acceptable current. Pop ourselves off
@@ -257,11 +257,11 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		{
 			super.readFromNBT(nbttagcompound);
 
-			if (Utils.isDebug()) System.out.println("CB ID: " + nbttagcompound.getString("id"));
+			if (ChargingBench.isDebugging) System.out.println("CB ID: " + nbttagcompound.getString("id"));
 
 			baseTier = nbttagcompound.getInteger("baseTier");
 			currentEnergy = nbttagcompound.getInteger("currentEnergy");
-			//if (Utils.isDebug()) System.out.println("ReadNBT.CurrentEergy: " + currentEnergy);
+			//if (ChargingBench.isDebugging) System.out.println("ReadNBT.CurrentEergy: " + currentEnergy);
 
 			// Our inventory
 			contents = new ItemStack[ChargingBench.cbInventorySize];
@@ -295,7 +295,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 
 			nbttagcompound.setInteger("baseTier", baseTier);
 			nbttagcompound.setInteger("currentEnergy", currentEnergy);
-			//if (Utils.isDebug()) System.out.println("WriteNBT.CurrentEergy: " + currentEnergy);
+			//if (ChargingBench.isDebugging) System.out.println("WriteNBT.CurrentEergy: " + currentEnergy);
 
 			// Our inventory
 			NBTTagList nbttaglist = new NBTTagList();
@@ -303,7 +303,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 			{
 				if (contents[i] != null)
 				{
-					//if (Utils.isDebug()) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
+					//if (ChargingBench.isDebugging) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
 					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
 					nbttagcompound1.setByte("Slot", (byte)i);
 					contents[i].writeToNBT(nbttagcompound1);
@@ -342,7 +342,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 		chargeLevel = gaugeEnergyScaled(12);
 		if (oldChargeLevel != chargeLevel || lastWorkState != doingWork)
 		{
-			//if (Utils.isDebug()) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + chargeLevel); 
+			//if (ChargingBench.isDebugging) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + chargeLevel); 
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
 	}
@@ -395,7 +395,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 				// Workaround for buggy IC2 API .discharge that automatically switches stack to emptyItemID but leaves a stackTagCompound on it, so it can't be stacked with never-used empties  
 				if (chargedItemID != emptyItemID && ElectricItem.discharge(stack, 1, powerTier, false, true) == 0)
 				{
-					//if (Utils.isDebug()) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
+					//if (ChargingBench.isDebugging) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
 					setInventorySlotContents(ChargingBench.cbSlotPowerSource, new ItemStack(emptyItemID, 1, 0));
 					//ItemStack newStack = new ItemStack(emptyItemID, 1, 0);
 					//contents[ChargingBench.slotPowerSource] = newStack;
@@ -542,7 +542,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IInve
 	@Override
 	public Packet250CustomPayload getDescriptionPacket()
 	{
-		//if (Utils.isDebug()) System.out.println("TE getAuxillaryInfoPacket()");
+		//if (ChargingBench.isDebugging) System.out.println("TE getAuxillaryInfoPacket()");
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		DataOutputStream data = new DataOutputStream(bytes);
 		try

@@ -8,17 +8,21 @@ package com.kaijin.ChargingBench;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.NBTTagCompound;
+
 public class Utils
 {
-	// This is set by a configuration file property debug
+	/**
+	 * Refer directly to ChargingBench.isDebugging instead.
+	 * Let's make this class a mod-independent drop-in "Utilities" package again.
+	 */
+	@Deprecated
 	public static boolean isDebug()
 	{
 		return ChargingBench.isDebugging;
 	}
 
-	public static final String VERSION = "@VERSION@";
-	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
-	
 	/**
 	 * Returns a SHA-256 hex hash string of the string passed to it
 	 * @param string
@@ -27,11 +31,12 @@ public class Utils
 	public static String hashSHA1(String string)
 	{
 		MessageDigest md = null;
-		try {
+		try
+		{
 			md = MessageDigest.getInstance("SHA-256");
 		}
-		catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
+		catch (NoSuchAlgorithmException e)
+		{
 			e.printStackTrace();
 		}
 		md.update(string.getBytes());
@@ -40,7 +45,8 @@ public class Utils
 
 		//convert the byte to hex format method 1
 		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < byteData.length; i++) {
+		for (int i = 0; i < byteData.length; i++)
+		{
 			sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
 		}
 
@@ -48,9 +54,10 @@ public class Utils
 
 		//convert the byte to hex format method 2
 		StringBuffer hexString = new StringBuffer();
-		for (int i=0;i<byteData.length;i++) {
+		for (int i = 0; i < byteData.length; i++)
+		{
 			String hex=Integer.toHexString(0xff & byteData[i]);
-			if(hex.length()==1) hexString.append('0');
+			if (hex.length() == 1) hexString.append('0');
 			hexString.append(hex);
 		}
 		//System.out.println("Hex format : " + hexString.toString());
@@ -81,5 +88,20 @@ public class Utils
 				{4, 4, 4, 5, 1, 0}
 			};
 		return table[side][orientation];
+	}
+
+	public static NBTTagCompound getOrCreateStackTag(ItemStack itemStack)
+	{
+		if (itemStack != null)
+		{
+			NBTTagCompound tag = itemStack.getTagCompound();
+			if (tag == null)
+			{
+				tag = new NBTTagCompound();
+				itemStack.setTagCompound(tag);
+			}
+			return tag;
+		}
+		return null;
 	}
 }

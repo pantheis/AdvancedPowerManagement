@@ -30,7 +30,7 @@ public class ItemCardBase extends Item
 
 	public static int[] getCoordinates(ItemStack itemStack)
 	{
-		if(!(itemStack.getItem() instanceof ItemStorageLinkCard))
+		if (!(itemStack.getItem() instanceof ItemStorageLinkCard))
 			return null;
 		NBTTagCompound nbtTagCompound = itemStack.getTagCompound();
 		if (nbtTagCompound == null)
@@ -47,7 +47,7 @@ public class ItemCardBase extends Item
 	
 	public String getTitle(ItemStack stack)
 	{
-		if(!(stack.getItem() instanceof ItemStorageLinkCard))
+		if (!(stack.getItem() instanceof ItemStorageLinkCard))
 			return "";
 		NBTTagCompound nbtTagCompound = stack.getTagCompound();
 		if (nbtTagCompound == null)
@@ -57,6 +57,6 @@ public class ItemCardBase extends Item
 
 	public void setTitle(ItemStack stack, String title)
 	{
-		NBTTagCompoundHelper.getTAGfromItemstack(stack).setString("title", title);
+		Utils.getOrCreateStackTag(stack).setString("title", title);
 	}
 }

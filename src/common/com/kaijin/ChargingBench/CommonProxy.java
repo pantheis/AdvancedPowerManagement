@@ -5,10 +5,6 @@
 
 package com.kaijin.ChargingBench;
 
-import com.kaijin.StorageMonitor.ContainerStorageMonitor;
-import com.kaijin.StorageMonitor.GuiStorageMonitor;
-import com.kaijin.StorageMonitor.TEStorageMonitor;
-
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.Packet250CustomPayload;
@@ -22,6 +18,9 @@ import cpw.mods.fml.common.network.Player;
 
 public class CommonProxy implements IGuiHandler
 {
+	public static final String VERSION = "@VERSION@";
+	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
+
 	public static final String ITEM_PNG    = "/com/kaijin/ChargingBench/textures/ChargingBenchItems.png";
 	public static final String BLOCK_PNG   = "/com/kaijin/ChargingBench/textures/ChargingBench.png";
 	public static final String GUI1_PNG    = "/com/kaijin/ChargingBench/textures/GUIChargingBench.png";
@@ -90,7 +89,6 @@ public class CommonProxy implements IGuiHandler
 		else if (ID == 2 && tile instanceof TEBatteryStation)
 		{
 			return new GuiBatteryStation(player.inventory, (TEBatteryStation)tile);
-
 		}
 		else if (ID == 3 && tile instanceof TEStorageMonitor)
 		{

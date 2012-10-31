@@ -25,7 +25,7 @@ public class ItemStorageLinkCardCreator extends ItemCardBase
 
 	private void setCoordinates(ItemStack itemStack, int x, int y, int z)
 	{
-		NBTTagCompound nbtTagCompound = NBTTagCompoundHelper.getTAGfromItemstack(itemStack);
+		NBTTagCompound nbtTagCompound = Utils.getOrCreateStackTag(itemStack);
 		nbtTagCompound.setInteger("x", x);
 		nbtTagCompound.setInteger("y", y);
 		nbtTagCompound.setInteger("z", z);
@@ -41,7 +41,7 @@ public class ItemStorageLinkCardCreator extends ItemCardBase
 			return false;
 		}
 
-		if (Utils.isDebug()) System.out.println("Clicked on X:" + x + " Y:" + y + " Z:" + z);
+		if (ChargingBench.isDebugging) System.out.println("Clicked on X:" + x + " Y:" + y + " Z:" + z);
 		ItemStack newcard = new ItemStack(ChargingBench.itemStorageLinkCard);
 		setCoordinates(newcard, x, y, z);
 		entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = newcard;

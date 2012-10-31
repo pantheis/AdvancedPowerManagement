@@ -20,7 +20,7 @@ public class GuiBatteryStation extends GuiContainer
 	public GuiBatteryStation(InventoryPlayer player, TEBatteryStation tile)
 	{
 		super(new ContainerBatteryStation(player, tile));
-		//if (Utils.isDebug()) System.out.println("GuiDischargingBench");
+		//if (ChargingBench.isDebugging) System.out.println("GuiDischargingBench");
 		this.tile = tile;
 		/** The X size of the inventory window in pixels. */
 		xSize = 176;

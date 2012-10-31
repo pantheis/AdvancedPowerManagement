@@ -38,11 +38,11 @@ public class ItemStorageLinkCard extends ItemCardBase
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List info, boolean bool) 
 	{
 		int[] coordinates = getCoordinates(itemStack);
-		if(coordinates != null)
+		if (coordinates != null)
 		{
 			NBTTagCompound nbtTagCompound = itemStack.getTagCompound();
 			String title = nbtTagCompound.getString("title");
-			if(title != null && !title.isEmpty())
+			if (title != null && !title.isEmpty())
 			{
 				info.add(title);
 			}

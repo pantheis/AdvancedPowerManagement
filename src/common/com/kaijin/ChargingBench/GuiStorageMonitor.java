@@ -39,7 +39,7 @@ public class GuiStorageMonitor extends GuiContainer
 	public GuiStorageMonitor(InventoryPlayer player, TEStorageMonitor tile)
 	{
 		super(new ContainerStorageMonitor(player, tile));
-		if (Utils.isDebug()) System.out.println("GuiStorageMonitor");
+		if (ChargingBench.isDebugging) System.out.println("GuiStorageMonitor");
 		this.tile = tile;
 		/** The X size of the inventory window in pixels. */
 		xSize = 176;

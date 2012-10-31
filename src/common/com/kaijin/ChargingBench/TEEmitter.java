@@ -85,13 +85,13 @@ public class TEEmitter extends TileEntity implements IEnergySource
 			// Prevent old emitters from misbehaving if they were placed before they saved their tier in NBT data
 			if (baseTier == 0)
 			{
-				if (Utils.isDebug()) System.out.println("baseTier is zero!");
+				if (ChargingBench.isDebugging) System.out.println("baseTier is zero!");
 				if (worldObj.getBlockId(xCoord, yCoord, zCoord) == ChargingBench.blockChargingBenchID)
 				{
 					baseTier = worldObj.getBlockMetadata(xCoord, yCoord, zCoord) - 2;
 					outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
-					if (Utils.isDebug()) System.out.println("baseTier is now: " + baseTier);
-					if (Utils.isDebug()) System.out.println("output is now: " + outputRate);
+					if (ChargingBench.isDebugging) System.out.println("baseTier is now: " + baseTier);
+					if (ChargingBench.isDebugging) System.out.println("output is now: " + outputRate);
 				}
 				else
 				{

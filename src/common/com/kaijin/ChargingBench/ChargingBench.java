@@ -26,7 +26,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
-@Mod(modid = "ChargingBench", name="Charging Bench", version=Utils.VERSION, dependencies = "required-after:IC2@[1.106,);required-after:Forge@[4.1.1.251,)")
+@Mod(modid = "ChargingBench", name="Charging Bench", version=CommonProxy.VERSION, dependencies = "required-after:IC2@[1.106,);required-after:Forge@[4.1.1.251,)")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,
 clientPacketHandlerSpec = @SidedPacketHandler(channels = {"ChargingBench"}, packetHandler = ClientPacketHandler.class),
 serverPacketHandlerSpec = @SidedPacketHandler(channels = ("ChargingBench"), packetHandler = ServerPacketHandler.class))
@@ -179,7 +179,7 @@ public class ChargingBench implements ICraftingHandler
 		proxy.load();
 		if (proxy.isServer())
 		{
-			FMLLog.getLogger().info (modNameSpaced + " " + Utils.VERSION + " loaded.");
+			FMLLog.getLogger().info (modNameSpaced + " " + CommonProxy.VERSION + " loaded.");
 		}
 		if (isDebugging)
 		{
@@ -210,7 +210,7 @@ public class ChargingBench implements ICraftingHandler
 	@PostInit
 	public void modsLoaded(FMLPostInitializationEvent event)
 	{
-		//if (Utils.isDebug()) System.out.println("ChargingBench.modsLoaded");
+		//if (ChargingBench.isDebugging) System.out.println("ChargingBench.modsLoaded");
 
 		// Charging Bench recipes
 		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1, 0), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("batBox")});
@@ -250,7 +250,7 @@ public class ChargingBench implements ICraftingHandler
 		for (int i=0; i < max; i++)
 		{        	
 			ItemStack stack = craftMatrix.getStackInSlot(i);
-			if(stack != null && stack.getItem() == itemBenchTools && stack.getItemDamage() == 0)
+			if (stack != null && stack.getItem() == itemBenchTools && stack.getItemDamage() == 0)
 			{				
 				stack.stackSize++;
 			}

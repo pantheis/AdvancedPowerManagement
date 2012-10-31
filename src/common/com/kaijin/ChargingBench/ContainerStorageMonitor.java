@@ -25,7 +25,7 @@ public class ContainerStorageMonitor extends Container
 
 	public ContainerStorageMonitor(InventoryPlayer player, TEStorageMonitor tile)
 	{
-		if (Utils.isDebug()) System.out.println("ContainerStorageMonitor");
+		if (ChargingBench.isDebugging) System.out.println("ContainerStorageMonitor");
 		this.te = tile;
 		this.energyStored = -1;
 		this.energyCapacity = -1;
@@ -37,7 +37,7 @@ public class ContainerStorageMonitor extends Container
 		int xCol;
 		int yRow;
 
-		// Power source slot
+		// Link Card slot
 		this.addSlotToContainer(new SlotLinkCard(tile, ChargingBench.smSlotUniversal, 8, 9));
 
 		// Player inventory
@@ -60,38 +60,38 @@ public class ContainerStorageMonitor extends Container
 	@Override
 	public void updateCraftingResults()
 	{
-		// if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateCraftingResults");
+		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateCraftingResults");
 		super.updateCraftingResults();
 
-		for (int crafterIndex = 0; crafterIndex < this.crafters.size(); ++crafterIndex)
+		for (int crafterIndex = 0; crafterIndex < crafters.size(); ++crafterIndex)
 		{
-			ICrafting crafter = (ICrafting)this.crafters.get(crafterIndex);
+			ICrafting crafter = (ICrafting)crafters.get(crafterIndex);
 
-			if (this.energyStored != this.te.energyStored)
+			if (this.energyStored != te.energyStored)
 			{
-				crafter.updateCraftingInventoryInfo(this, 0, this.te.energyStored & 65535);
-				crafter.updateCraftingInventoryInfo(this, 1, this.te.energyStored >>> 16);
+				crafter.updateCraftingInventoryInfo(this, 0, te.energyStored & 65535);
+				crafter.updateCraftingInventoryInfo(this, 1, te.energyStored >>> 16);
 			}
 
-			if (this.energyCapacity != this.te.energyCapacity)
+			if (this.energyCapacity != te.energyCapacity)
 			{
-				crafter.updateCraftingInventoryInfo(this, 2, this.te.energyCapacity & 65535);
-				crafter.updateCraftingInventoryInfo(this, 3, this.te.energyCapacity >>> 16);
+				crafter.updateCraftingInventoryInfo(this, 2, te.energyCapacity & 65535);
+				crafter.updateCraftingInventoryInfo(this, 3, te.energyCapacity >>> 16);
 			}
 
-			if (this.lowerBoundary != this.te.lowerBoundary)
+			if (this.lowerBoundary != te.lowerBoundary)
 			{
-				crafter.updateCraftingInventoryInfo(this, 4, this.te.lowerBoundaryBits);
+				crafter.updateCraftingInventoryInfo(this, 4, te.lowerBoundaryBits);
 			}
-			if (this.upperBoundary != this.te.upperBoundary)
+			if (this.upperBoundary != te.upperBoundary)
 			{
-				crafter.updateCraftingInventoryInfo(this, 5, this.te.upperBoundaryBits);
+				crafter.updateCraftingInventoryInfo(this, 5, te.upperBoundaryBits);
 			}
 		}
-		this.energyStored = this.te.energyStored;
-		this.energyCapacity = this.te.energyCapacity;
-		this.lowerBoundary = this.te.lowerBoundary;
-		this.upperBoundary = this.te.upperBoundary;
+		this.energyStored = te.energyStored;
+		this.energyCapacity = te.energyCapacity;
+		this.lowerBoundary = te.lowerBoundary;
+		this.upperBoundary = te.upperBoundary;
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -103,34 +103,34 @@ public class ContainerStorageMonitor extends Container
 		switch (param)
 		{
 		case 0:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & -65536) + " | " + value);
-			this.te.energyStored = this.te.energyStored & -65536 | value;
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & -65536) + " | " + value);
+			te.energyStored = te.energyStored & -65536 | value;
 			break;
 
 		case 1:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & 65535) + " | " + (value << 16));
-			this.te.energyStored = this.te.energyStored & 65535 | (value << 16);
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & 65535) + " | " + (value << 16));
+			te.energyStored = te.energyStored & 65535 | (value << 16);
 			break;
 
 		case 2:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & -65536) + " | " + value);
-			this.te.energyCapacity = this.te.energyCapacity & -65536 | value;
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & -65536) + " | " + value);
+			te.energyCapacity = te.energyCapacity & -65536 | value;
 			break;
 
 		case 3:
-			//if (Utils.isDebug()) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & 65535) + " | " + (value << 16));
-			this.te.energyCapacity = this.te.energyCapacity & 65535 | (value << 16);
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & 65535) + " | " + (value << 16));
+			te.energyCapacity = te.energyCapacity & 65535 | (value << 16);
 			break;
 
 			//FIXME? elaborate dance to transmit two floats via 4 shorts, maybe can be done better
 		case 4:
-			this.te.lowerBoundaryBits = value;
-			this.te.lowerBoundary = (float)this.te.lowerBoundaryBits / 100;
+			te.lowerBoundaryBits = value;
+			te.lowerBoundary = (float)te.lowerBoundaryBits / 100.0F;
 			break;
 
 		case 5:
-			this.te.upperBoundaryBits = value;
-			this.te.upperBoundary = (float)this.te.upperBoundaryBits / 100;
+			te.upperBoundaryBits = value;
+			te.upperBoundary = (float)te.upperBoundaryBits / 100.0F;
 			break;
 
 		default:
@@ -159,7 +159,7 @@ public class ContainerStorageMonitor extends Container
 		{
 			while (stack.stackSize > 0 && (!reverseOrder && slotID < endSlot || reverseOrder && slotID >= startSlot))
 			{
-				currentSlot = (Slot)this.inventorySlots.get(slotID);
+				currentSlot = (Slot)inventorySlots.get(slotID);
 				currentStack = currentSlot.getStack();
 
 				if (currentStack != null && currentStack.itemID == stack.itemID
@@ -210,7 +210,7 @@ public class ContainerStorageMonitor extends Container
 
 			while (!reverseOrder && slotID < endSlot || reverseOrder && slotID >= startSlot)
 			{
-				currentSlot = (Slot)this.inventorySlots.get(slotID);
+				currentSlot = (Slot)inventorySlots.get(slotID);
 				currentStack = currentSlot.getStack();
 
 				if (currentStack == null && currentSlot.isItemValid(stack))
@@ -250,7 +250,7 @@ public class ContainerStorageMonitor extends Container
 	public ItemStack func_82846_b(EntityPlayer p, int par1)
 	{
 		ItemStack original = null;
-		Slot slotclicked = (Slot)this.inventorySlots.get(par1);
+		Slot slotclicked = (Slot)inventorySlots.get(par1);
 
 		if (slotclicked != null && slotclicked.getHasStack())
 		{
@@ -259,7 +259,7 @@ public class ContainerStorageMonitor extends Container
 
 			if (par1 < playerInventoryStartSlot)
 			{
-				if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, this.inventorySlots.size(), true))
+				if (!this.mergeItemStack(sourceStack, playerInventoryStartSlot, inventorySlots.size(), true))
 				{
 					return null;
 				}
@@ -286,7 +286,7 @@ public class ContainerStorageMonitor extends Container
 	{
 		ItemStack result = null;
 
-		if (Utils.isDebug() && ChargingBench.proxy.isServer()) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
+		if (ChargingBench.isDebugging && ChargingBench.proxy.isServer()) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
 
 		if (button > 1)
 		{
@@ -328,7 +328,7 @@ public class ContainerStorageMonitor extends Container
 					{
 						int originalID = original.itemID;
 						result = original.copy();
-						Slot slot = (Slot)this.inventorySlots.get(slotID);
+						Slot slot = (Slot)inventorySlots.get(slotID);
 
 						if (slot != null && slot.getStack() != null && slot.getStack().itemID == originalID)
 						{
@@ -352,7 +352,7 @@ public class ContainerStorageMonitor extends Container
 
 						if (clickedStack != null)
 						{
-							if (Utils.isDebug()) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
+							if (ChargingBench.isDebugging) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
 							result = clickedStack.copy();
 						}
 
@@ -446,7 +446,7 @@ public class ContainerStorageMonitor extends Container
 
 	public boolean canInteractWith(EntityPlayer var1)
 	{
-		// if (Utils.isDebug()) System.out.println("ContainerChargingBench.canInteractWith");
+		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.canInteractWith");
 		return this.te.isUseableByPlayer(var1);
 	}
 }
