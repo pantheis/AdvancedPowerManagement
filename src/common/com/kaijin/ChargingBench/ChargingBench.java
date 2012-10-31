@@ -1,9 +1,5 @@
 package com.kaijin.ChargingBench;
 
-import com.kaijin.StorageMonitor.ItemStorageLinkCard;
-import com.kaijin.StorageMonitor.ItemStorageLinkCardCreator;
-import com.kaijin.StorageMonitor.TEStorageMonitor1;
-
 import ic2.api.Items;
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;

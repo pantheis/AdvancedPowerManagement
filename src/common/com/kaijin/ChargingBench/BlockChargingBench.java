@@ -5,6 +5,8 @@ import ic2.api.Items;
 import java.util.List;
 import java.util.Random;
 
+import com.kaijin.StorageMonitor.StorageMonitor;
+
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
@@ -78,6 +80,11 @@ public class BlockChargingBench extends Block
 			else if (meta >= 8 && meta <= 10)
 			{
 				entityplayer.openGui(ChargingBench.instance, 2, world, x, y, z);
+				return true;
+			}
+			else if (meta == 11)
+			{
+				entityplayer.openGui(ChargingBench.instance, 3, world, x, y, z);
 				return true;
 			}
 			else
