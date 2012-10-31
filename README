@@ -111,6 +111,7 @@ Valid electrical items placed into the charging bench via tubes will automatical
 from the input slot to an available charging slot, then moved to the output slot once fully
 charged. In this way, you can easily automate recharging of items!
 
+
 Battery Stations
 -------------------
 Sure, a charging bench lets you fill up a lot of items at the same time with ease, but what
@@ -190,6 +191,35 @@ Finally, the battery station has two more features similar to those of the charg
 is an activity indicator light, which will be lit while it is draining items or sending out EU.
 The other is that a redstone signal will deactivate the battery station, preventing it from
 performing those actions at all.
+
+
+Storage Monitor
+-------------------
+Everyone who's tried to set up an energy monitoring system of some sort knows that the redstone
+signals from your batbox, MFE, or MFSU aren't very useful and don't work very well - not to
+mention the fact that if you have a lot of wiring connected to the storage unit, it can be very
+tricky to get a redstone signal out of it, too, especially using vanilla redstone mechanics!
+Fret no more, because the storage monitor allows you to remotely monitor an energy storage unit
+and will start emitting redstone when the power level is low, and stop when the power is high.
+But that's not all! It allows you to configure the two thresholds at which the redstone signal
+turns on and off, so that you can customize its behavior to your precise needs. Hook it up to
+activate your nuclear reactor only when your MFSU's power is below 10%, so that renewable
+sources of energy will be used to refill your power reserves as often as possible... or make
+certain your high power consumption factory floor never runs out of juice by activating it any
+time the power falls below 80 or 90%!
+
+Just craft a link card and connect it to the device you wish to monitor by right-clicking on
+the batbox, MFE, or MFSU with the card. Then insert the card into the storage monitoring device
+and use the controls to configure its behavior. Or you can just keep the default settings, and
+the redstone signal will turn on when power falls below 60% and shut off when it rises to 90%.
+You can even use them to monitor a charging bench (or other mods' EU storage blocks, if they
+implement the IEnergyStorage interface from the IC2 API!)
+
+If you need to move your energy storage unit or want to reuse a link card elsewhere, there's no
+need to throw it away and craft a new one. You can wipe a link card clean by holding it in your
+hand and right-clicking in the air while holding your sneak key (as a safety feature to prevent
+accidental erasure). It will revert to a blank link card which you can then reuse on any storage
+unit you'd like.
 
 
 Emitters? What's this?
