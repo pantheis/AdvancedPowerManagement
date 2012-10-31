@@ -36,7 +36,6 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 	private boolean tileLoaded;
 
-	public int baseTier;
 	public int energyStored;
 	public int energyCapacity;
 	public int chargeLevel;
@@ -45,7 +44,6 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	public boolean blockState;
 
 	public int[] targetCoords = new int[3];
-
 	public TileEntity targetTile;
 
 	public TEStorageMonitor()
@@ -67,7 +65,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	private void selfDestroy()
 	{
 		dropContents();
-		ItemStack stack = new ItemStack(ChargingBench.blockChargingBench, 1, 10);
+		ItemStack stack = new ItemStack(ChargingBench.blockChargingBench, 1, 11);
 		dropItem(stack);
 		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
 		this.invalidate();
@@ -207,27 +205,21 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 	public void onInventoryChanged(int slot)
 	{
-		if (ChargingBench.isDebugging) System.out.println("TE.onInventoryChanged.slot.checkInventory()");
-		checkInventory();
-		super.onInventoryChanged();
+		this.onInventoryChanged();
 	}
 
 	@Override
 	public void onInventoryChanged()
 	{
-		// We're not sure what called this or what slot was altered, so make sure the upgrade effects are correct just in case and then pass the call on.
-		if (ChargingBench.isDebugging) System.out.println("TE.onInventoryChanged.checkInventory()");
+		if (ChargingBench.isDebugging) System.out.println("TEStorageMonitor.onInventoryChanged");
+		checkInventory();
 		super.onInventoryChanged();
 	}
 
 	public boolean isItemValid(int slot, ItemStack stack)
 	{
-		// Decide if the item is a valid IC2 electrical item
-		if (stack != null && stack.getItem() instanceof ItemStorageLinkCard)
-		{
-			return true;
-		}
-		return false; 
+		// Decide if the item is valid to place in a slot  
+		return stack != null && stack.getItem() instanceof ItemStorageLinkCard; 
 	}
 
 	/**
@@ -239,14 +231,12 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 		{
 			super.readFromNBT(nbttagcompound);
 
-			// Read extra NBT stuff here
-			baseTier = nbttagcompound.getInteger("baseTier");
+			// State info to remember
 			isPowering = nbttagcompound.getBoolean("isPowering");
-			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-
-			contents = new ItemStack[ChargingBench.smInventorySize];
 
 			// Our inventory
+			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
+			contents = new ItemStack[ChargingBench.smInventorySize];
 			for (int i = 0; i < nbttaglist.tagCount(); ++i)
 			{
 				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
@@ -257,8 +247,6 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 					contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
 				}
 			}
-
-			// We can calculate these, no need to save/load them.
 		}
 	}
 
@@ -270,6 +258,9 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 		if (!ChargingBench.proxy.isClient())
 		{
 			super.writeToNBT(nbttagcompound);
+
+			// State info to remember
+			nbttagcompound.setBoolean("isPowering", isPowering);
 
 			// Our inventory
 			NBTTagList nbttaglist = new NBTTagList();
@@ -285,10 +276,6 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 				}
 			}
 			nbttagcompound.setTag("Items", nbttaglist);
-
-			//write extra NBT stuff here
-			nbttagcompound.setInteger("baseTier", baseTier);
-			nbttagcompound.setBoolean("isPowering", isPowering);
 		}
 	}
 
@@ -336,10 +323,17 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 				TileEntity tile = worldObj.getBlockTileEntity(targetCoords[0], targetCoords[1], targetCoords[2]);
 				if (tile instanceof IEnergyStorage)
 				{
-					//				if (ChargingBench.isDebugging) System.out.println("updateEntity - check energy level of remote block");
-					this.energyStored = ((IEnergyStorage)tile).getStored();
-					this.energyCapacity = ((IEnergyStorage)tile).getCapacity();
-					this.blockState = true;
+					energyStored = ((IEnergyStorage)tile).getStored();
+					energyCapacity = ((IEnergyStorage)tile).getCapacity();
+					blockState = true;
+//					type = TargetType.IENERGYSTORAGE;
+//				}
+//				else if (tile instanceof TEChargingBench)
+//				{
+//					energyStored = ((TEChargingBench)tile).getStored();
+//					energyCapacity = ((TEChargingBench)tile).getCapacity();
+//					blockState = true;
+//					type = TargetType.IENERGYSTORAGE;
 				}
 				else
 				{
