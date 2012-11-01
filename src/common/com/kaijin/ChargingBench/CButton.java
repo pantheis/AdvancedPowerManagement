@@ -71,7 +71,7 @@ public class CButton extends GuiButton
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             mc.renderEngine.bindTexture(textureID);
             this.isHovering = xLoc >= this.xPosition && yLoc >= this.yPosition && xLoc < this.xPosition + this.width && yLoc < this.yPosition + this.height;
-            int hoverState = this.getHoverState(this.field_82253_i);
+            int hoverState = this.getHoverState(isHovering);
             if (hoverState == 1) hoverState = 0;
             this.drawTexturedModalRect(this.xPosition, this.yPosition, this.uLoc + (hoverState * this.uHoverOffset), this.vLoc + (hoverState * this.vHoverOffset), this.width, this.height);
             this.mouseDragged(mc, xLoc, yLoc);
