@@ -67,20 +67,11 @@ public class GuiStorageMonitor extends GuiContainer
 		// Draw tier and title
 		fontRenderer.drawString("Storage Monitor", 50, 7, 4210752);
 
+		final boolean invalid = tile.energyStored == -1 || tile.energyCapacity == -1; 
+
 		// Compute strings for current and max storage
-		String s1 = "";
-		String s2 = "";
-		if (tile.energyStored == -1 || tile.energyCapacity == -1)
-		{
-			s1 = "Invalid";
-			s2 = "Remote";
-		}
-		else
-		{
-			s1 = (Integer.toString(tile.energyStored));
-			s2 = (Integer.toString(tile.energyCapacity));
-		}
-		
+		String s1 = invalid ? "Invalid" : (Integer.toString(tile.energyStored));
+		String s2 = invalid ? "Remote" : (Integer.toString(tile.energyCapacity));
 		String s3 = df.format(tile.lowerBoundary);
 		String s4 = df.format(tile.upperBoundary);
 		
@@ -89,7 +80,7 @@ public class GuiStorageMonitor extends GuiContainer
 		// Draw left-aligned max energy number
 		fontRenderer.drawString(s2, 98, 20, 4210752);
 		// Draw separator
-		fontRenderer.drawString(" / ", 85, 20, 4210752);
+		if (!invalid) fontRenderer.drawString(" / ", 85, 20, 4210752);
 		
 		fontRenderer.drawString("Upper Threshold (Off)", 43, 40, 0xA03333);
 		drawCenteredText(fontRenderer, s3, 97, 53, 4210752);
