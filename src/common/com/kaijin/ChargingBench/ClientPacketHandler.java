@@ -44,7 +44,7 @@ public class ClientPacketHandler implements IPacketHandler
 	 *     4: int      charge level for texture
 	 *     5: boolean  power state for texture
 	 *     6: boolean  valid state for texture
-	 *
+	 *     
 	 */
 
 	@Override

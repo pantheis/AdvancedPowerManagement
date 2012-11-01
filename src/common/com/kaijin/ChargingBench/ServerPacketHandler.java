@@ -8,8 +8,11 @@ package com.kaijin.ChargingBench;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
+import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
@@ -19,75 +22,56 @@ public class ServerPacketHandler implements IPacketHandler
 	int x = 0;
 	int y = 0;
 	int z = 0;
-	int Metainfo = 0;
-
-	boolean snapshot = false;
-	boolean rotateRequest = false;
 
 	/*
 	 * Packet format:
-	 * byte 0: Packet Type
-	 *     Currently available packet types
-	 *         Client:
-	 *         0=
-	 *             byte 1: x location of TileEntity
-	 *             byte 2: y location of TileEntity
-	 *             byte 3: z location of TileEntity
-	 *             byte 4: boolean request, false = clear snapshot, true = take snapshot
-	 *         1=
-	 *             byte 1: x location of TileEntity
-	 *             byte 2: y location of TileEntity
-	 *             byte 3: z location of TileEntity
-	 *             byte 4: boolean request, false = not used, true = rotate request
+	 * 0: byte  Packet Type
+	 * 1: int   x location of TileEntity
+	 * 2: int   y location of TileEntity
+	 * 3: int   z location of TileEntity
+	 *  
+	 * Currently available packet types
 	 *         
-	 *         Server:
-	 *         0=
-	 *             byte 1: x location of TileEntity
-	 *             byte 2: y location of TileEntity
-	 *             byte 3: z location of TileEntity
-	 *             byte 4: int, charge level for texture
+	 * Client-to-Server:
+	 * 0 = Storage Monitor GUI command info
+	 *     4: int      Button ID clicked
 	 */
 	
 	@Override
 	public void onPacketData(INetworkManager network, Packet250CustomPayload packet, Player player)
 	{
-		//if (ChargingBench.isDebugging) System.out.println("ServerPacketHandler.onPacketData");
 		DataInputStream stream = new DataInputStream(new ByteArrayInputStream(packet.data));
-		//Read the first int to determine packet type
+		// Determine packet type and coordinates of affected tile entity 
+		packetType = -1;
 		try
 		{
 			packetType = stream.readInt();
+			x = stream.readInt();
+			y = stream.readInt();
+			z = stream.readInt();
 		}
 		catch (Exception ex)
 		{
 			ex.printStackTrace();
+			return;
 		}
-		/*
-		 * each packet type needs to implement an if and then whatever other read functions it needs
-		 * complete with try/catch blocks
-		 */
+		if (packetType < 0) return;
+
+		World world = ((EntityPlayerMP)player).worldObj;
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+
 		if (packetType == 0)
 		{
+			if (ChargingBench.isDebugging) System.out.println("Packet 0");
 			try
 			{
-				x = stream.readInt();
-				y = stream.readInt();
-				z = stream.readInt();
-				snapshot = stream.readBoolean();
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-		if (packetType == 1)
-		{
-			try
-			{
-				x = stream.readInt();
-				y = stream.readInt();
-				z = stream.readInt();
-				rotateRequest = stream.readBoolean();
+				int buttonID = stream.readInt();
+				if (ChargingBench.isDebugging) System.out.println("Button " + buttonID);
+				if (tile instanceof TEStorageMonitor)
+				{
+					if (ChargingBench.isDebugging) System.out.println("Storage Monitor command sent");
+					((TEStorageMonitor)tile).receiveGuiCommand(buttonID);
+				}
 			}
 			catch (Exception ex)
 			{
