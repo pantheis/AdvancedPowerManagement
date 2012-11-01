@@ -26,6 +26,7 @@ public class CommonProxy implements IGuiHandler
 	public static final String GUI1_PNG    = "/com/kaijin/ChargingBench/textures/GUIChargingBench.png";
 	public static final String GUI2_PNG    = "/com/kaijin/ChargingBench/textures/GUIBatteryStation.png";
 	public static final String GUI3_PNG    = "/com/kaijin/ChargingBench/textures/GUIStorageMonitor.png";
+	public static final String GUI4_PNG    = "/com/kaijin/ChargingBench/textures/GUIAdvEmitter.png";
 
 	public void load()
 	{
@@ -63,11 +64,15 @@ public class CommonProxy implements IGuiHandler
 		{
 			return new ContainerChargingBench(player.inventory, (TEChargingBench)tile);
 		}
-		else if (ID == 2 && tile instanceof TEBatteryStation)
+		else if (ID == 2 && tile instanceof TEAdvEmitter)
+		{
+			return new ContainerAdvEmitter(player.inventory, (TEAdvEmitter)tile);
+		}
+		else if (ID == 3 && tile instanceof TEBatteryStation)
 		{
 			return new ContainerBatteryStation(player.inventory, (TEBatteryStation)tile);
 		}
-		else if (ID == 3 && tile instanceof TEStorageMonitor)
+		else if (ID == 4 && tile instanceof TEStorageMonitor)
 		{
 			return new ContainerStorageMonitor(player.inventory, (TEStorageMonitor)tile);
 		}
@@ -86,11 +91,15 @@ public class CommonProxy implements IGuiHandler
 		{
 			return new GuiChargingBench(player.inventory, (TEChargingBench)tile);
 		}
-		else if (ID == 2 && tile instanceof TEBatteryStation)
+		else if (ID == 2 && tile instanceof TEAdvEmitter)
+		{
+			return new GuiAdvEmitter(player.inventory, (TEAdvEmitter)tile);
+		}
+		else if (ID == 3 && tile instanceof TEBatteryStation)
 		{
 			return new GuiBatteryStation(player.inventory, (TEBatteryStation)tile);
 		}
-		else if (ID == 3 && tile instanceof TEStorageMonitor)
+		else if (ID == 4 && tile instanceof TEStorageMonitor)
 		{
 			return new GuiStorageMonitor(player.inventory, (TEStorageMonitor)tile);
 		}

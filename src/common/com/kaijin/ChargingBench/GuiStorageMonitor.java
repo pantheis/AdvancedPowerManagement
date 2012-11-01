@@ -43,7 +43,8 @@ public class GuiStorageMonitor extends GuiContainer
 		//Button definition - mouse over CButton for details
 		for (int i = 0; i < buttons.length; i++)
 		{
-			buttons[i] = new CButton(i, 0, 0, 20, 10, 0, 192, 0, 0, displayStrings[i % 4], 0xFFFFFF, 16777120, ChargingBench.proxy.GUI3_PNG);
+			//16777120 old highlight color code, saved here for reference
+			buttons[i] = new CButton(i, 0, 0, 22, 12, 0, 192, 0, 206, displayStrings[i % 4], 0xFFFFFF, 0xFFFFFF, ChargingBench.proxy.GUI3_PNG);
 		}
 	}
 
@@ -51,28 +52,38 @@ public class GuiStorageMonitor extends GuiContainer
 	protected void drawGuiContainerForegroundLayer(int x, int y)
 	{
 		// Draw tier and title
-		fontRenderer.drawString("Storage Monitor", 50, 7, 4210752);
+		fontRenderer.drawString("Storage Monitor", 54, 7, 4210752);
 
 		if (tile.energyStored == -1 || tile.energyCapacity == -1)
 		{
-			Utils.drawCenteredText(fontRenderer, "Invalid Remote", 90, 20, 4210752);
+			Utils.drawCenteredText(fontRenderer, "No Valid Link", 90, 20, 0xFF5555);
 		}
 		else
 		{
 			// Draw Right-aligned current energy number
-			Utils.drawRightAlignedText(fontRenderer, Integer.toString(tile.energyStored), 85, 20, 4210752);
+			Utils.drawRightAlignedText(fontRenderer, Integer.toString(tile.energyStored), 90, 21, 0x55FF55);
 
 			// Draw separator and left-aligned max energy number
-			fontRenderer.drawString(" / " + Integer.toString(tile.energyCapacity), 85, 20, 4210752);
+			fontRenderer.drawString(" / " + Integer.toString(tile.energyCapacity), 90, 21, 0x55FF55);
+
+			// Draw Right-aligned current energy number
+			// Test string with 9 digits
+//			Utils.drawRightAlignedText(fontRenderer, "123456789", 85, 21, 4210752);
+
+			// Draw separator and left-aligned max energy number
+			// Test string with 9 digits
+//			fontRenderer.drawString(" / " + "123456789", 85, 21, 4210752);
+
+			
 		}
 		final String upper = Integer.toString(tile.upperBoundary) + "%";
 		final String lower = Integer.toString(tile.lowerBoundary) + "%";
 		
-		fontRenderer.drawString("Upper Threshold (Off)", 43, 40, 0xA03333);
-		Utils.drawRightAlignedText(fontRenderer, upper, 109, 53, 4210752);
+		fontRenderer.drawString("Upper Threshold (Off)", 41, 38, 0xA03333);
+		Utils.drawRightAlignedText(fontRenderer, upper, 109, 53, 0x55FF55);
 		
-		fontRenderer.drawString("Lower Threshold (On)", 43, 75, 0xA03333);
-		Utils.drawRightAlignedText(fontRenderer, lower, 109, 88, 4210752);
+		fontRenderer.drawString("Lower Threshold (On)", 41, 73, 0xA03333);
+		Utils.drawRightAlignedText(fontRenderer, lower, 109, 88, 0x55FF55);
 	}
 
 	@Override
@@ -98,12 +109,12 @@ public class GuiStorageMonitor extends GuiContainer
 		}
 
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
-		final int horizOffs[] = {-50, -28, 25, 47};
+		final int horizOffs[] = {-55, -31, 25, 49};
 
 		for (int i = 0; i < 8; i++)
 		{
 			buttons[i].xPosition = width / 2 + horizOffs[i % 4];
-			buttons[i].yPosition = yLoc + 52 + 35 * (i / 4);
+			buttons[i].yPosition = yLoc + 50 + 35 * (i / 4);
 		}
 
 		/*
