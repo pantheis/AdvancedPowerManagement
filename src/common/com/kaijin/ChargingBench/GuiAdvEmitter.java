@@ -23,14 +23,14 @@ public class GuiAdvEmitter extends GuiContainer
 	IInventory playerInventory;
 	public TEAdvEmitter tile;
 
-	private final String displayStrings[] = {"-10", "-1", "+1", "+10"};
+	private final String displayStrings[] = {"-100", "-10", "-1", "+1", "+10", "+100"};
 
-	private CButton buttons[] = new CButton[8];
+	private CButton buttons[] = new CButton[12];
 
 	public GuiAdvEmitter(InventoryPlayer player, TEAdvEmitter tile)
 	{
 		super(new ContainerAdvEmitter(player, tile));
-		if (ChargingBench.isDebugging) System.out.println("GuiStorageMonitor");
+		if (ChargingBench.isDebugging) System.out.println("GuiAdvEmitter");
 		this.tile = tile;
 		/** The X size of the inventory window in pixels. */
 		xSize = 176;
@@ -42,7 +42,7 @@ public class GuiAdvEmitter extends GuiContainer
 		for (int i = 0; i < buttons.length; i++)
 		{
 			//16777120 old highlight color code, saved here for reference
-			buttons[i] = new CButton(i, 0, 0, 22, 12, 0, 192, 0, 206, displayStrings[i % 4], 0xFFFFFF, 0xFFFFFF, ChargingBench.proxy.GUI3_PNG);
+			buttons[i] = new CButton(i, 0, 0, 22, 12, 0, 192, 0, 206, displayStrings[i % 6], 0xFFFFFF, 0xFFFFFF, ChargingBench.proxy.GUI4_PNG);
 		}
 	}
 
@@ -58,14 +58,14 @@ public class GuiAdvEmitter extends GuiContainer
 		fontRenderer.drawString("Packet Size", 41, 38, 0xA03333);
 		Utils.drawRightAlignedText(fontRenderer, upper, 109, 53, 0x55FF55);
 
-		fontRenderer.drawString("Total EU/T", 41, 73, 0xA03333);
+		fontRenderer.drawString("Total EU", 41, 73, 0xA03333);
 		Utils.drawRightAlignedText(fontRenderer, lower, 109, 88, 0x55FF55);
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
-		final int textureID = mc.renderEngine.getTexture(ChargingBench.proxy.GUI3_PNG);
+		final int textureID = mc.renderEngine.getTexture(ChargingBench.proxy.GUI4_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(textureID);
 
@@ -75,9 +75,9 @@ public class GuiAdvEmitter extends GuiContainer
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
-		final int horizOffs[] = {-55, -31, 25, 49};
+		final int horizOffs[] = {-70, -55, -31, 25, 49, 65};
 
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 12; i++)
 		{
 			buttons[i].xPosition = width / 2 + horizOffs[i % 4];
 			buttons[i].yPosition = yLoc + 50 + 35 * (i / 4);
