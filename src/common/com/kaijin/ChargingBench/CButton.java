@@ -52,7 +52,7 @@ public class CButton extends GuiButton
         this.color = color;
         this.texture = texture;
         this.uLoc = uLoc;
-        this.vLoc = yLoc;
+        this.vLoc = vLoc;
         this.uHoverOffset = uHoverOffset;
         this.vHoverOffset = vHoverOffset;
         this.hoverColor = hoverColor;

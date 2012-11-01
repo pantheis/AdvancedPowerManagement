@@ -20,8 +20,8 @@ public class ContainerStorageMonitor extends Container
 	public TEStorageMonitor te;
 	public int energyStored;
 	public int energyCapacity;
-	public float lowerBoundary;
-	public float upperBoundary;
+	public int lowerBoundary;
+	public int upperBoundary;
 
 	public ContainerStorageMonitor(InventoryPlayer player, TEStorageMonitor tile)
 	{
@@ -29,8 +29,8 @@ public class ContainerStorageMonitor extends Container
 		this.te = tile;
 		this.energyStored = -1;
 		this.energyCapacity = -1;
-		this.lowerBoundary = -1.0F;
-		this.upperBoundary = -1.0F;
+		this.lowerBoundary = -1;
+		this.upperBoundary = -1;
 
 		final int topOffset = 32; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
@@ -81,11 +81,12 @@ public class ContainerStorageMonitor extends Container
 
 			if (this.lowerBoundary != te.lowerBoundary)
 			{
-				crafter.updateCraftingInventoryInfo(this, 4, te.lowerBoundaryBits);
+				crafter.updateCraftingInventoryInfo(this, 4, te.lowerBoundary);
 			}
 			if (this.upperBoundary != te.upperBoundary)
 			{
-				crafter.updateCraftingInventoryInfo(this, 5, te.upperBoundaryBits);
+				if (ChargingBench.isDebugging) System.out.println("CSM.uCR: upper bound mismatch");
+				crafter.updateCraftingInventoryInfo(this, 5, te.upperBoundary);
 			}
 		}
 		this.energyStored = te.energyStored;
@@ -124,13 +125,11 @@ public class ContainerStorageMonitor extends Container
 
 			//FIXME? elaborate dance to transmit two floats via 4 shorts, maybe can be done better
 		case 4:
-			te.lowerBoundaryBits = value;
-			te.lowerBoundary = (float)te.lowerBoundaryBits / 100.0F;
+			te.lowerBoundary = value;
 			break;
 
 		case 5:
-			te.upperBoundaryBits = value;
-			te.upperBoundary = (float)te.upperBoundaryBits / 100.0F;
+			te.upperBoundary = value;
 			break;
 
 		default:

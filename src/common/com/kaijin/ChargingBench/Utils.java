@@ -8,6 +8,7 @@ package com.kaijin.ChargingBench;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import net.minecraft.src.FontRenderer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 
@@ -21,6 +22,32 @@ public class Utils
 	public static boolean isDebug()
 	{
 		return ChargingBench.isDebugging;
+	}
+
+	/**
+	 * 
+	 * @param fr    - Font Renderer handle
+	 * @param text  - Text to display
+	 * @param xLoc  - x location
+	 * @param yLoc  - y location
+	 * @param color - Color
+	 */
+	protected static void drawCenteredText(FontRenderer fr, String text, int xLoc, int yLoc, int color)
+	{
+		fr.drawString(text, xLoc - fr.getStringWidth(text) / 2, yLoc, color);
+	}
+
+	/**
+	 * 
+	 * @param fr    - Font Renderer handle
+	 * @param text  - Text to display
+	 * @param xLoc  - x location
+	 * @param yLoc  - y location
+	 * @param color - Color
+	 */
+	protected static void drawRightAlignedText(FontRenderer fr, String text, int xLoc, int yLoc, int color)
+	{
+		fr.drawString(text, xLoc - fr.getStringWidth(text), yLoc, color);
 	}
 
 	/**
