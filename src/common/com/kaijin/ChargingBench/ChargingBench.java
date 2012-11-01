@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Yancarlo Ramsey and CJ Bowman
+ * Licensed as open source with restrictions. Please see attached LICENSE.txt.
+ ******************************************************************************/
 package com.kaijin.ChargingBench;
 
 import ic2.api.Items;
@@ -26,7 +30,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
-@Mod(modid = "ChargingBench", name="Charging Bench", version=CommonProxy.VERSION, dependencies = "required-after:IC2@[1.106,);required-after:Forge@[4.1.1.251,)")
+@Mod(modid = "ChargingBench", name="Charging Bench", version=CommonProxy.VERSION, dependencies = "required-after:IC2@[1.108,);required-after:Forge@[6.0.1.349,)")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,
 clientPacketHandlerSpec = @SidedPacketHandler(channels = {"ChargingBench"}, packetHandler = ClientPacketHandler.class),
 serverPacketHandlerSpec = @SidedPacketHandler(channels = ("ChargingBench"), packetHandler = ServerPacketHandler.class))

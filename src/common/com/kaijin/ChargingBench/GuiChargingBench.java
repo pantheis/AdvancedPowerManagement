@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Yancarlo Ramsey and CJ Bowman
+ * Licensed as open source with restrictions. Please see attached LICENSE.txt.
+ ******************************************************************************/
 package com.kaijin.ChargingBench;
 
 import net.minecraft.src.EntityPlayer;
@@ -8,6 +12,10 @@ import net.minecraft.src.InventoryPlayer;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class GuiChargingBench extends GuiContainer
 {
 	IInventory playerInventory;
@@ -76,7 +84,7 @@ public class GuiChargingBench extends GuiContainer
 			// Make each box light up all at once like a LED instead of gradually using barLength = tile.gaugeEnergyScaled(66); 
 			int barLength = 5 * tile.gaugeEnergyScaled(13);
 			if (barLength > 0) barLength++;
-			this.drawTexturedModalRect(xLoc + 32, yLoc + 100 - barLength, 176, 66 - barLength, 66, barLength);
+			this.drawTexturedModalRect(xLoc + 32, yLoc + 100 - barLength, 176, 66 - barLength, 12, barLength);
 		}
 	}
 }

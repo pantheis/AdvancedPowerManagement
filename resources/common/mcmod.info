@@ -3,14 +3,14 @@
   "modid": "ChargingBench",
   "name": "Charging Bench",
   "description": "This mod adds a Charging Bench to Industrial Craft 2 which allows you to charge up to 12 items simultaneously!",
-  "mcversion": "1.3.2",
+  "mcversion": "1.4.2",
   "version": "@VERSION@",
   "logoFile": "",
   "screenshots": [ "" ],
   "url": "http://www.kaijin.com/",
   "updateUrl": "",
   "authors": [ "Pantheis", "Tallinu" ],
-  "credits": "Drashian, Starlight",
+  "credits": "Charging Bench: Drashian, Starlight",
   "dependencies": [ "mod_MinecraftForge", "IC2" ]
 }
 ]
