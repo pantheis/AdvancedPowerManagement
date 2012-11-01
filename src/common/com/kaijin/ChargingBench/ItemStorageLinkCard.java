@@ -34,7 +34,7 @@ public class ItemStorageLinkCard extends ItemCardBase
 	@SideOnly(Side.SERVER)
 	public boolean getShareTag()
 	{
-		return false;
+		return true;
 	} 
 
 	@Override
