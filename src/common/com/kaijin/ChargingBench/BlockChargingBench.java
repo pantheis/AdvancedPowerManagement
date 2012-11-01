@@ -351,6 +351,11 @@ public class BlockChargingBench extends Block
 				((TEBatteryStation)tile).dropContents();
 				tile.invalidate();
 			}
+			else if (tile instanceof TEStorageMonitor)
+			{
+				((TEStorageMonitor)tile).dropContents();
+				tile.invalidate();
+			}
 		}
 	}
 }

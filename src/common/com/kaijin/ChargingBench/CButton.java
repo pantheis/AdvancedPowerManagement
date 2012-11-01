@@ -16,8 +16,8 @@ public class CButton extends GuiButton
     
     protected int uLoc;
     protected int vLoc;
-    protected int uHoverOffset;
-    protected int vHoverOffset;
+    protected int uHoverLoc;
+    protected int vHoverLoc;
     protected int color;
     protected int hoverColor;
     protected boolean isHovering;
@@ -31,14 +31,14 @@ public class CButton extends GuiButton
 	 * @param height      - height of button
 	 * @param uLoc        - x location of start of texture in texture file
 	 * @param vLoc        - y location of start of texture in texture file
-	 * @param uHoverOffset - x pixel offset for mouse-over texture
-	 * @param vHoverOffset - y pixel offset for mouse-over texture
+	 * @param uHoverLoc   - x location of start of texture for mouse over in texture file
+	 * @param vHoverLoc   - x location of start of texture for mouse over in texture file
 	 * @param text        - text to display on button
 	 * @param color       - color for the text
 	 * @param hoverColor  - color for the text while hovering
 	 * @param texture     - path to texture file 
 	 */
-	public CButton(int id, int xLoc, int yLoc, int width, int height, int uLoc, int vLoc, int uHoverOffset, int vHoverOffset, String text, int color, int hoverColor, String texture)
+	public CButton(int id, int xLoc, int yLoc, int width, int height, int uLoc, int vLoc, int uHoverLoc, int vHoverLoc, String text, int color, int hoverColor, String texture)
 	{
 		super(id, xLoc, yLoc, width, height, text);
         this.enabled = true;
@@ -53,8 +53,8 @@ public class CButton extends GuiButton
         this.texture = texture;
         this.uLoc = uLoc;
         this.vLoc = vLoc;
-        this.uHoverOffset = uHoverOffset;
-        this.vHoverOffset = vHoverOffset;
+        this.uHoverLoc = uHoverLoc;
+        this.vHoverLoc = vHoverLoc;
         this.hoverColor = hoverColor;
 	}
 	
@@ -72,8 +72,14 @@ public class CButton extends GuiButton
             mc.renderEngine.bindTexture(textureID);
             this.isHovering = xLoc >= this.xPosition && yLoc >= this.yPosition && xLoc < this.xPosition + this.width && yLoc < this.yPosition + this.height;
             int hoverState = this.getHoverState(isHovering);
-            if (hoverState == 1) hoverState = 0;
-            this.drawTexturedModalRect(this.xPosition, this.yPosition, this.uLoc + (hoverState * this.uHoverOffset), this.vLoc + (hoverState * this.vHoverOffset), this.width, this.height);
+            if (hoverState == 2)
+            {
+            	this.drawTexturedModalRect(this.xPosition, this.yPosition, this.uHoverLoc, this.vHoverLoc, this.width, this.height);
+            }
+            else
+            {
+            	this.drawTexturedModalRect(this.xPosition, this.yPosition, this.uLoc, this.vLoc, this.width, this.height);
+            }
             this.mouseDragged(mc, xLoc, yLoc);
             int defaultColor = this.color;
             int renderColor = defaultColor;
