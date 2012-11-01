@@ -222,9 +222,10 @@ public class ChargingBench implements ICraftingHandler
 		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1,  9), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("doubleInsulatedGoldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mvTransformer")});
 		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1, 10), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("trippleInsulatedIronCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("hvTransformer")});
 
-		// Storage Monitor recipes
-		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1, 11), new Object[] {"U U", "CUC", "U U", 'U', Items.getItem("insulatedCopperCableItem"), 'C', Items.getItem("electronicCircuit")});
+		// Storage Monitor recipe
+		GameRegistry.addRecipe(new ItemStack(blockChargingBench, 1, 11), new Object[] {"WUW", "GCG", "WRW", 'W', Block.planks, 'U', Items.getItem("goldCableItem"), 'G', Block.glass, 'C', Items.getItem("electronicCircuit"), 'R', Item.redstone});
 
+		// Link Card Creator recipe
 		GameRegistry.addRecipe(new ItemStack(itemStorageLinkCardCreator, 1, 0), new Object[] {"U  ", " C ", "  V", 'U', Items.getItem("insulatedCopperCableItem"), 'C', Items.getItem("electronicCircuit"), 'V', Item.paper});
 
 		// Bench Toolkit recipe
