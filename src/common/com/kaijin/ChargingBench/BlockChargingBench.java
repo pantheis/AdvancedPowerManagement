@@ -78,15 +78,19 @@ public class BlockChargingBench extends Block
 				entityplayer.openGui(ChargingBench.instance, 1, world, x, y, z);
 				return true;
 			}
-			else if (meta >= 8 && meta <= 10)
+			else if (meta == 7)
 			{
 				entityplayer.openGui(ChargingBench.instance, 2, world, x, y, z);
 				return true;
 			}
+			else if (meta >= 8 && meta <= 10)
+			{
+				entityplayer.openGui(ChargingBench.instance, 3, world, x, y, z);
+				return true;
+			}
 			else if (meta == 11)
 			{
-				System.out.println("Storage Monitor Block Activated");
-				entityplayer.openGui(ChargingBench.instance, 3, world, x, y, z);
+				entityplayer.openGui(ChargingBench.instance, 4, world, x, y, z);
 				return true;
 			}
 			else
