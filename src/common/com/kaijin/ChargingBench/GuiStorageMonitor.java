@@ -25,15 +25,7 @@ public class GuiStorageMonitor extends GuiContainer
 	public EntityPlayer player;
 	private CButton selectedButton = null;
 
-	private CButton button1 = null;
-	private CButton button2 = null;
-	private CButton button3 = null;
-	private CButton button4 = null;
-	
-	private CButton button5 = null;
-	private CButton button6 = null;
-	private CButton button7 = null;
-	private CButton button8 = null;
+	private CButton buttons[] = new CButton[8];
 
 
 	public GuiStorageMonitor(InventoryPlayer player, TEStorageMonitor tile)
@@ -48,15 +40,10 @@ public class GuiStorageMonitor extends GuiContainer
 		ySize = 190;
 		
 		//Button definition - mouse over CButton for details
-		button1 = new CButton(0, 0, 0, 20, 10, 0, 0, 0, 0, "", 0xFFFFFF, 16777120, ChargingBench.proxy.GUI3_PNG);
-		button2 = new CButton(1, 0, 0, 20, 10, 0, 0, 0, 0, "", 0xFFFFFF, 16777120, ChargingBench.proxy.GUI3_PNG);
-		button3 = new CButton(2, 0, 0, 20, 10, 0, 0, 0, 0, "", 0xFFFFFF, 16777120, ChargingBench.proxy.GUI3_PNG);
-		button4 = new CButton(3, 0, 0, 20, 10, 0, 0, 0, 0, "", 0xFFFFFF, 16777120, ChargingBench.proxy.GUI3_PNG);
-
-		button5 = new CButton(4, 0, 0, 20, 10, 0, 0, 0, 0, "", 0xFFFFFF, 16777120, ChargingBench.proxy.GUI3_PNG);
-		button6 = new CButton(5, 0, 0, 20, 10, 0, 0, 0, 0, "", 0xFFFFFF, 16777120, ChargingBench.proxy.GUI3_PNG);
-		button7 = new CButton(6, 0, 0, 20, 10, 0, 0, 0, 0, "", 0xFFFFFF, 16777120, ChargingBench.proxy.GUI3_PNG);
-		button8 = new CButton(7, 0, 0, 20, 10, 0, 0, 0, 0, "", 0xFFFFFF, 16777120, ChargingBench.proxy.GUI3_PNG);
+		for (int i = 0; i < buttons.length; i++)
+		{
+			buttons[i] = new CButton(i, 0, 0, 20, 10, 0, 0, 0, 0, "", 0xFFFFFF, 16777120, ChargingBench.proxy.GUI3_PNG);
+		}
 	}
 
 	/**
@@ -136,59 +123,59 @@ public class GuiStorageMonitor extends GuiContainer
 			// Make each box light up all at once like a LED instead of gradually using barLength = this.tile.gaugeEnergyScaled(66); 
 			int barLength = 5 * this.tile.gaugeEnergyScaled(13);
 			if (barLength > 0) barLength++;
-			
+
 			this.drawTexturedModalRect(xLoc + 10, yLoc + 100 - barLength, 176 + offset, 66 - barLength, 12, barLength);
 		}
-		
+
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
-		button1.xPosition = (this.width / 2) - 50;
-		button1.yPosition = yLoc + 52;
-		button1.vLoc = 192;
-		button1.displayString = "-10";
-		button1.drawButton(mc, mouseX, mouseY);
-		
-		button2.xPosition = (this.width / 2) - 28;
-		button2.yPosition = yLoc + 52;
-		button2.vLoc = 192;
-		button2.displayString = "-1";
-		button2.drawButton(mc, mouseX, mouseY);
+		buttons[0].xPosition = (this.width / 2) - 50;
+		buttons[0].yPosition = yLoc + 52;
+		buttons[0].vLoc = 192;
+		buttons[0].displayString = "-10";
+		buttons[0].drawButton(mc, mouseX, mouseY);
 
-		button3.xPosition = (this.width / 2) + 25;
-		button3.yPosition = yLoc + 52;
-		button3.vLoc = 192;
-		button3.displayString = "+1";
-		button3.drawButton(mc, mouseX, mouseY);
+		buttons[1].xPosition = (this.width / 2) - 28;
+		buttons[1].yPosition = yLoc + 52;
+		buttons[1].vLoc = 192;
+		buttons[1].displayString = "-1";
+		buttons[1].drawButton(mc, mouseX, mouseY);
 
-		button4.xPosition = (this.width / 2) + 47;
-		button4.yPosition = yLoc + 52;
-		button4.vLoc = 192;
-		button4.displayString = "+10";
-		button4.drawButton(mc, mouseX, mouseY);
-		
-		button5.xPosition = (this.width / 2) - 50;
-		button5.yPosition = yLoc + 87;
-		button5.vLoc = 192;
-		button5.displayString = "-10";
-		button5.drawButton(mc, mouseX, mouseY);
-		
-		button6.xPosition = (this.width / 2) - 28;
-		button6.yPosition = yLoc + 87;
-		button6.vLoc = 192;
-		button6.displayString = "-1";
-		button6.drawButton(mc, mouseX, mouseY);
+		buttons[2].xPosition = (this.width / 2) + 25;
+		buttons[2].yPosition = yLoc + 52;
+		buttons[2].vLoc = 192;
+		buttons[2].displayString = "+1";
+		buttons[2].drawButton(mc, mouseX, mouseY);
 
-		button7.xPosition = (this.width / 2) + 25;
-		button7.yPosition = yLoc + 87;
-		button7.vLoc = 192;
-		button7.displayString = "+1";
-		button7.drawButton(mc, mouseX, mouseY);
+		buttons[3].xPosition = (this.width / 2) + 47;
+		buttons[3].yPosition = yLoc + 52;
+		buttons[3].vLoc = 192;
+		buttons[3].displayString = "+10";
+		buttons[3].drawButton(mc, mouseX, mouseY);
 
-		button8.xPosition = (this.width / 2) + 47;
-		button8.yPosition = yLoc + 87;
-		button8.vLoc = 192;
-		button8.displayString = "+10";
-		button8.drawButton(mc, mouseX, mouseY);
+		buttons[4].xPosition = (this.width / 2) - 50;
+		buttons[4].yPosition = yLoc + 87;
+		buttons[4].vLoc = 192;
+		buttons[4].displayString = "-10";
+		buttons[4].drawButton(mc, mouseX, mouseY);
 
+		buttons[5].xPosition = (this.width / 2) - 28;
+		buttons[5].yPosition = yLoc + 87;
+		buttons[5].vLoc = 192;
+		buttons[5].displayString = "-1";
+		buttons[5].drawButton(mc, mouseX, mouseY);
+
+		buttons[6].xPosition = (this.width / 2) + 25;
+		buttons[6].yPosition = yLoc + 87;
+		buttons[6].vLoc = 192;
+		buttons[6].displayString = "+1";
+		buttons[6].drawButton(mc, mouseX, mouseY);
+
+		buttons[7].xPosition = (this.width / 2) + 47;
+		buttons[7].yPosition = yLoc + 87;
+		buttons[7].vLoc = 192;
+		buttons[7].displayString = "+10";
+		buttons[7].drawButton(mc, mouseX, mouseY);
+		//TODO Simplify these definitions - see if a for loop can be used for some of this.
 
 	}
 	
@@ -196,16 +183,19 @@ public class GuiStorageMonitor extends GuiContainer
 	@Override
 	protected void mouseClicked(int par1, int par2, int par3)
 	{
-		if (par3 == 0)
+		if (par3 == 0) // On a left click,
 		{
-			if (button1.mousePressed(this.mc, par1, par2))
+			for (CButton b : buttons) // For each item in buttons,
 			{
-				this.selectedButton = button1;
-				this.mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F);
-				this.actionPerformed(button1);
+				if (b.mousePressed(this.mc, par1, par2)) // if it was pressed,
+				{
+					selectedButton = b; // select it,
+					mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F); // provide audio feedback,
+					actionPerformed(b); // and call its action.
+				}
 			}
 		}
-		super.mouseClicked(par1, par2, par3);
+		super.mouseClicked(par1, par2, par3); // Finally, do all that other normal stuff. 
 	}
 
 	/*
@@ -218,8 +208,25 @@ public class GuiStorageMonitor extends GuiContainer
 		{
 			return;
 		}
-		if (button.id == 0)
+
+		switch (button.id) //TODO Fill out action behavior for each button
 		{
+		case 0: // UPPER -10
+			break;
+		case 1: // UPPER -1
+			break;
+		case 2: // UPPER +1
+			break;
+		case 3: // UPPER +10
+			break;
+		case 4: // LOWER -10
+			break;
+		case 5: // LOWER -1
+			break;
+		case 6: // LOWER +1
+			break;
+		case 7: // LOWER +10
+			break;
 		}
 	}
 }
