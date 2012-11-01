@@ -44,7 +44,7 @@ public class GuiStorageMonitor extends GuiContainer
 		for (int i = 0; i < buttons.length; i++)
 		{
 			//16777120 old highlight color code, saved here for reference
-			buttons[i] = new CButton(i, 0, 0, 20, 10, 0, 192, 0, 205, displayStrings[i % 4], 0xFFFFFF, 0xFFFFFF, ChargingBench.proxy.GUI3_PNG);
+			buttons[i] = new CButton(i, 0, 0, 22, 12, 0, 192, 0, 206, displayStrings[i % 4], 0xFFFFFF, 0xFFFFFF, ChargingBench.proxy.GUI3_PNG);
 		}
 	}
 
@@ -52,7 +52,7 @@ public class GuiStorageMonitor extends GuiContainer
 	protected void drawGuiContainerForegroundLayer(int x, int y)
 	{
 		// Draw tier and title
-		fontRenderer.drawString("Storage Monitor", 50, 7, 4210752);
+		fontRenderer.drawString("Storage Monitor", 54, 7, 4210752);
 
 		if (tile.energyStored == -1 || tile.energyCapacity == -1)
 		{
@@ -61,10 +61,10 @@ public class GuiStorageMonitor extends GuiContainer
 		else
 		{
 			// Draw Right-aligned current energy number
-			Utils.drawRightAlignedText(fontRenderer, Integer.toString(tile.energyStored), 85, 20, 0x55FF55);
+			Utils.drawRightAlignedText(fontRenderer, Integer.toString(tile.energyStored), 90, 21, 0x55FF55);
 
 			// Draw separator and left-aligned max energy number
-			fontRenderer.drawString(" / " + Integer.toString(tile.energyCapacity), 85, 20, 0x55FF55);
+			fontRenderer.drawString(" / " + Integer.toString(tile.energyCapacity), 90, 21, 0x55FF55);
 
 			// Draw Right-aligned current energy number
 			// Test string with 9 digits
@@ -109,12 +109,12 @@ public class GuiStorageMonitor extends GuiContainer
 		}
 
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
-		final int horizOffs[] = {-53, -31, 27, 49};
+		final int horizOffs[] = {-55, -31, 25, 49};
 
 		for (int i = 0; i < 8; i++)
 		{
 			buttons[i].xPosition = width / 2 + horizOffs[i % 4];
-			buttons[i].yPosition = yLoc + 52 + 35 * (i / 4);
+			buttons[i].yPosition = yLoc + 50 + 35 * (i / 4);
 		}
 
 		/*
