@@ -47,46 +47,34 @@ public class GuiStorageMonitor extends GuiContainer
 		}
 	}
 
-	/**
-	 * 
-	 * @param fr    - Font Renderer handle
-	 * @param text  - Text to display
-	 * @param xLoc  - x location
-	 * @param yLoc  - y location
-	 * @param color - Color
-	 */
-	protected void drawCenteredText(FontRenderer fr, String text, int xLoc, int yLoc, int color)
-	{
-		fr.drawString(text, xLoc - fr.getStringWidth(text) / 2, yLoc, color);
-	}
-	
 	@Override
 	protected void drawGuiContainerForegroundLayer(int x, int y)
 	{
-		DecimalFormat df = new DecimalFormat("#,##0%");
+		final DecimalFormat df = new DecimalFormat("#,##0%");
+
 		// Draw tier and title
 		fontRenderer.drawString("Storage Monitor", 50, 7, 4210752);
 
-		final boolean invalid = tile.energyStored == -1 || tile.energyCapacity == -1; 
+		if (tile.energyStored == -1 || tile.energyCapacity == -1)
+		{
+			Utils.drawCenteredText(fontRenderer, "Invalid Remote", 90, 20, 4210752);
+		}
+		else
+		{
+			// Draw Right-aligned current energy number
+			Utils.drawRightAlignedText(fontRenderer, Integer.toString(tile.energyStored), 85, 20, 4210752);
 
-		// Compute strings for current and max storage
-		String s1 = invalid ? "Invalid" : (Integer.toString(tile.energyStored));
-		String s2 = invalid ? "Remote" : (Integer.toString(tile.energyCapacity));
-		String s3 = df.format(tile.lowerBoundary);
-		String s4 = df.format(tile.upperBoundary);
-		
-		// Draw Right-aligned current energy number
-		fontRenderer.drawString(s1, (85 - fontRenderer.getStringWidth(s1)), 20, 4210752);
-		// Draw left-aligned max energy number
-		fontRenderer.drawString(s2, 98, 20, 4210752);
-		// Draw separator
-		if (!invalid) fontRenderer.drawString(" / ", 85, 20, 4210752);
+			// Draw separator and left-aligned max energy number
+			fontRenderer.drawString(" / " + Integer.toString(tile.energyCapacity), 85, 20, 4210752);
+		}
+		final String upper = df.format(tile.lowerBoundary);
+		final String lower = df.format(tile.upperBoundary);
 		
 		fontRenderer.drawString("Upper Threshold (Off)", 43, 40, 0xA03333);
-		drawCenteredText(fontRenderer, s3, 97, 53, 4210752);
+		Utils.drawCenteredText(fontRenderer, upper, 97, 53, 4210752);
 		
 		fontRenderer.drawString("Lower Threshold (On)", 43, 75, 0xA03333);
-		drawCenteredText(fontRenderer, s4, 97, 88, 4210752);
+		Utils.drawCenteredText(fontRenderer, lower, 97, 88, 4210752);
 	}
 
 	@Override
