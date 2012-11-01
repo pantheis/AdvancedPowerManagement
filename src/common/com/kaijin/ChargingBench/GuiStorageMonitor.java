@@ -22,11 +22,12 @@ public class GuiStorageMonitor extends GuiContainer
 {
 	IInventory playerInventory;
 	public TEStorageMonitor tile;
-	public EntityPlayer player;
-	private CButton selectedButton = null;
+	//public EntityPlayer player;
+	//private CButton selectedButton = null;
+
+	private final String displayStrings[] = {"-10", "-1", "+1", "+10"};
 
 	private CButton buttons[] = new CButton[8];
-
 
 	public GuiStorageMonitor(InventoryPlayer player, TEStorageMonitor tile)
 	{
@@ -42,7 +43,7 @@ public class GuiStorageMonitor extends GuiContainer
 		//Button definition - mouse over CButton for details
 		for (int i = 0; i < buttons.length; i++)
 		{
-			buttons[i] = new CButton(i, 0, 0, 20, 10, 0, 0, 0, 0, "", 0xFFFFFF, 16777120, ChargingBench.proxy.GUI3_PNG);
+			buttons[i] = new CButton(i, 0, 0, 20, 10, 0, 192, 0, 0, displayStrings[i % 4], 0xFFFFFF, 16777120, ChargingBench.proxy.GUI3_PNG);
 		}
 	}
 
@@ -64,7 +65,7 @@ public class GuiStorageMonitor extends GuiContainer
 	{
 		DecimalFormat df = new DecimalFormat("#,##0%");
 		// Draw tier and title
-		this.fontRenderer.drawString("Storage Monitor", 50, 7, 4210752);
+		fontRenderer.drawString("Storage Monitor", 50, 7, 4210752);
 
 		// Compute strings for current and max storage
 		String s1 = "";
@@ -84,98 +85,81 @@ public class GuiStorageMonitor extends GuiContainer
 		String s4 = df.format(tile.upperBoundary);
 		
 		// Draw Right-aligned current energy number
-		this.fontRenderer.drawString(s1, (85 - this.fontRenderer.getStringWidth(s1)), 20, 4210752);
+		fontRenderer.drawString(s1, (85 - fontRenderer.getStringWidth(s1)), 20, 4210752);
 		// Draw left-aligned max energy number
-		this.fontRenderer.drawString(s2, 98, 20, 4210752);
+		fontRenderer.drawString(s2, 98, 20, 4210752);
 		// Draw separator
-		this.fontRenderer.drawString(" / ", 85, 20, 4210752);
+		fontRenderer.drawString(" / ", 85, 20, 4210752);
 		
-		this.fontRenderer.drawString("Upper Threshold (Off)", 43, 40, 0xA03333);
-		drawCenteredText(this.fontRenderer, s3, 97, 53, 4210752);
+		fontRenderer.drawString("Upper Threshold (Off)", 43, 40, 0xA03333);
+		drawCenteredText(fontRenderer, s3, 97, 53, 4210752);
 		
-		this.fontRenderer.drawString("Lower Threshold (On)", 43, 75, 0xA03333);
-		drawCenteredText(this.fontRenderer, s4, 97, 88, 4210752);
-		
-		
+		fontRenderer.drawString("Lower Threshold (On)", 43, 75, 0xA03333);
+		drawCenteredText(fontRenderer, s4, 97, 88, 4210752);
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
-		int textureID = this.mc.renderEngine.getTexture(ChargingBench.proxy.GUI3_PNG);
+		final int textureID = mc.renderEngine.getTexture(ChargingBench.proxy.GUI3_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		this.mc.renderEngine.bindTexture(textureID);
-		int xLoc = (this.width - this.xSize) / 2;
-		int yLoc = (this.height - this.ySize) / 2;
-		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, this.xSize, this.ySize);
+		mc.renderEngine.bindTexture(textureID);
 
-		if (this.tile.energyStored > 0)
+		int xLoc = (width - xSize) / 2;
+		int yLoc = (height - ySize) / 2;
+
+		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
+
+		if (tile.energyStored > 0)
 		{
-			int offset = 0;
-			if (this.tile.isPowering)
-			{
-				offset = 12;
-			}
-			else
-			{
-				offset = 0;
-			}
+			final int offset = tile.isPowering ? 12 : 0;
 			// Make each box light up all at once like a LED instead of gradually using barLength = this.tile.gaugeEnergyScaled(66); 
-			int barLength = 5 * this.tile.gaugeEnergyScaled(13);
+			int barLength = 5 * tile.gaugeEnergyScaled(13);
 			if (barLength > 0) barLength++;
 
-			this.drawTexturedModalRect(xLoc + 10, yLoc + 100 - barLength, 176 + offset, 66 - barLength, 12, barLength);
+			drawTexturedModalRect(xLoc + 10, yLoc + 100 - barLength, 176 + offset, 66 - barLength, 12, barLength);
 		}
 
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
+		final int horizOffs[] = {-50, -28, 25, 47};
+
+		for (int i = 0; i < 8; i++)
+		{
+			buttons[i].xPosition = width / 2 + horizOffs[i % 4];
+			buttons[i].yPosition = yLoc + 52 + 35 * (i / 4);
+		}
+
+		/*
 		buttons[0].xPosition = (this.width / 2) - 50;
 		buttons[0].yPosition = yLoc + 52;
-		buttons[0].vLoc = 192;
-		buttons[0].displayString = "-10";
-		buttons[0].drawButton(mc, mouseX, mouseY);
 
 		buttons[1].xPosition = (this.width / 2) - 28;
 		buttons[1].yPosition = yLoc + 52;
-		buttons[1].vLoc = 192;
-		buttons[1].displayString = "-1";
-		buttons[1].drawButton(mc, mouseX, mouseY);
 
 		buttons[2].xPosition = (this.width / 2) + 25;
 		buttons[2].yPosition = yLoc + 52;
-		buttons[2].vLoc = 192;
-		buttons[2].displayString = "+1";
-		buttons[2].drawButton(mc, mouseX, mouseY);
 
 		buttons[3].xPosition = (this.width / 2) + 47;
 		buttons[3].yPosition = yLoc + 52;
-		buttons[3].vLoc = 192;
-		buttons[3].displayString = "+10";
-		buttons[3].drawButton(mc, mouseX, mouseY);
 
 		buttons[4].xPosition = (this.width / 2) - 50;
 		buttons[4].yPosition = yLoc + 87;
-		buttons[4].vLoc = 192;
-		buttons[4].displayString = "-10";
-		buttons[4].drawButton(mc, mouseX, mouseY);
 
 		buttons[5].xPosition = (this.width / 2) - 28;
 		buttons[5].yPosition = yLoc + 87;
-		buttons[5].vLoc = 192;
-		buttons[5].displayString = "-1";
-		buttons[5].drawButton(mc, mouseX, mouseY);
 
 		buttons[6].xPosition = (this.width / 2) + 25;
 		buttons[6].yPosition = yLoc + 87;
-		buttons[6].vLoc = 192;
-		buttons[6].displayString = "+1";
-		buttons[6].drawButton(mc, mouseX, mouseY);
 
 		buttons[7].xPosition = (this.width / 2) + 47;
 		buttons[7].yPosition = yLoc + 87;
-		buttons[7].vLoc = 192;
-		buttons[7].displayString = "+10";
-		buttons[7].drawButton(mc, mouseX, mouseY);
-		//TODO Simplify these definitions - see if a for loop can be used for some of this.
+		*/
+
+		// Draw ALL of the buttons?! :o
+		for (CButton b : buttons)
+		{
+			b.drawButton(mc, mouseX, mouseY);
+		}
 
 	}
 	
@@ -187,46 +171,15 @@ public class GuiStorageMonitor extends GuiContainer
 		{
 			for (CButton b : buttons) // For each item in buttons,
 			{
-				if (b.mousePressed(this.mc, par1, par2)) // if it was pressed,
+				if (b.mousePressed(this.mc, par1, par2) && b.enabled) // if it was pressed and is enabled,
 				{
-					selectedButton = b; // select it,
+					//selectedButton = b; // select it,
 					mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F); // provide audio feedback,
-					actionPerformed(b); // and call its action.
+					tile.sendGuiCommand(b.id); // and inform the server of the button click.
 				}
 			}
 		}
 		super.mouseClicked(par1, par2, par3); // Finally, do all that other normal stuff. 
 	}
 
-	/*
-	 * This function actually handles what happens when you click on a button, by ID
-	 */
-	@Override
-	public void actionPerformed(GuiButton button)
-	{
-		if (!button.enabled)
-		{
-			return;
-		}
-
-		switch (button.id) //TODO Fill out action behavior for each button
-		{
-		case 0: // UPPER -10
-			break;
-		case 1: // UPPER -1
-			break;
-		case 2: // UPPER +1
-			break;
-		case 3: // UPPER +10
-			break;
-		case 4: // LOWER -10
-			break;
-		case 5: // LOWER -1
-			break;
-		case 6: // LOWER +1
-			break;
-		case 7: // LOWER +10
-			break;
-		}
-	}
 }
