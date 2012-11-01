@@ -327,7 +327,16 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 		blockState = state;
 		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 	}
-	
+
+	/**
+	 * Packet transmission to server of what button was clicked goes here.
+	 * @param id = the button ID
+	 */
+	public void sendGuiCommand(int id)
+	{
+		
+	}
+
 	@Override
 	public Packet250CustomPayload getDescriptionPacket()
 	{
