@@ -3,6 +3,7 @@
 	<!-- Properties -->
 
 	<property name="mod.name"            value="ChargingBench"/>
+	<property name="mod.dir"             value="Charging Bench"/>
 	<property name="build.dir"           value="Charging Bench/build"/>
 	<property name="src.dir"             value="Charging Bench/src"/>
 	<property name="res.dir"             value="Charging Bench/resources"/>
@@ -105,6 +106,18 @@
 		<!-- Copy common resources -->
 		<copy todir="${classes.dir}">
 			<fileset dir="${res.dir}/common">
+			</fileset>
+			<filterset>
+                <filter token="VERSION" value="${mymod.version.full}" />
+				<filter token="BUILD_NUMBER" value="${build.number}" />
+            </filterset>
+		</copy>
+		
+		<!-- Copy documentation -->
+		<copy todir="${classes.dir}">
+			<fileset file="${mod.dir}/LICENSE.txt">
+			</fileset>
+			<fileset file="${mod.dir}/README">
 			</fileset>
 			<filterset>
                 <filter token="VERSION" value="${mymod.version.full}" />
