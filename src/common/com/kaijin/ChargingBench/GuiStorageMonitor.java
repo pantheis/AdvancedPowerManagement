@@ -68,11 +68,11 @@ public class GuiStorageMonitor extends GuiContainer
 
 			// Draw Right-aligned current energy number
 			// Test string with 9 digits
-//			Utils.drawRightAlignedText(fontRenderer, "123456789", 85, 21, 4210752);
+//			Utils.drawRightAlignedText(fontRenderer, "000000000", 90, 21, 0x55FF55);
 
 			// Draw separator and left-aligned max energy number
 			// Test string with 9 digits
-//			fontRenderer.drawString(" / " + "123456789", 85, 21, 4210752);
+//			fontRenderer.drawString(" / " + "000000000", 90, 21, 0X55FF55);
 
 			
 		}
