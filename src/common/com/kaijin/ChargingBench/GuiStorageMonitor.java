@@ -50,8 +50,6 @@ public class GuiStorageMonitor extends GuiContainer
 	@Override
 	protected void drawGuiContainerForegroundLayer(int x, int y)
 	{
-		final DecimalFormat df = new DecimalFormat("#,##0%");
-
 		// Draw tier and title
 		fontRenderer.drawString("Storage Monitor", 50, 7, 4210752);
 
@@ -67,14 +65,14 @@ public class GuiStorageMonitor extends GuiContainer
 			// Draw separator and left-aligned max energy number
 			fontRenderer.drawString(" / " + Integer.toString(tile.energyCapacity), 85, 20, 4210752);
 		}
-		final String upper = df.format(tile.lowerBoundary);
-		final String lower = df.format(tile.upperBoundary);
+		final String upper = Integer.toString(tile.upperBoundary) + "%";
+		final String lower = Integer.toString(tile.lowerBoundary) + "%";
 		
 		fontRenderer.drawString("Upper Threshold (Off)", 43, 40, 0xA03333);
-		Utils.drawCenteredText(fontRenderer, upper, 97, 53, 4210752);
+		Utils.drawRightAlignedText(fontRenderer, upper, 109, 53, 4210752);
 		
 		fontRenderer.drawString("Lower Threshold (On)", 43, 75, 0xA03333);
-		Utils.drawCenteredText(fontRenderer, lower, 97, 88, 4210752);
+		Utils.drawRightAlignedText(fontRenderer, lower, 109, 88, 4210752);
 	}
 
 	@Override

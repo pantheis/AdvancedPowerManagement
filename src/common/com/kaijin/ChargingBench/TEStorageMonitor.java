@@ -25,26 +25,22 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 {
 	private ItemStack[] contents = new ItemStack[7];
 
-	private int tickTime;
+	private int tickTime = 0;
 	private int tickDelay = 5;
 	
-	public float lowerBoundary = 0.60F;
-	public float upperBoundary = 0.90F;
+	public int lowerBoundary = 60;
+	public int upperBoundary = 90;
 	
-	public int lowerBoundaryBits;
-	public int upperBoundaryBits;
+	private boolean tileLoaded = false;
 
-	private boolean tileLoaded;
-
-	public int energyStored;
-	public int energyCapacity;
-	public int chargeLevel;
+	public int energyStored = -1;
+	public int energyCapacity = -1;
+	public int chargeLevel = 0;
 	
-	public boolean isPowering;
-	public boolean blockState;
+	public boolean isPowering = false;
+	public boolean blockState = false;
 
-	public int[] targetCoords = new int[3];
-	public TileEntity targetTile;
+	public int[] targetCoords;
 
 	public TEStorageMonitor()
 	{
@@ -62,6 +58,8 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 			// State info to remember
 			isPowering = nbttagcompound.getBoolean("isPowering");
+			upperBoundary = nbttagcompound.getInteger("upperBoundary");
+			lowerBoundary = nbttagcompound.getInteger("lowerBoundary");
 
 			// Our inventory
 			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
@@ -90,6 +88,8 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 			// State info to remember
 			nbttagcompound.setBoolean("isPowering", isPowering);
+			nbttagcompound.setInteger("upperBoundary", upperBoundary);
+			nbttagcompound.setInteger("lowerBoundary", lowerBoundary);
 
 			// Our inventory
 			NBTTagList nbttaglist = new NBTTagList();
@@ -178,8 +178,6 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 				}
 			}
 			chargeLevel = gaugeEnergyScaled(12);
-			lowerBoundaryBits = (int)(lowerBoundary * 100.0F); 
-			upperBoundaryBits = (int)(upperBoundary * 100.0F);
 
 			if (energyCapacity > 0) // Avoid divide by zero and also test if the remote energy storage is valid
 			{
@@ -261,17 +259,11 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 	private void updateRedstone()
 	{
-		float chargePercent = (float)energyStored / energyCapacity;
-		//if (ChargingBench.isDebugging) System.out.println("chargePercent:" + chargePercent);
-		if (chargePercent < lowerBoundary && isPowering == false)
+		float chargePercent = ((float)energyStored * 100.0F) / (float)energyCapacity;
+		if ((isPowering == false && chargePercent < lowerBoundary) || (isPowering == true && chargePercent >= upperBoundary))
 		{
-			isPowering = true;
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-		}
-		if (chargePercent > upperBoundary && isPowering == true)
-		{
-			isPowering = false;
+			if (ChargingBench.isDebugging) System.out.println("Storage Monitor toggling redstone. chargePercent:" + chargePercent);
+			isPowering = !isPowering;
 			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
@@ -320,6 +312,53 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 	//Networking stuff
 
+	/**
+	 * Packet reception by server of what button was clicked on the client's GUI.
+	 * @param id = the button ID
+	 */
+	public void receiveGuiCommand(int id)
+	{
+		switch (id)
+		{
+		case 0:
+			upperBoundary -= 10;
+			if (upperBoundary < 1) upperBoundary = 1;
+			if (upperBoundary < lowerBoundary) lowerBoundary = upperBoundary;
+			break;
+		case 1:
+			upperBoundary -= 1;
+			if (upperBoundary < 1) upperBoundary = 1;
+			if (upperBoundary < lowerBoundary) lowerBoundary = upperBoundary;
+			break;
+		case 2:
+			upperBoundary += 1;
+			if (upperBoundary > 100) upperBoundary = 100;
+			break;
+		case 3:
+			upperBoundary += 10;
+			if (upperBoundary > 100) upperBoundary = 100;
+			break;
+		case 4:
+			lowerBoundary -= 10;
+			if (lowerBoundary < 1) lowerBoundary = 1;
+			break;
+		case 5:
+			lowerBoundary -= 1;
+			if (lowerBoundary < 1) lowerBoundary = 1;
+			break;
+		case 6:
+			lowerBoundary += 1;
+			if (lowerBoundary > 100) lowerBoundary = 100;
+			if (lowerBoundary > upperBoundary) upperBoundary = lowerBoundary;
+			break;
+		case 7:
+			lowerBoundary += 10;
+			if (lowerBoundary > 100) lowerBoundary = 100;
+			if (lowerBoundary > upperBoundary) upperBoundary = lowerBoundary;
+			break;
+		}
+	}
+
 	public void receiveDescriptionData(int charge, boolean power, boolean state)
 	{
 		chargeLevel = charge;
@@ -329,12 +368,32 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	}
 
 	/**
-	 * Packet transmission to server of what button was clicked goes here.
+	 * Packet transmission from client to server of what button was clicked on the GUI.
 	 * @param id = the button ID
 	 */
 	public void sendGuiCommand(int id)
 	{
-		
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		DataOutputStream data = new DataOutputStream(bytes);
+		try
+		{
+			data.writeInt(0); // Packet ID for Storage Monitor GUI button clicks
+			data.writeInt(xCoord);
+			data.writeInt(yCoord);
+			data.writeInt(zCoord);
+			data.writeInt(id);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = ChargingBench.packetChannel; // CHANNEL MAX 16 CHARS
+		packet.data = bytes.toByteArray();
+		packet.length = packet.data.length;
+
+		ChargingBench.proxy.sendPacketToServer(packet);
 	}
 
 	@Override
