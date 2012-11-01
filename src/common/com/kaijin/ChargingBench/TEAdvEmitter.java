@@ -4,20 +4,27 @@
  ******************************************************************************/
 package com.kaijin.ChargingBench;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import ic2.api.Direction;
 import ic2.api.EnergyNet;
 import ic2.api.IEnergySource;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
+import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 
 public class TEAdvEmitter extends TileEntity implements IEnergySource
 {
 	protected boolean initialized;
 
-	public int baseTier;
-	public int outputRate;
+	public int outputRate = 32;
+	public int packetSize = 32;
+	private int energyBuffer = 0;
 
 	public TEAdvEmitter() // Constructor used when placing a new tile entity, to set up correct parameters
 	{
@@ -33,10 +40,8 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 		if (!ChargingBench.proxy.isClient())
 		{
 			super.readFromNBT(nbttagcompound);
-			baseTier = nbttagcompound.getInteger("baseTier");
-
-			//Max Input math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-			outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
+			outputRate = nbttagcompound.getInteger("outputRate");
+			packetSize = nbttagcompound.getInteger("packetSize");
 		}
 	}
 
@@ -49,7 +54,8 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 		if (!ChargingBench.proxy.isClient())
 		{
 			super.writeToNBT(nbttagcompound);
-			nbttagcompound.setInteger("baseTier", baseTier);
+			nbttagcompound.setInteger("outputRate", outputRate);
+			nbttagcompound.setInteger("packetSize", packetSize);
 		}
 	}
 
@@ -73,33 +79,18 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 		if (!initialized)
 		{
 			if (worldObj == null) return;
-
-			// Prevent old emitters from misbehaving if they were placed before they saved their tier in NBT data
-			if (baseTier == 0)
-			{
-				if (ChargingBench.isDebugging) System.out.println("baseTier is zero!");
-				if (worldObj.getBlockId(xCoord, yCoord, zCoord) == ChargingBench.blockChargingBenchID)
-				{
-					baseTier = worldObj.getBlockMetadata(xCoord, yCoord, zCoord) - 2;
-					outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
-					if (ChargingBench.isDebugging) System.out.println("baseTier is now: " + baseTier);
-					if (ChargingBench.isDebugging) System.out.println("output is now: " + outputRate);
-				}
-				else
-				{
-					// Just in case there's a stale tile entity somehow...
-					this.invalidate();
-					return;
-				}
-			}
-
 			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
 
 		if (receivingRedstoneSignal())
 		{
-			EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, outputRate);
+			energyBuffer += outputRate;
+			while(energyBuffer >= packetSize)
+			{
+				EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, packetSize);
+				energyBuffer -= packetSize;
+			}
 		}
 	}
 
@@ -129,4 +120,104 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 	{
 		return Integer.MAX_VALUE;
 	}
+
+	public boolean isUseableByPlayer(EntityPlayer entityplayer)
+	{
+		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this)
+		{
+			return false;
+		}
+
+		return entityplayer.getDistanceSq((double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D) <= 64D;
+	}
+	
+	/**
+	 * Packet reception by server of what button was clicked on the client's GUI.
+	 * @param id = the button ID
+	 */
+	public void receiveGuiCommand(int id)
+	{
+		switch (id)
+		{
+		case 0:
+			packetSize -= 100;
+			if (packetSize < 1) packetSize = 1;
+			break;
+		case 1:
+			packetSize -= 10;
+			if (packetSize < 1) packetSize = 1;
+			break;
+		case 2:
+			packetSize -= 1;
+			if (packetSize < 1) packetSize = 1;
+			break;
+		case 3:
+			packetSize += 1;
+			if (packetSize > 8192) packetSize = 8192;
+			break;
+		case 4:
+			packetSize += 10;
+			if (packetSize > 8192) packetSize = 8192;
+			break;
+		case 5:
+			packetSize += 100;
+			if (packetSize > 8192) packetSize = 8192;
+			break;
+		case 6:
+			outputRate -= 100;
+			if (outputRate < 1) outputRate = 1;
+			break;
+		case 7:
+			outputRate -= 10;
+			if (outputRate < 1) outputRate = 1;
+			break;
+		case 8:
+			outputRate -= 1;
+			if (outputRate < 1) outputRate = 1;
+			break;
+		case 9:
+			outputRate += 1;
+			if (outputRate > 1000000) outputRate = 1000000;
+			break;
+		case 10:
+			outputRate += 10;
+			if (outputRate > 1000000) outputRate = 1000000;
+			break;
+		case 11:
+			outputRate += 100;
+			if (outputRate > 1000000) outputRate = 1000000;
+			break;
+		}
+	}
+
+	
+	/**
+	 * Packet transmission from client to server of what button was clicked on the GUI.
+	 * @param id = the button ID
+	 */
+	public void sendGuiCommand(int id)
+	{
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		DataOutputStream data = new DataOutputStream(bytes);
+		try
+		{
+			data.writeInt(1); // Packet ID for Storage Monitor GUI button clicks
+			data.writeInt(xCoord);
+			data.writeInt(yCoord);
+			data.writeInt(zCoord);
+			data.writeInt(id);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = ChargingBench.packetChannel; // CHANNEL MAX 16 CHARS
+		packet.data = bytes.toByteArray();
+		packet.length = packet.data.length;
+
+		ChargingBench.proxy.sendPacketToServer(packet);
+	}
+
 }

@@ -160,11 +160,15 @@ public class ChargingBench implements ICraftingHandler
 		GameRegistry.registerTileEntity(TEEmitter.class, "HV " + emitterName); // Legacy
 		GameRegistry.registerTileEntity(TEEmitter.class, "EV " + emitterName); // Legacy
 		GameRegistry.registerTileEntity(TEEmitter.class, "kaijin.emitter"); // Proper mapping
+		GameRegistry.registerTileEntity(TEAdvEmitter.class, "kaijin.advEmitter"); // Proper mapping
+		
 
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock1.name", "LV " + emitterName);
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock2.name", "MV " + emitterName);
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock3.name", "HV " + emitterName);
 		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock4.name", "EV " + emitterName);
+		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock4.name", "EV " + emitterName);
+		LanguageRegistry.instance().addStringLocalization("blockEmitterAdjustable.name", "Adjustable " + emitterName);
 
 		// Items
 		itemBenchTools = new ItemBenchTools(itemBenchToolsID).setItemName(toolkitName);

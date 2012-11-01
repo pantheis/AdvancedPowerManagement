@@ -34,7 +34,7 @@ public class BlockChargingBench extends Block
 	{
 		for (int i = 0; i <= ChargingBench.lastMetaValue; ++i)
 		{
-			if (i == 7) continue; //TODO Adjustable Emitter goes here, take this line out once it's added.
+//			if (i == 7) continue; //TODO Adjustable Emitter goes here, take this line out once it's added.
 			list.add(new ItemStack(blockID, 1, i));
 		}
 	}
@@ -135,6 +135,17 @@ public class BlockChargingBench extends Block
 			case 0: // bottom
 				return 0;
 
+			default:
+				return baseTexture + meta;
+			}
+		}
+		else if (tile instanceof TEAdvEmitter)
+		{
+			switch (side)
+			{
+			case 0: // bottom
+				return 0;
+				
 			default:
 				return baseTexture + meta;
 			}
@@ -291,7 +302,8 @@ public class BlockChargingBench extends Block
 			return new TEEmitter(4);
 
 		case 7:
-			return null; //TODO TEEmitterAdjustable goes here.
+			return new TEAdvEmitter(); //TODO TEEmitterAdjustable goes here.
+			
 		case 8:
 			return new TEBatteryStation(1);
 
@@ -358,6 +370,10 @@ public class BlockChargingBench extends Block
 			else if (tile instanceof TEStorageMonitor)
 			{
 				((TEStorageMonitor)tile).dropContents();
+				tile.invalidate();
+			}
+			else if (tile instanceof TEAdvEmitter)
+			{
 				tile.invalidate();
 			}
 		}
