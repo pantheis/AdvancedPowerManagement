@@ -7,9 +7,7 @@ package com.kaijin.AdvPowerMan;
 import ic2.api.Direction;
 import ic2.api.EnergyNet;
 import ic2.api.IEnergySource;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 
 public class TEEmitter extends TileEntity implements IEnergySource
