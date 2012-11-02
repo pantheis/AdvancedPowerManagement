@@ -559,7 +559,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	@Override
 	public String getInvName()
 	{
-		return "StorageMonitor";
+		return Info.MONITOR_NAME;
 	}
 
 	@Override
