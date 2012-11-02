@@ -472,22 +472,16 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public String getInvName()
 	{
-		String type;
 		switch (baseTier)
 		{
 		case 1:
-			type = "LV ";
-			break;
+			return Info.KEY_BLOCK_NAMES[8] + Info.KEY_NAME_SUFFIX;
 		case 2:
-			type = "MV ";
-			break;
+			return Info.KEY_BLOCK_NAMES[9] + Info.KEY_NAME_SUFFIX;
 		case 3:
-			type = "HV ";
-			break;
-		default:
-			type = "";
+			return Info.KEY_BLOCK_NAMES[10] + Info.KEY_NAME_SUFFIX;
 		}
-		return type + Info.DISCHARGER_NAME;
+		return "";
 	}
 
 	@Override

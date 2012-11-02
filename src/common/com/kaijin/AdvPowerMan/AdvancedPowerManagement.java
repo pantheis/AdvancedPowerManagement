@@ -78,70 +78,50 @@ public class AdvancedPowerManagement implements ICraftingHandler
 	{
 		GameRegistry.registerCraftingHandler(this);
 
-		blockAdvPwrMan = new BlockChargingBench(blockIDAdvPwrMan, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("ChargingBench").setCreativeTab(CreativeTabs.tabDecorations);
-		GameRegistry.registerBlock(blockAdvPwrMan, ItemChargingBench.class);
+		blockAdvPwrMan = new BlockAdvPwrMan(blockIDAdvPwrMan, 0, Material.wood).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("AdvPwrMan").setCreativeTab(CreativeTabs.tabDecorations);
+		GameRegistry.registerBlock(blockAdvPwrMan, ItemBlockAdvPwrMan.class);
 
-		// Charging Bench
+		// Charging Benches
 		GameRegistry.registerTileEntity(TEChargingBench.class, "LV " + Info.CHARGER_NAME); // Legacy mappings for backward compatibility - we didn't know wtf we were doing when we started this mod :)
 		GameRegistry.registerTileEntity(TEChargingBench.class, "MV " + Info.CHARGER_NAME); // Legacy
 		GameRegistry.registerTileEntity(TEChargingBench.class, "HV " + Info.CHARGER_NAME); // Legacy
 		GameRegistry.registerTileEntity(TEChargingBench.class, "kaijin.chargingBench"); // Proper mapping
 
-		LanguageRegistry.instance().addStringLocalization("blockChargingBench1.name", "LV " + Info.CHARGER_NAME);
-		LanguageRegistry.instance().addStringLocalization("blockChargingBench2.name", "MV " + Info.CHARGER_NAME);
-		LanguageRegistry.instance().addStringLocalization("blockChargingBench3.name", "HV " + Info.CHARGER_NAME);
-
-		// Battery Station
+		// Battery Stations
 		GameRegistry.registerTileEntity(TEBatteryStation.class, "LV " + Info.DISCHARGER_NAME); // Legacy mappings
 		GameRegistry.registerTileEntity(TEBatteryStation.class, "MV " + Info.DISCHARGER_NAME); // Legacy
 		GameRegistry.registerTileEntity(TEBatteryStation.class, "HV " + Info.DISCHARGER_NAME); // Legacy
 		GameRegistry.registerTileEntity(TEBatteryStation.class, "kaijin.batteryStation"); // Proper mapping
 
-		LanguageRegistry.instance().addStringLocalization("blockBatteryStation1.name", "LV " + Info.DISCHARGER_NAME);
-		LanguageRegistry.instance().addStringLocalization("blockBatteryStation2.name", "MV " + Info.DISCHARGER_NAME);
-		LanguageRegistry.instance().addStringLocalization("blockBatteryStation3.name", "HV " + Info.DISCHARGER_NAME);
-
 		// Storage Monitor
 		GameRegistry.registerTileEntity(TEStorageMonitor.class, "kaijin.storageMonitor");
 
-		LanguageRegistry.instance().addStringLocalization("blockStorageMonitor.name", Info.MONITOR_NAME);
-
-		// Emitter
+		// Emitters
 		GameRegistry.registerTileEntity(TEEmitter.class, "LV " + Info.EMITTER_NAME); // Legacy mappings
 		GameRegistry.registerTileEntity(TEEmitter.class, "MV " + Info.EMITTER_NAME); // Legacy
 		GameRegistry.registerTileEntity(TEEmitter.class, "HV " + Info.EMITTER_NAME); // Legacy
 		GameRegistry.registerTileEntity(TEEmitter.class, "EV " + Info.EMITTER_NAME); // Legacy
 		GameRegistry.registerTileEntity(TEEmitter.class, "kaijin.emitter"); // Proper mapping
-		GameRegistry.registerTileEntity(TEAdvEmitter.class, "kaijin.advEmitter"); // Proper mapping
-
-		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock1.name", "LV " + Info.EMITTER_NAME);
-		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock2.name", "MV " + Info.EMITTER_NAME);
-		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock3.name", "HV " + Info.EMITTER_NAME);
-		LanguageRegistry.instance().addStringLocalization("blockEmitterBlock4.name", "EV " + Info.EMITTER_NAME);
-		LanguageRegistry.instance().addStringLocalization("blockEmitterAdjustable.name", "Adjustable " + Info.EMITTER_NAME);
+		GameRegistry.registerTileEntity(TEAdvEmitter.class, "kaijin.advEmitter");
 
 		// Items
 		itemBenchTools = new ItemBenchTools(itemIDBenchTools).setItemName(Info.TOOLKIT_NAME);
-		LanguageRegistry.instance().addStringLocalization("item.benchTools.toolkit.name", Info.TOOLKIT_NAME);
-		LanguageRegistry.instance().addStringLocalization("item.benchTools.LV-kit.name", "LV " + Info.COMPONENTS_NAME);
-		LanguageRegistry.instance().addStringLocalization("item.benchTools.MV-kit.name", "MV " + Info.COMPONENTS_NAME);
-		LanguageRegistry.instance().addStringLocalization("item.benchTools.HV-kit.name", "HV " + Info.COMPONENTS_NAME);
 
 		itemStorageLinkCard = new ItemStorageLinkCard(itemIDStorageLinkCard).setItemName(Info.LINK_CARD_NAME);
-		LanguageRegistry.addName(itemStorageLinkCard, Info.LINK_CARD_NAME);
 		
 		itemStorageLinkCardCreator = new ItemStorageLinkCardCreator(itemIDStorageLinkCardCreator).setItemName(Info.LINK_CREATOR_NAME);
-		LanguageRegistry.addName(itemStorageLinkCardCreator, Info.LINK_CREATOR_NAME);
+
+		Info.registerTranslations();
 
 		NetworkRegistry.instance().registerGuiHandler(this.instance, proxy);
 		proxy.load();
 		if (proxy.isServer())
 		{
-			FMLLog.getLogger().info (Info.CHARGER_NAME + " " + Info.VERSION + " loaded.");
+			FMLLog.getLogger().info (Info.TITLE + " " + Info.VERSION + " loaded.");
 		}
 		if (Info.isDebugging)
 		{
-			FMLLog.getLogger().info(Info.CHARGER_NAME + " debugging enabled.");
+			FMLLog.getLogger().info(Info.TITLE + " debugging enabled.");
 		}
 
 		// For returning charging benches and deconstructing them

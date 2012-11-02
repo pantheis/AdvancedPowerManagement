@@ -1,5 +1,6 @@
 package com.kaijin.AdvPowerMan;
 
+import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.src.ItemStack;
 
 public class Info
@@ -23,6 +24,11 @@ public class Info
 	public static final String GUI3_PNG    = TEX_BASE + "GUIStorageMonitor.png";
 	public static final String GUI4_PNG    = TEX_BASE + "GUIAdvEmitter.png";
 
+	public static final String[] KEY_BLOCK_NAMES = new String[] {"blockChargingBench1", "blockChargingBench2", "blockChargingBench3",
+		"blockEmitterBlock1", "blockEmitterBlock2", "blockEmitterBlock3", "blockEmitterBlock4", "blockEmitterAdjustable",
+		"blockBatteryStation1", "blockBatteryStation2", "blockBatteryStation3", "blockStorageMonitor"};
+	public static final String KEY_NAME_SUFFIX = ".name";
+
 	// Blocks
 	public static final String CHARGER_NAME = "Charging Bench";
 	public static final String DISCHARGER_NAME = "Battery Station";
@@ -36,6 +42,16 @@ public class Info
 
 	public static final String LINK_CARD_NAME = "Energy Link Card";
 	public static final String LINK_CREATOR_NAME = "Energy Link Card (Blank)";
+
+	// GUI strings
+	public static final String KEY_TITLE = "AdvPwrMan.title";
+	public static final String KEY_EU = "AdvPwrMan.misc.EU";
+	public static final String KEY_EMITTER_PACKET = "AdvPwrMan.emitter.packet";
+	public static final String KEY_EMITTER_OUTPUT = "AdvPwrMan.emitter.output";
+	public static final String KEY_MONITOR_INVALID = "AdvPwrMan.monitor.invalid";
+	public static final String KEY_MONITOR_UPPER = "AdvPwrMan.monitor.upper";
+	public static final String KEY_MONITOR_LOWER = "AdvPwrMan.monitor.lower";
+
 
 	// Other constants for use in multiple classes
 	public static final int LAST_META_VALUE = 11;
@@ -75,4 +91,44 @@ public class Info
 	public static ItemStack ic2overclockerUpg;
 	public static ItemStack ic2transformerUpg;
 	public static ItemStack ic2storageUpg;
+
+	public static void registerTranslations()
+	{
+		LanguageRegistry lang = LanguageRegistry.instance();
+
+		lang.addStringLocalization(KEY_BLOCK_NAMES[0] + KEY_NAME_SUFFIX, "LV " + Info.CHARGER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[1] + KEY_NAME_SUFFIX, "MV " + Info.CHARGER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[2] + KEY_NAME_SUFFIX, "HV " + Info.CHARGER_NAME);
+
+		lang.addStringLocalization(KEY_BLOCK_NAMES[3] + KEY_NAME_SUFFIX, "LV " + Info.EMITTER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[4] + KEY_NAME_SUFFIX, "MV " + Info.EMITTER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[5] + KEY_NAME_SUFFIX, "HV " + Info.EMITTER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[6] + KEY_NAME_SUFFIX, "EV " + Info.EMITTER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[7] + KEY_NAME_SUFFIX, "Adjustable " + Info.EMITTER_NAME);
+
+		lang.addStringLocalization(KEY_BLOCK_NAMES[8] + KEY_NAME_SUFFIX, "LV " + Info.DISCHARGER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[9] + KEY_NAME_SUFFIX, "MV " + Info.DISCHARGER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[10] + KEY_NAME_SUFFIX, "HV " + Info.DISCHARGER_NAME);
+
+		lang.addStringLocalization(KEY_BLOCK_NAMES[11] + KEY_NAME_SUFFIX, Info.MONITOR_NAME);
+
+		lang.addStringLocalization("item.benchTools.toolkit.name", Info.TOOLKIT_NAME);
+		lang.addStringLocalization("item.benchTools.LV-kit.name", "LV " + Info.COMPONENTS_NAME);
+		lang.addStringLocalization("item.benchTools.MV-kit.name", "MV " + Info.COMPONENTS_NAME);
+		lang.addStringLocalization("item.benchTools.HV-kit.name", "HV " + Info.COMPONENTS_NAME);
+
+		LanguageRegistry.addName(AdvancedPowerManagement.itemStorageLinkCard, Info.LINK_CARD_NAME);
+		LanguageRegistry.addName(AdvancedPowerManagement.itemStorageLinkCardCreator, Info.LINK_CREATOR_NAME);
+
+		lang.addStringLocalization(KEY_TITLE, TITLE);
+
+		lang.addStringLocalization(KEY_EU, "EU");
+
+		// GUI strings
+		lang.addStringLocalization(KEY_EMITTER_PACKET, "Packet size (Voltage)");
+		lang.addStringLocalization(KEY_EMITTER_OUTPUT, "Output / Tick (Max 64 Packets)");
+		lang.addStringLocalization(KEY_MONITOR_INVALID, "No Valid Link");
+		lang.addStringLocalization(KEY_MONITOR_UPPER, "Upper Threshold (Off)");
+		lang.addStringLocalization(KEY_MONITOR_LOWER, "Lower Threshold (On)");
+	}
 }

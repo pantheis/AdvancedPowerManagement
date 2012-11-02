@@ -19,13 +19,13 @@ import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
-public class BlockChargingBench extends Block
+public class BlockAdvPwrMan extends Block
 {
 	//base texture index
 	private final int baseTexture = 16;
 	private final int sideTexture = 32;
 
-	public BlockChargingBench(int i, int j, Material material)
+	public BlockAdvPwrMan(int i, int j, Material material)
 	{
 		super(i, j, material);
 	}
@@ -70,7 +70,7 @@ public class BlockChargingBench extends Block
 				// This allows you to sneak place things directly on the charging bench
 				return false;
 			}
-			//if (ChargingBench.isDebugging) System.out.println("BlockChargingBench.BlockActivated");
+			//if (ChargingBench.isDebugging) System.out.println("BlockAdvPwrMan.BlockActivated");
 			int meta = world.getBlockMetadata(x, y, z);
 			if (meta >= 0 && meta <= 2)
 			{
@@ -272,7 +272,7 @@ public class BlockChargingBench extends Block
 	@Override
 	public TileEntity createTileEntity(World world, int metadata)
 	{
-		//if (ChargingBench.isDebugging) System.out.println("BlockChargingBench.createTileEntity");
+		//if (ChargingBench.isDebugging) System.out.println("BlockAdvPwrMan.createTileEntity");
 		switch (metadata)
 		{
 		case 0:
@@ -324,13 +324,13 @@ public class BlockChargingBench extends Block
 
 	public int idDropped(int var1, Random var2, int var3)
 	{
-		//if (ChargingBench.isDebugging) System.out.println("BlockChargingBench.idDropped");
+		//if (ChargingBench.isDebugging) System.out.println("BlockAdvPwrMan.idDropped");
 		return blockID;
 	}
 
 	public int damageDropped(int meta)
 	{
-		//if (ChargingBench.isDebugging) System.out.println("BlockChargingBench.damageDropped");
+		//if (ChargingBench.isDebugging) System.out.println("BlockAdvPwrMan.damageDropped");
 		return meta;
 	}
 
@@ -338,7 +338,7 @@ public class BlockChargingBench extends Block
 	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int par1)
 	{
 		preDestroyBlock(world, x, y, z);
-		//if (ChargingBench.isDebugging) System.out.println("BlockChargingBench.onBlockDestroyedByPlayer");
+		//if (ChargingBench.isDebugging) System.out.println("BlockAdvPwrMan.onBlockDestroyedByPlayer");
 		super.onBlockDestroyedByPlayer(world, x, y, z, par1);
 	}
 

@@ -103,6 +103,11 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 		return worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 	}
 
+	public String getInvName()
+	{
+		return Info.KEY_BLOCK_NAMES[7] + Info.KEY_NAME_SUFFIX;
+	}
+
 	public boolean isUseableByPlayer(EntityPlayer entityplayer)
 	{
 		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this)

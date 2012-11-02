@@ -9,6 +9,7 @@ import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.StringTranslate;
 
 import org.lwjgl.opengl.GL11;
 
@@ -20,6 +21,8 @@ public class GuiBatteryStation extends GuiContainer
 {
 	IInventory playerInventory;
 	public TEBatteryStation tile;
+
+	protected static StringTranslate lang = StringTranslate.getInstance();
 
 	public GuiBatteryStation(InventoryPlayer player, TEBatteryStation tileentity)
 	{
@@ -42,6 +45,6 @@ public class GuiBatteryStation extends GuiContainer
 		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
 		// Draw title text
-		Utils.drawCenteredText(fontRenderer, tile.getInvName(), width / 2, yLoc + 8, 4210752);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), width / 2, yLoc + 8, 4210752);
 	}
 }
