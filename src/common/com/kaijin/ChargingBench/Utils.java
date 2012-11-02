@@ -21,7 +21,7 @@ public class Utils
 	@Deprecated
 	public static boolean isDebug()
 	{
-		return ChargingBench.isDebugging;
+		return Info.isDebugging;
 	}
 
 	/**

@@ -72,7 +72,7 @@ public class GuiChargingBench extends GuiContainer
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
 	{
-		int textureID = mc.renderEngine.getTexture(ChargingBench.proxy.GUI1_PNG);
+		int textureID = mc.renderEngine.getTexture(Info.GUI1_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(textureID);
 		int xLoc = (width - xSize) / 2;

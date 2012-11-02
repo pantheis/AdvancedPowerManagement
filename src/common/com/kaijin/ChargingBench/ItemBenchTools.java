@@ -33,7 +33,7 @@ public class ItemBenchTools extends Item
 	@Override
 	public String getTextureFile()
 	{
-		return ChargingBench.proxy.ITEM_PNG;
+		return Info.ITEM_PNG;
 	}
 
 	/**
@@ -76,10 +76,10 @@ public class ItemBenchTools extends Item
 	 */
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) 
 	{
-		if (ChargingBench.proxy.isClient()) return false;
+		if (AdvancedPowerManagement.proxy.isClient()) return false;
 	
 		// Test if the target is a charging bench and the item is a component kit. If so, do the upgrade and return true.
-		if (world.getBlockId(x, y, z) != ChargingBench.blockChargingBenchID || stack.getItemDamage() < 1 || stack.getItemDamage() > 3 || player == null)
+		if (world.getBlockId(x, y, z) != AdvancedPowerManagement.blockIDAdvPwrMan || stack.getItemDamage() < 1 || stack.getItemDamage() > 3 || player == null)
 		{
 	        return false;
 		}
@@ -91,7 +91,7 @@ public class ItemBenchTools extends Item
 		}
 	
 		int recoveredTier = ((TEChargingBench)tile).swapBenchComponents(stack.getItemDamage());
-		generateItemStack(new ItemStack(ChargingBench.itemBenchTools, 1, recoveredTier), player);
+		generateItemStack(new ItemStack(AdvancedPowerManagement.itemBenchTools, 1, recoveredTier), player);
 		stack.stackSize--;
 		return true;
 	}
@@ -106,19 +106,19 @@ public class ItemBenchTools extends Item
 			switch (stack.getItemDamage())
 			{
 			case 1:
-				generateItemStack(ChargingBench.componentCopperCable.copy(), player);
-				generateItemStack(ChargingBench.componentBatBox.copy(), player);
+				generateItemStack(Info.componentCopperCable.copy(), player);
+				generateItemStack(Info.componentBatBox.copy(), player);
 				break;
 			case 2:
-				generateItemStack(ChargingBench.componentGoldCable.copy(), player);
-				generateItemStack(ChargingBench.componentMFE.copy(), player);
+				generateItemStack(Info.componentGoldCable.copy(), player);
+				generateItemStack(Info.componentMFE.copy(), player);
 				break;
 			case 3:
-				generateItemStack(ChargingBench.componentIronCable.copy(), player);
-				generateItemStack(ChargingBench.componentMFSU.copy(), player);
+				generateItemStack(Info.componentIronCable.copy(), player);
+				generateItemStack(Info.componentMFSU.copy(), player);
 				break;
 			}
-			generateItemStack(ChargingBench.componentCircuit.copy(), player);
+			generateItemStack(Info.componentCircuit.copy(), player);
 			stack.stackSize--;
 		}
 		return stack;

@@ -26,7 +26,7 @@ public class SlotMachineUpgrade extends Slot
     {
     	// Decide if the item is a valid IC2 machine upgrade 
     	if (stack == null) return false;
-    	if (stack.isItemEqual(ChargingBench.ic2overclockerUpg) || stack.isItemEqual(ChargingBench.ic2transformerUpg) || stack.isItemEqual(ChargingBench.ic2storageUpg))
+    	if (stack.isItemEqual(Info.ic2overclockerUpg) || stack.isItemEqual(Info.ic2transformerUpg) || stack.isItemEqual(Info.ic2storageUpg))
     	{
     		return true;
     	}

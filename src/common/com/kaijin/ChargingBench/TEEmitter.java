@@ -42,7 +42,7 @@ public class TEEmitter extends TileEntity implements IEnergySource
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!ChargingBench.proxy.isClient())
+		if (!AdvancedPowerManagement.proxy.isClient())
 		{
 			super.readFromNBT(nbttagcompound);
 			baseTier = nbttagcompound.getInteger("baseTier");
@@ -58,7 +58,7 @@ public class TEEmitter extends TileEntity implements IEnergySource
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!ChargingBench.proxy.isClient())
+		if (!AdvancedPowerManagement.proxy.isClient())
 		{
 			super.writeToNBT(nbttagcompound);
 			nbttagcompound.setInteger("baseTier", baseTier);
@@ -80,7 +80,7 @@ public class TEEmitter extends TileEntity implements IEnergySource
 	@Override
 	public void updateEntity()
 	{
-		if (ChargingBench.proxy.isClient()) return;
+		if (AdvancedPowerManagement.proxy.isClient()) return;
 
 		if (!initialized)
 		{
@@ -89,13 +89,13 @@ public class TEEmitter extends TileEntity implements IEnergySource
 			// Prevent old emitters from misbehaving if they were placed before they saved their tier in NBT data
 			if (baseTier == 0)
 			{
-				if (ChargingBench.isDebugging) System.out.println("baseTier is zero!");
-				if (worldObj.getBlockId(xCoord, yCoord, zCoord) == ChargingBench.blockChargingBenchID)
+				if (Info.isDebugging) System.out.println("baseTier is zero!");
+				if (worldObj.getBlockId(xCoord, yCoord, zCoord) == AdvancedPowerManagement.blockIDAdvPwrMan)
 				{
 					baseTier = worldObj.getBlockMetadata(xCoord, yCoord, zCoord) - 2;
 					outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
-					if (ChargingBench.isDebugging) System.out.println("baseTier is now: " + baseTier);
-					if (ChargingBench.isDebugging) System.out.println("output is now: " + outputRate);
+					if (Info.isDebugging) System.out.println("baseTier is now: " + baseTier);
+					if (Info.isDebugging) System.out.println("output is now: " + outputRate);
 				}
 				else
 				{

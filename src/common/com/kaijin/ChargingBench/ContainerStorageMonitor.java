@@ -25,7 +25,7 @@ public class ContainerStorageMonitor extends Container
 
 	public ContainerStorageMonitor(InventoryPlayer player, TEStorageMonitor tile)
 	{
-		if (ChargingBench.isDebugging) System.out.println("ContainerStorageMonitor");
+		if (Info.isDebugging) System.out.println("ContainerStorageMonitor");
 		this.te = tile;
 		this.energyStored = -1;
 		this.energyCapacity = -1;
@@ -38,7 +38,7 @@ public class ContainerStorageMonitor extends Container
 		int yRow;
 
 		// Link Card slot
-		this.addSlotToContainer(new SlotLinkCard(tile, ChargingBench.smSlotUniversal, 8, 9));
+		this.addSlotToContainer(new SlotLinkCard(tile, Info.SM_SLOT_UNIVERSAL, 8, 9));
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
@@ -85,7 +85,7 @@ public class ContainerStorageMonitor extends Container
 			}
 			if (this.upperBoundary != te.upperBoundary)
 			{
-				if (ChargingBench.isDebugging) System.out.println("CSM.uCR: upper bound mismatch");
+				if (Info.isDebugging) System.out.println("CSM.uCR: upper bound mismatch");
 				crafter.updateCraftingInventoryInfo(this, 5, te.upperBoundary);
 			}
 		}
@@ -285,7 +285,7 @@ public class ContainerStorageMonitor extends Container
 	{
 		ItemStack result = null;
 
-		if (ChargingBench.isDebugging && ChargingBench.proxy.isServer()) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
+		if (Info.isDebugging && AdvancedPowerManagement.proxy.isServer()) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
 
 		if (button > 1)
 		{
@@ -351,7 +351,7 @@ public class ContainerStorageMonitor extends Container
 
 						if (clickedStack != null)
 						{
-							if (ChargingBench.isDebugging) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
+							if (Info.isDebugging) System.out.println("Clicked stack tag: " + clickedStack.stackTagCompound + " / Item ID: " + clickedStack.itemID);
 							result = clickedStack.copy();
 						}
 

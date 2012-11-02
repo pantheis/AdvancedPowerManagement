@@ -62,14 +62,14 @@ public class ServerPacketHandler implements IPacketHandler
 
 		if (packetType == 0)
 		{
-			if (ChargingBench.isDebugging) System.out.println("Packet 0");
+			//if (Info.isDebugging) System.out.println("Packet 0");
 			try
 			{
 				int buttonID = stream.readInt();
-				if (ChargingBench.isDebugging) System.out.println("Button " + buttonID);
+				//if (Info.isDebugging) System.out.println("Button " + buttonID);
 				if (tile instanceof TEStorageMonitor)
 				{
-					if (ChargingBench.isDebugging) System.out.println("Storage Monitor command sent");
+					//if (Info.isDebugging) System.out.println("Storage Monitor command sent");
 					((TEStorageMonitor)tile).receiveGuiCommand(buttonID);
 				}
 			}
@@ -78,17 +78,16 @@ public class ServerPacketHandler implements IPacketHandler
 				ex.printStackTrace();
 			}
 		}
-		
-		if (packetType == 1)
+		else if (packetType == 1)
 		{
-			if (ChargingBench.isDebugging) System.out.println("Packet 1");
+			//if (Info.isDebugging) System.out.println("Packet 1");
 			try
 			{
 				int buttonID = stream.readInt();
-				if (ChargingBench.isDebugging) System.out.println("Button " + buttonID);
+				//if (Info.isDebugging) System.out.println("Button " + buttonID);
 				if (tile instanceof TEAdvEmitter)
 				{
-					if (ChargingBench.isDebugging) System.out.println("Advanced Emitter command sent");
+					//if (Info.isDebugging) System.out.println("Advanced Emitter command sent");
 					((TEAdvEmitter)tile).receiveGuiCommand(buttonID);
 				}
 			}

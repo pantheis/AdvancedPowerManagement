@@ -18,20 +18,7 @@ import cpw.mods.fml.common.network.Player;
 
 public class CommonProxy implements IGuiHandler
 {
-	public static final String VERSION = "@VERSION@";
-	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
-
-	public static final String ITEM_PNG    = "/com/kaijin/ChargingBench/textures/ChargingBenchItems.png";
-	public static final String BLOCK_PNG   = "/com/kaijin/ChargingBench/textures/ChargingBench.png";
-	public static final String GUI1_PNG    = "/com/kaijin/ChargingBench/textures/GUIChargingBench.png";
-	public static final String GUI2_PNG    = "/com/kaijin/ChargingBench/textures/GUIBatteryStation.png";
-	public static final String GUI3_PNG    = "/com/kaijin/ChargingBench/textures/GUIStorageMonitor.png";
-	public static final String GUI4_PNG    = "/com/kaijin/ChargingBench/textures/GUIAdvEmitter.png";
-
-	public void load()
-	{
-
-	}
+	public void load() {}
 
 	public boolean isClient()
 	{

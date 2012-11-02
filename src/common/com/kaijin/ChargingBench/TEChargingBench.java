@@ -134,7 +134,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	public int injectEnergy(Direction directionFrom, int supply)
 	{
 		int surplus = 0;
-		if (ChargingBench.proxy.isServer())
+		if (AdvancedPowerManagement.proxy.isServer())
 		{
 			// if supply is greater than the max we can take per tick
 			if (supply > adjustedMaxInput)
@@ -213,7 +213,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	protected void selfDestroy()
 	{
 		dropContents();
-		ItemStack stack = new ItemStack(ChargingBench.blockChargingBench, 1, baseTier - 1);
+		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, baseTier - 1);
 		dropItem(stack);
 		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
 		this.invalidate();
@@ -226,20 +226,20 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		int ocCount = 0;
 		int tfCount = 0;
 		int esCount = 0;
-		for (int i = ChargingBench.cbSlotUpgrade; i < ChargingBench.cbSlotUpgrade + 4; ++i)
+		for (int i = Info.CB_SLOT_UPGRADE; i < Info.CB_SLOT_UPGRADE + 4; ++i)
 		{
 			stack = contents[i];
 			if (stack != null)
 			{
-				if (stack.isItemEqual(ChargingBench.ic2overclockerUpg))
+				if (stack.isItemEqual(Info.ic2overclockerUpg))
 				{
 					ocCount += stack.stackSize;
 				}
-				else if (stack.isItemEqual(ChargingBench.ic2storageUpg))
+				else if (stack.isItemEqual(Info.ic2storageUpg))
 				{
 					esCount += stack.stackSize;
 				}
-				else if (stack.isItemEqual(ChargingBench.ic2transformerUpg))
+				else if (stack.isItemEqual(Info.ic2transformerUpg))
 				{
 					tfCount += stack.stackSize;
 				}
@@ -287,11 +287,11 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		{
 			IElectricItem item = (IElectricItem)(stack.getItem());
 			// Is the item appropriate for this slot?
-			if (slot == ChargingBench.cbSlotPowerSource && item.canProvideEnergy() && item.getTier() <= powerTier) return true;
-			if (slot >= ChargingBench.cbSlotCharging && slot < ChargingBench.cbSlotCharging + 12 && item.getTier() <= baseTier) return true;
-			if (slot >= ChargingBench.cbSlotUpgrade && slot < ChargingBench.cbSlotUpgrade + 4 && (stack.isItemEqual(ChargingBench.ic2overclockerUpg) || stack.isItemEqual(ChargingBench.ic2transformerUpg) || stack.isItemEqual(ChargingBench.ic2storageUpg))) return true;
-			if (slot == ChargingBench.cbSlotInput && item.getTier() <= baseTier) return true;
-			if (slot == ChargingBench.cbSlotOutput) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
+			if (slot == Info.CB_SLOT_POWER_SOURCE && item.canProvideEnergy() && item.getTier() <= powerTier) return true;
+			if (slot >= Info.CB_SLOT_CHARGING && slot < Info.CB_SLOT_CHARGING + 12 && item.getTier() <= baseTier) return true;
+			if (slot >= Info.CB_SLOT_UPGRADE && slot < Info.CB_SLOT_UPGRADE + 4 && (stack.isItemEqual(Info.ic2overclockerUpg) || stack.isItemEqual(Info.ic2transformerUpg) || stack.isItemEqual(Info.ic2storageUpg))) return true;
+			if (slot == Info.CB_SLOT_INPUT && item.getTier() <= baseTier) return true;
+			if (slot == Info.CB_SLOT_OUTPUT) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
 		}
 		return false; 
 	}
@@ -302,18 +302,18 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!ChargingBench.proxy.isClient())
+		if (!AdvancedPowerManagement.proxy.isClient())
 		{
 			super.readFromNBT(nbttagcompound);
 
-			if (ChargingBench.isDebugging) System.out.println("CB ID: " + nbttagcompound.getString("id"));
+			if (Info.isDebugging) System.out.println("CB ID: " + nbttagcompound.getString("id"));
 
 			baseTier = nbttagcompound.getInteger("baseTier");
 			currentEnergy = nbttagcompound.getInteger("currentEnergy");
 			//if (ChargingBench.isDebugging) System.out.println("ReadNBT.CurrentEergy: " + currentEnergy);
 
 			// Our inventory
-			contents = new ItemStack[ChargingBench.cbInventorySize];
+			contents = new ItemStack[Info.CB_INVENTORY_SIZE];
 			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
 			for (int i = 0; i < nbttaglist.tagCount(); ++i)
 			{
@@ -338,7 +338,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!ChargingBench.proxy.isClient())
+		if (!AdvancedPowerManagement.proxy.isClient())
 		{
 			super.writeToNBT(nbttagcompound);
 
@@ -366,7 +366,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public void updateEntity() //TODO Marked for easy access
 	{
-		if (ChargingBench.proxy.isClient())
+		if (AdvancedPowerManagement.proxy.isClient())
 		{
 			return;
 		}
@@ -407,7 +407,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	{
 		int chargeReturned = 0;
 
-		ItemStack stack = getStackInSlot(ChargingBench.cbSlotPowerSource);
+		ItemStack stack = getStackInSlot(Info.CB_SLOT_POWER_SOURCE);
 		if (stack != null && stack.getItem() instanceof IElectricItem && currentEnergy < adjustedStorage)
 		{
 			IElectricItem powerSource = (IElectricItem)(stack.getItem());
@@ -445,7 +445,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 				if (chargedItemID != emptyItemID && ElectricItem.discharge(stack, 1, powerTier, false, true) == 0)
 				{
 					//if (ChargingBench.isDebugging) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
-					setInventorySlotContents(ChargingBench.cbSlotPowerSource, new ItemStack(emptyItemID, 1, 0));
+					setInventorySlotContents(Info.CB_SLOT_POWER_SOURCE, new ItemStack(emptyItemID, 1, 0));
 					//ItemStack newStack = new ItemStack(emptyItemID, 1, 0);
 					//contents[ChargingBench.slotPowerSource] = newStack;
 				}
@@ -463,7 +463,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	 */
 	private void chargeItems()
 	{
-		for (int i = ChargingBench.cbSlotCharging; i < ChargingBench.cbSlotCharging + 12; i++)
+		for (int i = Info.CB_SLOT_CHARGING; i < Info.CB_SLOT_CHARGING + 12; i++)
 		{
 			ItemStack stack = contents[i];
 			if (currentEnergy > 0 && stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
@@ -520,11 +520,11 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	 */
 	private void moveOutputItems()
 	{
-		ItemStack stack = contents[ChargingBench.cbSlotOutput];
+		ItemStack stack = contents[Info.CB_SLOT_OUTPUT];
 		if (stack == null)
 		{
 			// Output slot is empty. Try to find a fully charged item to move there.
-			for (int slot = ChargingBench.cbSlotCharging; slot < ChargingBench.cbSlotCharging + 12; ++slot)
+			for (int slot = Info.CB_SLOT_CHARGING; slot < Info.CB_SLOT_CHARGING + 12; ++slot)
 			{
 				ItemStack currentStack = contents[slot];
 				if (currentStack != null && currentStack.getItem() instanceof IElectricItem)
@@ -532,7 +532,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 					// Test if the item is fully charged (cannot accept any more power).
 					if (ElectricItem.charge(currentStack.copy(), 1, baseTier, false, true) == 0)
 					{
-						contents[ChargingBench.cbSlotOutput] = currentStack;
+						contents[Info.CB_SLOT_OUTPUT] = currentStack;
 						contents[slot] = null;
 						this.onInventoryChanged();
 						break;
@@ -549,17 +549,17 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	 */
 	private void acceptInputItems()
 	{
-		ItemStack stack = contents[ChargingBench.cbSlotInput];
+		ItemStack stack = contents[Info.CB_SLOT_INPUT];
 		if (stack != null && stack.getItem() instanceof IElectricItem)
 		{
 			// Input slot contains something electrical. If possible, move one of it into the charging area.
 			IElectricItem item = (IElectricItem)(stack.getItem());
-			for (int slot = ChargingBench.cbSlotCharging; slot < ChargingBench.cbSlotCharging + 12; ++slot)
+			for (int slot = Info.CB_SLOT_CHARGING; slot < Info.CB_SLOT_CHARGING + 12; ++slot)
 			{
 				if (contents[slot] == null)
 				{
 					// Grab one unit from input and move it to the selected slot.
-					contents[slot] = decrStackSize(ChargingBench.cbSlotInput, 1);
+					contents[slot] = decrStackSize(Info.CB_SLOT_INPUT, 1);
 					break;
 				}
 			}
@@ -609,7 +609,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		}
 
 		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ChargingBench.packetChannel; // CHANNEL MAX 16 CHARS
+		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
 		packet.data = bytes.toByteArray();
 		packet.length = packet.data.length;
 		return packet;
@@ -623,11 +623,11 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		switch (side)
 		{
 		case UP:
-			return ChargingBench.cbSlotInput;
+			return Info.CB_SLOT_INPUT;
 		case DOWN:
-			return ChargingBench.cbSlotOutput;
+			return Info.CB_SLOT_OUTPUT;
 		default:
-			return ChargingBench.cbSlotPowerSource;
+			return Info.CB_SLOT_POWER_SOURCE;
 		}
 	}
 
@@ -656,29 +656,29 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public void onInventoryChanged(int slot)
 	{
-		if (slot == ChargingBench.cbSlotInput || slot == ChargingBench.cbSlotOutput)
+		if (slot == Info.CB_SLOT_INPUT || slot == Info.CB_SLOT_OUTPUT)
 		{
 			// Move item from input to output if not valid. (Wrong tier or not electric item.)
-			if (contents[ChargingBench.cbSlotInput] != null && contents[ChargingBench.cbSlotOutput] == null)
+			if (contents[Info.CB_SLOT_INPUT] != null && contents[Info.CB_SLOT_OUTPUT] == null)
 			{
-				if (!isItemValid(ChargingBench.cbSlotInput, contents[ChargingBench.cbSlotInput]))
+				if (!isItemValid(Info.CB_SLOT_INPUT, contents[Info.CB_SLOT_INPUT]))
 				{
-					contents[ChargingBench.cbSlotOutput] = contents[ChargingBench.cbSlotInput];
-					contents[ChargingBench.cbSlotInput] = null;
+					contents[Info.CB_SLOT_OUTPUT] = contents[Info.CB_SLOT_INPUT];
+					contents[Info.CB_SLOT_INPUT] = null;
 				}
 			}
 		}
-		else if (slot >= ChargingBench.cbSlotUpgrade && slot < ChargingBench.cbSlotUpgrade + 4)
+		else if (slot >= Info.CB_SLOT_UPGRADE && slot < Info.CB_SLOT_UPGRADE + 4)
 		{
 			// One of the upgrade slots was touched, so we need to recalculate.
 			doUpgradeEffects();
 		}
-		else if (slot >= ChargingBench.cbSlotCharging && slot < ChargingBench.cbSlotCharging + 12)
+		else if (slot >= Info.CB_SLOT_CHARGING && slot < Info.CB_SLOT_CHARGING + 12)
 		{
 			// Make sure it's not fully charged already? Not sure, full items will be output in updateEntity
 
 		}
-		else if (slot == ChargingBench.cbSlotPowerSource)
+		else if (slot == Info.CB_SLOT_POWER_SOURCE)
 		{
 			// Perhaps eject the item if it's not valid? No, just leave it alone. 
 			// If machinery added it the player can figure out the problem by trying to remove and replace it and realizing it won't fit.

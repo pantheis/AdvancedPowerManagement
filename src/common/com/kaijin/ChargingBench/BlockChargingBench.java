@@ -32,9 +32,8 @@ public class BlockChargingBench extends Block
 
 	public void getSubBlocks(int blockID, CreativeTabs creativetabs, List list)
 	{
-		for (int i = 0; i <= ChargingBench.lastMetaValue; ++i)
+		for (int i = 0; i <= Info.LAST_META_VALUE; ++i)
 		{
-//			if (i == 7) continue; //TODO Adjustable Emitter goes here, take this line out once it's added.
 			list.add(new ItemStack(blockID, 1, i));
 		}
 	}
@@ -51,21 +50,21 @@ public class BlockChargingBench extends Block
 				currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
 			}
 
-			if (entityplayer.isSneaking() || currentEquippedItemID == ChargingBench.ic2WrenchID || currentEquippedItemID == ChargingBench.ic2ElectricWrenchID)
+			if (entityplayer.isSneaking() || currentEquippedItemID == Info.ic2WrenchID || currentEquippedItemID == Info.ic2ElectricWrenchID)
 			{
 				// Prevent GUI popup when sneaking - this allows you to sneak place things directly on the charging bench
 				//if (ChargingBench.isDebugging) System.out.println("Block.world.isRemote.isSneaking");
 				return false;
 			}
 		}
-		else if (ChargingBench.proxy.isServer())
+		else if (AdvancedPowerManagement.proxy.isServer())
 		{
 			if (entityplayer.getCurrentEquippedItem() != null)
 			{
 				currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
 			}
 
-			if (entityplayer.isSneaking() || currentEquippedItemID == ChargingBench.ic2WrenchID || currentEquippedItemID == ChargingBench.ic2ElectricWrenchID)
+			if (entityplayer.isSneaking() || currentEquippedItemID == Info.ic2WrenchID || currentEquippedItemID == Info.ic2ElectricWrenchID)
 			{
 				// Prevent GUI popup when sneaking
 				// This allows you to sneak place things directly on the charging bench
@@ -75,22 +74,22 @@ public class BlockChargingBench extends Block
 			int meta = world.getBlockMetadata(x, y, z);
 			if (meta >= 0 && meta <= 2)
 			{
-				entityplayer.openGui(ChargingBench.instance, 1, world, x, y, z);
+				entityplayer.openGui(AdvancedPowerManagement.instance, 1, world, x, y, z);
 				return true;
 			}
 			else if (meta == 7)
 			{
-				entityplayer.openGui(ChargingBench.instance, 2, world, x, y, z);
+				entityplayer.openGui(AdvancedPowerManagement.instance, 2, world, x, y, z);
 				return true;
 			}
 			else if (meta >= 8 && meta <= 10)
 			{
-				entityplayer.openGui(ChargingBench.instance, 3, world, x, y, z);
+				entityplayer.openGui(AdvancedPowerManagement.instance, 3, world, x, y, z);
 				return true;
 			}
 			else if (meta == 11)
 			{
-				entityplayer.openGui(ChargingBench.instance, 4, world, x, y, z);
+				entityplayer.openGui(AdvancedPowerManagement.instance, 4, world, x, y, z);
 				return true;
 			}
 			else
@@ -103,7 +102,7 @@ public class BlockChargingBench extends Block
 
 	public String getTextureFile()
 	{
-		return ChargingBench.proxy.BLOCK_PNG;
+		return Info.BLOCK_PNG;
 	}
 
 	//Textures in the world
@@ -218,11 +217,7 @@ public class BlockChargingBench extends Block
 			{
 				return sideTexture + meta;
 			}
-			else if (meta < 7) // Emitters
-			{
-				return baseTexture + meta;
-			}
-			else if (meta == 7) //TODO Adjustable Emitter goes here. Can it share the previous calculation?
+			else if (meta < 8) // Emitters
 			{
 				return baseTexture + meta;
 			}
@@ -302,7 +297,7 @@ public class BlockChargingBench extends Block
 			return new TEEmitter(4);
 
 		case 7:
-			return new TEAdvEmitter(); //TODO TEEmitterAdjustable goes here.
+			return new TEAdvEmitter();
 			
 		case 8:
 			return new TEBatteryStation(1);
@@ -324,7 +319,7 @@ public class BlockChargingBench extends Block
 	@Override
 	public boolean hasTileEntity(int metadata)
 	{
-		return metadata >= 0 && metadata <= ChargingBench.lastMetaValue;
+		return metadata >= 0 && metadata <= Info.LAST_META_VALUE;
 	}
 
 	public int idDropped(int var1, Random var2, int var3)
@@ -349,7 +344,7 @@ public class BlockChargingBench extends Block
 
 	public static void preDestroyBlock(World world, int i, int j, int k)
 	{
-		if (!ChargingBench.proxy.isClient())
+		if (!AdvancedPowerManagement.proxy.isClient())
 		{
 			TileEntity tile = world.getBlockTileEntity(i, j, k);
 

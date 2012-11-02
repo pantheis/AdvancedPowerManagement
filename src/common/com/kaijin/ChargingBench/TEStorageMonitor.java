@@ -23,7 +23,7 @@ import net.minecraftforge.common.ISidedInventory;
 
 public class TEStorageMonitor extends TileEntity implements IInventory, ISidedInventory
 {
-	private ItemStack[] contents = new ItemStack[7];
+	private ItemStack[] contents;
 
 	private int tickTime = 0;
 	private int tickDelay = 5;
@@ -45,6 +45,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	public TEStorageMonitor()
 	{
 		super();
+		contents = new ItemStack[Info.SM_INVENTORY_SIZE];
 	}
 
 	/**
@@ -52,7 +53,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	 */
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!ChargingBench.proxy.isClient())
+		if (!AdvancedPowerManagement.proxy.isClient())
 		{
 			super.readFromNBT(nbttagcompound);
 
@@ -63,7 +64,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 			// Our inventory
 			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-			contents = new ItemStack[ChargingBench.smInventorySize];
+			contents = new ItemStack[Info.SM_INVENTORY_SIZE];
 			for (int i = 0; i < nbttaglist.tagCount(); ++i)
 			{
 				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
@@ -82,7 +83,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	 */
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!ChargingBench.proxy.isClient())
+		if (!AdvancedPowerManagement.proxy.isClient())
 		{
 			super.writeToNBT(nbttagcompound);
 
@@ -122,7 +123,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	private void selfDestroy()
 	{
 		dropContents();
-		ItemStack stack = new ItemStack(ChargingBench.blockChargingBench, 1, 11);
+		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, 11);
 		dropItem(stack);
 		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
 		this.invalidate();
@@ -157,7 +158,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	 */
 	private void onLoad()
 	{
-		if (!ChargingBench.proxy.isClient())
+		if (!AdvancedPowerManagement.proxy.isClient())
 		{
 			tileLoaded = true;
 			checkInventory();
@@ -195,7 +196,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	@Override
 	public void updateEntity() //TODO Marked for easy access
 	{
-		if (ChargingBench.proxy.isClient()) return;
+		if (AdvancedPowerManagement.proxy.isClient()) return;
 
 		if (!tileLoaded)
 		{
@@ -262,7 +263,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 		float chargePercent = ((float)energyStored * 100.0F) / (float)energyCapacity;
 		if ((isPowering == false && chargePercent < lowerBoundary) || (isPowering == true && chargePercent >= upperBoundary))
 		{
-			if (ChargingBench.isDebugging) System.out.println("Storage Monitor toggling redstone. chargePercent:" + chargePercent);
+			if (Info.isDebugging) System.out.println("Storage Monitor toggling redstone. chargePercent:" + chargePercent);
 			isPowering = !isPowering;
 			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
@@ -271,7 +272,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 	private void checkInventory()
 	{
-		ItemStack item = getStackInSlot(ChargingBench.smSlotUniversal);
+		ItemStack item = getStackInSlot(Info.SM_SLOT_UNIVERSAL);
 		if (item == null || !(item.getItem() instanceof ItemStorageLinkCard))
 		{
 			targetCoords = null;
@@ -389,11 +390,11 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 		}
 
 		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ChargingBench.packetChannel; // CHANNEL MAX 16 CHARS
+		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
 		packet.data = bytes.toByteArray();
 		packet.length = packet.data.length;
 
-		ChargingBench.proxy.sendPacketToServer(packet);
+		AdvancedPowerManagement.proxy.sendPacketToServer(packet);
 	}
 
 	@Override
@@ -418,7 +419,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 		}
 
 		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ChargingBench.packetChannel; // CHANNEL MAX 16 CHARS
+		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
 		packet.data = bytes.toByteArray();
 		packet.length = packet.data.length;
 		return packet;
@@ -448,7 +449,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 			return StorageMonitor.slotUniversal;
 		}
 		*/
-		return ChargingBench.smSlotUniversal;
+		return Info.SM_SLOT_UNIVERSAL;
 	}
 
 	@Override
@@ -522,14 +523,14 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	{
 		contents[slot] = itemstack;
 
-		if (ChargingBench.isDebugging && itemstack != null)
+		if (Info.isDebugging && itemstack != null)
 		{
-			if (ChargingBench.proxy.isServer())
+			if (AdvancedPowerManagement.proxy.isServer())
 			{
 				System.out.println("Server assigned stack tag: " + itemstack.stackTagCompound);
 				if (itemstack.stackTagCompound != null) System.out.println("     " + itemstack.stackTagCompound.getTags().toString());
 			}
-			if (ChargingBench.proxy.isClient())
+			if (AdvancedPowerManagement.proxy.isClient())
 			{
 				System.out.println("Client assigned stack tag: " + itemstack.stackTagCompound);
 				if (itemstack.stackTagCompound != null) System.out.println("     " + itemstack.stackTagCompound.getTags().toString());
@@ -550,7 +551,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 	@Override
 	public void onInventoryChanged()
 	{
-		if (ChargingBench.isDebugging) System.out.println("TEStorageMonitor.onInventoryChanged");
+		if (Info.isDebugging) System.out.println("TEStorageMonitor.onInventoryChanged");
 		checkInventory();
 		super.onInventoryChanged();
 	}

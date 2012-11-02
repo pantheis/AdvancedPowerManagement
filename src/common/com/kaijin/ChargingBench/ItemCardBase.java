@@ -19,7 +19,7 @@ public class ItemCardBase extends Item
 	@Override
 	public String getTextureFile()
 	{
-		return ChargingBench.proxy.ITEM_PNG;
+		return Info.ITEM_PNG;
 	}
 
 	@Override

@@ -23,7 +23,7 @@ public class ContainerAdvEmitter extends Container
 
 	public ContainerAdvEmitter(InventoryPlayer player, TEAdvEmitter tile)
 	{
-		if (ChargingBench.isDebugging) System.out.println("ContainerAdvEmitter");
+		if (Info.isDebugging) System.out.println("ContainerAdvEmitter");
 		te = tile;
 		outputRate = -1;
 		packetSize = -1;

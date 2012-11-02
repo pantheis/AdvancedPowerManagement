@@ -64,7 +64,7 @@ public class ItemStorageLinkCard extends ItemCardBase
 	{
 		if (player.isSneaking())
 		{
-			return new ItemStack(ChargingBench.itemStorageLinkCardCreator);
+			return new ItemStack(AdvancedPowerManagement.itemStorageLinkCardCreator);
 		}
 		else
 		{

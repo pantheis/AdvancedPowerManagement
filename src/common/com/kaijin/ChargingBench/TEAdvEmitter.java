@@ -37,7 +37,7 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!ChargingBench.proxy.isClient())
+		if (!AdvancedPowerManagement.proxy.isClient())
 		{
 			super.readFromNBT(nbttagcompound);
 			outputRate = nbttagcompound.getInteger("outputRate");
@@ -51,7 +51,7 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!ChargingBench.proxy.isClient())
+		if (!AdvancedPowerManagement.proxy.isClient())
 		{
 			super.writeToNBT(nbttagcompound);
 			nbttagcompound.setInteger("outputRate", outputRate);
@@ -74,7 +74,7 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 	@Override
 	public void updateEntity()
 	{
-		if (ChargingBench.proxy.isClient()) return;
+		if (AdvancedPowerManagement.proxy.isClient()) return;
 
 		if (!initialized)
 		{
@@ -239,11 +239,11 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 		}
 
 		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ChargingBench.packetChannel; // CHANNEL MAX 16 CHARS
+		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
 		packet.data = bytes.toByteArray();
 		packet.length = packet.data.length;
 
-		ChargingBench.proxy.sendPacketToServer(packet);
+		AdvancedPowerManagement.proxy.sendPacketToServer(packet);
 	}
 
 }

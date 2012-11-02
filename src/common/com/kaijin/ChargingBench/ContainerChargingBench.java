@@ -43,24 +43,24 @@ public class ContainerChargingBench extends Container
 		{
 			for (xCol = 0; xCol < 3; ++xCol) // 3 columns across
 			{
-				this.addSlotToContainer(new SlotChargeable(tile, ChargingBench.cbSlotCharging + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
+				this.addSlotToContainer(new SlotChargeable(tile, Info.CB_SLOT_CHARGING + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
 			}
 		}
 
 		// Upgrade slots (Overclocker, storage)
 		for (yRow = 0; yRow < 4; ++yRow) // 4 rows high
 		{
-			this.addSlotToContainer(new SlotMachineUpgrade(tile, ChargingBench.cbSlotUpgrade + yRow, 152, topOffset + yRow * 18));
+			this.addSlotToContainer(new SlotMachineUpgrade(tile, Info.CB_SLOT_UPGRADE + yRow, 152, topOffset + yRow * 18));
 		}
 
 		// Input Slot
-		this.addSlotToContainer(new SlotInput(tile, ChargingBench.cbSlotInput, 130, topOffset));
+		this.addSlotToContainer(new SlotInput(tile, Info.CB_SLOT_INPUT, 130, topOffset));
 
 		// Output slot
-		this.addSlotToContainer(new SlotOutput(tile, ChargingBench.cbSlotOutput, 130, topOffset + 54));
+		this.addSlotToContainer(new SlotOutput(tile, Info.CB_SLOT_OUTPUT, 130, topOffset + 54));
 
 		// Power source slot
-		this.addSlotToContainer(new SlotPowerSource(tile, ChargingBench.cbSlotPowerSource, 130, topOffset + 27));
+		this.addSlotToContainer(new SlotPowerSource(tile, Info.CB_SLOT_POWER_SOURCE, 130, topOffset + 27));
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
