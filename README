@@ -1,12 +1,21 @@
 Advanced Power Management
 
-Welcome! This mod adds several new blocks to Industrial Craft 2 to help you manage your energy grid. The scope of the mod has expanded since the original version, and it is no longer named for the single block it originally added. You will now find contained herein for your crafting enjoyment the following high quality devices: The Charging Bench, the Battery Station, and the Storage Monitor (plus the Adjustable Emitter for creative play).
+Welcome! This mod adds several new blocks to Industrial Craft 2 to help you
+manage your energy grid. The scope of the mod has expanded since the original
+version, and it is no longer named for the single block it originally added. You
+will now find contained herein for your crafting enjoyment the following high
+quality devices: The Charging Bench, the Battery Station, and the Storage
+Monitor (plus the Adjustable Emitter for creative play).
 
 
 The new and improved IC2 Charging Bench!
 -------------------
 
-The charging bench allows you to charge up to 12 items simultaneously! It comes in three tiers with each tier capable of charging all items at its tier level and below, but not above. If you want to charge your Quantum armor you'll need to craft a HV version - there's no getting around the need for that specialized high-power equipment, sadly. :)
+The charging bench allows you to charge up to 12 items simultaneously! It comes
+in three tiers with each tier capable of charging all items at its tier level
+and below, but not above. If you want to charge your Quantum armor you'll need
+to craft a HV version - there's no getting around the need for that specialized
+high-power equipment, sadly. :)
 
 LV Charging Bench
 - The low voltage charging bench has a maximum input energy of 32 EU/t, and a
@@ -48,18 +57,42 @@ Crafting pattern for all charging benches:
 Features common to all Charging Benches
 -------------------
 
-Due to advances in over-current circuit protection designs, a Charging Bench will not explode if exposed to higher than acceptable current but simply pop off onto the ground in a safe manner, ejecting any items it contained.
+Due to advances in over-current circuit protection designs, a Charging Bench
+will not explode if exposed to higher than acceptable current but simply pop off
+onto the ground in a safe manner, ejecting any items it contained.
 
-A charging bench will automatically direct valid electrical items shift-clicked from your inventory into the charging area if there is space free. Excess will be placed into the input slot. Once an item is done charging, it will be automatically moved to the output slot, if there is space, and another item from the input slot will be added to the main charging area. In this way, you can shift-click a full stack of RE-Batteries into the Charging Bench, and it will automatically unstack and charge them. You can quickly and easily collect all of them by shift-clicking repeatedly on the output slot.
+A charging bench will automatically direct valid electrical items shift-clicked
+from your inventory into the charging area if there is space free. Excess will
+be placed into the input slot. Once an item is done charging, it will be
+automatically moved to the output slot, if there is space, and another item from
+the input slot will be added to the main charging area. In this way, you can
+shift-click a full stack of RE-Batteries into the Charging Bench, and it will
+automatically unstack and charge them. You can quickly and easily collect all of
+them by shift-clicking repeatedly on the output slot.
 
-While using a charging bench, you will have easy access to your equipped armor slots. If you are wearing electrical armor, you can shift-click it directly from your armor slots into the bench. When it's done charging, simply shift-click it from the output slot (or the charging area, if you've let some other item loiter in the output slot) and it will automatically equip the armor in the correct location. It doesn't get much easier than that!
+While using a charging bench, you will have easy access to your equipped armor
+slots. If you are wearing electrical armor, you can shift-click it directly from
+your armor slots into the bench. When it's done charging, simply shift-click it
+from the output slot (or the charging area, if you've let some other item loiter
+in the output slot) and it will automatically equip the armor in the correct
+location. It doesn't get much easier than that!
 
-And we're not done yet with the awesome features of this mod! Each charging bench now includes a pair of indicators visible right on the outside of the bench. The storage meter lets you see just how much power is available for charging up your items, and the charging light lets you know if those energy-hungry items are done charging without even opening the GUI. You can toss in your quantum armor, lapotron crystals, mining laser, etc, and walk away, and with merely a glance across the room, you'll know when they're ready to be picked up! Even the battery slot is wired up, so that if you're filling a remote bench using items, you'll know when it's time to swap out the battery without having to stand around waiting for it to discharge completely.
+And we're not done yet with the awesome features of this mod! Each charging
+bench now includes a pair of indicators visible right on the outside of the
+bench. The storage meter lets you see just how much power is available for
+charging up your items, and the charging light lets you know if those energy-
+hungry items are done charging without even opening the GUI. You can toss in
+your quantum armor, lapotron crystals, mining laser, etc, and walk away, and
+with merely a glance across the room, you'll know when they're ready to be
+picked up! Even the battery slot is wired up, so that if you're filling a remote
+bench using items, you'll know when it's time to swap out the battery without
+having to stand around waiting for it to discharge completely.
 
 
 Available upgrades!
 -------------------
-All three tiers of the Charging Bench accept the standard array of upgrades, with each having a very specific effect.
+All three tiers of the Charging Bench accept the standard array of upgrades,
+with each having a very specific effect.
 
 - The transformer upgrade will allow the lower tier benches to accept higher
   input energy, including energy crystals, lappacks, and lapotrons in the power
@@ -88,20 +121,35 @@ All three tiers of the Charging Bench accept the standard array of upgrades, wit
     Speed:           S = (1.3^x)
     Time required:   T = 1/S
     Energy consumed: E = (1.5^x)/S
-  where x is the number of overclockers. (Just multiply the normal values by S, T, or E.)
+  where x is the number of overclockers. (Just multiply the normal values by S,
+  T, or E.)
 
 There's more!!
 -------------------
-The Charging Bench's input, output and power slots are exposed to pipes, tubes, and other devices. Input is on top, output is on bottom and the power slot is from all sides. While the GUI restricts items placed into each of the slots to appropriate types there is no such restriction for pipe/tube access. It is up to the player to design their systems so that the wrong types of items don't get tossed onto the bench. But not to worry, there are no negative consequences to inserting incorrect items, aside from temporarily clogging up the slot; the bench simply will not do anything with items that it can't process.
+The Charging Bench's input, output and power slots are exposed to pipes, tubes,
+and other devices. Input is on top, output is on bottom and the power slot is
+from all sides. While the GUI restricts items placed into each of the slots to
+appropriate types there is no such restriction for pipe/tube access. It is up to
+the player to design their systems so that the wrong types of items don't get
+tossed onto the bench. But not to worry, there are no negative consequences to
+inserting incorrect items, aside from temporarily clogging up the slot; the
+bench simply will not do anything with items that it can't process.
 
-Valid electrical items placed into the charging bench via tubes will automatically be moved from the input slot to an available charging slot, then moved to the output slot once fully charged. In this way, you can easily automate recharging of items!
+Valid electrical items placed into the charging bench via tubes will
+automatically be moved from the input slot to an available charging slot, then
+moved to the output slot once fully charged. In this way, you can easily
+automate recharging of items!
 
 
 Battery Stations
 -------------------
-Sure, a charging bench lets you fill up a lot of items at the same time with ease, but what if you want to do the opposite and drain power from a lot of items? That's what the brand new Battery Station allows you to do!
+Sure, a charging bench lets you fill up a lot of items at the same time with
+ease, but what if you want to do the opposite and drain power from a lot of
+items? That's what the brand new Battery Station allows you to do!
 
-The battery station comes in the same three tiers as the charging bench, but where the bench is crafted with an energy storage unit, the battery station requires a transformer instead.
+The battery station comes in the same three tiers as the charging bench, but
+where the bench is crafted with an energy storage unit, the battery station
+requires a transformer instead.
 
 LV Battery Station
 - The low voltage battery station outputs energy in 32 EU packets, and can drain
@@ -143,28 +191,87 @@ Crafting pattern for all battery stations:
 
 Features of the Battery Station
 -------------------
-Each battery station will output one packet of energy every tick, if it's able to drain enough EU from the items in its inventory. Remember that different energy storage items have different transfer rates, so a single battery in a HV Battery Station will not allow it to provide power every tick. It will take multiple ticks for the station to drain sufficient EU from one battery into its buffer.
+Each battery station will output one packet of energy every tick, if it's able
+to drain enough EU from the items in its inventory. Remember that different
+energy storage items have different transfer rates, so a single battery in a HV
+Battery Station will not allow it to provide power every tick. It will take
+multiple ticks for the station to drain sufficient EU from one battery into its
+buffer.
 
-To avoid potential problems with excessive energy loss over cabling, a battery station will never transmit a packet of EU less than its rated output. Instead it carries over the buffered EU from one tick to the next until it has enough EU stored to output a full packet.
+To avoid potential problems with excessive energy loss over cabling, a battery
+station will never transmit a packet of EU less than its rated output. Instead
+it carries over the buffered EU from one tick to the next until it has enough EU
+stored to output a full packet.
 
-A battery station can drain multiple items at once, if it doesn't get enough energy from the first item to be able to emit EU (but it will only drain the minimum number of items needed for it to be able to send one packet per tick). This allows a MV (or HV) battery station to run at maximum efficiency even if supplied only with charged RE-batteries (and/or energy crystals) instead of the more expensive lapotron crystals.
+A battery station can drain multiple items at once, if it doesn't get enough
+energy from the first item to be able to emit EU (but it will only drain the
+minimum number of items needed for it to be able to send one packet per tick).
+This allows a MV (or HV) battery station to run at maximum efficiency even if
+supplied only with charged RE-batteries (and/or energy crystals) instead of the
+more expensive lapotron crystals.
 
-The battery station supports automation features much like the charging bench! It will move full batteries, crystals, or other storage devices from its input slot to its discharging area, and empty items to its output slot. When an item is removed from the discharging area the other items present will be advanced automatically, so that newly added items will not 'cut in line'. That is to say, the battery station operates in a FIFO (First-In, First-Out) manner, as long as you don't rearrange items within its inventory manually, of course. ;) Like the charging bench, you can use pipes, tubes, machines, or other methods to automatically add and remove electrical items capable of being used as a power source. In concert with a charging bench, you can even create systems to automatically transport EU from one location to another, storing it in items to avoid the inefficiency and material expense of long cable runs.
+The battery station supports automation features much like the charging bench!
+It will move full batteries, crystals, or other storage devices from its input
+slot to its discharging area, and empty items to its output slot. When an item
+is removed from the discharging area the other items present will be advanced
+automatically, so that newly added items will not 'cut in line'. That is to say,
+the battery station operates in a FIFO (First-In, First-Out) manner, as long as
+you don't rearrange items within its inventory manually, of course. ;) Like the
+charging bench, you can use pipes, tubes, machines, or other methods to
+automatically add and remove electrical items capable of being used as a power
+source. In concert with a charging bench, you can even create systems to
+automatically transport EU from one location to another, storing it in items to
+avoid the inefficiency and material expense of long cable runs.
 
-The input slot is accessed from the top or bottom of a battery station, and the output slot is accessed from any side. Note that this layout is different from the charging bench, because the battery station only has two slots that need to be accessible. Cabling to accept the EU output from the battery station may be attached to any face (top, bottom, or sides), or the station may be placed directly adjacent to the machines you want it to power.
+The input slot is accessed from the top or bottom of a battery station, and the
+output slot is accessed from any side. Note that this layout is different from
+the charging bench, because the battery station only has two slots that need to
+be accessible. Cabling to accept the EU output from the battery station may be
+attached to any face (top, bottom, or sides), or the station may be placed
+directly adjacent to the machines you want it to power.
 
-Finally, the battery station has two more features similar to those of the charging bench. One is an activity indicator light, which will be lit while it is draining items or sending out EU. The other is that a redstone signal will deactivate the battery station, preventing it from performing any actions at all.
+Finally, the battery station has two more features similar to those of the
+charging bench. One is an activity indicator light, which will be lit while it
+is draining items or sending out EU. The other is that a redstone signal will
+deactivate the battery station, preventing it from performing any actions at
+all.
 
 
 Storage Monitor
 -------------------
-Everyone who's tried to set up an energy monitoring system of some sort knows that the redstone signals from your batbox, MFE, or MFSU are very challenging to make use of in an effective manner - not to mention the fact that if you have a lot of wiring connected to the storage unit, it can be very tricky to get a redstone signal out of it, too, especially using vanilla redstone mechanics! Fret no more, because the storage monitor allows you to remotely monitor an energy storage unit in an easy and user-friendly way. It will start emitting redstone when the power level falls below a certain threshold, and stop when the power rises above another threshold.
+Everyone who's tried to set up an energy monitoring system of some sort knows
+that the redstone signals from your batbox, MFE, or MFSU are very challenging to
+make use of in an effective manner - not to mention the fact that if you have a
+lot of wiring connected to the storage unit, it can be very tricky to get a
+redstone signal out of it, too, especially using vanilla redstone mechanics!
+Fret no more, because the storage monitor allows you to remotely monitor an
+energy storage unit in an easy and user-friendly way. It will start emitting
+redstone when the power level falls below a certain threshold, and stop when the
+power rises above another threshold.
 
-But that's not all! It allows you to easily configure the thresholds at which the redstone signal turns on and off, so that you can customize its behavior to your precise needs. Hook it up to activate your nuclear reactor only when your MFSU's power is below 10%, so that renewable sources of energy will be used to refill your power reserves as often as possible... or make certain your high power consumption factory floor never runs out of juice by activating it any time the power falls below 80 or 90%!
+But that's not all! It allows you to easily configure the thresholds at which
+the redstone signal turns on and off, so that you can customize its behavior to
+your precise needs. Hook it up to activate your nuclear reactor only when your
+MFSU's power is below 10%, so that renewable sources of energy will be used to
+refill your power reserves as often as possible... or make certain your high
+power consumption factory floor never runs out of juice by activating it any
+time the power falls below 80 or 90%!
 
-Just craft a link card and connect it to the device you wish to monitor by right-clicking on the batbox, MFE, or MFSU with the card. You can even monitor a charging bench, or other mods' EU storage blocks, if they implement the IEnergyStorage interface from the IC2 API! Once you have encoded the card with the storage unit's unique ID and location, insert the card into the Storage Monitor and use the controls to configure its behavior. Or you can just keep the default settings, and the redstone signal will turn on when power falls below 60% and shut off when it rises to 90%.
+Just craft a link card and connect it to the device you wish to monitor by
+right-clicking on the batbox, MFE, or MFSU with the card. You can even monitor a
+charging bench, or other mods' EU storage blocks, if they implement the
+IEnergyStorage interface from the IC2 API! Once you have encoded the card with
+the storage unit's unique ID and location, insert the card into the Storage
+Monitor and use the controls to configure its behavior. Or you can just keep the
+default settings, and the redstone signal will turn on when power falls below
+60% and shut off when it rises to 90%.
 
-If you need to move your energy storage unit or want to reuse a link card elsewhere, there's no need to throw it away and craft a new one. You can wipe a link card clean by holding it in your hand and right-clicking in the air while holding your sneak key (as a safety feature to prevent accidental erasure). It will revert to a blank link card creator which you can then reuse on any storage unit you'd like.
+If you need to move your energy storage unit or want to reuse a link card
+elsewhere, there's no need to throw it away and craft a new one. You can wipe a
+link card clean by holding it in your hand and right-clicking in the air while
+holding your sneak key (as a safety feature to prevent accidental erasure). It
+will revert to a blank link card creator which you can then reuse on any storage
+unit you'd like.
 
 Crafting recipes
 -------------------
@@ -193,9 +300,13 @@ Pattern:
 
 Emitters? What's this?
 -------------------
-Originally created for testing purposes, we have added these Emitter blocks to the creative inventory as a bonus for people playing in creative mode or wanting to test electrical builds without having to constantly spawn lapotron crystals and MFSUs.
+Originally created for testing purposes, we have added these Emitter blocks to
+the creative inventory as a bonus for people playing in creative mode or wanting
+to test electrical builds without having to constantly spawn lapotron crystals
+and MFSUs.
 
-There are four versions available. They have no crafting recipes, and must be acquired from the creative inventory or via tools like NEI.
+There are four versions available. They have no crafting recipes, and must be
+acquired from the creative inventory or via tools like NEI.
 
 LV Emitter
 -  Emits LV current (32 EU/t) when powered by redstone
@@ -216,3 +327,4 @@ Original idea by Drashian
 Original Charging Bench graphics by Starlight
 Emitter graphics by Pantheis
 Code: Pantheis and Tallinu
+
