@@ -26,7 +26,7 @@ public class GuiStorageMonitor extends GuiContainer
 
 	private static final String DISPLAYSTRINGS[] = {"-10", "-1", "+1", "+10"};
 	private static final int HORIZONTALOFFSETS[] = {-57, -33, 25, 49};
-	private static final int RED = 0x55FF55;
+	private static final int RED = 0xFF5555;
 	private static final int GREEN = 0x55FF55;
 	private static final int REDGLOW = Utils.multiplyColorComponents(RED, 0.16F);
 	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
