@@ -49,16 +49,19 @@ public class GuiAdvEmitter extends GuiContainer
 		int xLoc = (width - xSize) / 2;
 		int yLoc = (height - ySize) / 2;
 
+		// Draw GUI background graphic
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
-		// Draw title
-		Utils.drawCenteredText(fontRenderer, "Advanced Emitter", width / 2, yLoc + 7, 4210752);
+		// Draw title text
+		Utils.drawCenteredText(fontRenderer, Info.ADV_EMITTER_NAME, width / 2, yLoc + 7, 4210752);
 
+		// Packet size section text
 		Utils.drawCenteredText(fontRenderer, "Packet size (Voltage)", width / 2, yLoc + 21, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.packetSize), xLoc + 146, yLoc + 49, GREEN, GREENGLOW);
 		fontRenderer.drawString("[4 - 8192]", xLoc + 110, yLoc + 35, 4210752);
 		fontRenderer.drawString("EU", xLoc + 152, yLoc + 49, 4210752);
 
+		// Output rate section text
 		Utils.drawCenteredText(fontRenderer, "Output / Tick (Max 64 Packets)", width / 2, yLoc + 64, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.outputRate), xLoc + 146, yLoc + 92, GREEN, GREENGLOW);
 		fontRenderer.drawString("[1 - 65536]", xLoc + 110, yLoc + 78, 4210752);

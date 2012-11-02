@@ -20,8 +20,6 @@ public class GuiChargingBench extends GuiContainer
 {
 	IInventory playerInventory;
 	public TEChargingBench tile;
-	public EntityPlayer player;
-	private GuiButton selectedButton = null;
 
 	private static final int GREEN = 0x55FF55;
 	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
