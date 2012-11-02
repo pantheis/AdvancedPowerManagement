@@ -144,78 +144,78 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 		switch (id)
 		{
 		case 0:
-			packetSize -= 1;
-			if (packetSize < 4) packetSize = 4;
-			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
-			break;
-		case 1:
-			packetSize -= 10;
-			if (packetSize < 4) packetSize = 4;
-			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
-			break;
-		case 2:
-			packetSize -= 64;
-			if (packetSize < 4) packetSize = 4;
-			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
-			break;
-		case 3:
-			packetSize /= 2;
-			if (packetSize < 4) packetSize = 4;
-			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
-			break;
-		case 4:
 			packetSize += 1;
 			if (packetSize > 8192) packetSize = 8192;
 			break;
-		case 5:
+		case 1:
 			packetSize += 10;
 			if (packetSize > 8192) packetSize = 8192;
 			break;
-		case 6:
+		case 2:
 			packetSize += 64;
 			if (packetSize == 68) packetSize = 64;
 			if (packetSize > 8192) packetSize = 8192;
 			break;
-		case 7:
+		case 3:
 			packetSize *= 2;
 			if (packetSize > 8192) packetSize = 8192;
 			break;
+		case 4:
+			packetSize -= 1;
+			if (packetSize < 4) packetSize = 4;
+			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
+			break;
+		case 5:
+			packetSize -= 10;
+			if (packetSize < 4) packetSize = 4;
+			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
+			break;
+		case 6:
+			packetSize -= 64;
+			if (packetSize < 4) packetSize = 4;
+			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
+			break;
+		case 7:
+			packetSize /= 2;
+			if (packetSize < 4) packetSize = 4;
+			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
+			break;
 		case 8:
-			outputRate -= 1;
-			if (outputRate < 1) outputRate = 1;
-			break;
-		case 9:
-			outputRate -= 10;
-			if (outputRate < 1) outputRate = 1;
-			break;
-		case 10:
-			outputRate -= 64;
-			if (outputRate < 1) outputRate = 1;
-			break;
-		case 11:
-			outputRate /= 2;
-			if (outputRate < 1) outputRate = 1;
-			break;
-		case 12:
 			outputRate += 1;
 			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
 			if (outputRate > 65536) outputRate = 65536;
 			break;
-		case 13:
+		case 9:
 			outputRate += 10;
 			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
 			if (outputRate > 65536) outputRate = 65536;
 			break;
-		case 14:
+		case 10:
 			outputRate += 64;
 			if (outputRate == 65) outputRate = 64;
 			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
 			if (outputRate > 65536) outputRate = 65536;
 			break;
-		case 15:
+		case 11:
 			outputRate *= 2;
 			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
 			if (outputRate > 65536) outputRate = 65536;
+			break;
+		case 12:
+			outputRate -= 1;
+			if (outputRate < 1) outputRate = 1;
+			break;
+		case 13:
+			outputRate -= 10;
+			if (outputRate < 1) outputRate = 1;
+			break;
+		case 14:
+			outputRate -= 64;
+			if (outputRate < 1) outputRate = 1;
+			break;
+		case 15:
+			outputRate /= 2;
+			if (outputRate < 1) outputRate = 1;
 			break;
 		}
 	}
