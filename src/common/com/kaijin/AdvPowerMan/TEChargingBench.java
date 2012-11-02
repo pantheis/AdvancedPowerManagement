@@ -650,7 +650,22 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public String getInvName()
 	{
-		return "ChargingBench";
+		String type;
+		switch (baseTier)
+		{
+		case 1:
+			type = "LV ";
+			break;
+		case 2:
+			type = "MV ";
+			break;
+		case 3:
+			type = "HV ";
+			break;
+		default:
+			type = "";
+		}
+		return type + Info.CHARGER_NAME;
 	}
 
 	@Override
