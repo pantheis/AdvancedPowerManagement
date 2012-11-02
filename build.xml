@@ -1,12 +1,12 @@
-<project name="Charging Bench" basedir="../" default="main">
+<project name="AdvancedPowerManagement" basedir="../" default="main">
 	<property environment="env" />
 	<!-- Properties -->
 
-	<property name="mod.name"            value="ChargingBench"/>
-	<property name="mod.dir"             value="Charging Bench"/>
-	<property name="build.dir"           value="Charging Bench/build"/>
-	<property name="src.dir"             value="Charging Bench/src"/>
-	<property name="res.dir"             value="Charging Bench/resources"/>
+	<property name="mod.name"            value="AdvancedPowerManagement"/>
+	<property name="mod.dir"             value="AdvancedPowerManagement"/>
+	<property name="build.dir"           value="${mod.dir}/build"/>
+	<property name="src.dir"             value="${mod.dir}/src"/>
+	<property name="res.dir"             value="${mod.dir}/resources"/>
 
 	<property name="download.dir"        value="download"/>
 	<property name="files.minecraft.dir" value="jars"/>
