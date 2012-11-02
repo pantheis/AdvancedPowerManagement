@@ -5,8 +5,8 @@
 
 package com.kaijin.AdvPowerMan;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 import net.minecraft.src.FontRenderer;
 import net.minecraft.src.ItemStack;
@@ -32,6 +32,7 @@ public class Utils
 	 * @param yLoc  - y location
 	 * @param color - Color
 	 */
+	@SideOnly(Side.CLIENT)
 	public static void drawCenteredText(FontRenderer fr, String text, int xLoc, int yLoc, int color)
 	{
 		fr.drawString(text, xLoc - fr.getStringWidth(text) / 2, yLoc, color);
@@ -45,6 +46,7 @@ public class Utils
 	 * @param yLoc  - y location
 	 * @param color - Color
 	 */
+	@SideOnly(Side.CLIENT)
 	public static void drawRightAlignedText(FontRenderer fr, String text, int xLoc, int yLoc, int color)
 	{
 		fr.drawString(text, xLoc - fr.getStringWidth(text), yLoc, color);
@@ -107,6 +109,7 @@ public class Utils
 	 * @param color - Main Color
 	 * @param glowColor - Surrounding Color
 	 */
+	@SideOnly(Side.CLIENT)
 	public static void drawRightAlignedGlowingText(FontRenderer fr, String text, int xLoc, int yLoc, int color, int glowColor)
 	{
 		drawGlowingText(fr, text, xLoc - fr.getStringWidth(text), yLoc, color, glowColor);
@@ -121,6 +124,7 @@ public class Utils
 	 * @param color - Main Color
 	 * @param glowColor - Surrounding Color
 	 */
+	@SideOnly(Side.CLIENT)
 	public static void drawCenteredGlowingText(FontRenderer fr, String text, int xLoc, int yLoc, int color, int glowColor)
 	{
 		drawGlowingText(fr, text, xLoc - fr.getStringWidth(text) / 2, yLoc, color, glowColor);
@@ -135,6 +139,7 @@ public class Utils
 	 * @param color - Main Color
 	 * @param glowColor - Surrounding Color
 	 */
+	@SideOnly(Side.CLIENT)
 	public static void drawGlowingText(FontRenderer fr, String text, int xLoc, int yLoc, int color, int glowColor)
 	{
 		for (int i = 0; i < 4; i++)
@@ -142,47 +147,6 @@ public class Utils
 			fr.drawString(text, xLoc + oX[i], yLoc + oY[i], glowColor);
 		}
 		fr.drawString(text, xLoc, yLoc, color);
-	}
-
-	/**
-	 * Returns a SHA-256 hex hash string of the string passed to it
-	 * @param string
-	 * @return String
-	 */
-	public static String hashSHA1(String string)
-	{
-		MessageDigest md = null;
-		try
-		{
-			md = MessageDigest.getInstance("SHA-256");
-		}
-		catch (NoSuchAlgorithmException e)
-		{
-			e.printStackTrace();
-		}
-		md.update(string.getBytes());
-
-		byte byteData[] = md.digest();
-
-		//convert the byte to hex format method 1
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < byteData.length; i++)
-		{
-			sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-		}
-
-		//System.out.println("Hex format : " + sb.toString());
-
-		//convert the byte to hex format method 2
-		StringBuffer hexString = new StringBuffer();
-		for (int i = 0; i < byteData.length; i++)
-		{
-			String hex=Integer.toHexString(0xff & byteData[i]);
-			if (hex.length() == 1) hexString.append('0');
-			hexString.append(hex);
-		}
-		//System.out.println("Hex format : " + hexString.toString());
-		return hexString.toString();
 	}
 
 	/*
