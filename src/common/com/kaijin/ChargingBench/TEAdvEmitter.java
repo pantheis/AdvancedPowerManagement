@@ -86,9 +86,10 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 		if (receivingRedstoneSignal())
 		{
 			energyBuffer += outputRate;
-			while(energyBuffer >= packetSize)
+			EnergyNet net = EnergyNet.getForWorld(worldObj);
+			while (energyBuffer >= packetSize)
 			{
-				EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, packetSize);
+				net.emitEnergyFrom(this, packetSize);
 				energyBuffer -= packetSize;
 			}
 		}
@@ -130,7 +131,7 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 
 		return entityplayer.getDistanceSq((double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D) <= 64D;
 	}
-	
+
 	/**
 	 * Packet reception by server of what button was clicked on the client's GUI.
 	 * @param id = the button ID
@@ -216,7 +217,6 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 		}
 	}
 
-	
 	/**
 	 * Packet transmission from client to server of what button was clicked on the GUI.
 	 * @param id = the button ID
