@@ -24,7 +24,7 @@ public class GuiAdvEmitter extends GuiContainer
 	public TEAdvEmitter tile;
 	private CButton buttons[] = new CButton[16];
 
-	private static final String displayStrings[] = {"-1", "-10", "-64", "/2", "+1", "+10", "+64", "x2"};
+	private static final String displayStrings[] = {"+1", "+10", "+64", "x2", "-1", "-10", "-64", "/2"};
 	private static final int GREEN = 0x55FF55;
 	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
 
