@@ -4,6 +4,8 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
+import java.io.File;
+import java.util.logging.Level;
 import ic2.api.Items;
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
@@ -47,35 +49,73 @@ public class AdvancedPowerManagement implements ICraftingHandler
 	public static Item itemStorageLinkCard;
 	public static Item itemStorageLinkCardCreator;
 
-	public static int blockIDAdvPwrMan;
-	public static int itemIDBenchTools;
-	public static int itemIDStorageLinkCard;
-	public static int itemIDStorageLinkCardCreator;
+	public static int blockIDAdvPwrMan = 2491;
+	public static int itemIDBenchTools = 22499;
+	public static int itemIDStorageLinkCard = 22495;
+	public static int itemIDStorageLinkCardCreator = 22496;
 
 	@PreInit
 	public static void preInit(FMLPreInitializationEvent event)
 	{
+		Info.isDebugging = false;
 		try
 		{
 			Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
 			configuration.load();
-			blockIDAdvPwrMan = configuration.getBlock("ChargingBench", 2491).getInt();
-			itemIDBenchTools = configuration.getItem(configuration.CATEGORY_ITEM, "BenchTools", 22499).getInt();
-			itemIDStorageLinkCard = configuration.getItem(configuration.CATEGORY_ITEM, "LinkCard", 22495).getInt();
-			itemIDStorageLinkCardCreator = configuration.getItem(configuration.CATEGORY_ITEM, "LinkCardCreator", 22496).getInt();
-			Info.isDebugging = Boolean.parseBoolean((configuration.get(configuration.CATEGORY_GENERAL, "debug",  false).value));
+
+			// Check for legacy configuration file
+			File oldFile = new File(event.getModConfigurationDirectory(), "ChargingBench.cfg");
+			boolean migrate = oldFile.exists();
+			if (migrate)
+			{
+				FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Discovered old config file: " + oldFile + " - Attempting to migrate block and item IDs.");
+				if (configuration.hasKey("block", "AdvPowerManBlock"))
+				{
+					FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] New config file already contains settings. Skipping migration.");
+				}
+				else
+				{
+					Configuration oldconfig = new Configuration(oldFile);
+					oldconfig.load();
+					blockIDAdvPwrMan = oldconfig.get(configuration.CATEGORY_BLOCK, "ChargingBench", blockIDAdvPwrMan).getInt();
+					Info.isDebugging = Boolean.parseBoolean((oldconfig.get(configuration.CATEGORY_GENERAL, "debug",  Info.isDebugging).value));
+					oldconfig.save();
+					boolean success = oldFile.delete();
+					if (success)
+					{
+						FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Done with old config file.");
+					}
+					else
+					{
+						FMLLog.getLogger().log(Level.WARNING, "[" + Info.TITLE + "] Could not delete old configuration file: " + oldFile + " - Requesting delete on exit.");
+						oldFile.deleteOnExit();
+					}
+				}
+			}
+
+			// Read or create config file properties, reusing any block and item IDs discovered in old file, if it was present
+			blockIDAdvPwrMan = configuration.getBlock("AdvPowerManBlock", blockIDAdvPwrMan).getInt();
+			itemIDBenchTools = configuration.getItem(configuration.CATEGORY_ITEM, "BenchTools", itemIDBenchTools).getInt();
+			itemIDStorageLinkCard = configuration.getItem(configuration.CATEGORY_ITEM, "LinkCard", itemIDStorageLinkCard).getInt();
+			itemIDStorageLinkCardCreator = configuration.getItem(configuration.CATEGORY_ITEM, "LinkCardCreator", itemIDStorageLinkCardCreator).getInt();
+			Info.isDebugging = Boolean.parseBoolean((configuration.get(configuration.CATEGORY_GENERAL, "debug",  Info.isDebugging).value));
 			configuration.save();
+			if (migrate)
+			{
+				FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Successfully migrated settings to new config file.");
+			}
 		}
-		catch (Exception var1)
+		catch (Exception e)
 		{
-			System.out.println("[" + Info.TITLE + "] Error while trying to access configuration!");
-			throw new RuntimeException(var1);
+			FMLLog.getLogger().log(Level.SEVERE, "[" + Info.TITLE + "] Error while trying to access configuration!", e);
+			throw new RuntimeException(e);
 		}
 	}
 
 	@Init
 	public void load(FMLInitializationEvent event)
 	{
+		FMLLog.getLogger().log(Level.FINER, "[" + Info.TITLE + "] Loading.");
 		GameRegistry.registerCraftingHandler(this);
 
 		blockAdvPwrMan = new BlockAdvPwrMan(blockIDAdvPwrMan, 0, Material.wood).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("AdvPwrMan").setCreativeTab(CreativeTabs.tabDecorations);
@@ -115,14 +155,6 @@ public class AdvancedPowerManagement implements ICraftingHandler
 
 		NetworkRegistry.instance().registerGuiHandler(this.instance, proxy);
 		proxy.load();
-		if (proxy.isServer())
-		{
-			FMLLog.getLogger().info (Info.TITLE + " " + Info.VERSION + " loaded.");
-		}
-		if (Info.isDebugging)
-		{
-			FMLLog.getLogger().info(Info.TITLE + " debugging enabled.");
-		}
 
 		// For returning charging benches and deconstructing them
 		Info.componentCopperCable = Items.getItem("insulatedCopperCableItem").copy();
@@ -143,12 +175,24 @@ public class AdvancedPowerManagement implements ICraftingHandler
 
 		Info.ic2WrenchID = Items.getItem("wrench").itemID;
 		Info.ic2ElectricWrenchID = Items.getItem("electricWrench").itemID;
+
+		if (proxy.isServer())
+		{
+			FMLLog.getLogger().info(Info.TITLE + " " + Info.VERSION + " loaded.");
+		}
+
+		if (Info.isDebugging)
+		{
+			FMLLog.getLogger().info(Info.TITLE + " debugging enabled.");
+		}
+
+		FMLLog.getLogger().log(Level.FINER, "[" + Info.TITLE + "] Done loading.");
 }
 
 	@PostInit
 	public void modsLoaded(FMLPostInitializationEvent event)
 	{
-		//if (ChargingBench.isDebugging) System.out.println("ChargingBench.modsLoaded");
+		FMLLog.getLogger().log(Level.FINER, "[" + Info.TITLE + "] Adding crafting recipes.");
 
 		// Charging Bench recipes
 		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, 0), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("batBox")});
