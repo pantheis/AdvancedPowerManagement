@@ -7,6 +7,7 @@ package com.kaijin.AdvPowerMan;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.StringTranslate;
 
 import org.lwjgl.opengl.GL11;
 
@@ -19,6 +20,8 @@ public class GuiStorageMonitor extends GuiContainer
 	IInventory playerInventory;
 	public TEStorageMonitor tile;
 	private CButton buttons[] = new CButton[8];
+
+	protected static StringTranslate lang = StringTranslate.getInstance();
 
 	private static final String DISPLAYSTRINGS[] = {"-10", "-1", "+1", "+10"};
 	private static final int HORIZONTALOFFSETS[] = {-57, -33, 25, 49};
@@ -69,12 +72,12 @@ public class GuiStorageMonitor extends GuiContainer
 		}
 
 		// Draw title text
-		Utils.drawCenteredText(fontRenderer, Info.MONITOR_NAME, xLoc + 96, yLoc + 12, 4210752);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), xLoc + 96, yLoc + 12, 4210752);
 
 		if (tile.energyStored == -1 || tile.energyCapacity == -1)
 		{
 			// Error message: No card or storage unit not found
-			Utils.drawCenteredGlowingText(fontRenderer, "No Valid Link", xLoc + 96, yLoc + 35, RED, REDGLOW);
+			Utils.drawCenteredGlowingText(fontRenderer, lang.translateKey(Info.KEY_MONITOR_INVALID), xLoc + 96, yLoc + 35, RED, REDGLOW);
 		}
 		else
 		{
@@ -91,10 +94,10 @@ public class GuiStorageMonitor extends GuiContainer
 		}
 
 		// Draw control section labels and readouts
-		Utils.drawCenteredText(fontRenderer, "Upper Threshold (Off)", xLoc + 96, yLoc + 49, 0xB00000);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_MONITOR_UPPER), xLoc + 96, yLoc + 49, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.upperBoundary) + "%", xLoc + 109, yLoc + 63, GREEN, GREENGLOW);
 		
-		Utils.drawCenteredText(fontRenderer, "Lower Threshold (On)", xLoc + 96, yLoc + 78, 0xB00000);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_MONITOR_LOWER), xLoc + 96, yLoc + 78, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.lowerBoundary) + "%", xLoc + 109, yLoc + 92, GREEN, GREENGLOW);
 
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
