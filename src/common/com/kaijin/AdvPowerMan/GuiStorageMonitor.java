@@ -58,7 +58,9 @@ public class GuiStorageMonitor extends GuiContainer
 		// Draw energy meter
 		if (tile.energyStored > 0)
 		{
+			// Which color energy meter should be used?
 			final int offset = tile.isPowering ? 12 : 0;
+
 			// Make each box light up all at once like a LED instead of gradually using barLength = this.tile.gaugeEnergyScaled(66); 
 			int barLength = 5 * tile.gaugeEnergyScaled(13);
 			if (barLength > 0) barLength++;
@@ -71,6 +73,7 @@ public class GuiStorageMonitor extends GuiContainer
 
 		if (tile.energyStored == -1 || tile.energyCapacity == -1)
 		{
+			// Error message: No card or storage unit not found
 			Utils.drawCenteredGlowingText(fontRenderer, "No Valid Link", xLoc + 96, yLoc + 35, RED, REDGLOW);
 		}
 		else
@@ -86,7 +89,8 @@ public class GuiStorageMonitor extends GuiContainer
 			//Utils.drawRightAlignedGlowingText(fontRenderer, "123456789", xLoc + 90, yLoc + 35, 0x55FF55, 0.15F);
 			//Utils.drawGlowingText(fontRenderer, " / 123456789", xLoc + 90, yLoc + 35, 0x55FF55, 0.15F);
 		}
-		
+
+		// Draw control section labels and readouts
 		Utils.drawCenteredText(fontRenderer, "Upper Threshold (Off)", xLoc + 96, yLoc + 49, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.upperBoundary) + "%", xLoc + 109, yLoc + 63, GREEN, GREENGLOW);
 		
@@ -118,5 +122,4 @@ public class GuiStorageMonitor extends GuiContainer
 		}
 		super.mouseClicked(par1, par2, par3); // Finally, do all that other normal stuff. 
 	}
-
 }
