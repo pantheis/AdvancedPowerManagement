@@ -25,9 +25,10 @@ public class Info
 
 	// Blocks
 	public static final String CHARGER_NAME = "Charging Bench";
-	public static final String EMITTER_NAME = "Emitter";
 	public static final String DISCHARGER_NAME = "Battery Station";
 	public static final String MONITOR_NAME = "Storage Monitor";
+	public static final String EMITTER_NAME = "Emitter";
+	public static final String ADV_EMITTER_NAME = "Adjustable Emitter";
 
 	// Items
 	public static final String TOOLKIT_NAME = CHARGER_NAME + " Toolkit";
