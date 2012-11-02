@@ -32,7 +32,7 @@ public class Utils
 	 * @param yLoc  - y location
 	 * @param color - Color
 	 */
-	protected static void drawCenteredText(FontRenderer fr, String text, int xLoc, int yLoc, int color)
+	public static void drawCenteredText(FontRenderer fr, String text, int xLoc, int yLoc, int color)
 	{
 		fr.drawString(text, xLoc - fr.getStringWidth(text) / 2, yLoc, color);
 	}
@@ -45,9 +45,72 @@ public class Utils
 	 * @param yLoc  - y location
 	 * @param color - Color
 	 */
-	protected static void drawRightAlignedText(FontRenderer fr, String text, int xLoc, int yLoc, int color)
+	public static void drawRightAlignedText(FontRenderer fr, String text, int xLoc, int yLoc, int color)
 	{
 		fr.drawString(text, xLoc - fr.getStringWidth(text), yLoc, color);
+	}
+
+	/**
+	 * Individually multiply R, G, B color components by scalar value to dim or brighten the color.
+	 * Does not check for overflow. Beware when using values over 1.0F.
+	 * @param color - original color
+	 * @param brightnessFactor - should be positive and <> 1.0F
+	 * @return - modified color
+	 */
+	public static int multiplyColorComponents(int color, float brightnessFactor)
+	{
+		return (int)(brightnessFactor * (color & 0xFF0000)) & 0xFF0000
+			 | (int)(brightnessFactor * (color & 0x00FF00)) & 0x00FF00
+			 | (int)(brightnessFactor * (color & 0x0000FF)) & 0x0000FF;
+	}
+
+	private static final int oX[] = {0, -1, 0, 1};
+	private static final int oY[] = {-1, 0, 1, 0};
+
+	/**
+	 * Draws right-aligned text with a 'glow' surrounding it. 
+	 * @param fr    - Font Renderer handle
+	 * @param text  - Text to display
+	 * @param xLoc  - x location (upper right corner)
+	 * @param yLoc  - y location (upper right corner)
+	 * @param color - Main Color
+	 * @param glowColor - Surrounding Color
+	 */
+	public static void drawRightAlignedGlowingText(FontRenderer fr, String text, int xLoc, int yLoc, int color, int glowColor)
+	{
+		drawGlowingText(fr, text, xLoc - fr.getStringWidth(text), yLoc, color, glowColor);
+	}
+
+	/**
+	 * Draws centered text with a 'glow' surrounding it. 
+	 * @param fr    - Font Renderer handle
+	 * @param text  - Text to display
+	 * @param xLoc  - x location (top center)
+	 * @param yLoc  - y location (top center)
+	 * @param color - Main Color
+	 * @param glowColor - Surrounding Color
+	 */
+	public static void drawCenteredGlowingText(FontRenderer fr, String text, int xLoc, int yLoc, int color, int glowColor)
+	{
+		drawGlowingText(fr, text, xLoc - fr.getStringWidth(text) / 2, yLoc, color, glowColor);
+	}
+
+	/**
+	 * Draws left-aligned text with a 'glow' surrounding it. 
+	 * @param fr    - Font Renderer handle
+	 * @param text  - Text to display
+	 * @param xLoc  - x location (upper left corner)
+	 * @param yLoc  - y location (upper left corner)
+	 * @param color - Main Color
+	 * @param glowColor - Surrounding Color
+	 */
+	public static void drawGlowingText(FontRenderer fr, String text, int xLoc, int yLoc, int color, int glowColor)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			fr.drawString(text, xLoc + oX[i], yLoc + oY[i], glowColor);
+		}
+		fr.drawString(text, xLoc, yLoc, color);
 	}
 
 	/**
