@@ -33,7 +33,7 @@ public class ContainerChargingBench extends Container
 		adjustedMaxInput = -1;
 		adjustedStorage = -1;
 
-		final int topOffset = 32; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
+		final int topOffset = 40; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
 		int xCol;
 		int yRow;
