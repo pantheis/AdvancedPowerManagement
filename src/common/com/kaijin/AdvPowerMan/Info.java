@@ -11,7 +11,7 @@ public class Info
 {
 	// Mod Info
 	public static final String VERSION = "@VERSION@";
-	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
+	//public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
 	public static final String DEPENDENCIES = "required-after:IC2@[1.108,);required-after:Forge@[6.0.1.349,)";
 	public static final String CLIENT_PROXY = "com.kaijin.AdvPowerMan.ClientProxy";
 	public static final String SERVER_PROXY = "com.kaijin.AdvPowerMan.CommonProxy";
