@@ -9,6 +9,7 @@ import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.StringTranslate;
 
 import org.lwjgl.opengl.GL11;
 
@@ -20,6 +21,8 @@ public class GuiChargingBench extends GuiContainer
 {
 	IInventory playerInventory;
 	public TEChargingBench tile;
+
+	protected static StringTranslate lang = StringTranslate.getInstance();
 
 	private static final int GREEN = 0x55FF55;
 	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
@@ -55,7 +58,7 @@ public class GuiChargingBench extends GuiContainer
 		}
 
 		// Draw tier and title
-		Utils.drawCenteredText(fontRenderer, tile.getInvName(), xCenter, yLoc + 8, 4210752);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), xCenter, yLoc + 8, 4210752);
 
 		// Draw current and max storage
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.currentEnergy), xCenter - 7, yLoc + 24, GREEN, GREENGLOW);

@@ -7,6 +7,7 @@ package com.kaijin.AdvPowerMan;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.StringTranslate;
 
 import org.lwjgl.opengl.GL11;
 
@@ -19,6 +20,8 @@ public class GuiAdvEmitter extends GuiContainer
 	IInventory playerInventory;
 	public TEAdvEmitter tile;
 	private CButton buttons[] = new CButton[16];
+
+	protected static StringTranslate lang = StringTranslate.getInstance();
 
 	private static final String displayStrings[] = {"+1", "+10", "+64", "x2", "-1", "-10", "-64", "/2"};
 	private static final int GREEN = 0x55FF55;
@@ -53,19 +56,19 @@ public class GuiAdvEmitter extends GuiContainer
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
 		// Draw title text
-		Utils.drawCenteredText(fontRenderer, Info.ADV_EMITTER_NAME, width / 2, yLoc + 7, 4210752);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), width / 2, yLoc + 7, 4210752);
 
 		// Packet size section text
-		Utils.drawCenteredText(fontRenderer, "Packet size (Voltage)", width / 2, yLoc + 21, 0xB00000);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_EMITTER_PACKET), width / 2, yLoc + 21, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.packetSize), xLoc + 146, yLoc + 49, GREEN, GREENGLOW);
 		fontRenderer.drawString("[4 - 8192]", xLoc + 110, yLoc + 35, 4210752);
-		fontRenderer.drawString("EU", xLoc + 152, yLoc + 49, 4210752);
+		fontRenderer.drawString(lang.translateKey(Info.KEY_EU), xLoc + 152, yLoc + 49, 4210752);
 
 		// Output rate section text
-		Utils.drawCenteredText(fontRenderer, "Output / Tick (Max 64 Packets)", width / 2, yLoc + 64, 0xB00000);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_EMITTER_OUTPUT), width / 2, yLoc + 64, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.outputRate), xLoc + 146, yLoc + 92, GREEN, GREENGLOW);
 		fontRenderer.drawString("[1 - 65536]", xLoc + 110, yLoc + 78, 4210752);
-		fontRenderer.drawString("EU", xLoc + 152, yLoc + 92, 4210752);
+		fontRenderer.drawString(lang.translateKey(Info.KEY_EU), xLoc + 152, yLoc + 92, 4210752);
 
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
 		for (int i = 0; i < 16; i++)

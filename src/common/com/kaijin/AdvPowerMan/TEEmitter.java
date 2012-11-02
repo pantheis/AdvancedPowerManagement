@@ -70,12 +70,6 @@ public class TEEmitter extends TileEntity implements IEnergySource
 	}
 
 	@Override
-	public boolean isAddedToEnergyNet()
-	{
-		return initialized;
-	}
-
-	@Override
 	public void updateEntity()
 	{
 		if (AdvancedPowerManagement.proxy.isClient()) return;
@@ -126,6 +120,14 @@ public class TEEmitter extends TileEntity implements IEnergySource
 			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
 		}
 		super.invalidate();
+	}
+
+	// IC2 API stuff
+
+	@Override
+	public boolean isAddedToEnergyNet()
+	{
+		return initialized;
 	}
 
 	@Override
