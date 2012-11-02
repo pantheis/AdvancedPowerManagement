@@ -5,7 +5,6 @@
 package com.kaijin.AdvPowerMan;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.Level;
 import ic2.api.Items;
 import net.minecraft.src.Block;
