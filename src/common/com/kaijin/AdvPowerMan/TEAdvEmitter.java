@@ -60,15 +60,19 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 	}
 
 	@Override
-	public boolean canUpdate()
+	public void invalidate()
 	{
-		return true;
+		if (worldObj != null && initialized)
+		{
+			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
+		}
+		super.invalidate();
 	}
 
 	@Override
-	public boolean isAddedToEnergyNet()
+	public boolean canUpdate()
 	{
-		return initialized;
+		return true;
 	}
 
 	@Override
@@ -100,14 +104,22 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 		return worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 	}
 
-	@Override
-	public void invalidate()
+	public boolean isUseableByPlayer(EntityPlayer entityplayer)
 	{
-		if (worldObj != null && initialized)
+		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this)
 		{
-			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
+			return false;
 		}
-		super.invalidate();
+
+		return entityplayer.getDistanceSq((double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D) <= 64D;
+	}
+
+	// IC2 API stuff
+
+	@Override
+	public boolean isAddedToEnergyNet()
+	{
+		return initialized;
 	}
 
 	@Override
@@ -122,15 +134,7 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 		return Integer.MAX_VALUE;
 	}
 
-	public boolean isUseableByPlayer(EntityPlayer entityplayer)
-	{
-		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this)
-		{
-			return false;
-		}
-
-		return entityplayer.getDistanceSq((double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D) <= 64D;
-	}
+	// Networking stuff
 
 	/**
 	 * Packet reception by server of what button was clicked on the client's GUI.

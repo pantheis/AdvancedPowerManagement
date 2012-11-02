@@ -70,8 +70,8 @@ public class GuiStorageMonitor extends GuiContainer
 			drawTexturedModalRect(xLoc + 10, yLoc + 100 - barLength, 176 + offset, 66 - barLength, 12, barLength);
 		}
 
-		// Draw text
-		Utils.drawCenteredText(fontRenderer, "Storage Monitor", xLoc + 96, yLoc + 12, 4210752);
+		// Draw title text
+		Utils.drawCenteredText(fontRenderer, Info.MONITOR_NAME, xLoc + 96, yLoc + 12, 4210752);
 
 		if (tile.energyStored == -1 || tile.energyCapacity == -1)
 		{

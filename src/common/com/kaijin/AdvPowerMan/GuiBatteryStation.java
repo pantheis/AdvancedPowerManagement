@@ -12,6 +12,10 @@ import net.minecraft.src.InventoryPlayer;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class GuiBatteryStation extends GuiContainer
 {
 	IInventory playerInventory;

@@ -23,50 +23,15 @@ public class GuiChargingBench extends GuiContainer
 	public EntityPlayer player;
 	private GuiButton selectedButton = null;
 
-	private GuiButton button = null;
+	private static final int GREEN = 0x55FF55;
+	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
 
-	public GuiChargingBench(InventoryPlayer player, TEChargingBench tile)
+	public GuiChargingBench(InventoryPlayer player, TEChargingBench tileentity)
 	{
-		super(new ContainerChargingBench(player, tile));
-		//if (ChargingBench.isDebugging) System.out.println("GuiChargingBench");
-		this.tile = tile;
-		/** The X size of the inventory window in pixels. */
-		xSize = 176;
-
-		/** The Y size of the inventory window in pixels. */
-		ySize = 190;
-
-	}
-
-	@Override
-	protected void drawGuiContainerForegroundLayer(int x, int y)
-	{
-		String type = "";
-		switch(tile.baseTier)
-		{
-		case 1:
-			type = "LV";
-			break;
-		case 2:
-			type = "MV";
-			break;
-		case 3:
-			type = "HV";
-			break;
-		default:
-		}
-		// Draw tier and title
-		fontRenderer.drawString(type + " Charging Bench", 43, 7, 4210752);
-
-		// Compute strings for current and max storage
-		String s1 = (Integer.toString(tile.currentEnergy));
-		String s2 = (Integer.toString(tile.adjustedStorage));
-		// Draw Right-aligned current energy number
-		fontRenderer.drawString(s1, (80 - fontRenderer.getStringWidth(s1)), 20, 4210752);
-		// Draw left-aligned max energy number
-		fontRenderer.drawString(s2, 93, 20, 4210752);
-		// Draw separator		
-		fontRenderer.drawString(" / ", 80, 20, 4210752);
+		super(new ContainerChargingBench(player, tileentity));
+		tile = tileentity;
+		xSize = 176; // The X size of the GUI window in pixels.
+		ySize = 198; // The Y size of the GUI window in pixels.
 	}
 
 	@Override
@@ -75,8 +40,12 @@ public class GuiChargingBench extends GuiContainer
 		int textureID = mc.renderEngine.getTexture(Info.GUI1_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(textureID);
+
 		int xLoc = (width - xSize) / 2;
 		int yLoc = (height - ySize) / 2;
+		int xCenter = xLoc + xSize / 2;
+
+		// Draw GUI background
 		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
 		if (tile.currentEnergy > 0)
@@ -84,7 +53,17 @@ public class GuiChargingBench extends GuiContainer
 			// Make each box light up all at once like a LED instead of gradually using barLength = tile.gaugeEnergyScaled(66); 
 			int barLength = 5 * tile.gaugeEnergyScaled(13);
 			if (barLength > 0) barLength++;
-			this.drawTexturedModalRect(xLoc + 32, yLoc + 100 - barLength, 176, 66 - barLength, 12, barLength);
+			this.drawTexturedModalRect(xLoc + 32, yLoc + 108 - barLength, 176, 66 - barLength, 12, barLength);
 		}
+
+		// Draw tier and title
+		Utils.drawCenteredText(fontRenderer, tile.getInvName(), xCenter, yLoc + 8, 4210752);
+
+		// Draw current and max storage
+		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.currentEnergy), xCenter - 7, yLoc + 24, GREEN, GREENGLOW);
+		Utils.drawGlowingText(fontRenderer, " / " + Integer.toString(tile.adjustedStorage), xCenter - 7, yLoc + 24, GREEN, GREENGLOW);
+
+		// Test separator		
+		//Utils.drawCenteredText(fontRenderer, " / ", xCenter, yLoc + 24, 4210752);
 	}
 }
