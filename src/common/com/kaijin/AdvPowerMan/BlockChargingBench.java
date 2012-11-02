@@ -4,9 +4,9 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import ic2.api.Items;
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;

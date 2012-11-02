@@ -4,10 +4,6 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import java.text.DecimalFormat;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.FontRenderer;
-import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;

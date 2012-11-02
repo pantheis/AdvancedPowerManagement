@@ -4,15 +4,11 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import ic2.api.IEnergyStorage;
-
 import java.util.List;
 
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
