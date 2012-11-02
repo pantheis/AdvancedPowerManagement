@@ -24,30 +24,9 @@ public class ContainerAdvEmitter extends Container
 	public ContainerAdvEmitter(InventoryPlayer player, TEAdvEmitter tile)
 	{
 		if (ChargingBench.isDebugging) System.out.println("ContainerAdvEmitter");
-		this.te = tile;
-		this.outputRate = -1;
-		this.packetSize = -1;
-
-		final int topOffset = 32; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
-
-		int xCol;
-		int yRow;
-
-		// Player inventory
-		for (yRow = 0; yRow < 3; ++yRow)
-		{
-			for (xCol = 0; xCol < 9; ++xCol)
-			{
-				this.addSlotToContainer(new Slot(player, xCol + yRow * 9 + 9, 8 + xCol * 18, topOffset + 76 + yRow * 18));
-			}
-		}
-
-		// Player hot bar
-		for (yRow = 0; yRow < 9; ++yRow)
-		{
-			this.addSlotToContainer(new Slot(player, yRow, 8 + yRow * 18, topOffset + 134));
-		}
-
+		te = tile;
+		outputRate = -1;
+		packetSize = -1;
 	}
 
 	@Override
@@ -72,6 +51,8 @@ public class ContainerAdvEmitter extends Container
 				crafter.updateCraftingInventoryInfo(this, 3, te.packetSize >>> 16);
 			}
 		}
+		
+		// Done sending updates, record the new current values
 		this.outputRate = te.outputRate;
 		this.packetSize = te.packetSize;
 	}
@@ -112,6 +93,6 @@ public class ContainerAdvEmitter extends Container
 	@Override
 	public boolean canInteractWith(EntityPlayer var1)
 	{
-		return this.te.isUseableByPlayer(var1);
+		return te.isUseableByPlayer(var1);
 	}
 }
