@@ -50,6 +50,10 @@ public class Utils
 		fr.drawString(text, xLoc - fr.getStringWidth(text), yLoc, color);
 	}
 
+	private static final int MASKR = 0xFF0000;
+	private static final int MASKG = 0x00FF00;
+	private static final int MASKB = 0x0000FF;
+
 	/**
 	 * Individually multiply R, G, B color components by scalar value to dim or brighten the color.
 	 * Does not check for overflow. Beware when using values over 1.0F.
@@ -59,9 +63,36 @@ public class Utils
 	 */
 	public static int multiplyColorComponents(int color, float brightnessFactor)
 	{
-		return (int)(brightnessFactor * (color & 0xFF0000)) & 0xFF0000
-			 | (int)(brightnessFactor * (color & 0x00FF00)) & 0x00FF00
-			 | (int)(brightnessFactor * (color & 0x0000FF)) & 0x0000FF;
+		return ((int)(brightnessFactor * (color & MASKR)) & MASKR)
+			 | ((int)(brightnessFactor * (color & MASKG)) & MASKG)
+			 | ((int)(brightnessFactor * (color & MASKB)) & MASKB);
+	}
+
+	public static int interpolateColors(int a, int b, float lerp)
+	{
+		final int MASK1 = 0xff00ff; 
+		final int MASK2 = 0x00ff00; 
+
+		int f2 = (int)(256 * lerp);
+		int f1 = 256 - f2;
+
+		return ((((( a & MASK1 ) * f1 ) + ( ( b & MASK1 ) * f2 )) >> 8 ) & MASK1 ) 
+			 | ((((( a & MASK2 ) * f1 ) + ( ( b & MASK2 ) * f2 )) >> 8 ) & MASK2 );
+	}
+
+	public static final int GUIBACKGROUNDCOLOR = 0xC6C6C6;
+
+	public static int overlayColors(int base, int over)
+	{
+		final float rDiff = 1F - ((float)(base & MASKR) / MASKR);
+		final float gDiff = 1F - ((float)(base & MASKG) / MASKG);
+		final float bDiff = 1F - ((float)(base & MASKB) / MASKB);
+
+		final int r2 = (over & MASKR);
+		final int g2 = (over & MASKG);
+		final int b2 = (over & MASKB);
+
+		return base + ((int)(rDiff * r2) & MASKR) + ((int)(gDiff * g2) & MASKG) + ((int)(bDiff * b2) & MASKB);
 	}
 
 	private static final int oX[] = {0, -1, 0, 1};
