@@ -92,7 +92,8 @@ public class CButton extends GuiButton
             {
                 renderColor = this.hoverColor;
             }
-            this.drawCenteredString(fr, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, renderColor);
+            fr.drawString(displayString, xPosition + width / 2 - (fr.getStringWidth(displayString) / 2), yPosition + (height - 7) / 2, renderColor);
+            //this.drawCenteredString(fr, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, renderColor);
         }
     }
 	

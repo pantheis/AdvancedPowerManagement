@@ -22,44 +22,25 @@ public class GuiAdvEmitter extends GuiContainer
 {
 	IInventory playerInventory;
 	public TEAdvEmitter tile;
+	private CButton buttons[] = new CButton[16];
 
-	private final String displayStrings[] = {"-100", "-10", "-1", "+1", "+10", "+100"};
+	private static final String displayStrings[] = {"-1", "-10", "-64", "/2", "+1", "+10", "+64", "x2"};
+	private static final int GREEN = 0x55FF55;
+	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
 
-	private CButton buttons[] = new CButton[12];
-
-	public GuiAdvEmitter(InventoryPlayer player, TEAdvEmitter tile)
+	public GuiAdvEmitter(InventoryPlayer player, TEAdvEmitter tileentity)
 	{
-		super(new ContainerAdvEmitter(player, tile));
-		if (ChargingBench.isDebugging) System.out.println("GuiAdvEmitter");
-		this.tile = tile;
-		/** The X size of the inventory window in pixels. */
-		xSize = 176;
-
-		/** The Y size of the inventory window in pixels. */
-		ySize = 190;
+		super(new ContainerAdvEmitter(player, tileentity));
+		tile = tileentity;
+		xSize = 176; // The X size of the GUI window in pixels.
+		ySize = 110; // The Y size of the GUI window in pixels.
 
 		//Button definition - mouse over CButton for details
 		for (int i = 0; i < buttons.length; i++)
 		{
 			//16777120 old highlight color code, saved here for reference
-			buttons[i] = new CButton(i, 0, 0, 22, 12, 0, 192, 0, 206, displayStrings[i % 6], 0xFFFFFF, 0xFFFFFF, ChargingBench.proxy.GUI4_PNG);
+			buttons[i] = new CButton(i, 0, 0, 24, 13, 1, 192, 1, 207, displayStrings[i % 8], 4210752, 16777120, ChargingBench.proxy.GUI4_PNG);
 		}
-	}
-
-	@Override
-	protected void drawGuiContainerForegroundLayer(int x, int y)
-	{
-		// Draw tier and title
-		fontRenderer.drawString("Advanced Emitter", 54, 7, 4210752);
-
-		final String upper = Integer.toString(tile.packetSize) + " eu/T";
-		final String lower = Integer.toString(tile.outputRate) + " eu/T";
-
-		fontRenderer.drawString("Packet Size", 41, 38, 0xA03333);
-		Utils.drawRightAlignedText(fontRenderer, upper, 109, 53, 0x55FF55);
-
-		fontRenderer.drawString("Total EU", 41, 73, 0xA03333);
-		Utils.drawRightAlignedText(fontRenderer, lower, 109, 88, 0x55FF55);
 	}
 
 	@Override
@@ -74,24 +55,29 @@ public class GuiAdvEmitter extends GuiContainer
 
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
+		// Draw title
+		Utils.drawCenteredText(fontRenderer, "Advanced Emitter", width / 2, yLoc + 7, 4210752);
+
+		Utils.drawCenteredText(fontRenderer, "Packet size (Voltage)", width / 2, yLoc + 21, 0xB00000);
+		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.packetSize), xLoc + 146, yLoc + 49, GREEN, GREENGLOW);
+		fontRenderer.drawString("[4 ... 8192]", xLoc + 110, yLoc + 35, 4210752);
+		fontRenderer.drawString("EU", xLoc + 152, yLoc + 49, 4210752);
+
+		Utils.drawCenteredText(fontRenderer, "Output / Tick (Max 64 Packets)", width / 2, yLoc + 64, 0xB00000);
+		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.outputRate), xLoc + 146, yLoc + 92, GREEN, GREENGLOW);
+		fontRenderer.drawString("[1 ... 65536]", xLoc + 110, yLoc + 78, 4210752);
+		fontRenderer.drawString("EU", xLoc + 152, yLoc + 92, 4210752);
+
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
-		final int horizOffs[] = {-70, -55, -31, 25, 49, 65};
-
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < 16; i++)
 		{
-			buttons[i].xPosition = width / 2 + horizOffs[i % 4];
-			buttons[i].yPosition = yLoc + 50 + 35 * (i / 4);
-		}
-
-		// Draw ALL of the buttons?! :o
-		for (CButton b : buttons)
-		{
-			b.drawButton(mc, mouseX, mouseY);
+			buttons[i].xPosition = xLoc +  8 + 24 * (i % 4);
+			buttons[i].yPosition = yLoc + 33 + 13 * (i / 4) + 17 * (i / 8);
+			buttons[i].drawButton(mc, mouseX, mouseY);
 		}
 
 	}
 
-	//Copied mouseClicked function to get our button to make the "click" noise when clicked
 	@Override
 	protected void mouseClicked(int par1, int par2, int par3)
 	{
@@ -99,9 +85,8 @@ public class GuiAdvEmitter extends GuiContainer
 		{
 			for (CButton b : buttons) // For each item in buttons,
 			{
-				if (b.mousePressed(this.mc, par1, par2) && b.enabled) // if it was pressed and is enabled,
+				if (b.enabled && b.mousePressed(this.mc, par1, par2)) // if it's enabled and was under the pointer,
 				{
-					//selectedButton = b; // select it,
 					mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F); // provide audio feedback,
 					tile.sendGuiCommand(b.id); // and inform the server of the button click.
 				}
