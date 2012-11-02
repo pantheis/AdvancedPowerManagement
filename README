@@ -1,4 +1,5 @@
 Advanced Power Management
+-------------------
 
 Welcome! This mod adds several new blocks to Industrial Craft 2 to help you
 manage your energy grid. The scope of the mod has expanded since the original
@@ -52,11 +53,8 @@ Crafting pattern for all charging benches:
   WEW   E = Electronic Circuit,
   WSW   S = Storage Unit (Batbox, etc)
 
-
-
 Features common to all Charging Benches
 -------------------
-
 Due to advances in over-current circuit protection designs, a Charging Bench
 will not explode if exposed to higher than acceptable current but simply pop off
 onto the ground in a safe manner, ejecting any items it contained.
@@ -87,7 +85,6 @@ with merely a glance across the room, you'll know when they're ready to be
 picked up! Even the battery slot is wired up, so that if you're filling a remote
 bench using items, you'll know when it's time to swap out the battery without
 having to stand around waiting for it to discharge completely.
-
 
 Available upgrades!
 -------------------
@@ -141,8 +138,9 @@ moved to the output slot once fully charged. In this way, you can easily
 automate recharging of items!
 
 
-Battery Stations
+Battery Station
 -------------------
+
 Sure, a charging bench lets you fill up a lot of items at the same time with
 ease, but what if you want to do the opposite and drain power from a lot of
 items? That's what the brand new Battery Station allows you to do!
@@ -187,7 +185,6 @@ Crafting pattern for all battery stations:
   CCC   C = Cable, W = Wood,
   WEW   E = Electronic Circuit,
   WTW   T = Transformer
-
 
 Features of the Battery Station
 -------------------
@@ -239,6 +236,7 @@ all.
 
 Storage Monitor
 -------------------
+
 Everyone who's tried to set up an energy monitoring system of some sort knows
 that the redstone signals from your batbox, MFE, or MFSU are very challenging to
 make use of in an effective manner - not to mention the fact that if you have a
@@ -298,14 +296,16 @@ Pattern:
    E    E = Electronic Circuit,
     P   P = Paper
 
+
 Emitters? What's this?
 -------------------
+
 Originally created for testing purposes, we have added these Emitter blocks to
 the creative inventory as a bonus for people playing in creative mode or wanting
 to test electrical builds without having to constantly spawn lapotron crystals
 and MFSUs.
 
-There are four versions available. They have no crafting recipes, and must be
+There are five versions available. They have no crafting recipes, and must be
 acquired from the creative inventory or via tools like NEI.
 
 LV Emitter
@@ -320,11 +320,27 @@ HV Emitter
 EV Emitter
 -  Emits EV current (2048 EU/t) when powered by redstone
 
+Adjustable Emitter
+-  Emits a custom amount of energy when powered by redstone.
+-  Comes with a GUI that allows you to configure the amount of energy per packet
+   and the rate of energy generation. Packet size can range from 4 to 8192 EU
+   (in case you have cables that can carry more than 2048) and EU generation
+   rate can range from 1 EU per tick to 65536 EU/t, but has an additional cap of
+   64 packets per tick to prevent excessive server lag. If packet size is
+   greater than EU generation then a packet will not be emitted on every tick.
+
 
 Credits
 -------------------
-Original idea by Drashian
-Original Charging Bench graphics by Starlight
-Emitter graphics by Pantheis
+Original idea: Drashian
+Original Charging Bench graphics: Starlight
+Battery Station textures: Tallinu
+Emitter and Storage Monitor textures: Pantheis
+Charging Bench and Battery Station GUIs: Tallinu
+Storage Monitor and Adjustable Emitter GUIs: Pantheis and Tallinu
+Charging Bench toolkit and upgrade item textures: Tallinu
+Storage Monitor link card item textures: Pantheis
 Code: Pantheis and Tallinu
 
+Special thanks to the original Charging Bench mod. Without your ideas for
+inspiration, this mod wouldn't exist.
