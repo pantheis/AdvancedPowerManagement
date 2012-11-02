@@ -50,16 +50,16 @@ public class GuiAdvEmitter extends GuiContainer
 	protected void drawGuiContainerForegroundLayer(int x, int y)
 	{
 		// Draw tier and title
-		fontRenderer.drawString("Advanced Emitter", 50, 7, 4210752);
+		fontRenderer.drawString("Advanced Emitter", 54, 7, 4210752);
 
-		final String upper = Integer.toString(tile.packetSize) + " eu";
-		final String lower = Integer.toString(tile.outputRate) + " eu";
+		final String upper = Integer.toString(tile.packetSize) + " eu/T";
+		final String lower = Integer.toString(tile.outputRate) + " eu/T";
 
-		fontRenderer.drawString("Packet Size", 24, 23, 0xA03333);
-		Utils.drawRightAlignedText(fontRenderer, upper, 150, 23, 0x55FF55);
+		fontRenderer.drawString("Packet Size", 41, 38, 0xA03333);
+		Utils.drawRightAlignedText(fontRenderer, upper, 109, 53, 0x55FF55);
 
-		fontRenderer.drawString("Total EU", 24, 73, 0xA03333);
-		Utils.drawRightAlignedText(fontRenderer, lower, 150, 73, 0x55FF55);
+		fontRenderer.drawString("Total EU", 41, 73, 0xA03333);
+		Utils.drawRightAlignedText(fontRenderer, lower, 109, 88, 0x55FF55);
 	}
 
 	@Override
@@ -75,12 +75,12 @@ public class GuiAdvEmitter extends GuiContainer
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
-		final int horizOffs[] = {-69, -46, -23, 0, 23, 46};
+		final int horizOffs[] = {-70, -55, -31, 25, 49, 65};
 
 		for (int i = 0; i < 12; i++)
 		{
-			buttons[i].xPosition = width / 2 + horizOffs[i % 6];
-			buttons[i].yPosition = yLoc + 35 + 50 * (i / 6);
+			buttons[i].xPosition = width / 2 + horizOffs[i % 4];
+			buttons[i].yPosition = yLoc + 50 + 35 * (i / 4);
 		}
 
 		// Draw ALL of the buttons?! :o
