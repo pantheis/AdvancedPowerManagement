@@ -27,9 +27,9 @@ public class GuiAdvEmitter extends GuiContainer
 	private static final int GREEN = 0x55FF55;
 	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
 
-	public GuiAdvEmitter(InventoryPlayer player, TEAdvEmitter tileentity)
+	public GuiAdvEmitter(TEAdvEmitter tileentity)
 	{
-		super(new ContainerAdvEmitter(player, tileentity));
+		super(new ContainerAdvEmitter(tileentity));
 		tile = tileentity;
 		xSize = 176; // The X size of the GUI window in pixels.
 		ySize = 110; // The Y size of the GUI window in pixels.

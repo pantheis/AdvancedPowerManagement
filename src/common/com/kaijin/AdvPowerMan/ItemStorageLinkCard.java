@@ -15,7 +15,7 @@ import cpw.mods.fml.common.asm.SideOnly;
 
 public class ItemStorageLinkCard extends ItemCardBase
 {
-	private static final String HINT_TEMPLATE = "x: %d, y: %d, z: %d";
+	private static final String HINT_TEMPLATE = "X: %d, Y: %d, Z: %d, Dim: %d";
 
 	public ItemStorageLinkCard(int id)
 	{
@@ -47,7 +47,7 @@ public class ItemStorageLinkCard extends ItemCardBase
 			{
 				info.add(title);
 			}
-			String hint = String.format(HINT_TEMPLATE, coordinates[0], coordinates[1], coordinates[2]);
+			String hint = String.format(HINT_TEMPLATE, coordinates[0], coordinates[1], coordinates[2], coordinates [3]);
 			info.add(hint);
 		}
 	}
