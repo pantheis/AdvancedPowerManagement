@@ -30,6 +30,9 @@ public class ContainerAdvEmitter extends Container
 	@Override
 	public void updateCraftingResults()
 	{
+		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateCraftingResults");
+		super.updateCraftingResults();
+
 		for (int crafterIndex = 0; crafterIndex < crafters.size(); ++crafterIndex)
 		{
 			ICrafting crafter = (ICrafting)crafters.get(crafterIndex);
@@ -56,6 +59,8 @@ public class ContainerAdvEmitter extends Container
 	@Override
 	public void updateProgressBar(int param, int value)
 	{
+		super.updateProgressBar(param, value);
+
 		switch (param)
 		{
 		case 0:
