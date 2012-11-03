@@ -53,7 +53,7 @@ public class CommonProxy implements IGuiHandler
 		}
 		else if (ID == 2 && tile instanceof TEAdvEmitter)
 		{
-			return new ContainerAdvEmitter(player.inventory, (TEAdvEmitter)tile);
+			return new ContainerAdvEmitter((TEAdvEmitter)tile);
 		}
 		else if (ID == 3 && tile instanceof TEBatteryStation)
 		{
@@ -80,7 +80,7 @@ public class CommonProxy implements IGuiHandler
 		}
 		else if (ID == 2 && tile instanceof TEAdvEmitter)
 		{
-			return new GuiAdvEmitter(player.inventory, (TEAdvEmitter)tile);
+			return new GuiAdvEmitter((TEAdvEmitter)tile);
 		}
 		else if (ID == 3 && tile instanceof TEBatteryStation)
 		{
