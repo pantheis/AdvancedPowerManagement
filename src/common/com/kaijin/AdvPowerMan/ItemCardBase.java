@@ -40,11 +40,31 @@ public class ItemCardBase extends Item
 		int[] coordinates = new int[]{
 				nbtTagCompound.getInteger("x"),  
 				nbtTagCompound.getInteger("y"),  
-				nbtTagCompound.getInteger("z")  
+				nbtTagCompound.getInteger("z"),  
+				nbtTagCompound.getInteger("dim")
 		};
 		return coordinates;
 	}
-	
+
+	public static void setCoordinates(ItemStack itemStack, int[] coords)
+	{
+		final String tags[] = {"x", "y", "z", "dim"};
+		NBTTagCompound nbtTagCompound = Utils.getOrCreateStackTag(itemStack);
+		for (int i = 0; i < coords.length && i < 4; i++)
+		{
+			nbtTagCompound.setInteger(tags[i], coords[i]);
+		}
+	}
+
+	public static void setCoordinates(ItemStack itemStack, int x, int y, int z, int dim)
+	{
+		NBTTagCompound nbtTagCompound = Utils.getOrCreateStackTag(itemStack);
+		nbtTagCompound.setInteger("x", x);
+		nbtTagCompound.setInteger("y", y);
+		nbtTagCompound.setInteger("z", z);
+		nbtTagCompound.setInteger("dim", dim);
+	}
+
 	public String getTitle(ItemStack stack)
 	{
 		if (!(stack.getItem() instanceof ItemStorageLinkCard))
