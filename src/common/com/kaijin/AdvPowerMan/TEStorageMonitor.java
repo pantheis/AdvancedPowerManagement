@@ -165,7 +165,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 			if (targetCoords != null)
 			{
 				TileEntity tile = null;
-				if (targetCoords[3] == worldObj.getWorldInfo().getDimension())
+				if (targetCoords[3] == worldObj.provider.dimensionId)
 				{
 					tile = worldObj.getBlockTileEntity(targetCoords[0], targetCoords[1], targetCoords[2]);
 				}
@@ -219,14 +219,14 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 			if (targetCoords != null)
 			{
 				TileEntity tile = null;
-				if (targetCoords[3] == worldObj.getWorldInfo().getDimension())
+				if (targetCoords[3] == worldObj.provider.dimensionId)
 				{
 					tile = worldObj.getBlockTileEntity(targetCoords[0], targetCoords[1], targetCoords[2]);
 				}
 
 				if (tile instanceof IEnergyStorage)
 				{
-					// if (ChargingBench.isDebugging) System.out.println("updateEntity - check energy level of remote block");
+					//if (ChargingBench.isDebugging) System.out.println("updateEntity - check energy level of remote block");
 					energyStored = ((IEnergyStorage)tile).getStored();
 					energyCapacity = ((IEnergyStorage)tile).getCapacity();
 					if (!blockState)
