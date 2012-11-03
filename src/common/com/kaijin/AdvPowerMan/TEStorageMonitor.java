@@ -164,7 +164,12 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 			checkInventory();
 			if (targetCoords != null)
 			{
-				TileEntity tile = worldObj.getBlockTileEntity(targetCoords[0], targetCoords[1], targetCoords[2]);
+				TileEntity tile = null;
+				if (targetCoords[3] == worldObj.getWorldInfo().getDimension())
+				{
+					tile = worldObj.getBlockTileEntity(targetCoords[0], targetCoords[1], targetCoords[2]);
+				}
+
 				if (tile instanceof IEnergyStorage)
 				{
 					energyStored = ((IEnergyStorage)tile).getStored();
@@ -213,7 +218,12 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 			tickTime = tickDelay;
 			if (targetCoords != null)
 			{
-				TileEntity tile = worldObj.getBlockTileEntity(targetCoords[0], targetCoords[1], targetCoords[2]);
+				TileEntity tile = null;
+				if (targetCoords[3] == worldObj.getWorldInfo().getDimension())
+				{
+					tile = worldObj.getBlockTileEntity(targetCoords[0], targetCoords[1], targetCoords[2]);
+				}
+
 				if (tile instanceof IEnergyStorage)
 				{
 					// if (ChargingBench.isDebugging) System.out.println("updateEntity - check energy level of remote block");
@@ -283,6 +293,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 		else
 		{
 			targetCoords = ItemCardBase.getCoordinates(item);
+			ItemCardBase.setCoordinates(item, targetCoords); // Make sure old cards have a dimension number
 		}
 		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 	}
