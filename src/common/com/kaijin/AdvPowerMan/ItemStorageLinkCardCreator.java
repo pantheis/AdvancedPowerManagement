@@ -23,14 +23,6 @@ public class ItemStorageLinkCardCreator extends ItemCardBase
 		setCreativeTab(CreativeTabs.tabMisc);
 	}
 
-	private void setCoordinates(ItemStack itemStack, int x, int y, int z)
-	{
-		NBTTagCompound nbtTagCompound = Utils.getOrCreateStackTag(itemStack);
-		nbtTagCompound.setInteger("x", x);
-		nbtTagCompound.setInteger("y", y);
-		nbtTagCompound.setInteger("z", z);
-	}
-
 	@Override
 	public boolean onItemUseFirst(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
 	{
@@ -38,9 +30,9 @@ public class ItemStorageLinkCardCreator extends ItemCardBase
 
 		if (entityplayer instanceof EntityPlayerMP && tile instanceof IEnergyStorage)
 		{
-			if (Info.isDebugging) System.out.println("Clicked on X:" + x + " Y:" + y + " Z:" + z);
+			//if (Info.isDebugging) System.out.println("Clicked on X:" + x + " Y:" + y + " Z:" + z + " Dim:" + world.provider.dimensionId);
 			ItemStack newcard = new ItemStack(AdvancedPowerManagement.itemStorageLinkCard);
-			setCoordinates(newcard, x, y, z);
+			setCoordinates(newcard, x, y, z, world.provider.dimensionId);
 			entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = newcard;
 			return true;
 		}
