@@ -140,17 +140,19 @@ automate recharging of items!
 Modular construction with easy assembly and disassembly!
 -------------------
 Using a simple toolkit and a charging bench in your crafting window, you can
-disassemble it into its components, which you can then use to upgrade (or
-downgrade, should you desire) an already-placed charging bench simply by right-
-clicking on the bench using the components. You will receive a component kit for
-the bench you replaced, and can just as easily reassemble the components into a
-complete bench, ready to be placed. This means that you'll never lose a bench
-through this process! Additionally, if you no longer have any need for a bench,
-you can strip the components to scavenge the useful parts from them by right-
-clicking while holding sneak (as a safety measure), but be warned that the wood
-planks are not returned - they're custom cut for the shape of the bench, after
-all, and the scavenging process often requires breaking them up to remove more
-delicate parts. (Plus there's no way to know what kind of wood was used.)
+disassemble it into its components, which you can then use to upgrade an
+already-placed charging bench simply by right-clicking on the bench using the
+components. (You can also downgrade a bench, should you wish, but use caution
+regarding the voltage of any attached cables if you do.) You will receive a
+component kit for the bench you replaced, and can just as easily reassemble the
+components into a complete bench, ready to be placed. This means that you'll
+never lose a bench through this process! Additionally, if you no longer have any
+need for a bench, you can strip the components to scavenge the useful parts from
+them by right-clicking while holding sneak (as a safety measure), but be warned
+that the wood planks are not returned - they're custom cut for the shape of the
+bench, after all, and the scavenging process often requires breaking them up to
+remove more delicate parts. (Plus there's no way to know what kind of wood was
+used.)
 
 The toolkit required to convert a charging bench into a component kit and vice
 versa is very simple, requiring only one iron ingot and two sticks in the
@@ -366,4 +368,5 @@ Code: Pantheis and Tallinu
 
 Special thanks to the original Charging Bench mod. Without your ideas for
 inspiration, this mod wouldn't exist.
+
 
