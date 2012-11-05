@@ -68,7 +68,7 @@ public class CButton extends GuiButton
         if (this.drawButton)
         {
             FontRenderer fr = mc.fontRenderer;
-            int textureID = mc.renderEngine.getTexture(Info.GUI3_PNG);
+            int textureID = mc.renderEngine.getTexture(texture);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             mc.renderEngine.bindTexture(textureID);
             this.isHovering = xLoc >= this.xPosition && yLoc >= this.yPosition && xLoc < this.xPosition + this.width && yLoc < this.yPosition + this.height;

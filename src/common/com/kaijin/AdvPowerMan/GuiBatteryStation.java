@@ -31,14 +31,14 @@ public class GuiBatteryStation extends GuiContainer
 		super(new ContainerBatteryStation(player, tileentity));
 		tile = tileentity;
 		xSize = 176; // The X size of the GUI window in pixels.
-		ySize = 190; // The Y size of the GUI window in pixels.
-		button = new CButton(0, 0, 0, 24, 13, 1, 192, 1, 207, "push", 4210752, 16777120, Info.GUI4_PNG);
+		ySize = 182; // The Y size of the GUI window in pixels.
+		button = new CButton(0, 50, 50, 20, 10, 51, 185, 51, 185, "", 4210752, 16777120, Info.GUI2_PNG);
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
-		int textureID = mc.renderEngine.getTexture(Info.GUI2_PNG);
+		final int textureID = mc.renderEngine.getTexture(Info.GUI2_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(textureID);
 
@@ -49,6 +49,16 @@ public class GuiBatteryStation extends GuiContainer
 
 		// Draw title text
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), width / 2, yLoc + 8, 4210752);
+		if(tile.opMode == 1)
+		{
+			button.uLoc = 30;
+			button.uHoverLoc = 30;
+		}
+		else
+		{
+			button.uLoc = 51;
+			button.uHoverLoc = 51;
+		}
 		button.drawButton(mc, mouseX, mouseY);
 	}
 
