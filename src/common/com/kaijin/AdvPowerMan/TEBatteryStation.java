@@ -453,7 +453,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	public void receiveGuiCommand(int opm)
 	{
 		opMode ^= 1;
-		System.out.println("opMode:" + opMode); //FIXME remove debug line
 	}
 
 	/**

@@ -36,7 +36,7 @@ public class GuiBatteryStation extends GuiContainer
 		tile = tileentity;
 		xSize = 176; // The X size of the GUI window in pixels.
 		ySize = 182; // The Y size of the GUI window in pixels.
-		button = new CButton(0, 0, 0, 26, 15, 30, 200, 30, 200, "", 4210752, 16777120, Info.GUI2_PNG);
+		button = new CButton(0, 0, 0, 18, 12, 30, 200, 30, 200, "", 4210752, 16777120, Info.GUI2_PNG);
 	}
 
 	@Override
@@ -48,8 +48,8 @@ public class GuiBatteryStation extends GuiContainer
 		xLoc = (width - xSize) / 2; // Half the difference between screen width and GUI width
 		yLoc = (height - ySize) / 2; // Half the difference between screen height and GUI height
 		xCenter = width / 2;
-		button.xPosition = xLoc + 12;
-		button.yPosition = yLoc + 45;
+		button.xPosition = xLoc + 16;
+		button.yPosition = yLoc + 48;
 	}
 
 	@Override
