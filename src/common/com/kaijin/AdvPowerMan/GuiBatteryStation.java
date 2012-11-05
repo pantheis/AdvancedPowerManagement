@@ -24,6 +24,10 @@ public class GuiBatteryStation extends GuiContainer
 	public TEBatteryStation tile;
 	private CButton button;
 
+	private int xLoc;
+	private int yLoc;
+	private int xCenter;
+
 	protected static StringTranslate lang = StringTranslate.getInstance();
 
 	public GuiBatteryStation(InventoryPlayer player, TEBatteryStation tileentity)
@@ -36,19 +40,27 @@ public class GuiBatteryStation extends GuiContainer
 	}
 
 	@Override
+	public void initGui()
+	{
+		super.initGui(); // Don't forget this or MC will crash
+
+		// Upper left corner of GUI panel
+		xLoc = (width - xSize) / 2; // Half the difference between screen width and GUI width
+		yLoc = (height - ySize) / 2; // Half the difference between screen height and GUI height
+		xCenter = width / 2;
+	}
+
+	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		final int textureID = mc.renderEngine.getTexture(Info.GUI2_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(textureID);
 
-		int xLoc = (width - xSize) / 2;
-		int yLoc = (height - ySize) / 2;
-
 		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
 		// Draw title text
-		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), width / 2, yLoc + 8, 4210752);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), xCenter, yLoc + 8, 4210752);
 		if(tile.opMode == 1)
 		{
 			button.uLoc = 30;
