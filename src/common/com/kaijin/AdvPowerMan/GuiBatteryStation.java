@@ -27,6 +27,9 @@ public class GuiBatteryStation extends GuiContainer
 	private int xLoc;
 	private int yLoc;
 	private int xCenter;
+	
+	private static final int GREEN = 0x55FF55;
+	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
 
 	protected static StringTranslate lang = StringTranslate.getInstance();
 
@@ -73,6 +76,9 @@ public class GuiBatteryStation extends GuiContainer
 			button.vLoc = 200;
 			button.vHoverLoc = 200;
 		}
+		Utils.drawCenteredGlowingText(fontRenderer, "123 EU/t", xLoc + 146, yLoc + 42, GREEN, GREENGLOW);
+		Utils.drawCenteredGlowingText(fontRenderer, "123 EU/t", xLoc + 146, yLoc + 52, GREEN, GREENGLOW);
+		
 		button.drawButton(mc, mouseX, mouseY);
 	}
 
