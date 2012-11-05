@@ -36,7 +36,7 @@ public class GuiBatteryStation extends GuiContainer
 		tile = tileentity;
 		xSize = 176; // The X size of the GUI window in pixels.
 		ySize = 182; // The Y size of the GUI window in pixels.
-		button = new CButton(0, 50, 50, 20, 10, 51, 185, 51, 185, "", 4210752, 16777120, Info.GUI2_PNG);
+		button = new CButton(0, 0, 0, 26, 15, 30, 200, 30, 200, "", 4210752, 16777120, Info.GUI2_PNG);
 	}
 
 	@Override
@@ -48,6 +48,8 @@ public class GuiBatteryStation extends GuiContainer
 		xLoc = (width - xSize) / 2; // Half the difference between screen width and GUI width
 		yLoc = (height - ySize) / 2; // Half the difference between screen height and GUI height
 		xCenter = width / 2;
+		button.xPosition = xLoc + 12;
+		button.yPosition = yLoc + 45;
 	}
 
 	@Override
@@ -63,13 +65,13 @@ public class GuiBatteryStation extends GuiContainer
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), xCenter, yLoc + 8, 4210752);
 		if(tile.opMode == 1)
 		{
-			button.uLoc = 30;
-			button.uHoverLoc = 30;
+			button.vLoc = 185;
+			button.vHoverLoc = 185;
 		}
 		else
 		{
-			button.uLoc = 51;
-			button.uHoverLoc = 51;
+			button.vLoc = 200;
+			button.vHoverLoc = 200;
 		}
 		button.drawButton(mc, mouseX, mouseY);
 	}
