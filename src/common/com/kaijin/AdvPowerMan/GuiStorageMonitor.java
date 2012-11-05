@@ -21,6 +21,9 @@ public class GuiStorageMonitor extends GuiContainer
 	public TEStorageMonitor tile;
 	private CButton buttons[] = new CButton[8];
 
+	private int xLoc;
+	private int yLoc;
+
 	protected static StringTranslate lang = StringTranslate.getInstance();
 
 	private static final String DISPLAYSTRINGS[] = {"-10", "-1", "+1", "+10"};
@@ -46,14 +49,28 @@ public class GuiStorageMonitor extends GuiContainer
 	}
 
 	@Override
+	public void initGui()
+	{
+		super.initGui(); // Don't forget this or MC will crash
+
+		// Upper left corner of GUI panel
+		xLoc = (width - xSize) / 2; // Half the difference between screen width and GUI width
+		yLoc = (height - ySize) / 2; // Half the difference between screen height and GUI height
+
+		// Reposition buttons
+		for (int i = 0; i < 8; i++)
+		{
+			buttons[i].xPosition = width / 2 + HORIZONTALOFFSETS[i % 4];
+			buttons[i].yPosition = yLoc + 60 + 29 * (i / 4);
+		}
+	}
+
+	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		final int textureID = mc.renderEngine.getTexture(Info.GUI3_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(textureID);
-
-		int xLoc = (width - xSize) / 2;
-		int yLoc = (height - ySize) / 2;
 
 		// Draw GUI background
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
@@ -100,12 +117,10 @@ public class GuiStorageMonitor extends GuiContainer
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_MONITOR_LOWER), xLoc + 96, yLoc + 78, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.lowerBoundary) + "%", xLoc + 109, yLoc + 92, GREEN, GREENGLOW);
 
-		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
-		for (int i = 0; i < 8; i++)
+		for (CButton button : /* Who's got the */ buttons)
 		{
-			buttons[i].xPosition = width / 2 + HORIZONTALOFFSETS[i % 4];
-			buttons[i].yPosition = yLoc + 60 + 29 * (i / 4);
-			buttons[i].drawButton(mc, mouseX, mouseY);
+			// Draw ALL of the things?! :o
+			button.drawButton(mc, mouseX, mouseY);
 		}
 	}
 	
