@@ -15,16 +15,6 @@ import net.minecraft.src.NBTTagCompound;
 public class Utils
 {
 	/**
-	 * Refer directly to ChargingBench.isDebugging instead.
-	 * Let's make this class a mod-independent drop-in "Utilities" package again.
-	 */
-	@Deprecated
-	public static boolean isDebug()
-	{
-		return Info.isDebugging;
-	}
-
-	/**
 	 * 
 	 * @param fr    - Font Renderer handle
 	 * @param text  - Text to display
