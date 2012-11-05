@@ -10,6 +10,7 @@ import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.StringTranslate;
+import com.kaijin.AdvPowerMan.CButton;
 
 import org.lwjgl.opengl.GL11;
 
@@ -21,6 +22,7 @@ public class GuiBatteryStation extends GuiContainer
 {
 	IInventory playerInventory;
 	public TEBatteryStation tile;
+	private CButton button;
 
 	protected static StringTranslate lang = StringTranslate.getInstance();
 
@@ -30,10 +32,11 @@ public class GuiBatteryStation extends GuiContainer
 		tile = tileentity;
 		xSize = 176; // The X size of the GUI window in pixels.
 		ySize = 190; // The Y size of the GUI window in pixels.
+		button = new CButton(0, 0, 0, 24, 13, 1, 192, 1, 207, "push", 4210752, 16777120, Info.GUI4_PNG);
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
+	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		int textureID = mc.renderEngine.getTexture(Info.GUI2_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -46,5 +49,21 @@ public class GuiBatteryStation extends GuiContainer
 
 		// Draw title text
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), width / 2, yLoc + 8, 4210752);
+		button.drawButton(mc, mouseX, mouseY);
 	}
+
+	@Override
+	protected void mouseClicked(int par1, int par2, int par3)
+	{
+		if (par3 == 0) // On a left click,
+		{
+			if (button.enabled && button.mousePressed(this.mc, par1, par2)) // if it's enabled and was under the pointer,
+			{
+				mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F); // provide audio feedback,
+				tile.sendGuiCommand(button.id); // and inform the server of the button click.
+			}
+		}
+		super.mouseClicked(par1, par2, par3); // Finally, do all that other normal stuff. 
+	}
+
 }
