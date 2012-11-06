@@ -23,6 +23,7 @@ public class GuiBatteryStation extends GuiContainer
 	IInventory playerInventory;
 	public TEBatteryStation tile;
 	private CButton button;
+	private int mode = -1;
 
 	private int xLoc;
 	private int yLoc;
@@ -53,6 +54,7 @@ public class GuiBatteryStation extends GuiContainer
 		xCenter = width / 2;
 		button.xPosition = xLoc + 16;
 		button.yPosition = yLoc + 48;
+		mode = -1;
 	}
 
 	@Override
@@ -66,18 +68,24 @@ public class GuiBatteryStation extends GuiContainer
 
 		// Draw title text
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), xCenter, yLoc + 8, 4210752);
-		if(tile.opMode == 1)
+
+		if (mode != tile.opMode)
 		{
-			button.vLoc = 185;
-			button.vHoverLoc = 185;
+			mode = tile.opMode;
+			if (mode == 0)
+			{
+				button.vLoc = 200;
+				button.vHoverLoc = 200;
+			}
+			else
+			{
+				button.vLoc = 185;
+				button.vHoverLoc = 185;
+			}
 		}
-		else
-		{
-			button.vLoc = 200;
-			button.vHoverLoc = 200;
-		}
+
 		Utils.drawCenteredGlowingText(fontRenderer, "123", xLoc + 145, yLoc + 42, GREEN, GREENGLOW);
-		Utils.drawCenteredGlowingText(fontRenderer, "01:09:00", xLoc + 145, yLoc + 52, GREEN, GREENGLOW);
+		Utils.drawCenteredGlowingText(fontRenderer, "01:23:45", xLoc + 145, yLoc + 52, GREEN, GREENGLOW);
 		
 		button.drawButton(mc, mouseX, mouseY);
 	}
