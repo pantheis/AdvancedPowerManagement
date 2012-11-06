@@ -4,13 +4,15 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
+import java.io.DataInputStream;
+
 import ic2.api.Direction;
 import ic2.api.EnergyNet;
 import ic2.api.IEnergySource;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 
-public class TEEmitter extends TileEntity implements IEnergySource
+public class TEEmitter extends TECommon implements IEnergySource
 {
 	protected boolean initialized;
 
@@ -141,4 +143,7 @@ public class TEEmitter extends TileEntity implements IEnergySource
 	{
 		return Integer.MAX_VALUE;
 	}
+
+	@Override
+	public void receiveDescriptionData(int packetID, DataInputStream stream){}
 }

@@ -22,6 +22,10 @@ public class GuiChargingBench extends GuiContainer
 	IInventory playerInventory;
 	public TEChargingBench tile;
 
+	private int xLoc;
+	private int yLoc;
+	private int xCenter;
+
 	protected static StringTranslate lang = StringTranslate.getInstance();
 
 	private static final int GREEN = 0x55FF55;
@@ -36,15 +40,22 @@ public class GuiChargingBench extends GuiContainer
 	}
 
 	@Override
+	public void initGui()
+	{
+		super.initGui(); // Don't forget this or MC will crash
+
+		// Upper left corner of GUI panel
+		xLoc = (width - xSize) / 2; // Half the difference between screen width and GUI width
+		yLoc = (height - ySize) / 2; // Half the difference between screen height and GUI height
+		xCenter = width / 2;
+	}
+
+	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
 	{
 		int textureID = mc.renderEngine.getTexture(Info.GUI1_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(textureID);
-
-		int xLoc = (width - xSize) / 2;
-		int yLoc = (height - ySize) / 2;
-		int xCenter = xLoc + xSize / 2;
 
 		// Draw GUI background
 		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);

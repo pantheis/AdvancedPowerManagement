@@ -21,6 +21,9 @@ public class GuiAdvEmitter extends GuiContainer
 	public TEAdvEmitter tile;
 	private CButton buttons[] = new CButton[16];
 
+	private int xLoc;
+	private int yLoc;
+
 	protected static StringTranslate lang = StringTranslate.getInstance();
 
 	private static final String displayStrings[] = {"+1", "+10", "+64", "x2", "-1", "-10", "-64", "/2"};
@@ -43,14 +46,27 @@ public class GuiAdvEmitter extends GuiContainer
 	}
 
 	@Override
+	public void initGui()
+	{
+		super.initGui(); // Don't forget this or MC will crash
+
+		// Upper left corner of GUI panel
+		xLoc = (width - xSize) / 2; // Half the difference between screen width and GUI width
+		yLoc = (height - ySize) / 2; // Half the difference between screen height and GUI height
+
+		for (int i = 0; i < 16; i++)
+		{
+			buttons[i].xPosition = xLoc +  8 + 24 * (i % 4);
+			buttons[i].yPosition = yLoc + 33 + 13 * (i / 4) + 17 * (i / 8);
+		}
+	}
+
+	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		final int textureID = mc.renderEngine.getTexture(Info.GUI4_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(textureID);
-
-		int xLoc = (width - xSize) / 2;
-		int yLoc = (height - ySize) / 2;
 
 		// Draw GUI background graphic
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
@@ -71,13 +87,10 @@ public class GuiAdvEmitter extends GuiContainer
 		fontRenderer.drawString(lang.translateKey(Info.KEY_EU), xLoc + 152, yLoc + 92, 4210752);
 
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
-		for (int i = 0; i < 16; i++)
+		for (CButton button : buttons)
 		{
-			buttons[i].xPosition = xLoc +  8 + 24 * (i % 4);
-			buttons[i].yPosition = yLoc + 33 + 13 * (i / 4) + 17 * (i / 8);
-			buttons[i].drawButton(mc, mouseX, mouseY);
+			button.drawButton(mc, mouseX, mouseY);
 		}
-
 	}
 
 	@Override

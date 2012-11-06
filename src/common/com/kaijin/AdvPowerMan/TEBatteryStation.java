@@ -11,8 +11,12 @@ import ic2.api.IElectricItem;
 import ic2.api.IEnergySource;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -30,12 +34,15 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	private int tickDelay = 10;
 
 	public int baseTier;
+	
+	public int opMode;
 
 	// Base values
 	public int baseMaxOutput;
 	public int currentEnergy;
 
 	private boolean invChanged;
+	private boolean hasEnoughItems;
 
 	//For outside texture display
 	public boolean doingWork;
@@ -53,15 +60,16 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 		//base tier = what we're passed, so 1, 2 or 3
 		baseTier = i;
+		opMode = 0;
 		initializeValues();
 	}
 
 	private void initializeValues()
 	{
 		powerTier = baseTier;
-
 		//Output math = 32 for tier 1, 128 for tier 2, 512 for tier 3
 		baseMaxOutput = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
+		
 	}
 
 	// IC2 API functions
@@ -82,7 +90,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	{
 		return baseMaxOutput;
 	}
-	
+
 	@Override
 	public boolean canUpdate()
 	{
@@ -133,6 +141,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			if (Info.isDebugging) System.out.println("BS ID: " + nbttagcompound.getString("id"));
 
 			baseTier = nbttagcompound.getInteger("baseTier");
+			opMode = nbttagcompound.getInteger("opMode");
 
 			// Our inventory
 			contents = new ItemStack[Info.BS_INVENTORY_SIZE];
@@ -164,6 +173,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			super.writeToNBT(nbttagcompound);
 
 			nbttagcompound.setInteger("baseTier", baseTier);
+			nbttagcompound.setInteger("opMode", opMode);
 
 			// Our inventory
 			NBTTagList nbttaglist = new NBTTagList();
@@ -196,6 +206,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		boolean lastWorkState = doingWork;
 		doingWork = false;
 		invChanged = false;
+		hasEnoughItems = true;
 
 		// Work done only when not redstone powered 
 		if (!receivingRedstoneSignal())
@@ -235,11 +246,16 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	private void drainPowerSource()
 	{
+		hasEnoughItems = false;
 		for (int i = Info.BS_SLOT_POWER_START; i < Info.BS_SLOT_POWER_START + 12; i++)
 		{
 			//if (ChargingBench.isDebugging) System.out.println("currentEnergy: " + currentEnergy + " baseMaxOutput: " + baseMaxOutput);
-			if (currentEnergy >= baseMaxOutput) break;
-
+			if (currentEnergy >= baseMaxOutput)
+			{
+				hasEnoughItems = true;
+				break;
+			}
+			
 			ItemStack stack = contents[i];
 			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
@@ -372,8 +388,8 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	private void acceptInputItems()
 	{
 		ItemStack stack = contents[Info.BS_SLOT_INPUT];
-		if (stack == null || !(stack.getItem() instanceof IElectricItem)) return;
-		
+		if (stack == null || !(stack.getItem() instanceof IElectricItem) || (opMode == 1 && hasEnoughItems)) return;
+
 		IElectricItem item = (IElectricItem)stack.getItem();
 		if (item.canProvideEnergy())
 		{
@@ -405,13 +421,22 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	}
 
 	//Networking stuff
-
-	public void receiveDescriptionData(boolean workState)
+	
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void receiveDescriptionData(int packetID, DataInputStream stream)
 	{
-		doingWork = workState;
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		try
+		{
+			doingWork = stream.readBoolean();
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
 	}
-
+	
 	@Override
 	public Packet250CustomPayload getDescriptionPacket()
 	{
@@ -420,7 +445,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		DataOutputStream data = new DataOutputStream(bytes);
 		try
 		{
-			data.writeInt(1);
+			data.writeInt(0);
 			data.writeInt(xCoord);
 			data.writeInt(yCoord);
 			data.writeInt(zCoord);
@@ -437,7 +462,42 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		packet.length = packet.data.length;
 		return packet;
 	}
+	
+	public void receiveGuiCommand(int opm)
+	{
+		opMode ^= 1;
+	}
 
+	/**
+	 * Packet transmission from client to server of what button was clicked on the GUI.
+	 * @param id = the button ID
+	 */
+	public void sendGuiCommand(int id)
+	{
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		DataOutputStream data = new DataOutputStream(bytes);
+		try
+		{
+			data.writeInt(2); // Packet ID for Storage Monitor GUI button clicks
+			data.writeInt(xCoord);
+			data.writeInt(yCoord);
+			data.writeInt(zCoord);
+			data.writeInt(id);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
+		packet.data = bytes.toByteArray();
+		packet.length = packet.data.length;
+
+		AdvancedPowerManagement.proxy.sendPacketToServer(packet);
+	}
+
+	
 	// ISidedInventory
 
 	@Override

@@ -7,8 +7,12 @@ package com.kaijin.AdvPowerMan;
 import ic2.api.IEnergyStorage;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
@@ -21,7 +25,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 
-public class TEStorageMonitor extends TileEntity implements IInventory, ISidedInventory
+public class TEStorageMonitor extends TECommon implements IInventory, ISidedInventory
 {
 	private ItemStack[] contents;
 
@@ -324,6 +328,23 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 
 	//Networking stuff
 
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void receiveDescriptionData(int packetID, DataInputStream stream)
+	{
+		try
+		{
+			chargeLevel = stream.readInt();
+			isPowering = stream.readBoolean();
+			blockState = stream.readBoolean();
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Packet reception by server of what button was clicked on the client's GUI.
 	 * @param id = the button ID
@@ -371,14 +392,6 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 		}
 	}
 
-	public void receiveDescriptionData(int charge, boolean power, boolean state)
-	{
-		chargeLevel = charge;
-		isPowering = power;
-		blockState = state;
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-	}
-
 	/**
 	 * Packet transmission from client to server of what button was clicked on the GUI.
 	 * @param id = the button ID
@@ -416,7 +429,7 @@ public class TEStorageMonitor extends TileEntity implements IInventory, ISidedIn
 		DataOutputStream data = new DataOutputStream(bytes);
 		try
 		{
-			data.writeInt(2); // Packet ID for Storage Monitor
+			data.writeInt(0); // Packet ID for Storage Monitor
 			data.writeInt(xCoord);
 			data.writeInt(yCoord);
 			data.writeInt(zCoord);

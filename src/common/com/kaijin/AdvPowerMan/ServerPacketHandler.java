@@ -96,5 +96,23 @@ public class ServerPacketHandler implements IPacketHandler
 				ex.printStackTrace();
 			}
 		}
+		else if (packetType == 2)
+		{
+			//if (Info.isDebugging) System.out.println("Packet 1");
+			try
+			{
+				int opMode = stream.readInt();
+				//if (Info.isDebugging) System.out.println("Button " + buttonID);
+				if (tile instanceof TEBatteryStation)
+				{
+					//if (Info.isDebugging) System.out.println("Advanced Emitter command sent");
+					((TEBatteryStation)tile).receiveGuiCommand(opMode);
+				}
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
+		}
 	}
 }

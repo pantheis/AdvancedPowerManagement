@@ -6,6 +6,7 @@ package com.kaijin.AdvPowerMan;
 
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ICrafting;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
@@ -20,6 +21,7 @@ public class ContainerBatteryStation extends Container
 
 	public int currentEnergy;
 	public short adjustedMaxInput;
+	public int opMode;
 
 	public ContainerBatteryStation(InventoryPlayer player, TEBatteryStation tile)
 	{
@@ -27,6 +29,7 @@ public class ContainerBatteryStation extends Container
 		tileentity = tile;
 		currentEnergy = -1;
 		adjustedMaxInput = -1;
+		opMode = -1;
 
 		final int topOffset = 24; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
@@ -64,8 +67,6 @@ public class ContainerBatteryStation extends Container
 		}
 	}
 
-	//The following is not needed, but being left for now for reference
-/*
 	@Override
 	public void updateCraftingResults()
 	{
@@ -76,32 +77,13 @@ public class ContainerBatteryStation extends Container
 		{
 			ICrafting crafter = (ICrafting)this.crafters.get(crafterIndex);
 
-			if (this.currentEnergy != this.tileentity.currentEnergy)
+			if (this.opMode != this.tileentity.opMode)
 			{
-				crafter.updateCraftingInventoryInfo(this, 0, this.tileentity.currentEnergy & 65535);
-				crafter.updateCraftingInventoryInfo(this, 1, this.tileentity.currentEnergy >>> 16);
+				crafter.updateCraftingInventoryInfo(this, 0, this.tileentity.opMode & 65535);
+				crafter.updateCraftingInventoryInfo(this, 1, this.tileentity.opMode >>> 16);
 			}
-
-			if (this.adjustedMaxInput != this.tileentity.adjustedMaxInput)
-			{
-				crafter.updateCraftingInventoryInfo(this, 2, this.tileentity.adjustedMaxInput);
-			}
-
-			if (this.adjustedStorage != this.tileentity.adjustedStorage)
-			{
-				crafter.updateCraftingInventoryInfo(this, 3, this.tileentity.adjustedStorage & 65535);
-				crafter.updateCraftingInventoryInfo(this, 4, this.tileentity.adjustedStorage >>> 16);
-			}
-
-			//if (this.adjustedChargeRate != this.tileentity.adjustedChargeRate)
-			//{
-			//	crafter.updateCraftingInventoryInfo(this, 5, this.tileentity.adjustedChargeRate);
-			//}
 		}
-		this.currentEnergy = this.tileentity.currentEnergy;
-		this.adjustedStorage = this.tileentity.adjustedStorage;
-		this.adjustedMaxInput = (short)this.tileentity.adjustedMaxInput;
-		//this.adjustedChargeRate = (short)this.tileentity.adjustedChargeRate;
+		this.opMode = this.tileentity.opMode;
 	}
 	
 	@Override
@@ -113,32 +95,12 @@ public class ContainerBatteryStation extends Container
 		{
 		case 0:
 			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & -65536) + " | " + value);
-			this.tileentity.currentEnergy = this.tileentity.currentEnergy & -65536 | value;
+			this.tileentity.opMode = this.tileentity.opMode & -65536 | value;
 			break;
 
 		case 1:
 			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & 65535) + " | " + (value << 16));
-			this.tileentity.currentEnergy = this.tileentity.currentEnergy & 65535 | (value << 16);
-			break;
-
-		case 2:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 2 tileentity.adjustedMaxInput = " + value);
-			this.tileentity.adjustedMaxInput = value;
-			break;
-
-		case 3:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & -65536) + " | " + value);
-			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & -65536 | value;
-			break;
-
-		case 4:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & 65535) + " | " + (value << 16));
-			this.tileentity.adjustedStorage = this.tileentity.adjustedStorage & 65535 | (value << 16);
-			break;
-
-		case 5:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 5 tileentity.adjustedChargeRate = " + value);
-			//this.tileentity.adjustedChargeRate = value;
+			this.tileentity.opMode = this.tileentity.opMode & 65535 | (value << 16);
 			break;
 
 		default:
@@ -146,7 +108,6 @@ public class ContainerBatteryStation extends Container
 		}
 	}
 
-*/
 	/**
 	 * Merges provided ItemStack with the first available one in the container/player inventory
 	 */
