@@ -7,22 +7,19 @@ package com.kaijin.AdvPowerMan;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.util.logging.Level;
 
 import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
 public class ClientPacketHandler implements IPacketHandler
 {
-	int packetType = -1;
-	int x = 0;
-	int y = 0;
-	int z = 0;
-
 	/*
 	 * Packet format:
 	 * 0: byte  Packet Type
@@ -34,16 +31,29 @@ public class ClientPacketHandler implements IPacketHandler
 	 *         
 	 * Server-to-Client:
 	 * 0 = Universal description packet
-	 *     4: int        packet ID
-	 *     5: DataStream stream
+     *   Charging Bench:
+	 *     4: int      charge level for texture
+	 *     5: boolean  activity state for texture
+	 *
+	 *   Battery Station:
+	 *     4: boolean  activity state for texture
+	 *
+	 *   Storage Monitor:
+	 *     4: int      charge level for texture
+	 *     5: boolean  power state for texture
+	 *     6: boolean  valid state for texture
 	 */
 
 	@Override
 	public void onPacketData(INetworkManager network, Packet250CustomPayload packet, Player player)
 	{
 		DataInputStream stream = new DataInputStream(new ByteArrayInputStream(packet.data));
+
 		// Determine packet type and coordinates of affected tile entity 
-		packetType = -1;
+		int packetType = -1;
+		int x = 0;
+		int y = 0;
+		int z = 0;
 		try
 		{
 			packetType = stream.readInt();
@@ -53,28 +63,32 @@ public class ClientPacketHandler implements IPacketHandler
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Failed to read packet from server. (Details: " + ex.toString() + ")");
 			return;
 		}
-		if (packetType < 0) return;
 
-		World world = FMLClientHandler.instance().getClient().theWorld;
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
-
-		// each packet type needs to implement an if and then whatever other read functions it needs complete with try/catch blocks
 		if (packetType == 0)
 		{
+			World world = FMLClientHandler.instance().getClient().theWorld;
+			TileEntity tile = world.getBlockTileEntity(x, y, z);
+
+			Exception e;
 			try
 			{
-				if (tile instanceof TECommon)
-				{
-					((TECommon)tile).receiveDescriptionData(packetType, stream);
-				}
+				((TECommon)tile).receiveDescriptionData(packetType, stream);
+				return;
 			}
-			catch (Exception ex)
+			catch (ClassCastException ex)
 			{
-				ex.printStackTrace();
+				e = ex;
 			}
+			catch (NullPointerException ex)
+			{
+				e = ex;
+			}
+			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Received description packet for " + x + ", " + y + ", " + z + 
+				" but can't deliver to tile entity. (Details: " + e.toString() + ")");
+			return;
 		}
 	}
 }
