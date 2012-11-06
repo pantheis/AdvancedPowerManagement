@@ -7,6 +7,7 @@ package com.kaijin.AdvPowerMan;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.logging.Level;
 
 import net.minecraft.src.INetworkManager;
@@ -61,7 +62,7 @@ public class ClientPacketHandler implements IPacketHandler
 			y = stream.readInt();
 			z = stream.readInt();
 		}
-		catch (Exception e)
+		catch (IOException e)
 		{
 			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Failed to read packet from server. (Details: " + e.toString() + ")");
 			return;

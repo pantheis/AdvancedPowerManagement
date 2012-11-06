@@ -36,6 +36,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	public int baseTier;
 	
 	public int opMode;
+	public int clientOpMode;
 
 	// Base values
 	public int baseMaxOutput;
@@ -60,7 +61,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 		//base tier = what we're passed, so 1, 2 or 3
 		baseTier = i;
-		opMode = 0;
+		opMode = 1;
 		initializeValues();
 	}
 
@@ -255,7 +256,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 				hasEnoughItems = true;
 				break;
 			}
-			
+
 			ItemStack stack = contents[i];
 			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
@@ -387,6 +388,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	 */
 	private void acceptInputItems()
 	{
+		//System.out.println("aII: opMode " + opMode);
 		ItemStack stack = contents[Info.BS_SLOT_INPUT];
 		if (stack == null || !(stack.getItem() instanceof IElectricItem) || (opMode == 1 && hasEnoughItems)) return;
 
@@ -452,6 +454,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 	}
 
+	@Override
 	public void receiveGuiButton(int buttonID)
 	{
 		if (buttonID == 0)

@@ -140,6 +140,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		worldObj.spawnEntityInWorld(entityitem);
 	}
 
+	@Override
 	public void dropContents()
 	{
 		ItemStack item;

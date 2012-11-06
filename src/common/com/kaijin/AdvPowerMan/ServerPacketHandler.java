@@ -22,11 +22,6 @@ import cpw.mods.fml.common.network.Player;
 
 public class ServerPacketHandler implements IPacketHandler
 {
-	int packetType = -1;
-	int x = 0;
-	int y = 0;
-	int z = 0;
-
 	/*
 	 * Packet format:
 	 * 0: byte  Packet Type
@@ -45,8 +40,12 @@ public class ServerPacketHandler implements IPacketHandler
 	public void onPacketData(INetworkManager network, Packet250CustomPayload packet, Player player)
 	{
 		DataInputStream stream = new DataInputStream(new ByteArrayInputStream(packet.data));
+
 		// Determine packet type and coordinates of affected tile entity 
-		packetType = -1;
+		int packetType = -1;
+		int x;
+		int y;
+		int z;
 		try
 		{
 			packetType = stream.readInt();
@@ -54,7 +53,7 @@ public class ServerPacketHandler implements IPacketHandler
 			y = stream.readInt();
 			z = stream.readInt();
 		}
-		catch (Exception e)
+		catch (IOException e)
 		{
 			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Failed to read packet from client. (Details: " + e.toString() + ")");
 			return;
@@ -65,7 +64,7 @@ public class ServerPacketHandler implements IPacketHandler
 			Exception e;
 			try
 			{
-				World world = FMLClientHandler.instance().getClient().theWorld;
+				World world = ((EntityPlayerMP)player).worldObj;
 				TileEntity tile = world.getBlockTileEntity(x, y, z);
 
 				int buttonID = stream.readInt();

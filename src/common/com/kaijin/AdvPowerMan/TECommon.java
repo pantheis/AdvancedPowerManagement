@@ -95,4 +95,6 @@ public class TECommon extends TileEntity
 	{
 		FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Client received invalid description packet. (Details: " + e.toString() + ")");
 	}
+
+	public void dropContents() {} // Stub for block destroyed event
 }
