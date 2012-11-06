@@ -11,8 +11,12 @@ import ic2.api.IElectricItem;
 import ic2.api.IEnergySource;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -417,13 +421,22 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	}
 
 	//Networking stuff
-
-	public void receiveDescriptionData(boolean workState)
+	
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void receiveDescriptionData(int packetID, DataInputStream stream)
 	{
-		doingWork = workState;
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		try
+		{
+			doingWork = stream.readBoolean();
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
 	}
-
+	
 	@Override
 	public Packet250CustomPayload getDescriptionPacket()
 	{
@@ -432,7 +445,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		DataOutputStream data = new DataOutputStream(bytes);
 		try
 		{
-			data.writeInt(1);
+			data.writeInt(0);
 			data.writeInt(xCoord);
 			data.writeInt(yCoord);
 			data.writeInt(zCoord);

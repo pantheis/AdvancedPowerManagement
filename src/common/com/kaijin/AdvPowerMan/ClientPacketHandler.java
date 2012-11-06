@@ -33,18 +33,9 @@ public class ClientPacketHandler implements IPacketHandler
 	 * Currently available packet types
 	 *         
 	 * Server-to-Client:
-	 * 0 = Charging Bench description packet
-	 *     4: int      charge level for texture
-	 *     5: boolean  activity state for texture
-	 * 
-	 * 1 = Battery Station description packet
-	 *     4: boolean  activity state for texture
-	 *
-	 * 2 = Storage Monitor description packet
-	 *     4: int      charge level for texture
-	 *     5: boolean  power state for texture
-	 *     6: boolean  valid state for texture
-	 *     
+	 * 0 = Universal description packet
+	 *     4: int        packet ID
+	 *     5: DataStream stream
 	 */
 
 	@Override
@@ -75,11 +66,9 @@ public class ClientPacketHandler implements IPacketHandler
 		{
 			try
 			{
-				int chargeLevel = stream.readInt();
-				boolean doingWork = stream.readBoolean();
-				if (tile instanceof TEChargingBench)
+				if (tile instanceof TECommon)
 				{
-					((TEChargingBench)tile).receiveDescriptionData(chargeLevel, doingWork);
+					((TECommon)tile).receiveDescriptionData(packetType, stream);
 				}
 			}
 			catch (Exception ex)
@@ -87,38 +76,5 @@ public class ClientPacketHandler implements IPacketHandler
 				ex.printStackTrace();
 			}
 		}
-		else if (packetType == 1)
-		{
-			try
-			{
-				boolean working = stream.readBoolean();
-				if (tile instanceof TEBatteryStation)
-				{
-					((TEBatteryStation)tile).receiveDescriptionData(working);
-				}
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-		else if (packetType == 2)
-		{
-			try
-			{
-				int chargeLevel = stream.readInt();
-				boolean isPowering = stream.readBoolean();
-				boolean blockState = stream.readBoolean();
-				if (tile instanceof TEStorageMonitor)
-				{
-					((TEStorageMonitor)tile).receiveDescriptionData(chargeLevel, isPowering, blockState);
-				}
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-
 	}
 }

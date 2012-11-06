@@ -11,7 +11,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 
-public abstract class TECommonBench extends TileEntity implements IInventory
+public abstract class TECommonBench extends TECommon implements IInventory
 {
 	protected ItemStack[] contents;
 
