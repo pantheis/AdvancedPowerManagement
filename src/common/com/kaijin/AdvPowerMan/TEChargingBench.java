@@ -12,8 +12,12 @@ import ic2.api.IEnergySink;
 import ic2.api.IEnergyStorage;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -579,14 +583,23 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		return result;
 	}
 
-	//Networking stuff
-
-	public void receiveDescriptionData(int charge, boolean work)
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void receiveDescriptionData(int packetID, DataInputStream stream)
 	{
-		chargeLevel = charge;
-		doingWork = work;
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		try
+		{
+			chargeLevel = stream.readInt();
+			doingWork = stream.readBoolean();
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
 	}
+	
+	//Networking stuff
 
 	@Override
 	public Packet250CustomPayload getDescriptionPacket()
@@ -702,5 +715,4 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		doUpgradeEffects();
 		super.onInventoryChanged();
 	}
-
 }
