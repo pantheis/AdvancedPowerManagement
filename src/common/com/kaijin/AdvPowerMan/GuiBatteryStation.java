@@ -98,7 +98,7 @@ public class GuiBatteryStation extends GuiContainer
 			if (button.enabled && button.mousePressed(this.mc, par1, par2)) // if it's enabled and was under the pointer,
 			{
 				mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F); // provide audio feedback,
-				tile.sendGuiCommand(button.id); // and inform the server of the button click.
+				tile.sendGuiButton(button.id); // and inform the server of the button click.
 			}
 		}
 		super.mouseClicked(par1, par2, par3); // Finally, do all that other normal stuff. 

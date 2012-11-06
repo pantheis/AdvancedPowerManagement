@@ -27,7 +27,7 @@ public class ClientPacketHandler implements IPacketHandler
 	 * 2: int   y location of TileEntity
 	 * 3: int   z location of TileEntity
 	 *  
-	 * Currently available packet types
+	 * Currently used packet types
 	 *         
 	 * Server-to-Client:
 	 * 0 = Universal description packet
@@ -61,9 +61,9 @@ public class ClientPacketHandler implements IPacketHandler
 			y = stream.readInt();
 			z = stream.readInt();
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Failed to read packet from server. (Details: " + ex.toString() + ")");
+			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Failed to read packet from server. (Details: " + e.toString() + ")");
 			return;
 		}
 
@@ -86,8 +86,8 @@ public class ClientPacketHandler implements IPacketHandler
 			{
 				e = ex;
 			}
-			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Received description packet for " + x + ", " + y + ", " + z + 
-				" but can't deliver to tile entity. (Details: " + e.toString() + ")");
+			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Client received description packet for " + x + ", " + y + ", " + z + 
+				" but couldn't deliver to tile entity. (Details: " + e.toString() + ")");
 			return;
 		}
 	}

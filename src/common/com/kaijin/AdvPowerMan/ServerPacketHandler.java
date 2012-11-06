@@ -7,12 +7,16 @@ package com.kaijin.AdvPowerMan;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.logging.Level;
 
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
@@ -30,10 +34,10 @@ public class ServerPacketHandler implements IPacketHandler
 	 * 2: int   y location of TileEntity
 	 * 3: int   z location of TileEntity
 	 *  
-	 * Currently available packet types
+	 * Currently used packet types
 	 *         
 	 * Client-to-Server:
-	 * 0 = Storage Monitor GUI command info
+	 * 0 = GUI button command
 	 *     4: int      Button ID clicked
 	 */
 	
@@ -50,69 +54,32 @@ public class ServerPacketHandler implements IPacketHandler
 			y = stream.readInt();
 			z = stream.readInt();
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			ex.printStackTrace();
+			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Failed to read packet from client. (Details: " + e.toString() + ")");
 			return;
 		}
-		if (packetType < 0) return;
-
-		World world = ((EntityPlayerMP)player).worldObj;
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
 		if (packetType == 0)
 		{
-			//if (Info.isDebugging) System.out.println("Packet 0");
+			Exception e;
 			try
 			{
+				World world = FMLClientHandler.instance().getClient().theWorld;
+				TileEntity tile = world.getBlockTileEntity(x, y, z);
+
 				int buttonID = stream.readInt();
-				//if (Info.isDebugging) System.out.println("Button " + buttonID);
-				if (tile instanceof TEStorageMonitor)
-				{
-					//if (Info.isDebugging) System.out.println("Storage Monitor command sent");
-					((TEStorageMonitor)tile).receiveGuiCommand(buttonID);
-				}
+
+				((TECommon)tile).receiveGuiButton(buttonID);
+				return;
 			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-		else if (packetType == 1)
-		{
-			//if (Info.isDebugging) System.out.println("Packet 1");
-			try
-			{
-				int buttonID = stream.readInt();
-				//if (Info.isDebugging) System.out.println("Button " + buttonID);
-				if (tile instanceof TEAdvEmitter)
-				{
-					//if (Info.isDebugging) System.out.println("Advanced Emitter command sent");
-					((TEAdvEmitter)tile).receiveGuiCommand(buttonID);
-				}
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-		else if (packetType == 2)
-		{
-			//if (Info.isDebugging) System.out.println("Packet 1");
-			try
-			{
-				int opMode = stream.readInt();
-				//if (Info.isDebugging) System.out.println("Button " + buttonID);
-				if (tile instanceof TEBatteryStation)
-				{
-					//if (Info.isDebugging) System.out.println("Advanced Emitter command sent");
-					((TEBatteryStation)tile).receiveGuiCommand(opMode);
-				}
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace();
-			}
+			catch (ClassCastException ex) { e = ex; }
+			catch (NullPointerException ex) { e = ex; }
+			catch (IOException ex) { e = ex; }
+
+			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Server received GUI button packet for " + x + ", " + y + ", " + z + 
+				" but couldn't deliver to tile entity. (Details: " + e.toString() + ")");
+			return;
 		}
 	}
 }

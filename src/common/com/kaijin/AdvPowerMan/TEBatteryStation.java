@@ -421,83 +421,45 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	}
 
 	//Networking stuff
-	
+
+	@Override
+	public Packet250CustomPayload getDescriptionPacket()
+	{
+		return createDescPacket();
+	}
+
+	@Override
+	protected void addUniqueDescriptionData(DataOutputStream data) throws IOException
+	{
+		data.writeBoolean(doingWork);
+	}
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void receiveDescriptionData(int packetID, DataInputStream stream)
 	{
+		final boolean b;
 		try
 		{
-			doingWork = stream.readBoolean();
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
-	}
-	
-	@Override
-	public Packet250CustomPayload getDescriptionPacket()
-	{
-		//if (ChargingBench.isDebugging) System.out.println("TE getAuxillaryInfoPacket()");
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		DataOutputStream data = new DataOutputStream(bytes);
-		try
-		{
-			data.writeInt(0);
-			data.writeInt(xCoord);
-			data.writeInt(yCoord);
-			data.writeInt(zCoord);
-			data.writeBoolean(doingWork);
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
-		packet.data = bytes.toByteArray();
-		packet.length = packet.data.length;
-		return packet;
-	}
-	
-	public void receiveGuiCommand(int opm)
-	{
-		opMode ^= 1;
-	}
-
-	/**
-	 * Packet transmission from client to server of what button was clicked on the GUI.
-	 * @param id = the button ID
-	 */
-	public void sendGuiCommand(int id)
-	{
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		DataOutputStream data = new DataOutputStream(bytes);
-		try
-		{
-			data.writeInt(2); // Packet ID for Storage Monitor GUI button clicks
-			data.writeInt(xCoord);
-			data.writeInt(yCoord);
-			data.writeInt(zCoord);
-			data.writeInt(id);
+			b = stream.readBoolean();
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			logDescPacketError(e);
+			return;
 		}
-
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
-		packet.data = bytes.toByteArray();
-		packet.length = packet.data.length;
-
-		AdvancedPowerManagement.proxy.sendPacketToServer(packet);
+		doingWork = b;
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 	}
 
-	
+	public void receiveGuiButton(int buttonID)
+	{
+		if (buttonID == 0)
+		{
+			opMode ^= 1;
+		}
+	}
+
 	// ISidedInventory
 
 	@Override
