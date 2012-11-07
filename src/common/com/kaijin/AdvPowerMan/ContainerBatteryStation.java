@@ -19,17 +19,14 @@ public class ContainerBatteryStation extends Container
 	private final int playerInventoryStartSlot = 14;
 
 	public TEBatteryStation tileentity;
-	//public int currentEnergy;
-	//public short adjustedMaxInput;
 	public int opMode;
+	public int average;
 
 	public ContainerBatteryStation(InventoryPlayer player, TEBatteryStation tile)
 	{
-		//if (ChargingBench.isDebugging) System.out.println("ContainerBatteryStation");
 		tileentity = tile;
-		//currentEnergy = -1;
-		//adjustedMaxInput = -1;
 		opMode = -1;
+		average = -1;
 
 		final int topOffset = 24; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
@@ -73,25 +70,23 @@ public class ContainerBatteryStation extends Container
 		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateCraftingResults");
 		super.updateCraftingResults();
 
+		final int syncAvg = (int)(tileentity.outputTracker.getAverage() * 100);
 		for (int crafterIndex = 0; crafterIndex < crafters.size(); ++crafterIndex)
 		{
 			ICrafting crafter = (ICrafting)this.crafters.get(crafterIndex);
-
-			if (this.opMode != tileentity.opMode)
+			if (opMode != tileentity.opMode)
 			{
-				if (AdvancedPowerManagement.proxy.isClient()) //TODO remove this crap once bug is found
-				{
-					System.out.println("Client container: " + opMode + " tile: " + tileentity.opMode + " value: " + tileentity.opMode);
-				}
-				if (AdvancedPowerManagement.proxy.isServer())
-				{
-					System.out.println("Server container: " + opMode + " tile: " + tileentity.opMode + " value: " + tileentity.opMode);
-				}
+				crafter.updateCraftingInventoryInfo(this, 0, opMode);
+			}
 
-				crafter.updateCraftingInventoryInfo(this, 0, tileentity.opMode);
+			if (average != syncAvg)
+			{
+				crafter.updateCraftingInventoryInfo(this, 1, average & 65535);
+				crafter.updateCraftingInventoryInfo(this, 2, average >>> 16);
 			}
 		}
-		this.opMode = tileentity.opMode;
+		opMode = tileentity.opMode;
+		average = syncAvg;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -103,20 +98,19 @@ public class ContainerBatteryStation extends Container
 		switch (param)
 		{
 		case 0:
-			if (AdvancedPowerManagement.proxy.isClient()) //TODO remove this crap once bug is found
-			{
-				System.out.println("Client container: " + opMode + " tile: " + tileentity.opMode + " value: " + value);
-			}
-			if (AdvancedPowerManagement.proxy.isServer())
-			{
-				System.out.println("Server container: " + opMode + " tile: " + tileentity.opMode + " value: " + value);
-			}
+			this.opMode = value;
+			break;
 
-			tileentity.opMode = value;
+		case 1:
+			average = average & -65536 | value;
+			break;
+
+		case 2:
+			average = average & 65535 | (value << 16);
 			break;
 
 		default:
-			System.out.println("ContainerDischargingBench.updateProgressBar - Warning: default case!");
+			System.out.println("ContainerBatteryStation.updateProgressBar - Warning: default case!");
 		}
 	}
 

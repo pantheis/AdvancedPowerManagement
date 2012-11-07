@@ -29,14 +29,9 @@ import net.minecraftforge.common.ISidedInventory;
 
 public class TEBatteryStation extends TECommonBench implements IEnergySource, IInventory, ISidedInventory
 {
-	// No references to these variables found. What are they for?
-	private int tickTime;
-	private int tickDelay = 10;
-
 	public int baseTier;
 	
 	public int opMode;
-	public int clientOpMode;
 
 	// Base values
 	public int baseMaxOutput;
@@ -47,6 +42,9 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	//For outside texture display
 	public boolean doingWork;
+
+	private int energyOut;
+	public MovingAverage outputTracker = new MovingAverage(30);
 
 	public TEBatteryStation() // Default constructor used only when loading tile entity from world save
 	{
@@ -209,16 +207,22 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		invChanged = false;
 		hasEnoughItems = true;
 
-		// Work done only when not redstone powered 
 		if (!receivingRedstoneSignal())
 		{
+			// Work done only when not redstone powered 
 			drainPowerSource();
-			emitEnergy();
+			energyOut = emitEnergy();
+		}
+		else
+		{
+			energyOut = 0;
 		}
 		// Work done every tick
 		moveOutputItems();
 		repositionItems();
 		acceptInputItems();
+
+		outputTracker.tick(energyOut);
 
 		if (invChanged)
 		{
@@ -233,16 +237,21 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		}
 	}
 
-	private void emitEnergy()
+	private int emitEnergy()
 	{
 		//if (ChargingBench.isDebugging) System.out.println("preEmit-currentEnergy: " + currentEnergy);
 		if (currentEnergy >= baseMaxOutput)
 		{
-			int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, baseMaxOutput);
-			currentEnergy += surplus - baseMaxOutput; // Zero or negative
-			if (surplus < baseMaxOutput) doingWork = true;
+			final int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, baseMaxOutput);
+			if (surplus < baseMaxOutput)
+			{
+				final int sent = baseMaxOutput - surplus;
+				currentEnergy -= sent;
+				doingWork = true;
+				return sent; // For average tracker
+			}
 		}
-		//if (ChargingBench.isDebugging) System.out.println("postEmit-currentEnergy: " + currentEnergy);
+		return 0;
 	}
 
 	private void drainPowerSource()

@@ -4,6 +4,8 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
+import java.text.DecimalFormat;
+
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiContainer;
@@ -28,7 +30,9 @@ public class GuiBatteryStation extends GuiContainer
 	private int xLoc;
 	private int yLoc;
 	private int xCenter;
-	
+
+	private DecimalFormat df = new DecimalFormat("##0.00");
+
 	private static final int GREEN = 0x55FF55;
 	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
 
@@ -53,7 +57,7 @@ public class GuiBatteryStation extends GuiContainer
 		yLoc = (height - ySize) / 2; // Half the difference between screen height and GUI height
 		xCenter = width / 2;
 		button.xPosition = xLoc + 16;
-		button.yPosition = yLoc + 48;
+		button.yPosition = yLoc + 44;
 		mode = -1;
 	}
 
@@ -69,9 +73,9 @@ public class GuiBatteryStation extends GuiContainer
 		// Draw title text
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), xCenter, yLoc + 8, 4210752);
 
-		if (mode != tile.opMode)
+		if (mode != ((ContainerBatteryStation)inventorySlots).opMode)
 		{
-			mode = tile.opMode;
+			mode = ((ContainerBatteryStation)inventorySlots).opMode;
 			if (mode == 0)
 			{
 				button.vLoc = 200;
@@ -84,8 +88,17 @@ public class GuiBatteryStation extends GuiContainer
 			}
 		}
 
-		Utils.drawCenteredGlowingText(fontRenderer, "123", xLoc + 145, yLoc + 42, GREEN, GREENGLOW);
-		Utils.drawCenteredGlowingText(fontRenderer, "01:23:45", xLoc + 145, yLoc + 52, GREEN, GREENGLOW);
+		//Utils.drawLeftAlignedText(fontRenderer, "Input mode", xLoc + 7, yLoc + 60, 4210752);
+		//Utils.drawLeftAlignedText(fontRenderer, "Mode", xLoc + 35, yLoc + 46, 4210752);
+		Utils.drawLeftAlignedText(fontRenderer, "Only when ", xLoc + 7, yLoc + 59, 4210752);
+		Utils.drawLeftAlignedText(fontRenderer, "required", xLoc + 7, yLoc + 70, 4210752);
+		//Utils.drawLeftAlignedText(fontRenderer, "Input", xLoc + 7, yLoc + 80, 4210752);
+		Utils.drawCenteredText(fontRenderer, "Avg. EU/t", xLoc + 144, yLoc + 27, 4210752);
+		Utils.drawCenteredText(fontRenderer, "Remaining", xLoc + 144, yLoc + 65, 4210752);
+
+		// Factor of 2000 because data is in fixed point (x100) and EU per second (x20)
+		Utils.drawRightAlignedGlowingText(fontRenderer, df.format((float)(((ContainerBatteryStation)inventorySlots).average) / 2000F), xLoc + 165, yLoc + 41, GREEN, GREENGLOW);
+		Utils.drawRightAlignedGlowingText(fontRenderer, "01:23:45", xLoc + 165, yLoc + 51, GREEN, GREENGLOW);
 		
 		button.drawButton(mc, mouseX, mouseY);
 	}

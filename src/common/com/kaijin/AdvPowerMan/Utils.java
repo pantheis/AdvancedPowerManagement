@@ -42,6 +42,20 @@ public class Utils
 		fr.drawString(text, xLoc - fr.getStringWidth(text), yLoc, color);
 	}
 
+	/**
+	 * 
+	 * @param fr    - Font Renderer handle
+	 * @param text  - Text to display
+	 * @param xLoc  - x location
+	 * @param yLoc  - y location
+	 * @param color - Color
+	 */
+	@SideOnly(Side.CLIENT)
+	public static void drawLeftAlignedText(FontRenderer fr, String text, int xLoc, int yLoc, int color)
+	{
+		fr.drawString(text, xLoc, yLoc, color);
+	}
+
 	private static final int MASKR = 0xFF0000;
 	private static final int MASKG = 0x00FF00;
 	private static final int MASKB = 0x0000FF;
