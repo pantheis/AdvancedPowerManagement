@@ -29,23 +29,22 @@ import net.minecraftforge.common.ISidedInventory;
 
 public class TEBatteryStation extends TECommonBench implements IEnergySource, IInventory, ISidedInventory
 {
-	// No references to these variables found. What are they for?
-	private int tickTime;
-	private int tickDelay = 10;
-
 	public int baseTier;
 	
 	public int opMode;
 
 	// Base values
 	public int baseMaxOutput;
-	public int currentEnergy;
+	public int currentEnergy = 0;
 
-	private boolean invChanged;
-	private boolean hasEnoughItems;
+	private boolean invChanged = false;
+	private boolean hasEnoughItems = false;
 
 	//For outside texture display
 	public boolean doingWork;
+
+	private int energyOut = 0;
+	public MovingAverage outputTracker = new MovingAverage(30);
 
 	public TEBatteryStation() // Default constructor used only when loading tile entity from world save
 	{
@@ -60,7 +59,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 		//base tier = what we're passed, so 1, 2 or 3
 		baseTier = i;
-		opMode = 0;
+		opMode = 1;
 		initializeValues();
 	}
 
@@ -142,6 +141,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 			baseTier = nbttagcompound.getInteger("baseTier");
 			opMode = nbttagcompound.getInteger("opMode");
+			currentEnergy = nbttagcompound.getInteger("currentEnergy");
 
 			// Our inventory
 			contents = new ItemStack[Info.BS_INVENTORY_SIZE];
@@ -174,6 +174,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 			nbttagcompound.setInteger("baseTier", baseTier);
 			nbttagcompound.setInteger("opMode", opMode);
+			nbttagcompound.setInteger("currentEnergy", currentEnergy);
 
 			// Our inventory
 			NBTTagList nbttaglist = new NBTTagList();
@@ -208,16 +209,21 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		invChanged = false;
 		hasEnoughItems = true;
 
-		// Work done only when not redstone powered 
 		if (!receivingRedstoneSignal())
 		{
+			// Work done only when not redstone powered 
 			drainPowerSource();
-			emitEnergy();
+			energyOut = emitEnergy();
+		}
+		else
+		{
+			energyOut = 0;
 		}
 		// Work done every tick
 		moveOutputItems();
 		repositionItems();
 		acceptInputItems();
+		outputTracker.tick(energyOut);
 
 		if (invChanged)
 		{
@@ -232,16 +238,21 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		}
 	}
 
-	private void emitEnergy()
+	private int emitEnergy()
 	{
 		//if (ChargingBench.isDebugging) System.out.println("preEmit-currentEnergy: " + currentEnergy);
 		if (currentEnergy >= baseMaxOutput)
 		{
-			int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, baseMaxOutput);
-			currentEnergy += surplus - baseMaxOutput; // Zero or negative
-			if (surplus < baseMaxOutput) doingWork = true;
+			final int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, baseMaxOutput);
+			if (surplus < baseMaxOutput)
+			{
+				final int sent = baseMaxOutput - surplus;
+				currentEnergy -= sent;
+				doingWork = true;
+				return sent; // For average tracker
+			}
 		}
-		//if (ChargingBench.isDebugging) System.out.println("postEmit-currentEnergy: " + currentEnergy);
+		return 0;
 	}
 
 	private void drainPowerSource()
@@ -255,7 +266,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 				hasEnoughItems = true;
 				break;
 			}
-			
+
 			ItemStack stack = contents[i];
 			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
@@ -387,6 +398,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	 */
 	private void acceptInputItems()
 	{
+		//System.out.println("aII: opMode " + opMode);
 		ItemStack stack = contents[Info.BS_SLOT_INPUT];
 		if (stack == null || !(stack.getItem() instanceof IElectricItem) || (opMode == 1 && hasEnoughItems)) return;
 
@@ -420,84 +432,73 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		}
 	}
 
+	// Add up amount of energy stored in items in all slots except output and return that value
+	public int getTotalEnergy()
+	{
+		int energySum = 0;
+		for (int i = 0; i < Info.BS_SLOT_POWER_START + 12; i++)
+		{
+			if (i == Info.BS_SLOT_OUTPUT) continue;
+
+			final ItemStack stack = contents[i];
+			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
+			{
+				final IElectricItem item = (IElectricItem)(stack.getItem());
+				if (item.getTier() <= powerTier && item.canProvideEnergy() && stack.itemID == item.getChargedItemId())
+				{
+					final int chargeReturned = ElectricItem.discharge(stack, Integer.MAX_VALUE, powerTier, true, true);
+					if (chargeReturned > 0)
+					{
+						// Add the energy we received to our current energy level
+						energySum += chargeReturned;
+					}
+				}
+			}
+		}
+		return energySum;
+	}
+
 	//Networking stuff
-	
+
+	@Override
+	public Packet250CustomPayload getDescriptionPacket()
+	{
+		return createDescPacket();
+	}
+
+	@Override
+	protected void addUniqueDescriptionData(DataOutputStream data) throws IOException
+	{
+		data.writeBoolean(doingWork);
+	}
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void receiveDescriptionData(int packetID, DataInputStream stream)
 	{
+		final boolean b;
 		try
 		{
-			doingWork = stream.readBoolean();
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
-	}
-	
-	@Override
-	public Packet250CustomPayload getDescriptionPacket()
-	{
-		//if (ChargingBench.isDebugging) System.out.println("TE getAuxillaryInfoPacket()");
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		DataOutputStream data = new DataOutputStream(bytes);
-		try
-		{
-			data.writeInt(0);
-			data.writeInt(xCoord);
-			data.writeInt(yCoord);
-			data.writeInt(zCoord);
-			data.writeBoolean(doingWork);
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
-		packet.data = bytes.toByteArray();
-		packet.length = packet.data.length;
-		return packet;
-	}
-	
-	public void receiveGuiCommand(int opm)
-	{
-		opMode ^= 1;
-	}
-
-	/**
-	 * Packet transmission from client to server of what button was clicked on the GUI.
-	 * @param id = the button ID
-	 */
-	public void sendGuiCommand(int id)
-	{
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		DataOutputStream data = new DataOutputStream(bytes);
-		try
-		{
-			data.writeInt(2); // Packet ID for Storage Monitor GUI button clicks
-			data.writeInt(xCoord);
-			data.writeInt(yCoord);
-			data.writeInt(zCoord);
-			data.writeInt(id);
+			b = stream.readBoolean();
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			logDescPacketError(e);
+			return;
 		}
-
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
-		packet.data = bytes.toByteArray();
-		packet.length = packet.data.length;
-
-		AdvancedPowerManagement.proxy.sendPacketToServer(packet);
+		doingWork = b;
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 	}
 
-	
+	@Override
+	public void receiveGuiButton(int buttonID)
+	{
+		if (buttonID == 0)
+		{
+			opMode ^= 1;
+		}
+	}
+
 	// ISidedInventory
 
 	@Override

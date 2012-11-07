@@ -134,7 +134,7 @@ public class GuiStorageMonitor extends GuiContainer
 				if (b.enabled && b.mousePressed(this.mc, par1, par2)) // if it's enabled and was under the pointer,
 				{
 					mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F); // provide audio feedback,
-					tile.sendGuiCommand(b.id); // and inform the server of the button click.
+					tile.sendGuiButton(b.id); // and inform the server of the button click.
 				}
 			}
 		}

@@ -143,7 +143,4 @@ public class TEEmitter extends TECommon implements IEnergySource
 	{
 		return Integer.MAX_VALUE;
 	}
-
-	@Override
-	public void receiveDescriptionData(int packetID, DataInputStream stream){}
 }

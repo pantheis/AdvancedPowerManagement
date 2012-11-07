@@ -55,7 +55,12 @@ public class Info
 	public static final String KEY_MONITOR_INVALID = "AdvPwrMan.monitor.invalid";
 	public static final String KEY_MONITOR_UPPER = "AdvPwrMan.monitor.upper";
 	public static final String KEY_MONITOR_LOWER = "AdvPwrMan.monitor.lower";
-
+	public static final String KEY_DISCHARGER_MODE_LINE1 = "AdvPwrMan.station.modeline1";
+	public static final String KEY_DISCHARGER_MODE_LINE2 = "AdvPwrMan.station.modeline2";
+	public static final String KEY_DISCHARGER_AVERAGE = "AdvPwrMan.station.average";
+	public static final String KEY_DISCHARGER_REMAINING = "AdvPwrMan.station.remaining";
+	public static final String KEY_DISCHARGER_DISPLAY_DAYS = "AdvPwrMan.station.led.days";
+	public static final String KEY_DISCHARGER_DISPLAY_UNKNOWN = "AdvPwrMan.station.led.unknown";
 
 	// Other constants for use in multiple classes
 	public static final int LAST_META_VALUE = 11;
@@ -134,5 +139,11 @@ public class Info
 		lang.addStringLocalization(KEY_MONITOR_INVALID, "No Valid Link");
 		lang.addStringLocalization(KEY_MONITOR_UPPER, "Upper Threshold (Off)");
 		lang.addStringLocalization(KEY_MONITOR_LOWER, "Lower Threshold (On)");
+		lang.addStringLocalization(KEY_DISCHARGER_MODE_LINE1, "Only when");
+		lang.addStringLocalization(KEY_DISCHARGER_MODE_LINE2, "required");
+		lang.addStringLocalization(KEY_DISCHARGER_AVERAGE, "Avg. EU/t");
+		lang.addStringLocalization(KEY_DISCHARGER_REMAINING, "Remaining");
+		lang.addStringLocalization(KEY_DISCHARGER_DISPLAY_DAYS, "4+ DAYS");
+		lang.addStringLocalization(KEY_DISCHARGER_DISPLAY_UNKNOWN, "UNKNOWN");
 	}
 }

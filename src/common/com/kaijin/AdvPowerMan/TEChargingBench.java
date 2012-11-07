@@ -15,7 +15,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
@@ -583,49 +585,40 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		return result;
 	}
 
+	//Networking stuff
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void receiveDescriptionData(int packetID, DataInputStream stream)
 	{
+		final int a;
+		final boolean b;
 		try
 		{
-			chargeLevel = stream.readInt();
-			doingWork = stream.readBoolean();
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			a = stream.readInt();
+			b = stream.readBoolean();
 		}
-		catch (Exception ex)
+		catch (IOException e)
 		{
-			ex.printStackTrace();
+			logDescPacketError(e);
+			return;
 		}
+		chargeLevel = a;
+		doingWork = b;
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 	}
-	
-	//Networking stuff
 
 	@Override
 	public Packet250CustomPayload getDescriptionPacket()
 	{
-		//if (ChargingBench.isDebugging) System.out.println("TE getAuxillaryInfoPacket()");
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		DataOutputStream data = new DataOutputStream(bytes);
-		try
-		{
-			data.writeInt(0);
-			data.writeInt(xCoord);
-			data.writeInt(yCoord);
-			data.writeInt(zCoord);
-			data.writeInt(chargeLevel);
-			data.writeBoolean(doingWork);
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
+		return createDescPacket();
+	}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
-		packet.data = bytes.toByteArray();
-		packet.length = packet.data.length;
-		return packet;
+	@Override
+	protected void addUniqueDescriptionData(DataOutputStream data) throws IOException
+	{
+		data.writeInt(chargeLevel);
+		data.writeBoolean(doingWork);
 	}
 
 	// ISidedInventory
