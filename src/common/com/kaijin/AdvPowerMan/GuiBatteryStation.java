@@ -94,13 +94,14 @@ public class GuiBatteryStation extends GuiContainer
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_AVERAGE), xLoc + 144, yLoc + 27, 4210752);
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_REMAINING), xLoc + 144, yLoc + 65, 4210752);
 
-		// Factor of 2000 because data is in fixed point (x100) and EU per second (x20)
-		final float rate = (float)(((ContainerBatteryStation)inventorySlots).average) / 2000F;
+		// Factor of 100 because data is in fixed point (x100)
+		final float rate = (float)(((ContainerBatteryStation)inventorySlots).average) / 100F;
 		Utils.drawRightAlignedGlowingText(fontRenderer, fraction.format(rate), xLoc + 166, yLoc + 41, GREEN, GREENGLOW);
 
 		String clock;
 		if (rate > 0)
 		{
+			// Rate * 20 to convert per tick to per second
 			int timeScratch = (int)((float)(((ContainerBatteryStation)inventorySlots).itemsEnergyTotal) / (rate * 20));
 			final int sec = timeScratch % 60;
 			timeScratch /= 60;

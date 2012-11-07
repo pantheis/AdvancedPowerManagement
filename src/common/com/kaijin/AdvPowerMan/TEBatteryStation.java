@@ -42,7 +42,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	public boolean doingWork;
 
 	private int energyOut = 0;
-	public MovingAverage outputTracker = new MovingAverage(30);
+	public MovingAverage outputTracker = new MovingAverage(10);
 
 	public TEBatteryStation() // Default constructor used only when loading tile entity from world save
 	{
