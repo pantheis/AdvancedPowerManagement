@@ -15,18 +15,20 @@ import net.minecraft.src.Slot;
 
 public class ContainerBatteryStation extends Container
 {
-	private final int shiftClickRange = 13;
-	private final int playerInventoryStartSlot = 14;
+	private static final int shiftClickRange = 13;
+	private static final int playerInventoryStartSlot = 14;
 
 	public TEBatteryStation tileentity;
 	public int opMode;
 	public int average;
+	public int itemsEnergyTotal;
 
 	public ContainerBatteryStation(InventoryPlayer player, TEBatteryStation tile)
 	{
 		tileentity = tile;
 		opMode = -1;
 		average = -1;
+		itemsEnergyTotal = -1;
 
 		final int topOffset = 24; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
@@ -71,22 +73,31 @@ public class ContainerBatteryStation extends Container
 		super.updateCraftingResults();
 
 		final int syncAvg = (int)(tileentity.outputTracker.getAverage() * 100);
+		final int energy = tileentity.getTotalEnergy();
 		for (int crafterIndex = 0; crafterIndex < crafters.size(); ++crafterIndex)
 		{
 			ICrafting crafter = (ICrafting)this.crafters.get(crafterIndex);
-			if (opMode != tileentity.opMode)
-			{
-				crafter.updateCraftingInventoryInfo(this, 0, opMode);
-			}
 
 			if (average != syncAvg)
 			{
-				crafter.updateCraftingInventoryInfo(this, 1, average & 65535);
-				crafter.updateCraftingInventoryInfo(this, 2, average >>> 16);
+				crafter.updateCraftingInventoryInfo(this, 0, syncAvg & 65535);
+				crafter.updateCraftingInventoryInfo(this, 1, syncAvg >>> 16);
+			}
+
+			if (itemsEnergyTotal != energy)
+			{
+				crafter.updateCraftingInventoryInfo(this, 2, energy & 65535);
+				crafter.updateCraftingInventoryInfo(this, 3, energy >>> 16);
+			}
+
+			if (opMode != tileentity.opMode)
+			{
+				crafter.updateCraftingInventoryInfo(this, 4, tileentity.opMode);
 			}
 		}
 		opMode = tileentity.opMode;
 		average = syncAvg;
+		itemsEnergyTotal = energy;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -98,15 +109,23 @@ public class ContainerBatteryStation extends Container
 		switch (param)
 		{
 		case 0:
-			this.opMode = value;
-			break;
-
-		case 1:
 			average = average & -65536 | value;
 			break;
 
-		case 2:
+		case 1:
 			average = average & 65535 | (value << 16);
+			break;
+
+		case 2:
+			itemsEnergyTotal = itemsEnergyTotal & -65536 | value;
+			break;
+
+		case 3:
+			itemsEnergyTotal = itemsEnergyTotal & 65535 | (value << 16);
+			break;
+
+		case 4:
+			this.opMode = value;
 			break;
 
 		default:

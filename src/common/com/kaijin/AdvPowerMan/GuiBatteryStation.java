@@ -31,7 +31,8 @@ public class GuiBatteryStation extends GuiContainer
 	private int yLoc;
 	private int xCenter;
 
-	private DecimalFormat df = new DecimalFormat("##0.00");
+	private DecimalFormat fraction = new DecimalFormat("##0.00");
+	private DecimalFormat time = new DecimalFormat("00");
 
 	private static final int GREEN = 0x55FF55;
 	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
@@ -88,17 +89,27 @@ public class GuiBatteryStation extends GuiContainer
 			}
 		}
 
-		//Utils.drawLeftAlignedText(fontRenderer, "Input mode", xLoc + 7, yLoc + 60, 4210752);
-		//Utils.drawLeftAlignedText(fontRenderer, "Mode", xLoc + 35, yLoc + 46, 4210752);
-		Utils.drawLeftAlignedText(fontRenderer, "Only when ", xLoc + 7, yLoc + 59, 4210752);
-		Utils.drawLeftAlignedText(fontRenderer, "required", xLoc + 7, yLoc + 70, 4210752);
-		//Utils.drawLeftAlignedText(fontRenderer, "Input", xLoc + 7, yLoc + 80, 4210752);
-		Utils.drawCenteredText(fontRenderer, "Avg. EU/t", xLoc + 144, yLoc + 27, 4210752);
-		Utils.drawCenteredText(fontRenderer, "Remaining", xLoc + 144, yLoc + 65, 4210752);
+		Utils.drawLeftAlignedText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_MODE_LINE1), xLoc + 7, yLoc + 59, 4210752);
+		Utils.drawLeftAlignedText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_MODE_LINE2), xLoc + 7, yLoc + 70, 4210752);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_AVERAGE), xLoc + 144, yLoc + 27, 4210752);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_REMAINING), xLoc + 144, yLoc + 65, 4210752);
 
 		// Factor of 2000 because data is in fixed point (x100) and EU per second (x20)
-		Utils.drawRightAlignedGlowingText(fontRenderer, df.format((float)(((ContainerBatteryStation)inventorySlots).average) / 2000F), xLoc + 165, yLoc + 41, GREEN, GREENGLOW);
-		Utils.drawRightAlignedGlowingText(fontRenderer, "01:23:45", xLoc + 165, yLoc + 51, GREEN, GREENGLOW);
+		final float rate = (float)(((ContainerBatteryStation)inventorySlots).average) / 2000F;
+		Utils.drawRightAlignedGlowingText(fontRenderer, fraction.format(rate), xLoc + 166, yLoc + 41, GREEN, GREENGLOW);
+
+		String clock;
+		if (rate > 0)
+		{
+			int timeScratch = (int)((float)(((ContainerBatteryStation)inventorySlots).itemsEnergyTotal) / (rate * 20));
+			final int sec = timeScratch % 60;
+			timeScratch /= 60;
+			final int min = timeScratch % 60;
+			timeScratch /= 60;
+			clock = timeScratch < 100 ? time.format(timeScratch) + ":" + time.format(min) + ":" + time.format(sec) : lang.translateKey(Info.KEY_DISCHARGER_DISPLAY_DAYS);
+		}
+		else clock = lang.translateKey(Info.KEY_DISCHARGER_DISPLAY_UNKNOWN);
+		Utils.drawRightAlignedGlowingText(fontRenderer, clock, xLoc + 166, yLoc + 51, GREEN, GREENGLOW);
 		
 		button.drawButton(mc, mouseX, mouseY);
 	}

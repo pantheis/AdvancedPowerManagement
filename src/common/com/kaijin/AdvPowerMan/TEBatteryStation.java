@@ -35,15 +35,15 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	// Base values
 	public int baseMaxOutput;
-	public int currentEnergy;
+	public int currentEnergy = 0;
 
-	private boolean invChanged;
-	private boolean hasEnoughItems;
+	private boolean invChanged = false;
+	private boolean hasEnoughItems = false;
 
 	//For outside texture display
 	public boolean doingWork;
 
-	private int energyOut;
+	private int energyOut = 0;
 	public MovingAverage outputTracker = new MovingAverage(30);
 
 	public TEBatteryStation() // Default constructor used only when loading tile entity from world save
@@ -141,6 +141,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 			baseTier = nbttagcompound.getInteger("baseTier");
 			opMode = nbttagcompound.getInteger("opMode");
+			currentEnergy = nbttagcompound.getInteger("currentEnergy");
 
 			// Our inventory
 			contents = new ItemStack[Info.BS_INVENTORY_SIZE];
@@ -173,6 +174,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 			nbttagcompound.setInteger("baseTier", baseTier);
 			nbttagcompound.setInteger("opMode", opMode);
+			nbttagcompound.setInteger("currentEnergy", currentEnergy);
 
 			// Our inventory
 			NBTTagList nbttaglist = new NBTTagList();
@@ -221,7 +223,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		moveOutputItems();
 		repositionItems();
 		acceptInputItems();
-
 		outputTracker.tick(energyOut);
 
 		if (invChanged)
@@ -429,6 +430,32 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 				invChanged = true;
 			}
 		}
+	}
+
+	// Add up amount of energy stored in items in all slots except output and return that value
+	public int getTotalEnergy()
+	{
+		int energySum = 0;
+		for (int i = 0; i < Info.BS_SLOT_POWER_START + 12; i++)
+		{
+			if (i == Info.BS_SLOT_OUTPUT) continue;
+
+			final ItemStack stack = contents[i];
+			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
+			{
+				final IElectricItem item = (IElectricItem)(stack.getItem());
+				if (item.getTier() <= powerTier && item.canProvideEnergy() && stack.itemID == item.getChargedItemId())
+				{
+					final int chargeReturned = ElectricItem.discharge(stack, Integer.MAX_VALUE, powerTier, true, true);
+					if (chargeReturned > 0)
+					{
+						// Add the energy we received to our current energy level
+						energySum += chargeReturned;
+					}
+				}
+			}
+		}
+		return energySum;
 	}
 
 	//Networking stuff
