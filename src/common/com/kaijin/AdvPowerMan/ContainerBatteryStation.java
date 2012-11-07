@@ -4,6 +4,8 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
@@ -13,23 +15,20 @@ import net.minecraft.src.Slot;
 
 public class ContainerBatteryStation extends Container
 {
-	private final int shiftClickRange = 13;
-	private final int playerInventoryStartSlot = 14;
-	private final int playerArmorStartSlot = 55;
+	private static final int shiftClickRange = 13;
+	private static final int playerInventoryStartSlot = 14;
 
 	public TEBatteryStation tileentity;
-
-	public int currentEnergy;
-	public short adjustedMaxInput;
 	public int opMode;
+	public int average;
+	public int itemsEnergyTotal;
 
 	public ContainerBatteryStation(InventoryPlayer player, TEBatteryStation tile)
 	{
-		//if (ChargingBench.isDebugging) System.out.println("ContainerBatteryStation");
 		tileentity = tile;
-		currentEnergy = -1;
-		adjustedMaxInput = -1;
 		opMode = -1;
+		average = -1;
+		itemsEnergyTotal = -1;
 
 		final int topOffset = 24; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
@@ -73,19 +72,35 @@ public class ContainerBatteryStation extends Container
 		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateCraftingResults");
 		super.updateCraftingResults();
 
-		for (int crafterIndex = 0; crafterIndex < this.crafters.size(); ++crafterIndex)
+		final int syncAvg = (int)(tileentity.outputTracker.getAverage() * 100);
+		final int energy = tileentity.getTotalEnergy();
+		for (int crafterIndex = 0; crafterIndex < crafters.size(); ++crafterIndex)
 		{
 			ICrafting crafter = (ICrafting)this.crafters.get(crafterIndex);
 
-			if (this.opMode != this.tileentity.opMode)
+			if (average != syncAvg)
 			{
-				crafter.updateCraftingInventoryInfo(this, 0, this.tileentity.opMode & 65535);
-				crafter.updateCraftingInventoryInfo(this, 1, this.tileentity.opMode >>> 16);
+				crafter.updateCraftingInventoryInfo(this, 0, syncAvg & 65535);
+				crafter.updateCraftingInventoryInfo(this, 1, syncAvg >>> 16);
+			}
+
+			if (itemsEnergyTotal != energy)
+			{
+				crafter.updateCraftingInventoryInfo(this, 2, energy & 65535);
+				crafter.updateCraftingInventoryInfo(this, 3, energy >>> 16);
+			}
+
+			if (opMode != tileentity.opMode)
+			{
+				crafter.updateCraftingInventoryInfo(this, 4, tileentity.opMode);
 			}
 		}
-		this.opMode = this.tileentity.opMode;
+		opMode = tileentity.opMode;
+		average = syncAvg;
+		itemsEnergyTotal = energy;
 	}
-	
+
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void updateProgressBar(int param, int value)
 	{
@@ -94,17 +109,27 @@ public class ContainerBatteryStation extends Container
 		switch (param)
 		{
 		case 0:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & -65536) + " | " + value);
-			this.tileentity.opMode = this.tileentity.opMode & -65536 | value;
+			average = average & -65536 | value;
 			break;
 
 		case 1:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & 65535) + " | " + (value << 16));
-			this.tileentity.opMode = this.tileentity.opMode & 65535 | (value << 16);
+			average = average & 65535 | (value << 16);
+			break;
+
+		case 2:
+			itemsEnergyTotal = itemsEnergyTotal & -65536 | value;
+			break;
+
+		case 3:
+			itemsEnergyTotal = itemsEnergyTotal & 65535 | (value << 16);
+			break;
+
+		case 4:
+			this.opMode = value;
 			break;
 
 		default:
-			System.out.println("ContainerDischargingBench.updateProgressBar - Warning: default case!");
+			System.out.println("ContainerBatteryStation.updateProgressBar - Warning: default case!");
 		}
 	}
 

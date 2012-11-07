@@ -347,28 +347,9 @@ public class BlockAdvPwrMan extends Block
 		if (!AdvancedPowerManagement.proxy.isClient())
 		{
 			TileEntity tile = world.getBlockTileEntity(i, j, k);
-
-			if (tile instanceof TEEmitter)
+			if (tile instanceof TECommon) 
 			{
-				tile.invalidate();
-			}
-			else if (tile instanceof TECommonBench) 
-			{
-				((TECommonBench)tile).dropContents();
-				tile.invalidate();
-			}
-			else if (tile instanceof TEBatteryStation) 
-			{
-				((TEBatteryStation)tile).dropContents();
-				tile.invalidate();
-			}
-			else if (tile instanceof TEStorageMonitor)
-			{
-				((TEStorageMonitor)tile).dropContents();
-				tile.invalidate();
-			}
-			else if (tile instanceof TEAdvEmitter)
-			{
+				((TECommon)tile).dropContents();
 				tile.invalidate();
 			}
 		}

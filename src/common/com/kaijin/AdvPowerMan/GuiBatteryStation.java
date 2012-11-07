@@ -4,6 +4,8 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
+import java.text.DecimalFormat;
+
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiContainer;
@@ -23,11 +25,15 @@ public class GuiBatteryStation extends GuiContainer
 	IInventory playerInventory;
 	public TEBatteryStation tile;
 	private CButton button;
+	private int mode = -1;
 
 	private int xLoc;
 	private int yLoc;
 	private int xCenter;
-	
+
+	private DecimalFormat fraction = new DecimalFormat("##0.00");
+	private DecimalFormat time = new DecimalFormat("00");
+
 	private static final int GREEN = 0x55FF55;
 	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
 
@@ -52,7 +58,8 @@ public class GuiBatteryStation extends GuiContainer
 		yLoc = (height - ySize) / 2; // Half the difference between screen height and GUI height
 		xCenter = width / 2;
 		button.xPosition = xLoc + 16;
-		button.yPosition = yLoc + 48;
+		button.yPosition = yLoc + 44;
+		mode = -1;
 	}
 
 	@Override
@@ -66,18 +73,43 @@ public class GuiBatteryStation extends GuiContainer
 
 		// Draw title text
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), xCenter, yLoc + 8, 4210752);
-		if(tile.opMode == 1)
+
+		if (mode != ((ContainerBatteryStation)inventorySlots).opMode)
 		{
-			button.vLoc = 185;
-			button.vHoverLoc = 185;
+			mode = ((ContainerBatteryStation)inventorySlots).opMode;
+			if (mode == 0)
+			{
+				button.vLoc = 200;
+				button.vHoverLoc = 200;
+			}
+			else
+			{
+				button.vLoc = 185;
+				button.vHoverLoc = 185;
+			}
 		}
-		else
+
+		Utils.drawLeftAlignedText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_MODE_LINE1), xLoc + 7, yLoc + 59, 4210752);
+		Utils.drawLeftAlignedText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_MODE_LINE2), xLoc + 7, yLoc + 70, 4210752);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_AVERAGE), xLoc + 144, yLoc + 27, 4210752);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_REMAINING), xLoc + 144, yLoc + 65, 4210752);
+
+		// Factor of 2000 because data is in fixed point (x100) and EU per second (x20)
+		final float rate = (float)(((ContainerBatteryStation)inventorySlots).average) / 2000F;
+		Utils.drawRightAlignedGlowingText(fontRenderer, fraction.format(rate), xLoc + 166, yLoc + 41, GREEN, GREENGLOW);
+
+		String clock;
+		if (rate > 0)
 		{
-			button.vLoc = 200;
-			button.vHoverLoc = 200;
+			int timeScratch = (int)((float)(((ContainerBatteryStation)inventorySlots).itemsEnergyTotal) / (rate * 20));
+			final int sec = timeScratch % 60;
+			timeScratch /= 60;
+			final int min = timeScratch % 60;
+			timeScratch /= 60;
+			clock = timeScratch < 100 ? time.format(timeScratch) + ":" + time.format(min) + ":" + time.format(sec) : lang.translateKey(Info.KEY_DISCHARGER_DISPLAY_DAYS);
 		}
-		Utils.drawCenteredGlowingText(fontRenderer, "123", xLoc + 145, yLoc + 42, GREEN, GREENGLOW);
-		Utils.drawCenteredGlowingText(fontRenderer, "01:09:00", xLoc + 145, yLoc + 52, GREEN, GREENGLOW);
+		else clock = lang.translateKey(Info.KEY_DISCHARGER_DISPLAY_UNKNOWN);
+		Utils.drawRightAlignedGlowingText(fontRenderer, clock, xLoc + 166, yLoc + 51, GREEN, GREENGLOW);
 		
 		button.drawButton(mc, mouseX, mouseY);
 	}
@@ -90,7 +122,7 @@ public class GuiBatteryStation extends GuiContainer
 			if (button.enabled && button.mousePressed(this.mc, par1, par2)) // if it's enabled and was under the pointer,
 			{
 				mc.sndManager.playSoundFX("random.click", 1.0F, 1.0F); // provide audio feedback,
-				tile.sendGuiCommand(button.id); // and inform the server of the button click.
+				tile.sendGuiButton(button.id); // and inform the server of the button click.
 			}
 		}
 		super.mouseClicked(par1, par2, par3); // Finally, do all that other normal stuff. 
