@@ -58,6 +58,7 @@ public abstract class TECommonBench extends TECommon implements IInventory
 		worldObj.spawnEntityInWorld(entityitem);
 	}
 
+	@Override
 	public void dropContents()
 	{
 		ItemStack item;

@@ -11,13 +11,16 @@ import ic2.api.IEnergySource;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+
+import cpw.mods.fml.common.FMLLog;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 
-public class TEAdvEmitter extends TileEntity implements IEnergySource
+public class TEAdvEmitter extends TECommon implements IEnergySource
 {
 	protected boolean initialized;
 
@@ -144,7 +147,8 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 	 * Packet reception by server of what button was clicked on the client's GUI.
 	 * @param id = the button ID
 	 */
-	public void receiveGuiCommand(int id)
+	@Override
+	public void receiveGuiButton(int id)
 	{
 		switch (id)
 		{
@@ -224,34 +228,4 @@ public class TEAdvEmitter extends TileEntity implements IEnergySource
 			break;
 		}
 	}
-
-	/**
-	 * Packet transmission from client to server of what button was clicked on the GUI.
-	 * @param id = the button ID
-	 */
-	public void sendGuiCommand(int id)
-	{
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		DataOutputStream data = new DataOutputStream(bytes);
-		try
-		{
-			data.writeInt(1); // Packet ID for Storage Monitor GUI button clicks
-			data.writeInt(xCoord);
-			data.writeInt(yCoord);
-			data.writeInt(zCoord);
-			data.writeInt(id);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
-		packet.data = bytes.toByteArray();
-		packet.length = packet.data.length;
-
-		AdvancedPowerManagement.proxy.sendPacketToServer(packet);
-	}
-
 }

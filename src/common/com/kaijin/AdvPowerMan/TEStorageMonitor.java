@@ -140,6 +140,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		worldObj.spawnEntityInWorld(entityitem);
 	}
 
+	@Override
 	public void dropContents()
 	{
 		ItemStack item;
@@ -328,23 +329,6 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 
 	//Networking stuff
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void receiveDescriptionData(int packetID, DataInputStream stream)
-	{
-		try
-		{
-			chargeLevel = stream.readInt();
-			isPowering = stream.readBoolean();
-			blockState = stream.readBoolean();
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
-	}
-	
 	/**
 	 * Packet reception by server of what button was clicked on the client's GUI.
 	 * @param id = the button ID
@@ -392,63 +376,44 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		}
 	}
 
-	/**
-	 * Packet transmission from client to server of what button was clicked on the GUI.
-	 * @param id = the button ID
-	 */
-	public void sendGuiCommand(int id)
-	{
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		DataOutputStream data = new DataOutputStream(bytes);
-		try
-		{
-			data.writeInt(0); // Packet ID for Storage Monitor GUI button clicks
-			data.writeInt(xCoord);
-			data.writeInt(yCoord);
-			data.writeInt(zCoord);
-			data.writeInt(id);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
-		packet.data = bytes.toByteArray();
-		packet.length = packet.data.length;
-
-		AdvancedPowerManagement.proxy.sendPacketToServer(packet);
-	}
-
 	@Override
 	public Packet250CustomPayload getDescriptionPacket()
 	{
-		//if (ChargingBench.isDebugging) System.out.println("TEStorageMonitor.getDescriptionPacket()");
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		DataOutputStream data = new DataOutputStream(bytes);
+		return createDescPacket();
+	}
+
+	@Override
+	protected void addUniqueDescriptionData(DataOutputStream data) throws IOException
+	{
+		data.writeInt(chargeLevel);
+		data.writeBoolean(isPowering);
+		data.writeBoolean(blockState);
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void receiveDescriptionData(int packetID, DataInputStream stream)
+	{
+		final int a;
+		final boolean b;
+		final boolean c;
 		try
 		{
-			data.writeInt(0); // Packet ID for Storage Monitor
-			data.writeInt(xCoord);
-			data.writeInt(yCoord);
-			data.writeInt(zCoord);
-			data.writeInt(chargeLevel);
-			data.writeBoolean(isPowering);
-			data.writeBoolean(blockState);
+			a = stream.readInt();
+			b = stream.readBoolean();
+			c = stream.readBoolean();
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			logDescPacketError(e);
+			return;
 		}
-
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = Info.PACKET_CHANNEL; // CHANNEL MAX 16 CHARS
-		packet.data = bytes.toByteArray();
-		packet.length = packet.data.length;
-		return packet;
+		chargeLevel = a;
+		isPowering = b;
+		blockState = c;
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 	}
-
+	
 	// ISidedInventory
 
 	@Override
