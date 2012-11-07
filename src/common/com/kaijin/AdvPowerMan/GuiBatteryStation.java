@@ -33,6 +33,8 @@ public class GuiBatteryStation extends GuiContainer
 
 	private DecimalFormat fraction = new DecimalFormat("##0.00");
 	private DecimalFormat time = new DecimalFormat("00");
+	private DecimalFormat days = new DecimalFormat("#0");
+	private DecimalFormat dayFrac = new DecimalFormat("0.#");
 
 	private static final int GREEN = 0x55FF55;
 	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
@@ -103,11 +105,19 @@ public class GuiBatteryStation extends GuiContainer
 		{
 			// Rate * 20 to convert per tick to per second
 			int timeScratch = (int)((float)(((ContainerBatteryStation)inventorySlots).itemsEnergyTotal) / (rate * 20));
-			final int sec = timeScratch % 60;
-			timeScratch /= 60;
-			final int min = timeScratch % 60;
-			timeScratch /= 60;
-			clock = timeScratch < 100 ? time.format(timeScratch) + ":" + time.format(min) + ":" + time.format(sec) : lang.translateKey(Info.KEY_DISCHARGER_DISPLAY_DAYS);
+			if (timeScratch <= 345600) // 60 * 60 * 96 or 4 days
+			{
+				final int sec = timeScratch % 60;
+				timeScratch /= 60;
+				final int min = timeScratch % 60;
+				timeScratch /= 60;
+				clock = time.format(timeScratch) + ":" + time.format(min) + ":" + time.format(sec);
+			}
+			else
+			{
+				float dayScratch = ((float)timeScratch) / 86400F; // 60 * 60 * 24 or 1 day
+				clock = (dayScratch < 10F ? dayFrac.format(dayScratch) : dayScratch < 100 ? days.format((int)dayScratch) : "??") + lang.translateKey(Info.KEY_DISCHARGER_DISPLAY_DAYS);
+			}
 		}
 		else clock = lang.translateKey(Info.KEY_DISCHARGER_DISPLAY_UNKNOWN);
 		Utils.drawRightAlignedGlowingText(fontRenderer, clock, xLoc + 166, yLoc + 51, GREEN, GREENGLOW);
