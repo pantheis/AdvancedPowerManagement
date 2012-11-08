@@ -99,6 +99,12 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 	}
 
 	@Override
+	public int getGuiID()
+	{
+		return 2;
+	}
+
+	@Override
 	public void updateEntity()
 	{
 		if (AdvancedPowerManagement.proxy.isClient()) return;

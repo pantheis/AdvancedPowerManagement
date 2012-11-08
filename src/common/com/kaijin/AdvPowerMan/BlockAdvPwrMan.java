@@ -44,44 +44,31 @@ public class BlockAdvPwrMan extends Block
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
 	{
-		int currentEquippedItemID = 0;
+		//int currentEquippedItemID = 0; //TODO We're not currently responding to wrenches
 
-		if (entityplayer.getCurrentEquippedItem() != null)
-		{
-			currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
-		}
+		//if (entityplayer.getCurrentEquippedItem() != null)
+		//{
+		//	currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
+		//}
 
-		if (entityplayer.isSneaking() || currentEquippedItemID == Info.ic2WrenchID || currentEquippedItemID == Info.ic2ElectricWrenchID)
+		//if (entityplayer.isSneaking() || currentEquippedItemID == Info.ic2WrenchID || currentEquippedItemID == Info.ic2ElectricWrenchID)
+		if (entityplayer.isSneaking())
 		{
-			// Prevent GUI popup when sneaking - this allows you to sneak place things directly on the charging bench
-			//if (Info.isDebugging) System.out.println("Block.world.isRemote.isSneaking");
+			// Prevent GUI popup when sneaking - this allows you to place things directly on blocks
 			return false;
 		}
 
-		if (AdvancedPowerManagement.proxy.isServer())
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		if (tile instanceof TECommon)
 		{
-			int meta = world.getBlockMetadata(x, y, z);
-			if (meta >= 0 && meta <= 2)
+			final int id = ((TECommon)tile).getGuiID();
+			if (id < 1) return false;
+			if (AdvancedPowerManagement.proxy.isServer())
 			{
-				entityplayer.openGui(AdvancedPowerManagement.instance, 1, world, x, y, z);
-			}
-			else if (meta == 7)
-			{
-				entityplayer.openGui(AdvancedPowerManagement.instance, 2, world, x, y, z);
-			}
-			else if (meta >= 8 && meta <= 10)
-			{
-				entityplayer.openGui(AdvancedPowerManagement.instance, 3, world, x, y, z);
-			}
-			else if (meta == 11)
-			{
-				entityplayer.openGui(AdvancedPowerManagement.instance, 4, world, x, y, z);
-			}
-			else
-			{
-				return false;
+				entityplayer.openGui(AdvancedPowerManagement.instance, id, world, x, y, z);
 			}
 		}
+
 		return true;
 	}
 
