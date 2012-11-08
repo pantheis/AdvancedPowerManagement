@@ -123,7 +123,6 @@ public class ContainerStorageMonitor extends Container
 			te.energyCapacity = te.energyCapacity & 65535 | (value << 16);
 			break;
 
-			//FIXME? elaborate dance to transmit two floats via 4 shorts, maybe can be done better
 		case 4:
 			te.lowerBoundary = value;
 			break;
@@ -133,7 +132,7 @@ public class ContainerStorageMonitor extends Container
 			break;
 
 		default:
-			System.out.println("ContainerChargingBench.updateProgressBar - Warning: default case!");
+			System.out.println("ContainerStorageMonitor.updateProgressBar - Warning: default case!");
 		}
 	}
 

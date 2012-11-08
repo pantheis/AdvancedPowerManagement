@@ -143,7 +143,7 @@ public class Info
 		lang.addStringLocalization(KEY_DISCHARGER_MODE_LINE2, "required");
 		lang.addStringLocalization(KEY_DISCHARGER_AVERAGE, "Avg. EU/t");
 		lang.addStringLocalization(KEY_DISCHARGER_REMAINING, "Remaining");
-		lang.addStringLocalization(KEY_DISCHARGER_DISPLAY_DAYS, "4+ DAYS");
+		lang.addStringLocalization(KEY_DISCHARGER_DISPLAY_DAYS, " DAYS");
 		lang.addStringLocalization(KEY_DISCHARGER_DISPLAY_UNKNOWN, "UNKNOWN");
 	}
 }

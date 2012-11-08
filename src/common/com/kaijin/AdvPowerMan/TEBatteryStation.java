@@ -29,12 +29,10 @@ import net.minecraftforge.common.ISidedInventory;
 
 public class TEBatteryStation extends TECommonBench implements IEnergySource, IInventory, ISidedInventory
 {
-	public int baseTier;
-	
 	public int opMode;
 
 	// Base values
-	public int baseMaxOutput;
+	public int packetSize;
 	public int currentEnergy = 0;
 
 	private boolean invChanged = false;
@@ -44,7 +42,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	public boolean doingWork;
 
 	private int energyOut = 0;
-	public MovingAverage outputTracker = new MovingAverage(30);
+	public MovingAverage outputTracker = new MovingAverage(10);
 
 	public TEBatteryStation() // Default constructor used only when loading tile entity from world save
 	{
@@ -67,7 +65,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	{
 		powerTier = baseTier;
 		//Output math = 32 for tier 1, 128 for tier 2, 512 for tier 3
-		baseMaxOutput = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
+		packetSize = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
 		
 	}
 
@@ -87,13 +85,21 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public int getMaxEnergyOutput()
 	{
-		return baseMaxOutput;
+		return packetSize;
 	}
+
+	// End IC2 API
 
 	@Override
 	public boolean canUpdate()
 	{
 		return true;
+	}
+
+	@Override
+	public int getGuiID()
+	{
+		return 3;
 	}
 
 	/**
@@ -241,12 +247,12 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	private int emitEnergy()
 	{
 		//if (ChargingBench.isDebugging) System.out.println("preEmit-currentEnergy: " + currentEnergy);
-		if (currentEnergy >= baseMaxOutput)
+		if (currentEnergy >= packetSize)
 		{
-			final int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, baseMaxOutput);
-			if (surplus < baseMaxOutput)
+			final int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, packetSize);
+			if (surplus < packetSize)
 			{
-				final int sent = baseMaxOutput - surplus;
+				final int sent = packetSize - surplus;
 				currentEnergy -= sent;
 				doingWork = true;
 				return sent; // For average tracker
@@ -261,7 +267,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		for (int i = Info.BS_SLOT_POWER_START; i < Info.BS_SLOT_POWER_START + 12; i++)
 		{
 			//if (ChargingBench.isDebugging) System.out.println("currentEnergy: " + currentEnergy + " baseMaxOutput: " + baseMaxOutput);
-			if (currentEnergy >= baseMaxOutput)
+			if (currentEnergy >= packetSize)
 			{
 				hasEnoughItems = true;
 				break;
@@ -280,7 +286,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 					{
 						int transferLimit = item.getTransferLimit();
 						//int amountNeeded = baseMaxOutput - currentEnergy;
-						if (transferLimit == 0) transferLimit = baseMaxOutput;
+						if (transferLimit == 0) transferLimit = packetSize;
 						//if (transferLimit > amountNeeded) transferLimit = amountNeeded;
 
 						int chargeReturned = ElectricItem.discharge(stack, transferLimit, powerTier, false, false);

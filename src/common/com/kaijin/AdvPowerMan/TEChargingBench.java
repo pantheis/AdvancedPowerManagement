@@ -210,6 +210,12 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 	// End IC2 API
 
+	@Override
+	public int getGuiID()
+	{
+		return 1;
+	}
+
 	/**
 	 * This will cause the block to drop anything inside it, create a new item in the
 	 * world of its type, invalidate the tile entity, remove itself from the IC2

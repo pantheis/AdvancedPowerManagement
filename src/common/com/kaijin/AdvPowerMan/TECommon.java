@@ -14,6 +14,15 @@ import net.minecraft.src.TileEntity;
 public class TECommon extends TileEntity
 {
 	/**
+	 * TileEntities override this to select a GUI to open on block activation
+	 * @return int guiID
+	 */
+	public int getGuiID()
+	{
+		return -1;
+	}
+
+	/**
 	 * TileEntites implement this to receive packet data, they are then responsible
 	 * in their own code to handle the packet.
 	 * @param packetID The first value from the packet, in case it's needed again
