@@ -137,11 +137,11 @@ public class AdvancedPowerManagement implements ICraftingHandler
 		GameRegistry.registerTileEntity(TEStorageMonitor.class, "kaijin.storageMonitor");
 
 		// Emitters
-		GameRegistry.registerTileEntity(TEEmitter.class, "LV " + Info.EMITTER_NAME); // Legacy mappings
-		GameRegistry.registerTileEntity(TEEmitter.class, "MV " + Info.EMITTER_NAME); // Legacy
-		GameRegistry.registerTileEntity(TEEmitter.class, "HV " + Info.EMITTER_NAME); // Legacy
-		GameRegistry.registerTileEntity(TEEmitter.class, "EV " + Info.EMITTER_NAME); // Legacy
-		GameRegistry.registerTileEntity(TEEmitter.class, "kaijin.emitter"); // Proper mapping
+		GameRegistry.registerTileEntity(TEAdvEmitter.class, "LV " + Info.EMITTER_NAME); // Legacy mappings
+		GameRegistry.registerTileEntity(TEAdvEmitter.class, "MV " + Info.EMITTER_NAME); // Legacy
+		GameRegistry.registerTileEntity(TEAdvEmitter.class, "HV " + Info.EMITTER_NAME); // Legacy
+		GameRegistry.registerTileEntity(TEAdvEmitter.class, "EV " + Info.EMITTER_NAME); // Legacy
+		GameRegistry.registerTileEntity(TEAdvEmitter.class, "kaijin.emitter"); // Now legacy as well
 		GameRegistry.registerTileEntity(TEAdvEmitter.class, "kaijin.advEmitter");
 
 		// Items

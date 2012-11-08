@@ -77,9 +77,6 @@ public class ContainerChargingBench extends Container
 			this.addSlotToContainer(new Slot(player, yRow, 8 + yRow * 18, topOffset + 134));
 		}
 
-		//TODO fix slot, needs a custom armor slot type, can't use SlotArmor as it is private, will
-		//need to make our own
-
 		// Player armor
 		for (yRow = 0; yRow < 4; ++yRow)
 		{
