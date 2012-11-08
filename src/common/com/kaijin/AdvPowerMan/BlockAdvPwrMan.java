@@ -30,10 +30,13 @@ public class BlockAdvPwrMan extends Block
 		super(i, j, material);
 	}
 
+    @SideOnly(Side.CLIENT)
+    @Override
 	public void getSubBlocks(int blockID, CreativeTabs creativetabs, List list)
 	{
 		for (int i = 0; i <= Info.LAST_META_VALUE; ++i)
 		{
+			if (i >= 3 && i <= 6) continue; // Don't add legacy emitters to creative inventory
 			list.add(new ItemStack(blockID, 1, i));
 		}
 	}
@@ -43,54 +46,36 @@ public class BlockAdvPwrMan extends Block
 	{
 		int currentEquippedItemID = 0;
 
-		if (world.isRemote)
+		if (entityplayer.getCurrentEquippedItem() != null)
 		{
-			if (entityplayer.getCurrentEquippedItem() != null)
-			{
-				currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
-			}
-
-			if (entityplayer.isSneaking() || currentEquippedItemID == Info.ic2WrenchID || currentEquippedItemID == Info.ic2ElectricWrenchID)
-			{
-				// Prevent GUI popup when sneaking - this allows you to sneak place things directly on the charging bench
-				//if (ChargingBench.isDebugging) System.out.println("Block.world.isRemote.isSneaking");
-				return false;
-			}
+			currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
 		}
-		else if (AdvancedPowerManagement.proxy.isServer())
-		{
-			if (entityplayer.getCurrentEquippedItem() != null)
-			{
-				currentEquippedItemID = entityplayer.getCurrentEquippedItem().itemID;
-			}
 
-			if (entityplayer.isSneaking() || currentEquippedItemID == Info.ic2WrenchID || currentEquippedItemID == Info.ic2ElectricWrenchID)
-			{
-				// Prevent GUI popup when sneaking
-				// This allows you to sneak place things directly on the charging bench
-				return false;
-			}
-			//if (ChargingBench.isDebugging) System.out.println("BlockAdvPwrMan.BlockActivated");
+		if (entityplayer.isSneaking() || currentEquippedItemID == Info.ic2WrenchID || currentEquippedItemID == Info.ic2ElectricWrenchID)
+		{
+			// Prevent GUI popup when sneaking - this allows you to sneak place things directly on the charging bench
+			//if (Info.isDebugging) System.out.println("Block.world.isRemote.isSneaking");
+			return false;
+		}
+
+		if (AdvancedPowerManagement.proxy.isServer())
+		{
 			int meta = world.getBlockMetadata(x, y, z);
 			if (meta >= 0 && meta <= 2)
 			{
 				entityplayer.openGui(AdvancedPowerManagement.instance, 1, world, x, y, z);
-				return true;
 			}
 			else if (meta == 7)
 			{
 				entityplayer.openGui(AdvancedPowerManagement.instance, 2, world, x, y, z);
-				return true;
 			}
 			else if (meta >= 8 && meta <= 10)
 			{
 				entityplayer.openGui(AdvancedPowerManagement.instance, 3, world, x, y, z);
-				return true;
 			}
 			else if (meta == 11)
 			{
 				entityplayer.openGui(AdvancedPowerManagement.instance, 4, world, x, y, z);
-				return true;
 			}
 			else
 			{
@@ -285,16 +270,16 @@ public class BlockAdvPwrMan extends Block
 			return new TEChargingBench(3);
 
 		case 3:
-			return new TEEmitter(1);
+			return new TEAdvEmitter(1); // Update old emitter tier 1
 
 		case 4:
-			return new TEEmitter(2);
+			return new TEAdvEmitter(2); // Update old emitter tier 2
 
 		case 5:
-			return new TEEmitter(3);
+			return new TEAdvEmitter(3); // Update old emitter tier 3
 
 		case 6:
-			return new TEEmitter(4);
+			return new TEAdvEmitter(4); // Update old emitter tier 4
 
 		case 7:
 			return new TEAdvEmitter();

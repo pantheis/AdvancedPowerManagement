@@ -24,7 +24,7 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 {
 	protected boolean initialized;
 
-	public int outputRate = 32;
+	public int outputRate = 256;
 	public int packetSize = 32;
 	private int energyBuffer = 0;
 
@@ -33,17 +33,37 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 		super();
 	}
 
+	public TEAdvEmitter(int i) // Constructor used when placing a new tile entity, to set up correct parameters
+	{
+		super();
+		packetSize = outputRate = (int)Math.pow(2.0D, (double)(2 * i + 3));
+		if (AdvancedPowerManagement.proxy.isServer()) System.out.println("Server: Updating old Emitter block of tier " + i);
+		if (AdvancedPowerManagement.proxy.isClient()) System.out.println("Client: Updating old Emitter block of tier " + i);
+	}
+
 	/**
 	 * Reads a tile entity from NBT.
 	 */
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!AdvancedPowerManagement.proxy.isClient())
+		if (AdvancedPowerManagement.proxy.isServer())
 		{
 			super.readFromNBT(nbttagcompound);
-			outputRate = nbttagcompound.getInteger("outputRate");
-			packetSize = nbttagcompound.getInteger("packetSize");
+
+			int baseTier = nbttagcompound.getInteger("baseTier");
+			if (baseTier > 0)
+			{
+				packetSize = outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
+				System.out.println("Loading NBT data for old Emitter block with baseTier of " + baseTier + " and setting output to " + packetSize);
+				
+			}
+			else
+			{
+				outputRate = nbttagcompound.getInteger("outputRate");
+				packetSize = nbttagcompound.getInteger("packetSize");
+				energyBuffer = nbttagcompound.getInteger("energyBuffer");
+			}
 		}
 	}
 
@@ -53,11 +73,12 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!AdvancedPowerManagement.proxy.isClient())
+		if (AdvancedPowerManagement.proxy.isServer())
 		{
 			super.writeToNBT(nbttagcompound);
 			nbttagcompound.setInteger("outputRate", outputRate);
 			nbttagcompound.setInteger("packetSize", packetSize);
+			nbttagcompound.setInteger("energyBuffer", energyBuffer);
 		}
 	}
 
@@ -85,6 +106,15 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 		if (!initialized)
 		{
 			if (worldObj == null) return;
+
+			// Test if this is an old emitter block and needs its meta value adjusted
+			final int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			if (meta != 7)
+			{
+				System.out.println("Resetting Emitter block meta value from " + meta + " to 7");
+				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, 7);
+				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			}
 			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
@@ -95,7 +125,7 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 			EnergyNet net = EnergyNet.getForWorld(worldObj);
 			while (energyBuffer >= packetSize)
 			{
-				net.emitEnergyFrom(this, packetSize);
+				net.emitEnergyFrom(this, packetSize); // No reason to save any surplus. Output is always the same.
 				energyBuffer -= packetSize;
 			}
 		}

@@ -19,6 +19,7 @@ public class ItemBlockAdvPwrMan extends ItemBlock
 
 	public int getMetadata(int meta)
 	{
+		//if (meta >= 3 && meta <= 6) return 7;
 		return meta;
 	}
 
