@@ -119,6 +119,12 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		return true;
 	}
 
+	@Override
+	public int getGuiID()
+	{
+		return 4;
+	}
+
 	/**
 	 * This will cause the block to drop anything inside it, create a new item in the
 	 * world of its type, invalidate the tile entity, remove itself from the IC2

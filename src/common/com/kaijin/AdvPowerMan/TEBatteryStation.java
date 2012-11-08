@@ -96,6 +96,12 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		return true;
 	}
 
+	@Override
+	public int getGuiID()
+	{
+		return 3;
+	}
+
 	/**
 	 * This will cause the block to drop anything inside it, create a new item in the
 	 * world of its type, invalidate the tile entity, remove itself from the IC2
