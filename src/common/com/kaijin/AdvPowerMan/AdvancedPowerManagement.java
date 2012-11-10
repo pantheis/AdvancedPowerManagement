@@ -68,10 +68,10 @@ public class AdvancedPowerManagement implements ICraftingHandler
 			boolean migrate = oldFile.exists();
 			if (migrate)
 			{
-				FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Discovered old config file: " + oldFile + " - Attempting to migrate block and item IDs.");
+				FMLLog.getLogger().info(Info.TITLE_LOG + "Discovered old config file: " + oldFile + " - Attempting to migrate block and item IDs.");
 				if (configuration.hasKey("block", "AdvPowerManBlock"))
 				{
-					FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] New config file already contains settings. Skipping migration.");
+					FMLLog.getLogger().info(Info.TITLE_LOG + "New config file already contains settings. Skipping migration.");
 				}
 				else
 				{
@@ -83,11 +83,11 @@ public class AdvancedPowerManagement implements ICraftingHandler
 					boolean success = oldFile.delete();
 					if (success)
 					{
-						FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Done with old config file.");
+						FMLLog.getLogger().info(Info.TITLE_LOG + "Done with old config file.");
 					}
 					else
 					{
-						FMLLog.getLogger().log(Level.WARNING, "[" + Info.TITLE + "] Could not delete old configuration file: " + oldFile + " - Requesting delete on exit.");
+						FMLLog.getLogger().warning(Info.TITLE_LOG + "Could not delete old configuration file: " + oldFile + " - Requesting delete on exit.");
 						oldFile.deleteOnExit();
 					}
 				}
@@ -102,12 +102,12 @@ public class AdvancedPowerManagement implements ICraftingHandler
 			configuration.save();
 			if (migrate)
 			{
-				FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Successfully migrated settings to new config file.");
+				FMLLog.getLogger().info(Info.TITLE_LOG + "Successfully migrated settings to new config file.");
 			}
 		}
 		catch (Exception e)
 		{
-			FMLLog.getLogger().log(Level.SEVERE, "[" + Info.TITLE + "] Error while trying to access configuration!", e);
+			FMLLog.getLogger().log(Level.SEVERE, Info.TITLE_LOG + "Error while trying to access configuration!", e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -115,7 +115,7 @@ public class AdvancedPowerManagement implements ICraftingHandler
 	@Init
 	public void load(FMLInitializationEvent event)
 	{
-		FMLLog.getLogger().log(Level.FINER, "[" + Info.TITLE + "] Loading.");
+		FMLLog.getLogger().fine(Info.TITLE_LOG + "Loading.");
 		GameRegistry.registerCraftingHandler(this);
 
 		blockAdvPwrMan = new BlockAdvPwrMan(blockIDAdvPwrMan, 0, Material.wood).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("AdvPwrMan").setCreativeTab(CreativeTabs.tabDecorations);
@@ -178,21 +178,21 @@ public class AdvancedPowerManagement implements ICraftingHandler
 
 		if (proxy.isServer())
 		{
-			FMLLog.getLogger().info(Info.TITLE + " " + Info.VERSION + " loaded.");
+			FMLLog.getLogger().info(Info.TITLE_LOG + Info.TITLE + " " + Info.VERSION + " loaded.");
 		}
 
 		if (Info.isDebugging)
 		{
-			FMLLog.getLogger().info(Info.TITLE + " debugging enabled.");
+			FMLLog.getLogger().info(Info.TITLE_LOG + "Debugging enabled.");
 		}
 
-		FMLLog.getLogger().log(Level.FINER, "[" + Info.TITLE + "] Done loading.");
+		FMLLog.getLogger().fine(Info.TITLE_LOG + "Done loading.");
 }
 
 	@PostInit
 	public void modsLoaded(FMLPostInitializationEvent event)
 	{
-		FMLLog.getLogger().log(Level.FINER, "[" + Info.TITLE + "] Adding crafting recipes.");
+		FMLLog.getLogger().fine(Info.TITLE_LOG + "Adding crafting recipes.");
 
 		// Charging Bench recipes
 		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, 0), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("batBox")});

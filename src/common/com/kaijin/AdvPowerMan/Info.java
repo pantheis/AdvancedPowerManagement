@@ -18,6 +18,7 @@ public class Info
 	public static final String PACKET_CHANNEL = "kaijinAdvPwrMan"; // CHANNEL MAX 16 CHARS
 	public static final String TITLE_PACKED = "AdvancedPowerManagement";
 	public static final String TITLE = "Advanced Power Management";
+	public static final String TITLE_LOG = "[" + TITLE_PACKED + "] ";
 
 	// Textures
 	public static final String TEX_BASE    = "/com/kaijin/AdvPowerMan/textures/";
