@@ -48,21 +48,6 @@ public class Info
 	public static final String LINK_CARD_NAME = "Energy Link Card";
 	public static final String LINK_CREATOR_NAME = "Energy Link Card (Blank)";
 
-	// GUI strings
-	public static final String KEY_TITLE = "AdvPwrMan.title";
-	public static final String KEY_EU = "AdvPwrMan.misc.EU";
-	public static final String KEY_EMITTER_PACKET = "AdvPwrMan.emitter.packet";
-	public static final String KEY_EMITTER_OUTPUT = "AdvPwrMan.emitter.output";
-	public static final String KEY_MONITOR_INVALID = "AdvPwrMan.monitor.invalid";
-	public static final String KEY_MONITOR_UPPER = "AdvPwrMan.monitor.upper";
-	public static final String KEY_MONITOR_LOWER = "AdvPwrMan.monitor.lower";
-	public static final String KEY_DISCHARGER_MODE_LINE1 = "AdvPwrMan.station.modeline1";
-	public static final String KEY_DISCHARGER_MODE_LINE2 = "AdvPwrMan.station.modeline2";
-	public static final String KEY_DISCHARGER_AVERAGE = "AdvPwrMan.station.average";
-	public static final String KEY_DISCHARGER_REMAINING = "AdvPwrMan.station.remaining";
-	public static final String KEY_DISCHARGER_DISPLAY_DAYS = "AdvPwrMan.station.led.days";
-	public static final String KEY_DISCHARGER_DISPLAY_UNKNOWN = "AdvPwrMan.station.led.unknown";
-
 	// Other constants for use in multiple classes
 	public static final int LAST_META_VALUE = 11;
 
@@ -81,6 +66,30 @@ public class Info
 	public static final int CB_INVENTORY_SIZE = 19;
 	public static final int BS_INVENTORY_SIZE = 14;
 	public static final int SM_INVENTORY_SIZE = 1;
+
+	public static final int AE_MIN_PACKET = 4;
+	public static final int AE_MAX_PACKET = 2048;
+	public static final int AE_MIN_OUTPUT = 1;
+	public static final int AE_MAX_OUTPUT = 32768;
+	public static final int AE_PACKETS_TICK = 64;
+
+	// GUI strings
+	public static final String KEY_TITLE = "AdvPwrMan.title";
+	public static final String KEY_EU = "AdvPwrMan.misc.EU";
+	public static final String KEY_EMITTER_PACKET = "AdvPwrMan.emitter.packet";
+	public static final String KEY_EMITTER_OUTPUT = "AdvPwrMan.emitter.output";
+	public static final String KEY_MONITOR_INVALID = "AdvPwrMan.monitor.invalid";
+	public static final String KEY_MONITOR_UPPER = "AdvPwrMan.monitor.upper";
+	public static final String KEY_MONITOR_LOWER = "AdvPwrMan.monitor.lower";
+	public static final String KEY_DISCHARGER_MODE_LINE1 = "AdvPwrMan.station.modeline1";
+	public static final String KEY_DISCHARGER_MODE_LINE2 = "AdvPwrMan.station.modeline2";
+	public static final String KEY_DISCHARGER_AVERAGE = "AdvPwrMan.station.average";
+	public static final String KEY_DISCHARGER_REMAINING = "AdvPwrMan.station.remaining";
+	public static final String KEY_DISCHARGER_DISPLAY_DAYS = "AdvPwrMan.station.led.days";
+	public static final String KEY_DISCHARGER_DISPLAY_UNKNOWN = "AdvPwrMan.station.led.unknown";
+
+	public static final String AE_PACKET_RANGE = "[" + AE_MIN_PACKET + " - " + AE_MAX_PACKET + "]";
+	public static final String AE_OUTPUT_RANGE = "[" + AE_MIN_OUTPUT + " - " + AE_MAX_OUTPUT + "]";
 
 	// Some global variables
 	public static boolean isDebugging;
