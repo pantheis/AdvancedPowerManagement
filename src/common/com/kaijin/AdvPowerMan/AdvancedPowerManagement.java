@@ -118,7 +118,7 @@ public class AdvancedPowerManagement implements ICraftingHandler
 		FMLLog.getLogger().log(Level.FINER, "[" + Info.TITLE + "] Loading.");
 		GameRegistry.registerCraftingHandler(this);
 
-		blockAdvPwrMan = new BlockAdvPwrMan(blockIDAdvPwrMan, 0, Material.wood).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("AdvPwrMan").setCreativeTab(CreativeTabs.tabDecorations);
+		blockAdvPwrMan = new BlockAdvPwrMan(blockIDAdvPwrMan, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("AdvPwrMan").setCreativeTab(CreativeTabs.tabDecorations);
 		GameRegistry.registerBlock(blockAdvPwrMan, ItemBlockAdvPwrMan.class);
 
 		// Charging Benches
