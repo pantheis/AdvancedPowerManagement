@@ -251,6 +251,31 @@ be accessible. Cabling to accept the EU output from the battery station may be
 attached to any face (top, bottom, or sides), or the station may be placed
 directly adjacent to the machines you want it to power.
 
+To help with automation, there is now a toggle button below the input slot which
+controls the mode it operates in. If the button is dark, all valid items placed
+in the input slot will immediately be transferred to the working area, as usual.
+This is fine if you want to put as many items as possible into each station, but
+if you want each one to keep just one spare at a time, you'll want to push the
+button in so it lights up. In this mode, the battery station will only transfer
+an item from the input to the working area when it finds that it is unable to
+drain enough energy from the items in the working area to emit a full packet of
+EU per tick. Until then, the item will remain in the input slot so that your
+automation can't add more and/or can tell that it already has a spare.
+
+Additionally, there is a new feature on the right side which lists some useful
+statistics relevant to the battery station's operation. The top value is an
+adaptive average based on the delay between packets. Its display will adjust
+rapidly to increased energy consumption, although it can take up to 5 minutes
+to settle back to zero (or 256 seconds to return to an induction furnace's
+idle consumption of 1 EU per tick, for example). In testing it has proven to be
+a stable and highly accurate measure of energy consumption rates, and yet has
+no detectable impact on server performance! The bottom display is the estimated
+length of time for which the battery station could maintain the current rate of
+energy output. This is based on the amount of EU stored in the items in its
+inventory, including the input slot, and the currently displayed average EU per
+tick. It will update as energy is consumed from the items and when the rate of
+energy output changes.
+
 Finally, the battery station has two more features similar to those of the
 charging bench. One is an activity indicator light, which will be lit while it
 is draining items or sending out EU. The other is that a redstone signal will

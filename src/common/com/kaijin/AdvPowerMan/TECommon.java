@@ -54,7 +54,7 @@ public class TECommon extends TileEntity
 		}
 		catch (IOException e)
 		{
-			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Client failed to create packet. (Details: " + e.toString() + ")");
+			FMLLog.getLogger().info(Info.TITLE_LOG + "Client failed to create packet. (Details: " + e.toString() + ")");
 			return;
 		}
 
@@ -82,7 +82,7 @@ public class TECommon extends TileEntity
 		}
 		catch (IOException e)
 		{
-			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Client failed to create description packet. (Details: " + e.toString() + ")");
+			FMLLog.getLogger().info(Info.TITLE_LOG + "Client failed to create description packet. (Details: " + e.toString() + ")");
 		}
 
 		return new Packet250CustomPayload(Info.PACKET_CHANNEL, bytes.toByteArray());
@@ -102,7 +102,7 @@ public class TECommon extends TileEntity
 
 	protected void logDescPacketError(Exception e)
 	{
-		FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Client received invalid description packet. (Details: " + e.toString() + ")");
+		FMLLog.getLogger().info(Info.TITLE_LOG + "Client received invalid description packet. (Details: " + e.toString() + ")");
 	}
 
 	public void dropContents() {} // Stub for block destroyed event

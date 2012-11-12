@@ -339,7 +339,8 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 	 * Packet reception by server of what button was clicked on the client's GUI.
 	 * @param id = the button ID
 	 */
-	public void receiveGuiCommand(int id)
+	@Override
+	public void receiveGuiButton(int id)
 	{
 		switch (id)
 		{
@@ -501,6 +502,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		}
 	}
 
+	@Override
 	public ItemStack getStackInSlotOnClosing(int slot)
 	{
 		if (contents[slot] == null)
