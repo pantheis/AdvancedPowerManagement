@@ -11,7 +11,6 @@ import ic2.api.IEnergySource;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
 
 import cpw.mods.fml.common.FMLLog;
 
@@ -24,7 +23,7 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 {
 	protected boolean initialized;
 
-	public int outputRate = 256;
+	public int outputRate = 32;
 	public int packetSize = 32;
 	private int energyBuffer = 0;
 
@@ -37,8 +36,7 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 	{
 		super();
 		packetSize = outputRate = (int)Math.pow(2.0D, (double)(2 * i + 3));
-		if (AdvancedPowerManagement.proxy.isServer()) System.out.println("Server: Updating old Emitter block of tier " + i);
-		if (AdvancedPowerManagement.proxy.isClient()) System.out.println("Client: Updating old Emitter block of tier " + i);
+		FMLLog.info(Info.TITLE_LOG + "Updating old Emitter block of tier " + i);
 	}
 
 	/**
@@ -51,18 +49,26 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 		{
 			super.readFromNBT(nbttagcompound);
 
+			// Test if block used to be an old style emitter and if so use appropriate settings
 			int baseTier = nbttagcompound.getInteger("baseTier");
 			if (baseTier > 0)
 			{
 				packetSize = outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
-				System.out.println("Loading NBT data for old Emitter block with baseTier of " + baseTier + " and setting output to " + packetSize);
+				FMLLog.info(Info.TITLE_LOG + "Loading NBT data for old Emitter block with baseTier of " + baseTier + " and setting output to " + packetSize);
 				
 			}
 			else
 			{
+				// Normal load
 				outputRate = nbttagcompound.getInteger("outputRate");
 				packetSize = nbttagcompound.getInteger("packetSize");
 				energyBuffer = nbttagcompound.getInteger("energyBuffer");
+				if (packetSize > Info.AE_MAX_PACKET) packetSize = Info.AE_MAX_PACKET;
+				if (packetSize < Info.AE_MIN_PACKET) packetSize = Info.AE_MIN_PACKET;
+				if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
+				if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
+				if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
+				if (energyBuffer > packetSize * Info.AE_PACKETS_TICK) energyBuffer = packetSize * Info.AE_PACKETS_TICK;
 			}
 		}
 	}
@@ -117,9 +123,10 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 			final int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 			if (meta != 7)
 			{
-				System.out.println("Resetting Emitter block meta value from " + meta + " to 7");
+				FMLLog.info(Info.TITLE_LOG + "Resetting Emitter block meta value from " + meta + " to 7");
 				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, 7);
 				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+				return;
 			}
 			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
@@ -190,77 +197,77 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 		{
 		case 0:
 			packetSize += 1;
-			if (packetSize > 8192) packetSize = 8192;
+			if (packetSize > Info.AE_MAX_PACKET) packetSize = Info.AE_MAX_PACKET;
 			break;
 		case 1:
 			packetSize += 10;
-			if (packetSize > 8192) packetSize = 8192;
+			if (packetSize > Info.AE_MAX_PACKET) packetSize = Info.AE_MAX_PACKET;
 			break;
 		case 2:
 			packetSize += 64;
 			if (packetSize == 68) packetSize = 64;
-			if (packetSize > 8192) packetSize = 8192;
+			if (packetSize > Info.AE_MAX_PACKET) packetSize = Info.AE_MAX_PACKET;
 			break;
 		case 3:
 			packetSize *= 2;
-			if (packetSize > 8192) packetSize = 8192;
+			if (packetSize > Info.AE_MAX_PACKET) packetSize = Info.AE_MAX_PACKET;
 			break;
 		case 4:
 			packetSize -= 1;
-			if (packetSize < 4) packetSize = 4;
-			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
+			if (packetSize < Info.AE_MIN_PACKET) packetSize = Info.AE_MIN_PACKET;
+			if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
 			break;
 		case 5:
 			packetSize -= 10;
-			if (packetSize < 4) packetSize = 4;
-			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
+			if (packetSize < Info.AE_MIN_PACKET) packetSize = Info.AE_MIN_PACKET;
+			if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
 			break;
 		case 6:
 			packetSize -= 64;
-			if (packetSize < 4) packetSize = 4;
-			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
+			if (packetSize < Info.AE_MIN_PACKET) packetSize = Info.AE_MIN_PACKET;
+			if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
 			break;
 		case 7:
 			packetSize /= 2;
-			if (packetSize < 4) packetSize = 4;
-			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
+			if (packetSize < Info.AE_MIN_PACKET) packetSize = Info.AE_MIN_PACKET;
+			if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
 			break;
 		case 8:
 			outputRate += 1;
-			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
-			if (outputRate > 65536) outputRate = 65536;
+			if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
+			if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
 			break;
 		case 9:
 			outputRate += 10;
-			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
-			if (outputRate > 65536) outputRate = 65536;
+			if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
+			if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
 			break;
 		case 10:
 			outputRate += 64;
 			if (outputRate == 65) outputRate = 64;
-			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
-			if (outputRate > 65536) outputRate = 65536;
+			if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
+			if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
 			break;
 		case 11:
 			outputRate *= 2;
-			if (outputRate > packetSize * 64) outputRate = packetSize * 64;
-			if (outputRate > 65536) outputRate = 65536;
+			if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
+			if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
 			break;
 		case 12:
 			outputRate -= 1;
-			if (outputRate < 1) outputRate = 1;
+			if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
 			break;
 		case 13:
 			outputRate -= 10;
-			if (outputRate < 1) outputRate = 1;
+			if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
 			break;
 		case 14:
 			outputRate -= 64;
-			if (outputRate < 1) outputRate = 1;
+			if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
 			break;
 		case 15:
 			outputRate /= 2;
-			if (outputRate < 1) outputRate = 1;
+			if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
 			break;
 		}
 	}
