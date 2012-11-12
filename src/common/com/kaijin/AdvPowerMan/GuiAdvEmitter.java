@@ -77,13 +77,13 @@ public class GuiAdvEmitter extends GuiContainer
 		// Packet size section text
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_EMITTER_PACKET), width / 2, yLoc + 21, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.packetSize), xLoc + 146, yLoc + 49, GREEN, GREENGLOW);
-		fontRenderer.drawString("[4 - 8192]", xLoc + 110, yLoc + 35, 4210752);
+		fontRenderer.drawString(Info.AE_PACKET_RANGE, xLoc + 110, yLoc + 35, 4210752);
 		fontRenderer.drawString(lang.translateKey(Info.KEY_EU), xLoc + 152, yLoc + 49, 4210752);
 
 		// Output rate section text
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_EMITTER_OUTPUT), width / 2, yLoc + 64, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.outputRate), xLoc + 146, yLoc + 92, GREEN, GREENGLOW);
-		fontRenderer.drawString("[1 - 65536]", xLoc + 110, yLoc + 78, 4210752);
+		fontRenderer.drawString(Info.AE_OUTPUT_RANGE, xLoc + 110, yLoc + 78, 4210752);
 		fontRenderer.drawString(lang.translateKey(Info.KEY_EU), xLoc + 152, yLoc + 92, 4210752);
 
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
