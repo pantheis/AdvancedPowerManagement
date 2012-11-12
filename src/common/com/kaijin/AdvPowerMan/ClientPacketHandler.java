@@ -64,7 +64,7 @@ public class ClientPacketHandler implements IPacketHandler
 		}
 		catch (IOException e)
 		{
-			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Failed to read packet from server. (Details: " + e.toString() + ")");
+			FMLLog.getLogger().info(Info.TITLE_LOG + "Failed to read packet from server. (Details: " + e.toString() + ")");
 			return;
 		}
 
@@ -87,7 +87,7 @@ public class ClientPacketHandler implements IPacketHandler
 			{
 				e = ex;
 			}
-			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Client received description packet for " + x + ", " + y + ", " + z + 
+			FMLLog.getLogger().info(Info.TITLE_LOG + "Client received description packet for " + x + ", " + y + ", " + z + 
 				" but couldn't deliver to tile entity. (Details: " + e.toString() + ")");
 			return;
 		}

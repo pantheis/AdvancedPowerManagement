@@ -55,7 +55,7 @@ public class ServerPacketHandler implements IPacketHandler
 		}
 		catch (IOException e)
 		{
-			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Failed to read packet from client. (Details: " + e.toString() + ")");
+			FMLLog.getLogger().info(Info.TITLE_LOG + "Failed to read packet from client. (Details: " + e.toString() + ")");
 			return;
 		}
 
@@ -76,7 +76,7 @@ public class ServerPacketHandler implements IPacketHandler
 			catch (NullPointerException ex) { e = ex; }
 			catch (IOException ex) { e = ex; }
 
-			FMLLog.getLogger().log(Level.INFO, "[" + Info.TITLE + "] Server received GUI button packet for " + x + ", " + y + ", " + z + 
+			FMLLog.getLogger().info(Info.TITLE_LOG + "Server received GUI button packet for " + x + ", " + y + ", " + z + 
 				" but couldn't deliver to tile entity. (Details: " + e.toString() + ")");
 			return;
 		}
