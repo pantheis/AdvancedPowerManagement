@@ -190,7 +190,7 @@ public class ContainerChargingBench extends Container
 
 				if (currentStack != null && currentStack.itemID == stack.itemID
 						&& (!stack.getHasSubtypes() || stack.getItemDamage() == currentStack.getItemDamage())
-						&& ItemStack.func_77970_a(stack, currentStack) // func_77970_a = areItemStackTagCompoundsEqual
+						&& ItemStack.areItemStackTagsEqual(stack, currentStack)
 						&& currentSlot.isItemValid(stack))
 				{
 					int limit = Math.min(stack.getMaxStackSize(), currentSlot.getSlotStackLimit());
@@ -273,7 +273,7 @@ public class ContainerChargingBench extends Container
 	}
 
 	@Override
-	public ItemStack func_82846_b(EntityPlayer p, int slotID)
+	public ItemStack transferStackInSlot(EntityPlayer p, int slotID)
 	{
 		ItemStack original = null;
 		Slot slotclicked = (Slot)inventorySlots.get(slotID);
@@ -404,7 +404,7 @@ public class ContainerChargingBench extends Container
 				}
 				else if (shiftclick == 1)
 				{
-					ItemStack original = this.func_82846_b(par4EntityPlayer, slotID);
+					ItemStack original = this.transferStackInSlot(par4EntityPlayer, slotID);
 
 					// For crafting and other situations where a new stack could appear in the slot after each click; may be useful for output slot
 					if (original != null)
@@ -468,11 +468,11 @@ public class ContainerChargingBench extends Container
 								slot.putStack((ItemStack)null);
 							}
 
-							slot.func_82870_a(par4EntityPlayer, invPlayer.getItemStack());
+							slot.onPickupFromSlot(par4EntityPlayer, invPlayer.getItemStack());
 						}
 						else if (slot.isItemValid(mouseStack))
 						{ // Both the mouse and the slot contain items, run this code if the item can be placed here 
-							if (clickedStack.itemID == mouseStack.itemID && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.func_77970_a(clickedStack, mouseStack))
+							if (clickedStack.itemID == mouseStack.itemID && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(clickedStack, mouseStack))
 							{
 								quantity = button == 0 ? mouseStack.stackSize : 1;
 
@@ -501,7 +501,7 @@ public class ContainerChargingBench extends Container
 								invPlayer.setItemStack(clickedStack);
 							}
 						}
-						else if (clickedStack.itemID == mouseStack.itemID && mouseStack.getMaxStackSize() > 1 && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.func_77970_a(clickedStack, mouseStack))
+						else if (clickedStack.itemID == mouseStack.itemID && mouseStack.getMaxStackSize() > 1 && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(clickedStack, mouseStack))
 						{ // Both the mouse and the slot contain items, run this code if they match
 							quantity = clickedStack.stackSize;
 
@@ -515,7 +515,7 @@ public class ContainerChargingBench extends Container
 									slot.putStack((ItemStack)null);
 								}
 
-								slot.func_82870_a(par4EntityPlayer, invPlayer.getItemStack());
+								slot.onPickupFromSlot(par4EntityPlayer, invPlayer.getItemStack());
 							}
 						}
 
