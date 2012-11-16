@@ -99,17 +99,6 @@ public class BlockAdvPwrMan extends Block
 				return sideTexture + meta + chargeLevel + working;
 			}
 		}
-		else if (tile instanceof TEEmitter)
-		{
-			switch (side)
-			{
-			case 0: // bottom
-				return 0;
-
-			default:
-				return baseTexture + meta;
-			}
-		}
 		else if (tile instanceof TEAdvEmitter)
 		{
 			switch (side)

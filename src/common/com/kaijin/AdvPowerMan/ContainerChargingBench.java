@@ -43,7 +43,7 @@ public class ContainerChargingBench extends Container
 		{
 			for (xCol = 0; xCol < 3; ++xCol) // 3 columns across
 			{
-				this.addSlotToContainer(new SlotChargeable(tile, Info.CB_SLOT_CHARGING + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
+				this.addSlotToContainer(new SlotChargeable(tile, Info.CB_SLOT_CHARGING + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18, tile.baseTier)); // 52, 32 is upper left input slot 
 			}
 		}
 
@@ -54,13 +54,16 @@ public class ContainerChargingBench extends Container
 		}
 
 		// Input Slot
-		this.addSlotToContainer(new SlotInput(tile, Info.CB_SLOT_INPUT, 130, topOffset));
+		this.addSlotToContainer(new SlotInput(tile, Info.CB_SLOT_INPUT, 130, topOffset, tile.baseTier));
 
 		// Output slot
 		this.addSlotToContainer(new SlotOutput(tile, Info.CB_SLOT_OUTPUT, 130, topOffset + 54));
 
 		// Power source slot
-		this.addSlotToContainer(new SlotPowerSource(tile, Info.CB_SLOT_POWER_SOURCE, 130, topOffset + 27));
+		SlotPowerSource power = new SlotPowerSource(tile, Info.CB_SLOT_POWER_SOURCE, 130, topOffset + 27, tile.powerTier);
+		power.setBackgroundIconIndex(244);
+		power.setBackgroundIconTexture(Info.ITEM_PNG);
+		this.addSlotToContainer(power);
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)

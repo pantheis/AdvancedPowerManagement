@@ -40,12 +40,12 @@ public class ContainerBatteryStation extends Container
 		{
 			for (xCol = 2; xCol >= 0; xCol--) // 3 columns across
 			{
-				this.addSlotToContainer(new SlotPowerSource(tile, Info.BS_SLOT_POWER_START + 11 - xCol - 3 * yRow, 62 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
+				this.addSlotToContainer(new SlotDrainable(tile, Info.BS_SLOT_POWER_START + 11 - xCol - 3 * yRow, 62 + xCol * 18, topOffset + yRow * 18, tile.powerTier)); // 52, 32 is upper left input slot 
 			}
 		}
 
 		// Input Slot
-		this.addSlotToContainer(new SlotPowerSource(tile, Info.BS_SLOT_INPUT, 17, topOffset));
+		this.addSlotToContainer(new SlotPowerSource(tile, Info.BS_SLOT_INPUT, 17, topOffset, tile.powerTier));
 
 		// Output slot
 		this.addSlotToContainer(new SlotOutput(tile, Info.BS_SLOT_OUTPUT, 143, topOffset + 54));
