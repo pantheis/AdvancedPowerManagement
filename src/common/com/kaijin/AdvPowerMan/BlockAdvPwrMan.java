@@ -194,14 +194,14 @@ public class BlockAdvPwrMan extends Block
 	}
 
 	@Override
-	public boolean isProvidingStrongPower(IBlockAccess block, int x, int y, int z, int side)
+	public boolean isProvidingWeakPower(IBlockAccess block, int x, int y, int z, int side)
 	{
 		TileEntity tile = block.getBlockTileEntity(x, y, z);
 		return tile instanceof TEStorageMonitor && ((TEStorageMonitor)tile).isPowering;
 	}
 
 	@Override
-	public boolean isProvidingWeakPower(IBlockAccess block, int x, int y, int z, int side)
+	public boolean isProvidingStrongPower(IBlockAccess block, int x, int y, int z, int side)
 	{
 		return false;
 	}
