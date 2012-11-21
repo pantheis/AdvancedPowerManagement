@@ -148,17 +148,6 @@ public abstract class TECommonBench extends TECommon implements IInventory
 		return 64;
 	}
 
-	public void onInventoryChanged(int slot)
-	{
-		super.onInventoryChanged();
-	}
-
-	@Override
-	public void onInventoryChanged()
-	{
-		super.onInventoryChanged();
-	}
-
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer)
 	{

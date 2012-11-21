@@ -9,15 +9,14 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
 
-public class SlotChargeable extends Slot
+public class SlotChargeable extends SlotCustom
 {
-	public int invIndex;
 	public int chargeTier;
 	
-	public SlotChargeable(IInventory inv, int index, int xpos, int ypos)
+	public SlotChargeable(IInventory inv, int index, int xpos, int ypos, int tier)
 	{
 		super(inv, index, xpos, ypos);
-		invIndex = index;
+		chargeTier = tier;
 	}
 
 	@Override
@@ -27,15 +26,11 @@ public class SlotChargeable extends Slot
 		if (stack != null && stack.getItem() instanceof IElectricItem)
 		{
 			IElectricItem item = (IElectricItem)(stack.getItem());
-			if (item.getTier() <= ((TECommonBench)inventory).baseTier) return true;
+			if (item.getTier() <= chargeTier) return true;
 		}
 		return false;
 	}
 
-	/**
-	 * Returns the maximum stack size for a given slot (usually the same as getInventoryStackLimit(), but 1 in the case
-	 * of armor slots)
-	 */
 	@Override
 	public int getSlotStackLimit()
 	{
@@ -43,16 +38,9 @@ public class SlotChargeable extends Slot
 	}
 
 	@Override
-	public void onSlotChanged()
+	public int getBackgroundIconIndex()
 	{
-		if (inventory instanceof TECommonBench)
-		{
-			((TECommonBench)inventory).onInventoryChanged(invIndex);
-		}
-		else
-		{
-			inventory.onInventoryChanged();
-		}
+		return 247;
 	}
 }
 

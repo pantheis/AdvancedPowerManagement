@@ -8,14 +8,11 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
 
-public class SlotMachineUpgrade extends Slot
+public class SlotMachineUpgrade extends SlotCustom
 {
-	public int invIndex;
-
 	public SlotMachineUpgrade(IInventory inv, int index, int xpos, int ypos)
 	{
 		super(inv, index, xpos, ypos);
-		invIndex = index;
 	}
 
     /**
@@ -34,15 +31,8 @@ public class SlotMachineUpgrade extends Slot
     }
 
 	@Override
-    public void onSlotChanged()
-    {
-    	if (inventory instanceof TECommonBench)
-    	{
-            ((TECommonBench)inventory).onInventoryChanged(invIndex);
-    	}
-    	else
-    	{
-            inventory.onInventoryChanged();
-    	}
-    }
+	public int getBackgroundIconIndex()
+	{
+		return 245;
+	}
 }

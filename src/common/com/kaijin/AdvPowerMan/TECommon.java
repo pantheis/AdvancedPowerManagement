@@ -11,7 +11,7 @@ import cpw.mods.fml.common.FMLLog;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 
-public class TECommon extends TileEntity
+public abstract class TECommon extends TileEntity
 {
 	/**
 	 * TileEntities override this to select a GUI to open on block activation
@@ -82,10 +82,12 @@ public class TECommon extends TileEntity
 		}
 		catch (IOException e)
 		{
-			FMLLog.getLogger().info(Info.TITLE_LOG + "Client failed to create description packet. (Details: " + e.toString() + ")");
+			FMLLog.getLogger().info(Info.TITLE_LOG + "Server failed to create description packet. (Details: " + e.toString() + ")");
 		}
 
-		return new Packet250CustomPayload(Info.PACKET_CHANNEL, bytes.toByteArray());
+		Packet250CustomPayload packet = new Packet250CustomPayload(Info.PACKET_CHANNEL, bytes.toByteArray());
+		packet.isChunkDataPacket = true;
+		return packet;
 	}
 
 	/**
@@ -106,4 +108,9 @@ public class TECommon extends TileEntity
 	}
 
 	public void dropContents() {} // Stub for block destroyed event
+
+	public void onInventoryChanged(int slot)
+	{
+		onInventoryChanged();
+	}
 }

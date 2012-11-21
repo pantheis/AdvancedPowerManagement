@@ -43,7 +43,7 @@ public class ContainerChargingBench extends Container
 		{
 			for (xCol = 0; xCol < 3; ++xCol) // 3 columns across
 			{
-				this.addSlotToContainer(new SlotChargeable(tile, Info.CB_SLOT_CHARGING + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
+				this.addSlotToContainer(new SlotChargeable(tile, Info.CB_SLOT_CHARGING + xCol + 3 * yRow, 52 + xCol * 18, topOffset + yRow * 18, tile.baseTier)); // 52, 32 is upper left input slot 
 			}
 		}
 
@@ -54,13 +54,16 @@ public class ContainerChargingBench extends Container
 		}
 
 		// Input Slot
-		this.addSlotToContainer(new SlotInput(tile, Info.CB_SLOT_INPUT, 130, topOffset));
+		this.addSlotToContainer(new SlotInput(tile, Info.CB_SLOT_INPUT, 130, topOffset, tile.baseTier));
 
 		// Output slot
 		this.addSlotToContainer(new SlotOutput(tile, Info.CB_SLOT_OUTPUT, 130, topOffset + 54));
 
 		// Power source slot
-		this.addSlotToContainer(new SlotPowerSource(tile, Info.CB_SLOT_POWER_SOURCE, 130, topOffset + 27));
+		SlotPowerSource power = new SlotPowerSource(tile, Info.CB_SLOT_POWER_SOURCE, 130, topOffset + 27, tile.powerTier);
+		power.setBackgroundIconIndex(244);
+		power.setBackgroundIconTexture(Info.ITEM_PNG);
+		this.addSlotToContainer(power);
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
@@ -96,24 +99,24 @@ public class ContainerChargingBench extends Container
 
 			if (this.currentEnergy != tileentity.currentEnergy)
 			{
-				crafter.updateCraftingInventoryInfo(this, 0, tileentity.currentEnergy & 65535);
-				crafter.updateCraftingInventoryInfo(this, 1, tileentity.currentEnergy >>> 16);
+				crafter.sendProgressBarUpdate(this, 0, tileentity.currentEnergy & 65535);
+				crafter.sendProgressBarUpdate(this, 1, tileentity.currentEnergy >>> 16);
 			}
 
 			if (this.adjustedMaxInput != tileentity.adjustedMaxInput)
 			{
-				crafter.updateCraftingInventoryInfo(this, 2, tileentity.adjustedMaxInput);
+				crafter.sendProgressBarUpdate(this, 2, tileentity.adjustedMaxInput);
 			}
 
 			if (this.adjustedStorage != tileentity.adjustedStorage)
 			{
-				crafter.updateCraftingInventoryInfo(this, 3, tileentity.adjustedStorage & 65535);
-				crafter.updateCraftingInventoryInfo(this, 4, tileentity.adjustedStorage >>> 16);
+				crafter.sendProgressBarUpdate(this, 3, tileentity.adjustedStorage & 65535);
+				crafter.sendProgressBarUpdate(this, 4, tileentity.adjustedStorage >>> 16);
 			}
 
 			//if (this.adjustedChargeRate != tileentity.adjustedChargeRate)
 			//{
-			//	crafter.updateCraftingInventoryInfo(this, 5, tileentity.adjustedChargeRate);
+			//	crafter.sendProgressBarUpdate(this, 5, tileentity.adjustedChargeRate);
 			//}
 		}
 		this.currentEnergy = tileentity.currentEnergy;
@@ -190,7 +193,7 @@ public class ContainerChargingBench extends Container
 
 				if (currentStack != null && currentStack.itemID == stack.itemID
 						&& (!stack.getHasSubtypes() || stack.getItemDamage() == currentStack.getItemDamage())
-						&& ItemStack.func_77970_a(stack, currentStack) // func_77970_a = areItemStackTagCompoundsEqual
+						&& ItemStack.areItemStackTagsEqual(stack, currentStack)
 						&& currentSlot.isItemValid(stack))
 				{
 					int limit = Math.min(stack.getMaxStackSize(), currentSlot.getSlotStackLimit());
@@ -273,7 +276,7 @@ public class ContainerChargingBench extends Container
 	}
 
 	@Override
-	public ItemStack func_82846_b(EntityPlayer p, int slotID)
+	public ItemStack transferStackInSlot(EntityPlayer p, int slotID)
 	{
 		ItemStack original = null;
 		Slot slotclicked = (Slot)inventorySlots.get(slotID);
@@ -404,7 +407,7 @@ public class ContainerChargingBench extends Container
 				}
 				else if (shiftclick == 1)
 				{
-					ItemStack original = this.func_82846_b(par4EntityPlayer, slotID);
+					ItemStack original = this.transferStackInSlot(par4EntityPlayer, slotID);
 
 					// For crafting and other situations where a new stack could appear in the slot after each click; may be useful for output slot
 					if (original != null)
@@ -468,11 +471,11 @@ public class ContainerChargingBench extends Container
 								slot.putStack((ItemStack)null);
 							}
 
-							slot.func_82870_a(par4EntityPlayer, invPlayer.getItemStack());
+							slot.onPickupFromSlot(par4EntityPlayer, invPlayer.getItemStack());
 						}
 						else if (slot.isItemValid(mouseStack))
 						{ // Both the mouse and the slot contain items, run this code if the item can be placed here 
-							if (clickedStack.itemID == mouseStack.itemID && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.func_77970_a(clickedStack, mouseStack))
+							if (clickedStack.itemID == mouseStack.itemID && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(clickedStack, mouseStack))
 							{
 								quantity = button == 0 ? mouseStack.stackSize : 1;
 
@@ -501,7 +504,7 @@ public class ContainerChargingBench extends Container
 								invPlayer.setItemStack(clickedStack);
 							}
 						}
-						else if (clickedStack.itemID == mouseStack.itemID && mouseStack.getMaxStackSize() > 1 && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.func_77970_a(clickedStack, mouseStack))
+						else if (clickedStack.itemID == mouseStack.itemID && mouseStack.getMaxStackSize() > 1 && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(clickedStack, mouseStack))
 						{ // Both the mouse and the slot contain items, run this code if they match
 							quantity = clickedStack.stackSize;
 
@@ -515,7 +518,7 @@ public class ContainerChargingBench extends Container
 									slot.putStack((ItemStack)null);
 								}
 
-								slot.func_82870_a(par4EntityPlayer, invPlayer.getItemStack());
+								slot.onPickupFromSlot(par4EntityPlayer, invPlayer.getItemStack());
 							}
 						}
 

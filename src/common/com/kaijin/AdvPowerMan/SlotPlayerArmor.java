@@ -10,35 +10,23 @@ import net.minecraft.src.ItemArmor;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
 
-class SlotPlayerArmor extends Slot
+class SlotPlayerArmor extends SlotCustom
 {
-
-	/**
-	 * The armor type that can be placed on that slot, it uses the same values of armorType field on ItemArmor.
-	 */
+	// The armor type that can be placed on that slot, it uses the same values of armorType field on ItemArmor.
 	final int armorType;
-	public int invIndex;
 
 	SlotPlayerArmor(IInventory inv, int index, int xpos, int ypos, int armorType)
 	{
 		super(inv, index, xpos, ypos);
 		this.armorType = armorType;
-		this.invIndex = index;
 	}
 
-	/**
-	 * Returns the maximum stack size for a given slot (usually the same as getInventoryStackLimit(), but 1 in the case
-	 * of armor slots)
-	 */
 	@Override
 	public int getSlotStackLimit()
 	{
 		return 1;
 	}
 
-	/**
-	 * Check if the stack is a valid item for this slot. Always true beside for the armor slots.
-	 */
 	@Override
 	public boolean isItemValid(ItemStack stack)
 	{
@@ -49,19 +37,6 @@ class SlotPlayerArmor extends Slot
 	@Override
 	public int getBackgroundIconIndex()
 	{
-		return 15 + armorType * 16;
-	}
-
-	@Override
-	public void onSlotChanged()
-	{
-		if (inventory instanceof TECommonBench)
-		{
-			((TECommonBench)inventory).onInventoryChanged(invIndex);
-		}
-		else
-		{
-			inventory.onInventoryChanged();
-		}
+		return 240 + armorType;
 	}
 }
