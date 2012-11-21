@@ -11,12 +11,21 @@ import net.minecraft.src.Slot;
 
 public class SlotPowerSource extends SlotCustom
 {
-	protected int powerTier;
+	private int powerTier;
+	private int iconIndex;
 
 	public SlotPowerSource(IInventory inv, int index, int xpos, int ypos, int tier)
 	{
 		super(inv, index, xpos, ypos);
+		setTier(tier);
+	}
+
+	public void setTier(int tier)
+	{
+		if (tier < 1) tier = 1;
+		if (tier > 3) tier = 3;
 		powerTier = tier;
+		iconIndex = 244; //243 + tier;
 	}
 
 	/**
@@ -43,6 +52,6 @@ public class SlotPowerSource extends SlotCustom
 	@Override
 	public int getBackgroundIconIndex()
 	{
-		return 244;
+		return iconIndex;
 	}
 }
