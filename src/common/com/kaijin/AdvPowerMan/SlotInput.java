@@ -34,6 +34,6 @@ public class SlotInput extends SlotCustom
 	@Override
 	public int getBackgroundIconIndex()
 	{
-		return 248;
+		return 249;
 	}
 }

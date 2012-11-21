@@ -15,15 +15,18 @@ import net.minecraft.src.Slot;
 
 public class ContainerChargingBench extends Container
 {
-	private final int benchShiftClickRange = 17;
-	private final int playerInventoryStartSlot = 19;
-	private final int playerArmorStartSlot = 55;
+	private static final int topOffset = 40; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
-	public TEChargingBench tileentity;
-	public int currentEnergy;
-	public int adjustedStorage;
-	//public short adjustedChargeRate;
-	public short adjustedMaxInput;
+	protected final int benchShiftClickRange = 17;
+	protected final int playerInventoryStartSlot = 19;
+	protected final int playerArmorStartSlot = 55;
+
+	protected TEChargingBench tileentity;
+	protected int currentEnergy;
+	protected int adjustedStorage;
+	protected short adjustedMaxInput;
+	protected short powerTier;
+	protected SlotPowerSource powerSlot;
 
 	public ContainerChargingBench(InventoryPlayer player, TEChargingBench tile)
 	{
@@ -32,8 +35,7 @@ public class ContainerChargingBench extends Container
 		currentEnergy = -1;
 		adjustedMaxInput = -1;
 		adjustedStorage = -1;
-
-		final int topOffset = 40; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
+		powerTier = -1;
 
 		int xCol;
 		int yRow;
@@ -60,10 +62,8 @@ public class ContainerChargingBench extends Container
 		this.addSlotToContainer(new SlotOutput(tile, Info.CB_SLOT_OUTPUT, 130, topOffset + 54));
 
 		// Power source slot
-		SlotPowerSource power = new SlotPowerSource(tile, Info.CB_SLOT_POWER_SOURCE, 130, topOffset + 27, tile.powerTier);
-		power.setBackgroundIconIndex(244);
-		power.setBackgroundIconTexture(Info.ITEM_PNG);
-		this.addSlotToContainer(power);
+		powerSlot = new SlotPowerSource(tile, Info.CB_SLOT_POWER_SOURCE, 130, topOffset + 27, tile.powerTier);
+		this.addSlotToContainer(powerSlot);
 
 		// Player inventory
 		for (yRow = 0; yRow < 3; ++yRow)
@@ -114,22 +114,22 @@ public class ContainerChargingBench extends Container
 				crafter.sendProgressBarUpdate(this, 4, tileentity.adjustedStorage >>> 16);
 			}
 
-			//if (this.adjustedChargeRate != tileentity.adjustedChargeRate)
-			//{
-			//	crafter.sendProgressBarUpdate(this, 5, tileentity.adjustedChargeRate);
-			//}
+			if (this.powerTier != tileentity.powerTier)
+			{
+				crafter.sendProgressBarUpdate(this, 5, tileentity.powerTier);
+			}
 		}
 		this.currentEnergy = tileentity.currentEnergy;
 		this.adjustedStorage = tileentity.adjustedStorage;
 		this.adjustedMaxInput = (short)tileentity.adjustedMaxInput;
-		//this.adjustedChargeRate = (short)tileentity.adjustedChargeRate;
+		this.powerTier = (short)tileentity.powerTier;
+		powerSlot.setTier(powerTier);
 	}
 
 	@Override
 	public void updateProgressBar(int param, int value)
 	{
-		super.updateProgressBar(param, value);
-
+		//super.updateProgressBar(param, value);
 		switch (param)
 		{
 		case 0:
@@ -158,8 +158,9 @@ public class ContainerChargingBench extends Container
 			break;
 
 		case 5:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 5 tileentity.adjustedChargeRate = " + value);
-			//tileentity.adjustedChargeRate = value;
+			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 5 tileentity.powerTier = " + value);
+			tileentity.powerTier = value;
+			powerSlot.setTier(value);
 			break;
 
 		default:

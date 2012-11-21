@@ -28,6 +28,6 @@ public class SlotOutput extends SlotCustom
 	@Override
 	public int getBackgroundIconIndex()
 	{
-		return 250;
+		return -1; // 250
 	}
 }
