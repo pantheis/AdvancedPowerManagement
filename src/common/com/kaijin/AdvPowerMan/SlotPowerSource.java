@@ -25,7 +25,7 @@ public class SlotPowerSource extends SlotCustom
 		if (tier < 1) tier = 1;
 		if (tier > 3) tier = 3;
 		powerTier = tier;
-		iconIndex = 244; //243 + tier;
+		iconIndex = 223 + tier;
 	}
 
 	/**

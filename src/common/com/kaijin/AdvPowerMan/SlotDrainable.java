@@ -32,6 +32,6 @@ public class SlotDrainable extends SlotCustom
 	@Override
 	public int getBackgroundIconIndex()
 	{
-		return 249;
+		return -1; // 232;
 	}
 }
