@@ -80,19 +80,19 @@ public class ContainerBatteryStation extends Container
 
 			if (average != syncAvg)
 			{
-				crafter.updateCraftingInventoryInfo(this, 0, syncAvg & 65535);
-				crafter.updateCraftingInventoryInfo(this, 1, syncAvg >>> 16);
+				crafter.sendProgressBarUpdate(this, 0, syncAvg & 65535);
+				crafter.sendProgressBarUpdate(this, 1, syncAvg >>> 16);
 			}
 
 			if (itemsEnergyTotal != energy)
 			{
-				crafter.updateCraftingInventoryInfo(this, 2, energy & 65535);
-				crafter.updateCraftingInventoryInfo(this, 3, energy >>> 16);
+				crafter.sendProgressBarUpdate(this, 2, energy & 65535);
+				crafter.sendProgressBarUpdate(this, 3, energy >>> 16);
 			}
 
 			if (opMode != tileentity.opMode)
 			{
-				crafter.updateCraftingInventoryInfo(this, 4, tileentity.opMode);
+				crafter.sendProgressBarUpdate(this, 4, tileentity.opMode);
 			}
 		}
 		opMode = tileentity.opMode;

@@ -5,6 +5,7 @@
 
 package com.kaijin.AdvPowerMan;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
@@ -14,6 +15,16 @@ import net.minecraft.src.NBTTagCompound;
 
 public class Utils
 {
+	public boolean isClient()
+	{
+		return FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT;
+	}
+
+	public boolean isServer()
+	{
+		return FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER;
+	}
+
 	/**
 	 * 
 	 * @param fr    - Font Renderer handle

@@ -205,7 +205,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 				isPowering = false;
 				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
 			}
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 	}
 
@@ -242,7 +242,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 					energyCapacity = ((IEnergyStorage)tile).getCapacity();
 					if (!blockState)
 					{
-						worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+						worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 					}
 					blockState = true;
 				}
@@ -252,7 +252,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 					energyCapacity = -1;
 					if (blockState)
 					{
-						worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+						worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 					}
 					blockState = false;
 				}
@@ -274,7 +274,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 			if (oldChargeLevel != chargeLevel)
 			{
 				//if (ChargingBench.isDebugging) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + chargeLevel); 
-				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			}
 		}
 	}
@@ -287,7 +287,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 			if (Info.isDebugging) System.out.println("Storage Monitor toggling redstone. chargePercent:" + chargePercent);
 			isPowering = !isPowering;
 			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 	}
 
@@ -306,7 +306,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 			targetCoords = ItemCardBase.getCoordinates(item);
 			ItemCardBase.setCoordinates(item, targetCoords); // Make sure old cards have a dimension number
 		}
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 
 	boolean receivingRedstoneSignal()
@@ -418,7 +418,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		chargeLevel = a;
 		isPowering = b;
 		blockState = c;
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	
 	// ISidedInventory

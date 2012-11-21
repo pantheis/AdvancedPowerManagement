@@ -69,24 +69,24 @@ public class ContainerStorageMonitor extends Container
 
 			if (this.energyStored != te.energyStored)
 			{
-				crafter.updateCraftingInventoryInfo(this, 0, te.energyStored & 65535);
-				crafter.updateCraftingInventoryInfo(this, 1, te.energyStored >>> 16);
+				crafter.sendProgressBarUpdate(this, 0, te.energyStored & 65535);
+				crafter.sendProgressBarUpdate(this, 1, te.energyStored >>> 16);
 			}
 
 			if (this.energyCapacity != te.energyCapacity)
 			{
-				crafter.updateCraftingInventoryInfo(this, 2, te.energyCapacity & 65535);
-				crafter.updateCraftingInventoryInfo(this, 3, te.energyCapacity >>> 16);
+				crafter.sendProgressBarUpdate(this, 2, te.energyCapacity & 65535);
+				crafter.sendProgressBarUpdate(this, 3, te.energyCapacity >>> 16);
 			}
 
 			if (this.lowerBoundary != te.lowerBoundary)
 			{
-				crafter.updateCraftingInventoryInfo(this, 4, te.lowerBoundary);
+				crafter.sendProgressBarUpdate(this, 4, te.lowerBoundary);
 			}
 			if (this.upperBoundary != te.upperBoundary)
 			{
 				if (Info.isDebugging) System.out.println("CSM.uCR: upper bound mismatch");
-				crafter.updateCraftingInventoryInfo(this, 5, te.upperBoundary);
+				crafter.sendProgressBarUpdate(this, 5, te.upperBoundary);
 			}
 		}
 		this.energyStored = te.energyStored;

@@ -99,24 +99,24 @@ public class ContainerChargingBench extends Container
 
 			if (this.currentEnergy != tileentity.currentEnergy)
 			{
-				crafter.updateCraftingInventoryInfo(this, 0, tileentity.currentEnergy & 65535);
-				crafter.updateCraftingInventoryInfo(this, 1, tileentity.currentEnergy >>> 16);
+				crafter.sendProgressBarUpdate(this, 0, tileentity.currentEnergy & 65535);
+				crafter.sendProgressBarUpdate(this, 1, tileentity.currentEnergy >>> 16);
 			}
 
 			if (this.adjustedMaxInput != tileentity.adjustedMaxInput)
 			{
-				crafter.updateCraftingInventoryInfo(this, 2, tileentity.adjustedMaxInput);
+				crafter.sendProgressBarUpdate(this, 2, tileentity.adjustedMaxInput);
 			}
 
 			if (this.adjustedStorage != tileentity.adjustedStorage)
 			{
-				crafter.updateCraftingInventoryInfo(this, 3, tileentity.adjustedStorage & 65535);
-				crafter.updateCraftingInventoryInfo(this, 4, tileentity.adjustedStorage >>> 16);
+				crafter.sendProgressBarUpdate(this, 3, tileentity.adjustedStorage & 65535);
+				crafter.sendProgressBarUpdate(this, 4, tileentity.adjustedStorage >>> 16);
 			}
 
 			//if (this.adjustedChargeRate != tileentity.adjustedChargeRate)
 			//{
-			//	crafter.updateCraftingInventoryInfo(this, 5, tileentity.adjustedChargeRate);
+			//	crafter.sendProgressBarUpdate(this, 5, tileentity.adjustedChargeRate);
 			//}
 		}
 		this.currentEnergy = tileentity.currentEnergy;
