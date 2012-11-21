@@ -40,12 +40,12 @@ public class ContainerBatteryStation extends Container
 		{
 			for (xCol = 2; xCol >= 0; xCol--) // 3 columns across
 			{
-				this.addSlotToContainer(new SlotPowerSource(tile, Info.BS_SLOT_POWER_START + 11 - xCol - 3 * yRow, 62 + xCol * 18, topOffset + yRow * 18)); // 52, 32 is upper left input slot 
+				this.addSlotToContainer(new SlotDrainable(tile, Info.BS_SLOT_POWER_START + 11 - xCol - 3 * yRow, 62 + xCol * 18, topOffset + yRow * 18, tile.powerTier)); // 52, 32 is upper left input slot 
 			}
 		}
 
 		// Input Slot
-		this.addSlotToContainer(new SlotPowerSource(tile, Info.BS_SLOT_INPUT, 17, topOffset));
+		this.addSlotToContainer(new SlotPowerSource(tile, Info.BS_SLOT_INPUT, 17, topOffset, tile.powerTier));
 
 		// Output slot
 		this.addSlotToContainer(new SlotOutput(tile, Info.BS_SLOT_OUTPUT, 143, topOffset + 54));
@@ -80,19 +80,19 @@ public class ContainerBatteryStation extends Container
 
 			if (average != syncAvg)
 			{
-				crafter.updateCraftingInventoryInfo(this, 0, syncAvg & 65535);
-				crafter.updateCraftingInventoryInfo(this, 1, syncAvg >>> 16);
+				crafter.sendProgressBarUpdate(this, 0, syncAvg & 65535);
+				crafter.sendProgressBarUpdate(this, 1, syncAvg >>> 16);
 			}
 
 			if (itemsEnergyTotal != energy)
 			{
-				crafter.updateCraftingInventoryInfo(this, 2, energy & 65535);
-				crafter.updateCraftingInventoryInfo(this, 3, energy >>> 16);
+				crafter.sendProgressBarUpdate(this, 2, energy & 65535);
+				crafter.sendProgressBarUpdate(this, 3, energy >>> 16);
 			}
 
 			if (opMode != tileentity.opMode)
 			{
-				crafter.updateCraftingInventoryInfo(this, 4, tileentity.opMode);
+				crafter.sendProgressBarUpdate(this, 4, tileentity.opMode);
 			}
 		}
 		opMode = tileentity.opMode;
@@ -159,7 +159,7 @@ public class ContainerBatteryStation extends Container
 
 				if (currentStack != null && currentStack.itemID == stack.itemID
 						&& (!stack.getHasSubtypes() || stack.getItemDamage() == currentStack.getItemDamage())
-						&& ItemStack.func_77970_a(stack, currentStack) // func_77970_a = areItemStackTagCompoundsEqual
+						&& ItemStack.areItemStackTagsEqual(stack, currentStack)
 						&& currentSlot.isItemValid(stack))
 				{
 					int limit = Math.min(stack.getMaxStackSize(), currentSlot.getSlotStackLimit());
@@ -245,7 +245,7 @@ public class ContainerBatteryStation extends Container
 	 * transferStackInSlot with a new signature, not yet mapped to the proper method name
 	 */
 	@Override
-	public ItemStack func_82846_b(EntityPlayer p, int slotID)
+	public ItemStack transferStackInSlot(EntityPlayer p, int slotID)
 	{
 		ItemStack original = null;
 		Slot slotclicked = (Slot)inventorySlots.get(slotID);
@@ -324,7 +324,7 @@ public class ContainerBatteryStation extends Container
 				}
 				else if (shiftclick == 1)
 				{
-					ItemStack original = this.func_82846_b(par4EntityPlayer, slotID);
+					ItemStack original = this.transferStackInSlot(par4EntityPlayer, slotID);
 
 					// For crafting and other situations where a new stack could appear in the slot after each click; may be useful for output slot
 					if (original != null)
@@ -388,11 +388,11 @@ public class ContainerBatteryStation extends Container
 								slot.putStack((ItemStack)null);
 							}
 
-							slot.func_82870_a(par4EntityPlayer, invPlayer.getItemStack());
+							slot.onPickupFromSlot(par4EntityPlayer, invPlayer.getItemStack());
 						}
 						else if (slot.isItemValid(mouseStack))
 						{ // Both the mouse and the slot contain items, run this code if the item can be placed here 
-							if (clickedStack.itemID == mouseStack.itemID && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.func_77970_a(clickedStack, mouseStack))
+							if (clickedStack.itemID == mouseStack.itemID && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(clickedStack, mouseStack))
 							{
 								quantity = button == 0 ? mouseStack.stackSize : 1;
 
@@ -421,7 +421,7 @@ public class ContainerBatteryStation extends Container
 								invPlayer.setItemStack(clickedStack);
 							}
 						}
-						else if (clickedStack.itemID == mouseStack.itemID && mouseStack.getMaxStackSize() > 1 && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.func_77970_a(clickedStack, mouseStack))
+						else if (clickedStack.itemID == mouseStack.itemID && mouseStack.getMaxStackSize() > 1 && (!clickedStack.getHasSubtypes() || clickedStack.getItemDamage() == mouseStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(clickedStack, mouseStack))
 						{ // Both the mouse and the slot contain items, run this code if they match
 							quantity = clickedStack.stackSize;
 
@@ -435,7 +435,7 @@ public class ContainerBatteryStation extends Container
 									slot.putStack((ItemStack)null);
 								}
 
-								slot.func_82870_a(par4EntityPlayer, invPlayer.getItemStack());
+								slot.onPickupFromSlot(par4EntityPlayer, invPlayer.getItemStack());
 							}
 						}
 

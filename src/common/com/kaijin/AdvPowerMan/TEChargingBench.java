@@ -110,7 +110,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		initializeBaseValues();
 		doUpgradeEffects();
 		chargeLevel = gaugeEnergyScaled(12);
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		return oldTier;
 	}
 
@@ -404,7 +404,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		if (oldChargeLevel != chargeLevel || lastWorkState != doingWork)
 		{
 			//if (ChargingBench.isDebugging) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + chargeLevel); 
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 	}
 
@@ -611,7 +611,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		}
 		chargeLevel = a;
 		doingWork = b;
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 
 	@Override
