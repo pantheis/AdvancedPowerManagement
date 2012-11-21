@@ -10,13 +10,9 @@ import net.minecraft.src.Slot;
 
 public class SlotLinkCard extends Slot
 {
-	public int invIndex;
-	public int chargeTier;
-
 	public SlotLinkCard(IInventory inv, int index, int xpos, int ypos)
 	{
 		super(inv, index, xpos, ypos);
-		this.invIndex = index;
 	}
 
 	/**
@@ -33,10 +29,6 @@ public class SlotLinkCard extends Slot
 		return false;
 	}
 
-	/**
-	 * Returns the maximum stack size for a given slot (usually the same as getInventoryStackLimit(), but 1 in the case
-	 * of armor slots)
-	 */
 	@Override
 	public int getSlotStackLimit()
 	{
@@ -44,15 +36,27 @@ public class SlotLinkCard extends Slot
 	}
 
 	@Override
+	public int getBackgroundIconIndex()
+	{
+		return 246;
+	}
+
+	@Override
+	public String getBackgroundIconTexture()
+	{
+		return Info.ITEM_PNG;
+	}
+
+	@Override
 	public void onSlotChanged()
 	{
-		if (this.inventory instanceof TEStorageMonitor)
+		if (this.inventory instanceof TECommon)
 		{
-			((TEStorageMonitor)this.inventory).onInventoryChanged(this.invIndex);
+			((TECommon)inventory).onInventoryChanged(this.getSlotIndex());
 		}
 		else
 		{
-			this.inventory.onInventoryChanged();
+			inventory.onInventoryChanged();
 		}
 	}
 }

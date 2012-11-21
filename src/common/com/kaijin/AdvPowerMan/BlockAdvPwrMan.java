@@ -99,17 +99,6 @@ public class BlockAdvPwrMan extends Block
 				return sideTexture + meta + chargeLevel + working;
 			}
 		}
-		else if (tile instanceof TEEmitter)
-		{
-			switch (side)
-			{
-			case 0: // bottom
-				return 0;
-
-			default:
-				return baseTexture + meta;
-			}
-		}
 		else if (tile instanceof TEAdvEmitter)
 		{
 			switch (side)
@@ -205,14 +194,14 @@ public class BlockAdvPwrMan extends Block
 	}
 
 	@Override
-	public boolean isPoweringTo(IBlockAccess block, int x, int y, int z, int side)
+	public boolean isProvidingStrongPower(IBlockAccess block, int x, int y, int z, int side)
 	{
 		TileEntity tile = block.getBlockTileEntity(x, y, z);
 		return tile instanceof TEStorageMonitor && ((TEStorageMonitor)tile).isPowering;
 	}
 
 	@Override
-	public boolean isIndirectlyPoweringTo(IBlockAccess block, int x, int y, int z, int side)
+	public boolean isProvidingWeakPower(IBlockAccess block, int x, int y, int z, int side)
 	{
 		return false;
 	}

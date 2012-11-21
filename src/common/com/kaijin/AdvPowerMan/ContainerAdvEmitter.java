@@ -37,14 +37,14 @@ public class ContainerAdvEmitter extends Container
 
 			if (this.outputRate != te.outputRate)
 			{
-				crafter.updateCraftingInventoryInfo(this, 0, te.outputRate & 65535);
-				crafter.updateCraftingInventoryInfo(this, 1, te.outputRate >>> 16);
+				crafter.sendProgressBarUpdate(this, 0, te.outputRate & 65535);
+				crafter.sendProgressBarUpdate(this, 1, te.outputRate >>> 16);
 			}
 
 			if (this.packetSize != te.packetSize)
 			{
-				crafter.updateCraftingInventoryInfo(this, 2, te.packetSize & 65535);
-				crafter.updateCraftingInventoryInfo(this, 3, te.packetSize >>> 16);
+				crafter.sendProgressBarUpdate(this, 2, te.packetSize & 65535);
+				crafter.sendProgressBarUpdate(this, 3, te.packetSize >>> 16);
 			}
 		}
 		

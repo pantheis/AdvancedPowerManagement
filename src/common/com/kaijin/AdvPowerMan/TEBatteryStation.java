@@ -240,7 +240,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		if (lastWorkState != doingWork)
 		{
 			//if (ChargingBench.isDebugging) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + chargeLevel); 
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 	}
 
@@ -493,7 +493,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			return;
 		}
 		doingWork = b;
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 
 	@Override
