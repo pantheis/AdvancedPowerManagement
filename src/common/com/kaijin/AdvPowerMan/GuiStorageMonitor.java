@@ -91,7 +91,7 @@ public class GuiStorageMonitor extends GuiContainer
 		// Draw title text
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), xLoc + 96, yLoc + 12, 4210752);
 
-		if (tile.energyStored == -1 || tile.energyCapacity == -1)
+		if (tile.energyCapacity == 0 && tile.energyStored == 0)
 		{
 			// Error message: No card or storage unit not found
 			Utils.drawCenteredGlowingText(fontRenderer, lang.translateKey(Info.KEY_MONITOR_INVALID), xLoc + 96, yLoc + 35, RED, REDGLOW);
@@ -123,7 +123,7 @@ public class GuiStorageMonitor extends GuiContainer
 			button.drawButton(mc, mouseX, mouseY);
 		}
 	}
-	
+
 	@Override
 	protected void mouseClicked(int par1, int par2, int par3)
 	{
