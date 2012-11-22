@@ -85,7 +85,6 @@ public class ContainerStorageMonitor extends Container
 			}
 			if (this.upperBoundary != te.upperBoundary)
 			{
-				if (Info.isDebugging) System.out.println("CSM.uCR: upper bound mismatch");
 				crafter.sendProgressBarUpdate(this, 5, te.upperBoundary);
 			}
 		}
@@ -104,22 +103,18 @@ public class ContainerStorageMonitor extends Container
 		switch (param)
 		{
 		case 0:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & -65536) + " | " + value);
 			te.energyStored = te.energyStored & -65536 | value;
 			break;
 
 		case 1:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & 65535) + " | " + (value << 16));
 			te.energyStored = te.energyStored & 65535 | (value << 16);
 			break;
 
 		case 2:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & -65536) + " | " + value);
 			te.energyCapacity = te.energyCapacity & -65536 | value;
 			break;
 
 		case 3:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & 65535) + " | " + (value << 16));
 			te.energyCapacity = te.energyCapacity & 65535 | (value << 16);
 			break;
 
