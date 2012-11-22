@@ -299,8 +299,8 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		if (item == null || !(item.getItem() instanceof ItemStorageLinkCard))
 		{
 			targetCoords = null;
-			energyCapacity = -1;
-			energyStored = -1;
+			energyCapacity = 0;
+			energyStored = 0;
 			blockState = false;
 		}
 		else
