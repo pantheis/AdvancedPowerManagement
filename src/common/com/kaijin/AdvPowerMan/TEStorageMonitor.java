@@ -37,8 +37,8 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 	
 	private boolean tileLoaded = false;
 
-	public int energyStored = -1;
-	public int energyCapacity = -1;
+	public int energyStored = 0;
+	public int energyCapacity = 0;
 	public int chargeLevel = 0;
 	
 	public boolean isPowering = false;
@@ -55,6 +55,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 	/**
 	 * Reads a tile entity from NBT.
 	 */
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
 		if (!AdvancedPowerManagement.proxy.isClient())
@@ -68,7 +69,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 
 			// Our inventory
 			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-			contents = new ItemStack[Info.SM_INVENTORY_SIZE];
+			//Redundant: contents = new ItemStack[Info.SM_INVENTORY_SIZE];
 			for (int i = 0; i < nbttaglist.tagCount(); ++i)
 			{
 				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
@@ -85,6 +86,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 	/**
 	 * Writes a tile entity to NBT.
 	 */
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
 		if (!AdvancedPowerManagement.proxy.isClient())
@@ -189,8 +191,8 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 				}
 				else
 				{
-					energyStored = -1;
-					energyCapacity = -1;
+					energyStored = 0;
+					energyCapacity = 0;
 					blockState = false;
 				}
 			}
@@ -248,8 +250,8 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 				}
 				else
 				{
-					energyStored = -1;
-					energyCapacity = -1;
+					energyStored = 0;
+					energyCapacity = 0;
 					if (blockState)
 					{
 						worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -327,12 +329,6 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		return result;
 	}
 
-//	@Override
-//	public void invalidate()
-//	{
-//		super.invalidate();
-//	}
-
 	//Networking stuff
 
 	/**
@@ -360,6 +356,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 			break;
 		case 3:
 			upperBoundary += 10;
+			if (upperBoundary == 11) upperBoundary = 10;
 			if (upperBoundary > 100) upperBoundary = 100;
 			break;
 		case 4:
@@ -377,6 +374,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 			break;
 		case 7:
 			lowerBoundary += 10;
+			if (lowerBoundary == 11) lowerBoundary = 10;
 			if (lowerBoundary > 100) lowerBoundary = 100;
 			if (lowerBoundary > upperBoundary) upperBoundary = lowerBoundary;
 			break;
@@ -540,6 +538,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		this.onInventoryChanged(slot);
 	}
 
+	@Override
 	public void onInventoryChanged(int slot)
 	{
 		this.onInventoryChanged();
