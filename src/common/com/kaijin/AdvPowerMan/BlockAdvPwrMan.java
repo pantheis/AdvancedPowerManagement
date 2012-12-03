@@ -16,6 +16,7 @@ import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraftforge.common.ForgeDirection;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
@@ -308,11 +309,16 @@ public class BlockAdvPwrMan extends Block
 		if (!AdvancedPowerManagement.proxy.isClient())
 		{
 			TileEntity tile = world.getBlockTileEntity(i, j, k);
-			if (tile instanceof TECommon) 
+			if (tile == null) return;
+			try
 			{
 				((TECommon)tile).dropContents();
-				tile.invalidate();
 			}
+			catch (ClassCastException e)
+			{
+				FMLLog.getLogger().warning(Info.TITLE_LOG + "Attempted to destroy APM block with non-APM tile entity at: " + i + ", " + j + ", " + k);
+			}
+			tile.invalidate();
 		}
 	}
 }
