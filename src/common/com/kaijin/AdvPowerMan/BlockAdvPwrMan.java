@@ -297,11 +297,9 @@ public class BlockAdvPwrMan extends Block
 	}
 
 	@Override
-	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int par1)
+	public void breakBlock(World world, int x, int y, int z, int id, int meta)
 	{
 		preDestroyBlock(world, x, y, z);
-		//if (ChargingBench.isDebugging) System.out.println("BlockAdvPwrMan.onBlockDestroyedByPlayer");
-		super.onBlockDestroyedByPlayer(world, x, y, z, par1);
 	}
 
 	public static void preDestroyBlock(World world, int i, int j, int k)
