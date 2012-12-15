@@ -1,6 +1,6 @@
 package ic2.api;
 
-import net.minecraft.src.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Allows a tile entity to receive network events received from clients.

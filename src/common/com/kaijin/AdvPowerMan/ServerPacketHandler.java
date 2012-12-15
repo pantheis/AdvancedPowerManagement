@@ -10,11 +10,11 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.INetworkManager;
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.IPacketHandler;

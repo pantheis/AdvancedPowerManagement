@@ -5,11 +5,11 @@
 
 package com.kaijin.AdvPowerMan;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.IGuiHandler;

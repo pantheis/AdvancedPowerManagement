@@ -9,9 +9,9 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
-import net.minecraft.src.FontRenderer;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class Utils
 {
