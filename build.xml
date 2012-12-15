@@ -100,6 +100,9 @@
 		<copy todir="${classes.dir}">
 			<fileset dir="${mcp.dir}/reobf/minecraft">
                 <exclude name="**/ic2/**" />
+                <exclude name="**/net/**" />
+                <exclude name="**/cpw/**" />
+                <exclude name="/*.class" />
             </fileset>
 		</copy>
 
@@ -135,9 +138,7 @@
 
 	<!-- Zip the compiled files -->
 	<target name="package" depends="compile">
-
 		<jar destfile="${jar.dir}/${mod.name}-${mymod.version.full}.jar" basedir="${classes.dir}"/>
-
 	</target>
 
 	<!-- Default target to run -->
