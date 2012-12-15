@@ -5,9 +5,9 @@
 package com.kaijin.AdvPowerMan;
 
 import ic2.api.IElectricItem;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Slot;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.inventory.Slot;
 
 public class SlotChargeable extends SlotCustom
 {

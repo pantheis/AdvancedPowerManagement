@@ -1,7 +1,7 @@
 package com.kaijin.AdvPowerMan;
 
-import net.minecraft.src.IInventory;
-import net.minecraft.src.Slot;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 
 public class SlotCustom extends Slot
 {

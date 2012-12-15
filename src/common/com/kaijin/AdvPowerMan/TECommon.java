@@ -8,8 +8,8 @@ import java.util.logging.Level;
 
 import cpw.mods.fml.common.FMLLog;
 
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.TileEntity;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
 
 public abstract class TECommon extends TileEntity
 {

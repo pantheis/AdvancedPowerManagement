@@ -1,6 +1,6 @@
 package ic2.api;
 
-import net.minecraft.src.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Allows an item to receive network events received from the server.
