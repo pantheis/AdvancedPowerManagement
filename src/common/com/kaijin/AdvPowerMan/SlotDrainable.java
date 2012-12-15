@@ -1,8 +1,8 @@
 package com.kaijin.AdvPowerMan;
 
 import ic2.api.IElectricItem;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 public class SlotDrainable extends SlotCustom
 {

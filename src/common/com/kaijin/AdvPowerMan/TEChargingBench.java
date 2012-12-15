@@ -21,12 +21,12 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.TileEntity;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 
@@ -713,5 +713,25 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		// We're not sure what called this or what slot was altered, so make sure the upgrade effects are correct just in case and then pass the call on.
 		doUpgradeEffects();
 		super.onInventoryChanged();
+	}
+
+	@Override
+	public void setStored(int energy)
+	{
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public int addEnergy(int amount)
+	{
+		// TODO Auto-generated method stub
+		// Returning our current energy value always, we do not implement this function
+		return currentEnergy;
+	}
+
+	@Override
+	public boolean isTeleporterCompatible(Direction side)
+	{
+		return false;
 	}
 }
