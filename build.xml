@@ -25,8 +25,6 @@
 	<property name="mymod.version"       value="1.1"/>
     <property name="ic2.version"         value="IC2_1.110"/>
 
-    http://files.minecraftforge.net/minecraftforge/minecraftforge-src-1.4.5-6.4.2.445.zip
-	
     <available property="forge-exists" file="${download_dir}/minecraftforge-src-${fullforge.version}.zip"/>
     <condition property="should-download-ant-contrib">
 		<or>
