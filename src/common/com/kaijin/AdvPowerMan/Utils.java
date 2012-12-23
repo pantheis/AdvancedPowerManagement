@@ -6,8 +6,8 @@
 package com.kaijin.AdvPowerMan;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;

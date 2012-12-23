@@ -5,8 +5,8 @@
 package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
-import ic2.api.EnergyNet;
-import ic2.api.IEnergySource;
+import ic2.api.energy.EnergyNet;
+import ic2.api.energy.tile.IEnergySource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;

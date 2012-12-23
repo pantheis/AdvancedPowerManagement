@@ -18,10 +18,10 @@
 
 	<property name="mcpsrc.dir"          value="${mcp.dir}/src/minecraft"/>
 
-	<property name="mcp.version"         value="723"/>
-	<property name="forge.version"       value="1.4.5-6.4.2.445"/>
+	<property name="mcp.version"         value="725"/>
+	<property name="forge.version"       value="1.4.6-6.5.0.471"/>
 	<property name="mymod.version"       value="1.1"/>
-    <property name="ic2.version"         value="IC2_1.110"/>
+    <property name="ic2.version"         value="IC2_1.112"/>
 
     <available property="forge-exists" file="${download_dir}/minecraftforge-src-${forge.version}.zip"/>
     <condition property="should-download-ant-contrib">

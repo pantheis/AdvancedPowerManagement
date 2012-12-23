@@ -6,17 +6,17 @@ package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
 import ic2.api.ElectricItem;
-import ic2.api.EnergyNet;
+import ic2.api.energy.EnergyNet;
 import ic2.api.IElectricItem;
-import ic2.api.IEnergySource;
+import ic2.api.energy.tile.IEnergySource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
