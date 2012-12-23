@@ -1,6 +1,6 @@
-package ic2.api.energy;
+package ic2.api.energy.event;
 
-import ic2.api.IEnergySource;
+import ic2.api.energy.tile.IEnergySource;
 
 /**
  * Event announcing an energy source operation.
