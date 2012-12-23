@@ -6,9 +6,9 @@ package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
 import ic2.api.ElectricItem;
-import ic2.api.EnergyNet;
+import ic2.api.energy.EnergyNet;
 import ic2.api.IElectricItem;
-import ic2.api.IEnergySink;
+import ic2.api.energy.tile.IEnergySink;
 import ic2.api.IEnergyStorage;
 
 import java.io.ByteArrayOutputStream;
@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -125,15 +125,46 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	// IEnergySink
 	
 	@Override
+	public void setStored(int energy)
+	{
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public int addEnergy(int amount)
+	{
+		// TODO Auto-generated method stub
+		// Returning our current energy value always, we do not implement this function
+		return currentEnergy;
+	}
+
+	@Override
+	public boolean isTeleporterCompatible(Direction side)
+	{
+		return false;
+	}
+
+	@Override
+	public int getMaxSafeInput() {
+		// TODO Auto-generated method stub
+		return adjustedMaxInput;
+	}
+	
+	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
 	{
 		return true;
 	}
 
 	@Override
-	public boolean demandsEnergy()
+	public int demandsEnergy()
 	{
-		return (currentEnergy < adjustedStorage && !receivingRedstoneSignal());
+//		return (currentEnergy < adjustedStorage && !receivingRedstoneSignal());
+		if(!receivingRedstoneSignal())
+		{
+			return adjustedStorage - currentEnergy;
+		}
+		return 0;
 	}
 
 	@Override
@@ -713,25 +744,5 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		// We're not sure what called this or what slot was altered, so make sure the upgrade effects are correct just in case and then pass the call on.
 		doUpgradeEffects();
 		super.onInventoryChanged();
-	}
-
-	@Override
-	public void setStored(int energy)
-	{
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public int addEnergy(int amount)
-	{
-		// TODO Auto-generated method stub
-		// Returning our current energy value always, we do not implement this function
-		return currentEnergy;
-	}
-
-	@Override
-	public boolean isTeleporterCompatible(Direction side)
-	{
-		return false;
 	}
 }

@@ -4,7 +4,7 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import ic2.api.EnergyNet;
+import ic2.api.energy.EnergyNet;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;

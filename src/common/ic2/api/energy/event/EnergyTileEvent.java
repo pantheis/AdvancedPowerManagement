@@ -1,9 +1,9 @@
-package ic2.api.energy;
+package ic2.api.energy.event;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.event.world.WorldEvent;
 
-import ic2.api.IEnergyTile;
+import ic2.api.energy.tile.IEnergyTile;
 
 public class EnergyTileEvent extends WorldEvent {
 	public final IEnergyTile energyTile;
