@@ -6,9 +6,9 @@ package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
 import ic2.api.ElectricItem;
-import ic2.api.EnergyNet;
+import ic2.api.energy.EnergyNet;
 import ic2.api.IElectricItem;
-import ic2.api.IEnergySink;
+import ic2.api.energy.tile.IEnergySink;
 import ic2.api.IEnergyStorage;
 
 import java.io.ByteArrayOutputStream;
@@ -18,15 +18,15 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.TileEntity;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 
@@ -125,15 +125,46 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	// IEnergySink
 	
 	@Override
+	public void setStored(int energy)
+	{
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public int addEnergy(int amount)
+	{
+		// TODO Auto-generated method stub
+		// Returning our current energy value always, we do not implement this function
+		return currentEnergy;
+	}
+
+	@Override
+	public boolean isTeleporterCompatible(Direction side)
+	{
+		return false;
+	}
+
+	@Override
+	public int getMaxSafeInput() {
+		// TODO Auto-generated method stub
+		return adjustedMaxInput;
+	}
+	
+	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
 	{
 		return true;
 	}
 
 	@Override
-	public boolean demandsEnergy()
+	public int demandsEnergy()
 	{
-		return (currentEnergy < adjustedStorage && !receivingRedstoneSignal());
+//		return (currentEnergy < adjustedStorage && !receivingRedstoneSignal());
+		if(!receivingRedstoneSignal())
+		{
+			return adjustedStorage - currentEnergy;
+		}
+		return 0;
 	}
 
 	@Override

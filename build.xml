@@ -9,33 +9,31 @@
 	<property name="res.dir"             value="${mod.dir}/resources"/>
 
 	<property name="download.dir"        value="download"/>
-	<property name="files.minecraft.dir" value="jars"/>
-	<property name="clean_mcp"           value="clean"/>
-    
-    <property name="clean.name"          value="mcp723_f640394_clean.zip"/>
-
-	<property name="classes.dir"         value="${build.dir}/classes"/>
+	    
+    <property name="classes.dir"         value="${build.dir}/classes"/>
 	<property name="jar.dir"             value="${build.dir}/dist"/>
 
-	<property name="mcp.dir"             value="${build.dir}/mcp"/>
-	<property name="forge.dir"           value="${mcp.dir}/forge"/>
+	<property name="forge.dir"           value="${build.dir}/forge"/>
+	<property name="mcp.dir"             value="${forge.dir}/mcp"/>
 
 	<property name="mcpsrc.dir"          value="${mcp.dir}/src/minecraft"/>
 
-	<property name="mcp.version"         value="723"/>
-	<property name="forge.version"       value="6.4.0.394"/>
+	<property name="mcp.version"         value="725"/>
+	<property name="forge.version"       value="1.4.6-6.5.0.471"/>
 	<property name="mymod.version"       value="1.1"/>
-    <property name="ic2.version"         value="IC2_1.109"/>
+    <property name="ic2.version"         value="IC2_1.112"/>
 
-	<available property="forge-exists" file="${clean_mcp}/${clean.name}"/>
-    <target name="abort" unless="forge-exists">
-        <fail message="${clean.name} does not exist!" />
-    </target>
-
+    <available property="forge-exists" file="${download_dir}/minecraftforge-src-${forge.version}.zip"/>
+    <condition property="should-download-ant-contrib">
+		<or>
+			<available file="${download.dir}/ant-contrib/ant-contrib-1.0b3.jar"/>
+			<available file="${download.dir}/minecraftforge-src-${forge.version}.zip"/>
+		</or>
+	</condition>
+    
 	<mkdir dir="${download.dir}"/>
 
 	<!-- Targets -->
-
 	<target name="clean">
 		<delete dir="${build.dir}"/>
 	</target>
@@ -54,17 +52,70 @@
 		<property name="build.number" value="${env.BUILD_NUMBER}"/>
 	</target>
 
+    <!-- Download necessary files -->
+	<target name="download-files" depends="download-forge"/>
+
+    <!-- Download ant-contrib, necessary to be able to download forge (only if neither forge zip nor ant-contrib exist) -->
+	<target name="download-ant-contrib" unless="should-download-ant-contrib">
+
+		<echo message="Getting: ant-contrib"/>
+		<mkdir dir="${download.dir}/tmp"/>
+
+		<get src="http://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download" dest="${download.dir}/tmp/ant-contrib-1.0b3-bin.zip"/>
+		<get src="http://archive.apache.org/dist/commons/codec/binaries/commons-codec-1.6-bin.zip" dest="${download.dir}/tmp/commons-codec-1.6-bin.zip"/>
+
+		<unzip src="${download.dir}/tmp/ant-contrib-1.0b3-bin.zip" dest="${download.dir}"/>
+		<unzip src="${download.dir}/tmp/commons-codec-1.6-bin.zip" dest="${download.dir}/tmp"/>
+
+		<move todir="${download.dir}/ant-contrib/lib">
+			<fileset file="${download.dir}/tmp/commons-codec-1.6/commons-codec-1.6.jar"/>
+		</move>
+
+		<!-- Delete useless files -->
+		<delete dir="${download.dir}/ant-contrib/docs"/>
+		<delete dir="${download.dir}/tmp"/>
+
+	</target>
+
+	<!-- Download forge (if it doesn't exist) -->
+	<target name="download-forge" depends="download-ant-contrib" unless="forge-exists" >
+
+		<taskdef resource="net/sf/antcontrib/antlib.xml">
+			<classpath>
+				<pathelement location="${download.dir}/ant-contrib/ant-contrib-1.0b3.jar"/>
+				<fileset dir="${download.dir}/ant-contrib/lib">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</taskdef>
+
+		<getMethod url="http://files.minecraftforge.net/minecraftforge-src-${forge.version}.zip"
+				   responseDataFile="${download.dir}/minecraftforge-src-${forge.version}.zip">
+			<header name="User-Agent" value="Ant-${ant.version}/${ant.java.version}"/>
+		</getMethod>
+
+	</target>
+    
 	<!-- Setup mcp and forge -->
 	<target name="setup" depends="initialize-version">
 
-		<!-- Unzip them -->
+		<!-- Unzip forge -->
 		<unzip dest="${build.dir}">
-			<fileset dir="${clean_mcp}">
-				<include name="${clean.name}"/>
+			<fileset dir="${download.dir}">
+				<include name="minecraftforge-src-${forge.version}.zip"/>
 			</fileset>
 		</unzip>
 
-		<!-- Copy MyMod source -->
+        <!-- Install forge -->
+		<exec dir="${forge.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c install.cmd"/>
+		</exec>
+
+		<exec dir="${forge.dir}" executable="sh" osfamily="unix">
+			<arg value="install.sh" />
+		</exec>
+
+        <!-- Copy MyMod source -->
 		<copy todir="${mcpsrc.dir}">
 			<fileset dir="${src.dir}/common">
 			</fileset>
@@ -141,6 +192,6 @@
 	</target>
 
 	<!-- Default target to run -->
-	<target name="main" depends="abort,initialize-version,clean,package"/>
+	<target name="main" depends="initialize-version,download-files,clean,package"/>
 
 </project>

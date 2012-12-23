@@ -6,18 +6,18 @@ package com.kaijin.AdvPowerMan;
 
 import java.text.DecimalFormat;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.GuiButton;
-import net.minecraft.src.GuiContainer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.InventoryPlayer;
-import net.minecraft.src.StringTranslate;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.StringTranslate;
 import com.kaijin.AdvPowerMan.CButton;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiBatteryStation extends GuiContainer

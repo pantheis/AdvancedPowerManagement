@@ -3,7 +3,7 @@
   "modid": "AdvancedPowerManagement",
   "name": "Advanced Power Management",
   "description": "This mod adds a Charging Bench, Battery Station, and Storage Monitor to Industrial Craft 2. Charge or drain up to 12 items at once, and easily automate your IC2 power generation and storage systems!",
-  "mcversion": "1.4.2",
+  "mcversion": "1.4.6",
   "version": "@VERSION@",
   "logoFile": "",
   "screenshots": [ "" ],

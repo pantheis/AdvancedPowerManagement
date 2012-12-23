@@ -5,8 +5,8 @@
 package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
-import ic2.api.EnergyNet;
-import ic2.api.IEnergySource;
+import ic2.api.energy.EnergyNet;
+import ic2.api.energy.tile.IEnergySource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -14,10 +14,10 @@ import java.io.IOException;
 
 import cpw.mods.fml.common.FMLLog;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.TileEntity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
 
 public class TEAdvEmitter extends TECommon implements IEnergySource
 {

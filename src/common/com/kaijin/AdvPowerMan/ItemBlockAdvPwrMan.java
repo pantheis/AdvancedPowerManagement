@@ -5,8 +5,8 @@
 package com.kaijin.AdvPowerMan;
 
 
-import net.minecraft.src.ItemBlock;
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 
 public class ItemBlockAdvPwrMan extends ItemBlock
 {

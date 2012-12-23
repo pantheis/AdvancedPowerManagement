@@ -1,8 +1,8 @@
 package ic2.api;
 
-import net.minecraft.src.ChunkCoordinates;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 /**
  * Interface implemented by the tile entity of nuclear reactors.
@@ -79,21 +79,21 @@ public interface IReactor {
 	/**
 	 * Get the reactor's energy output.
 	 * 
-	 * @return Energy output in EU/t
+	 * @return Energy output, not multiplied by the base EU/t value
 	 */
 	public int getOutput();
 	
 	/**
 	 * Add's the given amount of energy to the Reactor's output.
 	 * 
-	 * @return Energy output after adding the value, in EU/t
+	 * @return Energy output after adding the value, not multiplied by the base EU/t value
 	 */
 	public int addOutput(int energy);
 	
 	/**
-	 * Get's the EU worth of a single basic Uranium pulse
-	 * Please use this variable to alter energy output, as it represents the config modifiers as well.
+	 * Replaced by IC2Reactor.getEUOutput() - stays at the universal output value of 1 for compatibility
 	 */
+	@Deprecated
 	public int getPulsePower();
 	
 	/**
