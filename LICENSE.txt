@@ -1,7 +1,7 @@
 TERMS AND CONDITIONS
 
-Version 1.0.2.IC2 Edition
-July 19th, 2012
+Version 1.0.3.IC2 Edition
+December 27th, 2012
 This document supersedes and replaces any prior license agreement.
 
 0. Used Terms
@@ -77,9 +77,7 @@ strictly forbidden without advance written permission from owner.
 ----------------------
 Any part of this license agreement in conflict with required licensing for
 Industrial Craft 2 mods is void or replaced by IC2 licensing language, as
-appropriate. As per the Industrial Craft 2 mod licensing agreement, this mod
-can only be distributed in compiled form on the Industrial Craft 2 forums
-located at http://forum.industrial-craft.net/index.php
+appropriate.
 
 Please see http://forum.industrial-craft.net/index.php?page=Thread&threadID=344
 for more details on the Industrial Craft 2 licensing details.
