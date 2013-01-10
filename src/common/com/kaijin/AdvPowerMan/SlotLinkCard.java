@@ -5,8 +5,8 @@
 package com.kaijin.AdvPowerMan;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
 public class SlotLinkCard extends Slot
 {

@@ -4,16 +4,18 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
+import ic2.api.Items;
+
 import java.io.File;
 import java.util.logging.Level;
-import ic2.api.Items;
+
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICraftingHandler;
@@ -30,7 +32,6 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(modid = Info.TITLE_PACKED, name=Info.TITLE, version=Info.VERSION, dependencies = Info.DEPENDENCIES)
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,
@@ -119,7 +120,7 @@ public class AdvancedPowerManagement implements ICraftingHandler
 		GameRegistry.registerCraftingHandler(this);
 
 		blockAdvPwrMan = new BlockAdvPwrMan(blockIDAdvPwrMan, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("AdvPwrMan").setCreativeTab(CreativeTabs.tabDecorations);
-		GameRegistry.registerBlock(blockAdvPwrMan, ItemBlockAdvPwrMan.class);
+		GameRegistry.registerBlock(blockAdvPwrMan, ItemBlockAdvPwrMan.class, "blockAdvPwrMan");
 
 		// Charging Benches
 		GameRegistry.registerTileEntity(TEChargingBench.class, "LV " + Info.CHARGER_NAME); // Legacy mappings for backward compatibility - we didn't know wtf we were doing when we started this mod :)

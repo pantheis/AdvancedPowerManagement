@@ -6,7 +6,6 @@ package com.kaijin.AdvPowerMan;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.inventory.Slot;
 
 public class SlotMachineUpgrade extends SlotCustom
 {

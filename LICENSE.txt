@@ -1,7 +1,7 @@
 TERMS AND CONDITIONS
 
-Version 1.0.2.IC2 Edition
-July 19th, 2012
+Version 1.0.3.IC2 Edition
+December 27th, 2012
 This document supersedes and replaces any prior license agreement.
 
 0. Used Terms
@@ -54,9 +54,9 @@ certain terms.
 Public distribution of the original or modified source is allowed without other
 restrictions only as long as the copyright headers on each file are maintained
 as originally published by owner, this license file is included in all
-copies, and modifications are noted at the top of the modified file with the
-author of the modification, the date of the modification, and a brief
-description of what was changed.
+copies, and modifications are noted with the author of the modification,
+the date of the modification, and a brief description of what was changed. A
+git commit history will suffice.
 
 Creating entirely new works based on portions of the source is allowed without
 any restrictions.
@@ -64,9 +64,10 @@ any restrictions.
 5. Distribution of original or modified copy rights
 ---------------------------------------------------
 This mod may only be distributed where uploaded, mirrored, or otherwise linked
-to by the owner. All other distribution of this mod, including distribution as
-part of a publicly available modpack, must have advance written permission
-from the owner.
+to by the owner. All other distribution of this mod, with the exception of
+modpacks, must have advance written permission from the owner. Please see
+https://github.com/pantheis/AdvancedPowerManagement/wiki/Modpacks for modpack
+specific distribution requirements.
 
 6. Commercial Purposes
 ----------------------
@@ -77,9 +78,7 @@ strictly forbidden without advance written permission from owner.
 ----------------------
 Any part of this license agreement in conflict with required licensing for
 Industrial Craft 2 mods is void or replaced by IC2 licensing language, as
-appropriate. As per the Industrial Craft 2 mod licensing agreement, this mod
-can only be distributed in compiled form on the Industrial Craft 2 forums
-located at http://forum.industrial-craft.net/index.php
+appropriate.
 
 Please see http://forum.industrial-craft.net/index.php?page=Thread&threadID=344
 for more details on the Industrial Craft 2 licensing details.

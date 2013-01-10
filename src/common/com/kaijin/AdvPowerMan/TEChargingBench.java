@@ -6,20 +6,14 @@ package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
 import ic2.api.ElectricItem;
-import ic2.api.energy.EnergyNet;
 import ic2.api.IElectricItem;
-import ic2.api.energy.tile.IEnergySink;
 import ic2.api.IEnergyStorage;
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.tile.IEnergySink;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -29,6 +23,9 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
+import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TEChargingBench extends TECommonBench implements IEnergySink, IEnergyStorage, IInventory, ISidedInventory
 {
@@ -416,7 +413,9 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 		if (!initialized && worldObj != null)
 		{
-			EnergyNet.getForWorld(worldObj).addTileEntity(this);
+			EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
+			MinecraftForge.EVENT_BUS.post(loadEvent);
+//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
 

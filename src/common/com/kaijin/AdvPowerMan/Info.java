@@ -4,15 +4,15 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.item.ItemStack;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class Info
 {
 	// Mod Info
 	public static final String VERSION = "@VERSION@";
 	//public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
-	public static final String DEPENDENCIES = "required-after:IC2@[1.112,);required-after:Forge@[6.5.0.471,)";
+	public static final String DEPENDENCIES = "required-after:IC2@[1.112,);required-after:Forge@[6.6.0.497,)";
 	public static final String CLIENT_PROXY = "com.kaijin.AdvPowerMan.ClientProxy";
 	public static final String SERVER_PROXY = "com.kaijin.AdvPowerMan.CommonProxy";
 	public static final String PACKET_CHANNEL = "kaijinAdvPwrMan"; // CHANNEL MAX 16 CHARS
