@@ -4,10 +4,9 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import net.minecraft.inventory.Container;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
-import net.minecraft.entity.player.InventoryPlayer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

@@ -6,17 +6,14 @@ package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
 import ic2.api.ElectricItem;
-import ic2.api.energy.EnergyNet;
 import ic2.api.IElectricItem;
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileSourceEvent;
 import ic2.api.energy.tile.IEnergySource;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -26,6 +23,9 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
+import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TEBatteryStation extends TECommonBench implements IEnergySource, IInventory, ISidedInventory
 {
@@ -206,7 +206,9 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 		if (!initialized && worldObj != null)
 		{
-			EnergyNet.getForWorld(worldObj).addTileEntity(this);
+			EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
+			MinecraftForge.EVENT_BUS.post(loadEvent);
+//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
 
@@ -249,7 +251,11 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		//if (ChargingBench.isDebugging) System.out.println("preEmit-currentEnergy: " + currentEnergy);
 		if (currentEnergy >= packetSize)
 		{
-			final int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, packetSize);
+			EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
+			MinecraftForge.EVENT_BUS.post(sourceEvent);
+//			final int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, packetSize);
+			final int surplus = sourceEvent.amount;
+			
 			if (surplus < packetSize)
 			{
 				final int sent = packetSize - surplus;

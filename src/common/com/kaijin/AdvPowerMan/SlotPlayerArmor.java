@@ -8,7 +8,6 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.inventory.Slot;
 
 class SlotPlayerArmor extends SlotCustom
 {

@@ -4,8 +4,8 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.item.ItemStack;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class Info
 {
