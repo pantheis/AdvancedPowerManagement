@@ -28,7 +28,7 @@ public class ContainerAdvEmitter extends Container
 	}
 
 	@Override
-	public void updateCraftingResults()
+	public void detectAndSendChanges()
 	{
 		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateCraftingResults");
 		for (int crafterIndex = 0; crafterIndex < crafters.size(); ++crafterIndex)

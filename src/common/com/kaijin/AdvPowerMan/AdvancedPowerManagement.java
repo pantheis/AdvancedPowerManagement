@@ -119,7 +119,7 @@ public class AdvancedPowerManagement implements ICraftingHandler
 		GameRegistry.registerCraftingHandler(this);
 
 		blockAdvPwrMan = new BlockAdvPwrMan(blockIDAdvPwrMan, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("AdvPwrMan").setCreativeTab(CreativeTabs.tabDecorations);
-		GameRegistry.registerBlock(blockAdvPwrMan, ItemBlockAdvPwrMan.class);
+		GameRegistry.registerBlock(blockAdvPwrMan, ItemBlockAdvPwrMan.class, "blockAdvPwrMan");
 
 		// Charging Benches
 		GameRegistry.registerTileEntity(TEChargingBench.class, "LV " + Info.CHARGER_NAME); // Legacy mappings for backward compatibility - we didn't know wtf we were doing when we started this mod :)

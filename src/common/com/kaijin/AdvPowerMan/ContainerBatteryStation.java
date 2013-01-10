@@ -67,10 +67,10 @@ public class ContainerBatteryStation extends Container
 	}
 
 	@Override
-	public void updateCraftingResults()
+	public void detectAndSendChanges()
 	{
 		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateCraftingResults");
-		super.updateCraftingResults();
+		super.detectAndSendChanges();
 
 		final int syncAvg = (int)(tileentity.outputTracker.getAverage() * 100);
 		final int energy = tileentity.getTotalEnergy();
