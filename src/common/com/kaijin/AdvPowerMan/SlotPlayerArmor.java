@@ -8,7 +8,6 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.inventory.Slot;
 
 class SlotPlayerArmor extends SlotCustom
 {
@@ -31,7 +30,7 @@ class SlotPlayerArmor extends SlotCustom
 	public boolean isItemValid(ItemStack stack)
 	{
 		if (stack == null) return false;
-		return stack.getItem() instanceof ItemArmor ? ((ItemArmor)stack.getItem()).armorType == this.armorType : (stack.getItem().shiftedIndex == Block.pumpkin.blockID ? this.armorType == 0 : false);
+		return stack.getItem() instanceof ItemArmor ? ((ItemArmor)stack.getItem()).armorType == this.armorType : (stack.getItem().itemID == Block.pumpkin.blockID ? this.armorType == 0 : false);
 	}
 
 	@Override

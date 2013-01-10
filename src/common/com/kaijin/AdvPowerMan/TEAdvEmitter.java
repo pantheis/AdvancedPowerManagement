@@ -6,18 +6,15 @@ package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
 import ic2.api.energy.EnergyNet;
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileSourceEvent;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySource;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import cpw.mods.fml.common.FMLLog;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.common.FMLLog;
 
 public class TEAdvEmitter extends TECommon implements IEnergySource
 {
@@ -93,7 +90,9 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 	{
 		if (worldObj != null && initialized)
 		{
-			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
+			EnergyTileUnloadEvent unloadEvent = new EnergyTileUnloadEvent(this);
+			MinecraftForge.EVENT_BUS.post(unloadEvent);
+//			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
 		}
 		super.invalidate();
 	}
@@ -128,7 +127,9 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				return;
 			}
-			EnergyNet.getForWorld(worldObj).addTileEntity(this);
+			EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
+			MinecraftForge.EVENT_BUS.post(loadEvent);
+//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
 
@@ -138,7 +139,9 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 			EnergyNet net = EnergyNet.getForWorld(worldObj);
 			while (energyBuffer >= packetSize)
 			{
-				net.emitEnergyFrom(this, packetSize); // No reason to save any surplus. Output is always the same.
+				EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
+				MinecraftForge.EVENT_BUS.post(sourceEvent);
+//				net.emitEnergyFrom(this, packetSize); // No reason to save any surplus. Output is always the same.
 				energyBuffer -= packetSize;
 			}
 		}

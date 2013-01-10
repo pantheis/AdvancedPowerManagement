@@ -5,13 +5,13 @@
 package com.kaijin.AdvPowerMan;
 
 import ic2.api.IElectricItem;
-import net.minecraft.inventory.Container;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.inventory.Slot;
 
 public class ContainerChargingBench extends Container
 {
@@ -88,10 +88,10 @@ public class ContainerChargingBench extends Container
 	}
 
 	@Override
-	public void updateCraftingResults()
+	public void detectAndSendChanges()
 	{
 		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateCraftingResults");
-		super.updateCraftingResults();
+		super.detectAndSendChanges();
 
 		for (int crafterIndex = 0; crafterIndex < crafters.size(); ++crafterIndex)
 		{
