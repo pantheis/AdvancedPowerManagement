@@ -7,7 +7,7 @@ package com.kaijin.AdvPowerMan;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +20,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockAdvPwrMan extends Block
+public class BlockAdvPwrMan extends BlockContainer
 {
 	//base texture index
 	private final int baseTexture = 16;
@@ -232,7 +232,13 @@ public class BlockAdvPwrMan extends Block
 	}
 
 	@Override
-	public TileEntity createTileEntity(World world, int metadata)
+	public TileEntity createNewTileEntity(World world)
+	{
+		return null;
+	}
+	
+	@Override
+	public TileEntity createNewTileEntity(World world, int metadata)
 	{
 		//if (ChargingBench.isDebugging) System.out.println("BlockAdvPwrMan.createTileEntity");
 		switch (metadata)

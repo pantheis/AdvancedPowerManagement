@@ -66,7 +66,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		powerTier = baseTier;
 		//Output math = 32 for tier 1, 128 for tier 2, 512 for tier 3
 		packetSize = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
-		
+
 	}
 
 	// IC2 API functions
@@ -139,33 +139,30 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!AdvancedPowerManagement.proxy.isClient())
+		super.readFromNBT(nbttagcompound);
+
+		if (Info.isDebugging) System.out.println("BS ID: " + nbttagcompound.getString("id"));
+
+		baseTier = nbttagcompound.getInteger("baseTier");
+		opMode = nbttagcompound.getInteger("opMode");
+		currentEnergy = nbttagcompound.getInteger("currentEnergy");
+
+		// Our inventory
+		contents = new ItemStack[Info.BS_INVENTORY_SIZE];
+		NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
+		for (int i = 0; i < nbttaglist.tagCount(); ++i)
 		{
-			super.readFromNBT(nbttagcompound);
+			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
+			int j = nbttagcompound1.getByte("Slot") & 255;
 
-			if (Info.isDebugging) System.out.println("BS ID: " + nbttagcompound.getString("id"));
-
-			baseTier = nbttagcompound.getInteger("baseTier");
-			opMode = nbttagcompound.getInteger("opMode");
-			currentEnergy = nbttagcompound.getInteger("currentEnergy");
-
-			// Our inventory
-			contents = new ItemStack[Info.BS_INVENTORY_SIZE];
-			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-			for (int i = 0; i < nbttaglist.tagCount(); ++i)
+			if (j >= 0 && j < contents.length)
 			{
-				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
-				int j = nbttagcompound1.getByte("Slot") & 255;
-
-				if (j >= 0 && j < contents.length)
-				{
-					contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-				}
+				contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
 			}
-
-			// We can calculate these, no need to save/load them.
-			initializeValues();
 		}
+
+		// We can calculate these, no need to save/load them.
+		initializeValues();
 	}
 
 	/**
@@ -174,29 +171,26 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!AdvancedPowerManagement.proxy.isClient())
+		super.writeToNBT(nbttagcompound);
+
+		nbttagcompound.setInteger("baseTier", baseTier);
+		nbttagcompound.setInteger("opMode", opMode);
+		nbttagcompound.setInteger("currentEnergy", currentEnergy);
+
+		// Our inventory
+		NBTTagList nbttaglist = new NBTTagList();
+		for (int i = 0; i < contents.length; ++i)
 		{
-			super.writeToNBT(nbttagcompound);
-
-			nbttagcompound.setInteger("baseTier", baseTier);
-			nbttagcompound.setInteger("opMode", opMode);
-			nbttagcompound.setInteger("currentEnergy", currentEnergy);
-
-			// Our inventory
-			NBTTagList nbttaglist = new NBTTagList();
-			for (int i = 0; i < contents.length; ++i)
+			if (contents[i] != null)
 			{
-				if (contents[i] != null)
-				{
-					//if (ChargingBench.isDebugging) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
-					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-					nbttagcompound1.setByte("Slot", (byte)i);
-					contents[i].writeToNBT(nbttagcompound1);
-					nbttaglist.appendTag(nbttagcompound1);
-				}
+				//if (ChargingBench.isDebugging) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
+				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+				nbttagcompound1.setByte("Slot", (byte)i);
+				contents[i].writeToNBT(nbttagcompound1);
+				nbttaglist.appendTag(nbttagcompound1);
 			}
-			nbttagcompound.setTag("Items", nbttaglist);
 		}
+		nbttagcompound.setTag("Items", nbttaglist);
 	}
 
 	@Override
@@ -208,7 +202,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		{
 			EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
 			MinecraftForge.EVENT_BUS.post(loadEvent);
-//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
+			//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
 
@@ -253,9 +247,9 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		{
 			EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
 			MinecraftForge.EVENT_BUS.post(sourceEvent);
-//			final int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, packetSize);
+			//			final int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, packetSize);
 			final int surplus = sourceEvent.amount;
-			
+
 			if (surplus < packetSize)
 			{
 				final int sent = packetSize - surplus;
