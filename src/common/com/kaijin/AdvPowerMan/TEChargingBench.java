@@ -49,7 +49,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		super();
 		// Do nothing else; Creating the inventory array and loading previous values will be handled in NBT read method momentarily.
 	}
-	
+
 	public TEChargingBench(int i) // Constructor used when placing a new tile entity, to set up correct parameters
 	{
 		super();
@@ -120,7 +120,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	// IC2 API stuff
 
 	// IEnergySink
-	
+
 	@Override
 	public void setStored(int energy)
 	{
@@ -146,7 +146,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		// TODO Auto-generated method stub
 		return adjustedMaxInput;
 	}
-	
+
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
 	{
@@ -156,7 +156,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public int demandsEnergy()
 	{
-//		return (currentEnergy < adjustedStorage && !receivingRedstoneSignal());
+		//		return (currentEnergy < adjustedStorage && !receivingRedstoneSignal());
 		if(!receivingRedstoneSignal())
 		{
 			return adjustedStorage - currentEnergy;
@@ -213,7 +213,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	{
 		return currentEnergy;
 	}
-	
+
 	/**
 	 * Get the maximum amount of energy the block can store.
 	 * 
@@ -224,7 +224,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	{
 		return adjustedStorage;
 	}
-	
+
 	/**
 	 * Get the block's energy output.
 	 * 
@@ -342,34 +342,31 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!AdvancedPowerManagement.proxy.isClient())
+		super.readFromNBT(nbttagcompound);
+
+		if (Info.isDebugging) System.out.println("CB ID: " + nbttagcompound.getString("id"));
+
+		baseTier = nbttagcompound.getInteger("baseTier");
+		currentEnergy = nbttagcompound.getInteger("currentEnergy");
+		//if (ChargingBench.isDebugging) System.out.println("ReadNBT.CurrentEergy: " + currentEnergy);
+
+		// Our inventory
+		contents = new ItemStack[Info.CB_INVENTORY_SIZE];
+		NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
+		for (int i = 0; i < nbttaglist.tagCount(); ++i)
 		{
-			super.readFromNBT(nbttagcompound);
+			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
+			int j = nbttagcompound1.getByte("Slot") & 255;
 
-			if (Info.isDebugging) System.out.println("CB ID: " + nbttagcompound.getString("id"));
-
-			baseTier = nbttagcompound.getInteger("baseTier");
-			currentEnergy = nbttagcompound.getInteger("currentEnergy");
-			//if (ChargingBench.isDebugging) System.out.println("ReadNBT.CurrentEergy: " + currentEnergy);
-
-			// Our inventory
-			contents = new ItemStack[Info.CB_INVENTORY_SIZE];
-			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-			for (int i = 0; i < nbttaglist.tagCount(); ++i)
+			if (j >= 0 && j < contents.length)
 			{
-				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
-				int j = nbttagcompound1.getByte("Slot") & 255;
-
-				if (j >= 0 && j < contents.length)
-				{
-					contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-				}
+				contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
 			}
-
-			// We can calculate these, no need to save/load them.
-			initializeBaseValues();
-			doUpgradeEffects();
 		}
+
+		// We can calculate these, no need to save/load them.
+		initializeBaseValues();
+		doUpgradeEffects();
 	}
 
 	/**
@@ -378,29 +375,26 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!AdvancedPowerManagement.proxy.isClient())
+		super.writeToNBT(nbttagcompound);
+
+		nbttagcompound.setInteger("baseTier", baseTier);
+		nbttagcompound.setInteger("currentEnergy", currentEnergy);
+		//if (ChargingBench.isDebugging) System.out.println("WriteNBT.CurrentEergy: " + currentEnergy);
+
+		// Our inventory
+		NBTTagList nbttaglist = new NBTTagList();
+		for (int i = 0; i < contents.length; ++i)
 		{
-			super.writeToNBT(nbttagcompound);
-
-			nbttagcompound.setInteger("baseTier", baseTier);
-			nbttagcompound.setInteger("currentEnergy", currentEnergy);
-			//if (ChargingBench.isDebugging) System.out.println("WriteNBT.CurrentEergy: " + currentEnergy);
-
-			// Our inventory
-			NBTTagList nbttaglist = new NBTTagList();
-			for (int i = 0; i < contents.length; ++i)
+			if (contents[i] != null)
 			{
-				if (contents[i] != null)
-				{
-					//if (ChargingBench.isDebugging) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
-					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-					nbttagcompound1.setByte("Slot", (byte)i);
-					contents[i].writeToNBT(nbttagcompound1);
-					nbttaglist.appendTag(nbttagcompound1);
-				}
+				//if (ChargingBench.isDebugging) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
+				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+				nbttagcompound1.setByte("Slot", (byte)i);
+				contents[i].writeToNBT(nbttagcompound1);
+				nbttaglist.appendTag(nbttagcompound1);
 			}
-			nbttagcompound.setTag("Items", nbttaglist);
 		}
+		nbttagcompound.setTag("Items", nbttaglist);
 	}
 
 	@Override
@@ -415,7 +409,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		{
 			EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
 			MinecraftForge.EVENT_BUS.post(loadEvent);
-//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
+			//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
 
