@@ -37,7 +37,7 @@ public class SlotPowerSource extends SlotCustom
 		if (stack != null && stack.getItem() instanceof IElectricItem)
 		{
 			IElectricItem item = (IElectricItem)(stack.getItem());
-			if (item.canProvideEnergy() && item.getTier() <= powerTier) return true;
+			if (item.canProvideEnergy(stack) && item.getTier(stack) <= powerTier) return true;
 		}
 		return false;
 	}

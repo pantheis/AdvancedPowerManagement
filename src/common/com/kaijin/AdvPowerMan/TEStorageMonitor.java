@@ -129,7 +129,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		dropContents();
 		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, 11);
 		dropItem(stack);
-		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
+		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		this.invalidate();
 	}
 

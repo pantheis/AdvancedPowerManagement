@@ -25,7 +25,7 @@ public class SlotChargeable extends SlotCustom
 		if (stack != null && stack.getItem() instanceof IElectricItem)
 		{
 			IElectricItem item = (IElectricItem)(stack.getItem());
-			if (item.getTier() <= chargeTier) return true;
+			if (item.getTier(stack) <= chargeTier) return true;
 		}
 		return false;
 	}

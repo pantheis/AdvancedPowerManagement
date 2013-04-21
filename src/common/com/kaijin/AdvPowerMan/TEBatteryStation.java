@@ -113,7 +113,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		dropContents();
 		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, baseTier - 1);
 		dropItem(stack);
-		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
+		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		this.invalidate();
 	}
 
@@ -125,7 +125,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			IElectricItem item = (IElectricItem)(stack.getItem());
 			// Is the item appropriate for this slot?
 			if (slot == Info.BS_SLOT_OUTPUT) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
-			if (item.canProvideEnergy() && item.getTier() <= powerTier)
+			if (item.canProvideEnergy(stack) && item.getTier(stack) <= powerTier)
 			{
 				if ((slot >= Info.BS_SLOT_POWER_START && slot < Info.BS_SLOT_POWER_START + 12) || slot == Info.BS_SLOT_INPUT) return true;
 			}
@@ -277,14 +277,14 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				IElectricItem item = (IElectricItem)(stack.getItem());
-				if (item.getTier() <= powerTier && item.canProvideEnergy())
+				if (item.getTier(stack) <= powerTier && item.canProvideEnergy(stack))
 				{
-					int emptyItemID = item.getEmptyItemId();
-					int chargedItemID = item.getChargedItemId();
+					int emptyItemID = item.getEmptyItemId(stack);
+					int chargedItemID = item.getChargedItemId(stack);
 
 					if (stack.itemID == chargedItemID)
 					{
-						int transferLimit = item.getTransferLimit();
+						int transferLimit = item.getTransferLimit(stack);
 						//int amountNeeded = baseMaxOutput - currentEnergy;
 						if (transferLimit == 0) transferLimit = packetSize;
 						//if (transferLimit > amountNeeded) transferLimit = amountNeeded;
@@ -330,10 +330,10 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 				if (currentStack != null && currentStack.getItem() instanceof IElectricItem)
 				{
 					IElectricItem powerSource = (IElectricItem)(currentStack.getItem());
-					if (powerSource.getTier() <= powerTier) // && powerSource.canProvideEnergy()
+					if (powerSource.getTier(currentStack) <= powerTier) // && powerSource.canProvideEnergy()
 					{
-						int emptyItemID = powerSource.getEmptyItemId();
-						int chargedItemID = powerSource.getChargedItemId();
+						int emptyItemID = powerSource.getEmptyItemId(currentStack);
+						int chargedItemID = powerSource.getChargedItemId(currentStack);
 						if (emptyItemID != chargedItemID)
 						{
 							if (currentStack.itemID == emptyItemID)
@@ -409,7 +409,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		if (stack == null || !(stack.getItem() instanceof IElectricItem) || (opMode == 1 && hasEnoughItems)) return;
 
 		IElectricItem item = (IElectricItem)stack.getItem();
-		if (item.canProvideEnergy())
+		if (item.canProvideEnergy(stack))
 		{
 			// Input slot contains a power source. If possible, move one of it into the discharging area.
 			for (int slot = Info.BS_SLOT_POWER_START; slot < Info.BS_SLOT_POWER_START + 12; ++slot)
@@ -450,7 +450,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				final IElectricItem item = (IElectricItem)(stack.getItem());
-				if (item.getTier() <= powerTier && item.canProvideEnergy() && stack.itemID == item.getChargedItemId())
+				if (item.getTier(stack) <= powerTier && item.canProvideEnergy(stack) && stack.itemID == item.getChargedItemId(stack))
 				{
 					final int chargeReturned = ElectricItem.discharge(stack, Integer.MAX_VALUE, powerTier, true, true);
 					if (chargeReturned > 0)

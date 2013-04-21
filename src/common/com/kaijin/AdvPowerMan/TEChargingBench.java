@@ -103,7 +103,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	{
 		int oldTier = baseTier;
 		baseTier = newTier;
-		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newTier - 1);
+		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newTier - 1, 3);
 		initializeBaseValues();
 		doUpgradeEffects();
 		chargeLevel = gaugeEnergyScaled(12);
@@ -255,7 +255,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		dropContents();
 		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, baseTier - 1);
 		dropItem(stack);
-		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
+		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		this.invalidate();
 	}
 
@@ -327,10 +327,10 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		{
 			IElectricItem item = (IElectricItem)(stack.getItem());
 			// Is the item appropriate for this slot?
-			if (slot == Info.CB_SLOT_POWER_SOURCE && item.canProvideEnergy() && item.getTier() <= powerTier) return true;
-			if (slot >= Info.CB_SLOT_CHARGING && slot < Info.CB_SLOT_CHARGING + 12 && item.getTier() <= baseTier) return true;
+			if (slot == Info.CB_SLOT_POWER_SOURCE && item.canProvideEnergy(stack) && item.getTier(stack) <= powerTier) return true;
+			if (slot >= Info.CB_SLOT_CHARGING && slot < Info.CB_SLOT_CHARGING + 12 && item.getTier(stack) <= baseTier) return true;
 			if (slot >= Info.CB_SLOT_UPGRADE && slot < Info.CB_SLOT_UPGRADE + 4 && (stack.isItemEqual(Info.ic2overclockerUpg) || stack.isItemEqual(Info.ic2transformerUpg) || stack.isItemEqual(Info.ic2storageUpg))) return true;
-			if (slot == Info.CB_SLOT_INPUT && item.getTier() <= baseTier) return true;
+			if (slot == Info.CB_SLOT_INPUT && item.getTier(stack) <= baseTier) return true;
 			if (slot == Info.CB_SLOT_OUTPUT) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
 		}
 		return false; 
@@ -448,14 +448,14 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		{
 			IElectricItem powerSource = (IElectricItem)(stack.getItem());
 
-			int emptyItemID = powerSource.getEmptyItemId();
-			int chargedItemID = powerSource.getChargedItemId();
+			int emptyItemID = powerSource.getEmptyItemId(stack);
+			int chargedItemID = powerSource.getChargedItemId(stack);
 
 			if (stack.itemID == chargedItemID)
 			{
-				if (powerSource.getTier() <= powerTier && powerSource.canProvideEnergy())
+				if (powerSource.getTier(stack) <= powerTier && powerSource.canProvideEnergy(stack))
 				{
-					int itemTransferLimit = powerSource.getTransferLimit();
+					int itemTransferLimit = powerSource.getTransferLimit(stack);
 					int energyNeeded = adjustedStorage - currentEnergy;
 
 					// Test if the amount of energy we have room for is greater than what the item can transfer per tick.
@@ -505,14 +505,14 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 			if (currentEnergy > 0 && stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				IElectricItem item = (IElectricItem)(stack.getItem());
-				if (item.getTier() <= baseTier)
+				if (item.getTier(stack) <= baseTier)
 				{
-					int itemTransferLimit = item.getTransferLimit();
+					int itemTransferLimit = item.getTransferLimit(stack);
 					if (itemTransferLimit == 0) itemTransferLimit = baseMaxInput;
 					int adjustedTransferLimit = (int)Math.ceil(chargeFactor * itemTransferLimit);
 
 					int amountNeeded;
-					if (item.getChargedItemId() != item.getEmptyItemId() || stack.isStackable())
+					if (item.getChargedItemId(stack) != item.getEmptyItemId(stack) || stack.isStackable())
 					{
 						// Running stack.copy() on every item every tick would be a horrible thing for performance, but the workaround is needed
 						// for ElectricItem.charge adding stackTagCompounds for charge level to EmptyItemID batteries even when run in simulate mode.
@@ -667,6 +667,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		}
 	}
 
+	//TODO
 	@Override
 	public int getSizeInventorySide(ForgeDirection side)
 	{
