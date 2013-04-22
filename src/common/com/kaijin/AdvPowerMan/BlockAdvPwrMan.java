@@ -7,28 +7,29 @@ package com.kaijin.AdvPowerMan;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockAdvPwrMan extends Block
+public class BlockAdvPwrMan extends BlockContainer
 {
 	//base texture index
 	private final int baseTexture = 16;
 	private final int sideTexture = 32;
 
-	public BlockAdvPwrMan(int i, int j, Material material)
+	public BlockAdvPwrMan(int i, Material material)
 	{
-		super(i, j, material);
+		super(i, material);
 	}
 
     @SideOnly(Side.CLIENT)
@@ -195,16 +196,16 @@ public class BlockAdvPwrMan extends Block
 	}
 
 	@Override
-	public boolean isProvidingWeakPower(IBlockAccess block, int x, int y, int z, int side)
+	public int isProvidingWeakPower(IBlockAccess block, int x, int y, int z, int side)
 	{
 		TileEntity tile = block.getBlockTileEntity(x, y, z);
 		return tile instanceof TEStorageMonitor && ((TEStorageMonitor)tile).isPowering;
 	}
 
 	@Override
-	public boolean isProvidingStrongPower(IBlockAccess block, int x, int y, int z, int side)
+	public int isProvidingStrongPower(IBlockAccess block, int x, int y, int z, int side)
 	{
-		return false;
+		return 0;
 	}
 
 	@Override
@@ -231,6 +232,12 @@ public class BlockAdvPwrMan extends Block
 		return true;
 	}
 
+	@Override
+	public TileEntity createNewTileEntity(World world)
+	{
+		return null;
+	}
+	
 	@Override
 	public TileEntity createTileEntity(World world, int metadata)
 	{

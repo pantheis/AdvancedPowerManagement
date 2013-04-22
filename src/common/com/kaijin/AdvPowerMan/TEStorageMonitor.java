@@ -6,13 +6,9 @@ package com.kaijin.AdvPowerMan;
 
 import ic2.api.IEnergyStorage;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +20,8 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TEStorageMonitor extends TECommon implements IInventory, ISidedInventory
 {
@@ -31,16 +29,16 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 
 	private int tickTime = 0;
 	private int tickDelay = 5;
-	
+
 	public int lowerBoundary = 60;
 	public int upperBoundary = 90;
-	
+
 	private boolean tileLoaded = false;
 
 	public int energyStored = 0;
 	public int energyCapacity = 0;
 	public int chargeLevel = 0;
-	
+
 	public boolean isPowering = false;
 	public boolean blockState = false;
 
@@ -58,27 +56,24 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!AdvancedPowerManagement.proxy.isClient())
+		super.readFromNBT(nbttagcompound);
+
+		// State info to remember
+		isPowering = nbttagcompound.getBoolean("isPowering");
+		upperBoundary = nbttagcompound.getInteger("upperBoundary");
+		lowerBoundary = nbttagcompound.getInteger("lowerBoundary");
+
+		// Our inventory
+		NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
+		//Redundant: contents = new ItemStack[Info.SM_INVENTORY_SIZE];
+		for (int i = 0; i < nbttaglist.tagCount(); ++i)
 		{
-			super.readFromNBT(nbttagcompound);
+			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
+			int j = nbttagcompound1.getByte("Slot") & 255;
 
-			// State info to remember
-			isPowering = nbttagcompound.getBoolean("isPowering");
-			upperBoundary = nbttagcompound.getInteger("upperBoundary");
-			lowerBoundary = nbttagcompound.getInteger("lowerBoundary");
-
-			// Our inventory
-			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-			//Redundant: contents = new ItemStack[Info.SM_INVENTORY_SIZE];
-			for (int i = 0; i < nbttaglist.tagCount(); ++i)
+			if (j >= 0 && j < contents.length)
 			{
-				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
-				int j = nbttagcompound1.getByte("Slot") & 255;
-
-				if (j >= 0 && j < contents.length)
-				{
-					contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-				}
+				contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
 			}
 		}
 	}
@@ -89,30 +84,27 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!AdvancedPowerManagement.proxy.isClient())
+		super.writeToNBT(nbttagcompound);
+
+		// State info to remember
+		nbttagcompound.setBoolean("isPowering", isPowering);
+		nbttagcompound.setInteger("upperBoundary", upperBoundary);
+		nbttagcompound.setInteger("lowerBoundary", lowerBoundary);
+
+		// Our inventory
+		NBTTagList nbttaglist = new NBTTagList();
+		for (int i = 0; i < contents.length; ++i)
 		{
-			super.writeToNBT(nbttagcompound);
-
-			// State info to remember
-			nbttagcompound.setBoolean("isPowering", isPowering);
-			nbttagcompound.setInteger("upperBoundary", upperBoundary);
-			nbttagcompound.setInteger("lowerBoundary", lowerBoundary);
-
-			// Our inventory
-			NBTTagList nbttaglist = new NBTTagList();
-			for (int i = 0; i < contents.length; ++i)
+			if (contents[i] != null)
 			{
-				if (contents[i] != null)
-				{
-					//if (ChargingBench.isDebugging) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
-					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-					nbttagcompound1.setByte("Slot", (byte)i);
-					contents[i].writeToNBT(nbttagcompound1);
-					nbttaglist.appendTag(nbttagcompound1);
-				}
+				//if (ChargingBench.isDebugging) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
+				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+				nbttagcompound1.setByte("Slot", (byte)i);
+				contents[i].writeToNBT(nbttagcompound1);
+				nbttaglist.appendTag(nbttagcompound1);
 			}
-			nbttagcompound.setTag("Items", nbttaglist);
 		}
+		nbttagcompound.setTag("Items", nbttaglist);
 	}
 
 	@Override
@@ -137,7 +129,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		dropContents();
 		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, 11);
 		dropItem(stack);
-		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
+		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		this.invalidate();
 	}
 
@@ -159,7 +151,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 			if (item != null && item.stackSize > 0) dropItem(item);
 		}
 	}
-	
+
 	public boolean isItemValid(int slot, ItemStack stack)
 	{
 		// Decide if the item is valid to place in a slot  
@@ -418,7 +410,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		blockState = c;
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
-	
+
 	// ISidedInventory
 
 	@Override
@@ -442,7 +434,7 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 		default:
 			return StorageMonitor.slotUniversal;
 		}
-		*/
+		 */
 		return Info.SM_SLOT_UNIVERSAL;
 	}
 

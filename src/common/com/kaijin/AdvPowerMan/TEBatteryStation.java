@@ -6,17 +6,14 @@ package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
 import ic2.api.ElectricItem;
-import ic2.api.energy.EnergyNet;
 import ic2.api.IElectricItem;
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileSourceEvent;
 import ic2.api.energy.tile.IEnergySource;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -26,6 +23,9 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
+import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TEBatteryStation extends TECommonBench implements IEnergySource, IInventory, ISidedInventory
 {
@@ -66,7 +66,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		powerTier = baseTier;
 		//Output math = 32 for tier 1, 128 for tier 2, 512 for tier 3
 		packetSize = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
-		
+
 	}
 
 	// IC2 API functions
@@ -113,7 +113,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		dropContents();
 		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, baseTier - 1);
 		dropItem(stack);
-		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
+		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		this.invalidate();
 	}
 
@@ -125,7 +125,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			IElectricItem item = (IElectricItem)(stack.getItem());
 			// Is the item appropriate for this slot?
 			if (slot == Info.BS_SLOT_OUTPUT) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
-			if (item.canProvideEnergy() && item.getTier() <= powerTier)
+			if (item.canProvideEnergy(stack) && item.getTier(stack) <= powerTier)
 			{
 				if ((slot >= Info.BS_SLOT_POWER_START && slot < Info.BS_SLOT_POWER_START + 12) || slot == Info.BS_SLOT_INPUT) return true;
 			}
@@ -139,33 +139,30 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!AdvancedPowerManagement.proxy.isClient())
+		super.readFromNBT(nbttagcompound);
+
+		if (Info.isDebugging) System.out.println("BS ID: " + nbttagcompound.getString("id"));
+
+		baseTier = nbttagcompound.getInteger("baseTier");
+		opMode = nbttagcompound.getInteger("opMode");
+		currentEnergy = nbttagcompound.getInteger("currentEnergy");
+
+		// Our inventory
+		contents = new ItemStack[Info.BS_INVENTORY_SIZE];
+		NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
+		for (int i = 0; i < nbttaglist.tagCount(); ++i)
 		{
-			super.readFromNBT(nbttagcompound);
+			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
+			int j = nbttagcompound1.getByte("Slot") & 255;
 
-			if (Info.isDebugging) System.out.println("BS ID: " + nbttagcompound.getString("id"));
-
-			baseTier = nbttagcompound.getInteger("baseTier");
-			opMode = nbttagcompound.getInteger("opMode");
-			currentEnergy = nbttagcompound.getInteger("currentEnergy");
-
-			// Our inventory
-			contents = new ItemStack[Info.BS_INVENTORY_SIZE];
-			NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-			for (int i = 0; i < nbttaglist.tagCount(); ++i)
+			if (j >= 0 && j < contents.length)
 			{
-				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
-				int j = nbttagcompound1.getByte("Slot") & 255;
-
-				if (j >= 0 && j < contents.length)
-				{
-					contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-				}
+				contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
 			}
-
-			// We can calculate these, no need to save/load them.
-			initializeValues();
 		}
+
+		// We can calculate these, no need to save/load them.
+		initializeValues();
 	}
 
 	/**
@@ -174,29 +171,26 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		if (!AdvancedPowerManagement.proxy.isClient())
+		super.writeToNBT(nbttagcompound);
+
+		nbttagcompound.setInteger("baseTier", baseTier);
+		nbttagcompound.setInteger("opMode", opMode);
+		nbttagcompound.setInteger("currentEnergy", currentEnergy);
+
+		// Our inventory
+		NBTTagList nbttaglist = new NBTTagList();
+		for (int i = 0; i < contents.length; ++i)
 		{
-			super.writeToNBT(nbttagcompound);
-
-			nbttagcompound.setInteger("baseTier", baseTier);
-			nbttagcompound.setInteger("opMode", opMode);
-			nbttagcompound.setInteger("currentEnergy", currentEnergy);
-
-			// Our inventory
-			NBTTagList nbttaglist = new NBTTagList();
-			for (int i = 0; i < contents.length; ++i)
+			if (contents[i] != null)
 			{
-				if (contents[i] != null)
-				{
-					//if (ChargingBench.isDebugging) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
-					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-					nbttagcompound1.setByte("Slot", (byte)i);
-					contents[i].writeToNBT(nbttagcompound1);
-					nbttaglist.appendTag(nbttagcompound1);
-				}
+				//if (ChargingBench.isDebugging) System.out.println("WriteNBT contents[" + i + "] stack tag: " + contents[i].stackTagCompound);
+				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+				nbttagcompound1.setByte("Slot", (byte)i);
+				contents[i].writeToNBT(nbttagcompound1);
+				nbttaglist.appendTag(nbttagcompound1);
 			}
-			nbttagcompound.setTag("Items", nbttaglist);
 		}
+		nbttagcompound.setTag("Items", nbttaglist);
 	}
 
 	@Override
@@ -206,7 +200,9 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 		if (!initialized && worldObj != null)
 		{
-			EnergyNet.getForWorld(worldObj).addTileEntity(this);
+			EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
+			MinecraftForge.EVENT_BUS.post(loadEvent);
+			//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
 
@@ -249,7 +245,11 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		//if (ChargingBench.isDebugging) System.out.println("preEmit-currentEnergy: " + currentEnergy);
 		if (currentEnergy >= packetSize)
 		{
-			final int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, packetSize);
+			EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
+			MinecraftForge.EVENT_BUS.post(sourceEvent);
+			//			final int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, packetSize);
+			final int surplus = sourceEvent.amount;
+
 			if (surplus < packetSize)
 			{
 				final int sent = packetSize - surplus;
@@ -277,14 +277,14 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				IElectricItem item = (IElectricItem)(stack.getItem());
-				if (item.getTier() <= powerTier && item.canProvideEnergy())
+				if (item.getTier(stack) <= powerTier && item.canProvideEnergy(stack))
 				{
-					int emptyItemID = item.getEmptyItemId();
-					int chargedItemID = item.getChargedItemId();
+					int emptyItemID = item.getEmptyItemId(stack);
+					int chargedItemID = item.getChargedItemId(stack);
 
 					if (stack.itemID == chargedItemID)
 					{
-						int transferLimit = item.getTransferLimit();
+						int transferLimit = item.getTransferLimit(stack);
 						//int amountNeeded = baseMaxOutput - currentEnergy;
 						if (transferLimit == 0) transferLimit = packetSize;
 						//if (transferLimit > amountNeeded) transferLimit = amountNeeded;
@@ -330,10 +330,10 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 				if (currentStack != null && currentStack.getItem() instanceof IElectricItem)
 				{
 					IElectricItem powerSource = (IElectricItem)(currentStack.getItem());
-					if (powerSource.getTier() <= powerTier) // && powerSource.canProvideEnergy()
+					if (powerSource.getTier(currentStack) <= powerTier) // && powerSource.canProvideEnergy()
 					{
-						int emptyItemID = powerSource.getEmptyItemId();
-						int chargedItemID = powerSource.getChargedItemId();
+						int emptyItemID = powerSource.getEmptyItemId(currentStack);
+						int chargedItemID = powerSource.getChargedItemId(currentStack);
 						if (emptyItemID != chargedItemID)
 						{
 							if (currentStack.itemID == emptyItemID)
@@ -409,7 +409,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		if (stack == null || !(stack.getItem() instanceof IElectricItem) || (opMode == 1 && hasEnoughItems)) return;
 
 		IElectricItem item = (IElectricItem)stack.getItem();
-		if (item.canProvideEnergy())
+		if (item.canProvideEnergy(stack))
 		{
 			// Input slot contains a power source. If possible, move one of it into the discharging area.
 			for (int slot = Info.BS_SLOT_POWER_START; slot < Info.BS_SLOT_POWER_START + 12; ++slot)
@@ -450,7 +450,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				final IElectricItem item = (IElectricItem)(stack.getItem());
-				if (item.getTier() <= powerTier && item.canProvideEnergy() && stack.itemID == item.getChargedItemId())
+				if (item.getTier(stack) <= powerTier && item.canProvideEnergy(stack) && stack.itemID == item.getChargedItemId(stack))
 				{
 					final int chargeReturned = ElectricItem.discharge(stack, Integer.MAX_VALUE, powerTier, true, true);
 					if (chargeReturned > 0)

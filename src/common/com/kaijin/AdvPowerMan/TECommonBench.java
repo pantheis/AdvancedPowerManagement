@@ -4,12 +4,13 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import ic2.api.energy.EnergyNet;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergyTile;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.MinecraftForge;
 
 public abstract class TECommonBench extends TECommon implements IInventory
 {
@@ -33,7 +34,9 @@ public abstract class TECommonBench extends TECommon implements IInventory
 	{
 		if (worldObj != null && initialized)
 		{
-			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
+			EnergyTileUnloadEvent unloadEvent = new EnergyTileUnloadEvent((IEnergyTile)this);
+			MinecraftForge.EVENT_BUS.post(unloadEvent);
+//			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
 		}
 		super.invalidate();
 	}

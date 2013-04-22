@@ -7,7 +7,6 @@ package com.kaijin.AdvPowerMan;
 import ic2.api.IElectricItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.inventory.Slot;
 
 public class SlotPowerSource extends SlotCustom
 {
@@ -38,7 +37,7 @@ public class SlotPowerSource extends SlotCustom
 		if (stack != null && stack.getItem() instanceof IElectricItem)
 		{
 			IElectricItem item = (IElectricItem)(stack.getItem());
-			if (item.canProvideEnergy() && item.getTier() <= powerTier) return true;
+			if (item.canProvideEnergy(stack) && item.getTier(stack) <= powerTier) return true;
 		}
 		return false;
 	}

@@ -6,18 +6,15 @@ package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
 import ic2.api.energy.EnergyNet;
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileSourceEvent;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySource;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import cpw.mods.fml.common.FMLLog;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.common.FMLLog;
 
 public class TEAdvEmitter extends TECommon implements IEnergySource
 {
@@ -45,31 +42,28 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound)
 	{
-		if (AdvancedPowerManagement.proxy.isServer())
-		{
-			super.readFromNBT(nbttagcompound);
+		super.readFromNBT(nbttagcompound);
 
-			// Test if block used to be an old style emitter and if so use appropriate settings
-			int baseTier = nbttagcompound.getInteger("baseTier");
-			if (baseTier > 0)
-			{
-				packetSize = outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
-				FMLLog.info(Info.TITLE_LOG + "Loading NBT data for old Emitter block with baseTier of " + baseTier + " and setting output to " + packetSize);
-				
-			}
-			else
-			{
-				// Normal load
-				outputRate = nbttagcompound.getInteger("outputRate");
-				packetSize = nbttagcompound.getInteger("packetSize");
-				energyBuffer = nbttagcompound.getInteger("energyBuffer");
-				if (packetSize > Info.AE_MAX_PACKET) packetSize = Info.AE_MAX_PACKET;
-				if (packetSize < Info.AE_MIN_PACKET) packetSize = Info.AE_MIN_PACKET;
-				if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
-				if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
-				if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
-				if (energyBuffer > packetSize * Info.AE_PACKETS_TICK) energyBuffer = packetSize * Info.AE_PACKETS_TICK;
-			}
+		// Test if block used to be an old style emitter and if so use appropriate settings
+		int baseTier = nbttagcompound.getInteger("baseTier");
+		if (baseTier > 0)
+		{
+			packetSize = outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
+			FMLLog.info(Info.TITLE_LOG + "Loading NBT data for old Emitter block with baseTier of " + baseTier + " and setting output to " + packetSize);
+
+		}
+		else
+		{
+			// Normal load
+			outputRate = nbttagcompound.getInteger("outputRate");
+			packetSize = nbttagcompound.getInteger("packetSize");
+			energyBuffer = nbttagcompound.getInteger("energyBuffer");
+			if (packetSize > Info.AE_MAX_PACKET) packetSize = Info.AE_MAX_PACKET;
+			if (packetSize < Info.AE_MIN_PACKET) packetSize = Info.AE_MIN_PACKET;
+			if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
+			if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
+			if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
+			if (energyBuffer > packetSize * Info.AE_PACKETS_TICK) energyBuffer = packetSize * Info.AE_PACKETS_TICK;
 		}
 	}
 
@@ -79,13 +73,10 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound)
 	{
-		if (AdvancedPowerManagement.proxy.isServer())
-		{
-			super.writeToNBT(nbttagcompound);
-			nbttagcompound.setInteger("outputRate", outputRate);
-			nbttagcompound.setInteger("packetSize", packetSize);
-			nbttagcompound.setInteger("energyBuffer", energyBuffer);
-		}
+		super.writeToNBT(nbttagcompound);
+		nbttagcompound.setInteger("outputRate", outputRate);
+		nbttagcompound.setInteger("packetSize", packetSize);
+		nbttagcompound.setInteger("energyBuffer", energyBuffer);
 	}
 
 	@Override
@@ -93,7 +84,9 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 	{
 		if (worldObj != null && initialized)
 		{
-			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
+			EnergyTileUnloadEvent unloadEvent = new EnergyTileUnloadEvent(this);
+			MinecraftForge.EVENT_BUS.post(unloadEvent);
+			//			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
 		}
 		super.invalidate();
 	}
@@ -124,11 +117,13 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 			if (meta != 7)
 			{
 				FMLLog.info(Info.TITLE_LOG + "Resetting Emitter block meta value from " + meta + " to 7");
-				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, 7);
+				worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 7, 3);
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				return;
 			}
-			EnergyNet.getForWorld(worldObj).addTileEntity(this);
+			EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
+			MinecraftForge.EVENT_BUS.post(loadEvent);
+			//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
 
@@ -138,7 +133,9 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 			EnergyNet net = EnergyNet.getForWorld(worldObj);
 			while (energyBuffer >= packetSize)
 			{
-				net.emitEnergyFrom(this, packetSize); // No reason to save any surplus. Output is always the same.
+				EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
+				MinecraftForge.EVENT_BUS.post(sourceEvent);
+				//				net.emitEnergyFrom(this, packetSize); // No reason to save any surplus. Output is always the same.
 				energyBuffer -= packetSize;
 			}
 		}

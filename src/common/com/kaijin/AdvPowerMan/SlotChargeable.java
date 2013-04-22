@@ -7,7 +7,6 @@ package com.kaijin.AdvPowerMan;
 import ic2.api.IElectricItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.inventory.Slot;
 
 public class SlotChargeable extends SlotCustom
 {
@@ -26,7 +25,7 @@ public class SlotChargeable extends SlotCustom
 		if (stack != null && stack.getItem() instanceof IElectricItem)
 		{
 			IElectricItem item = (IElectricItem)(stack.getItem());
-			if (item.getTier() <= chargeTier) return true;
+			if (item.getTier(stack) <= chargeTier) return true;
 		}
 		return false;
 	}
