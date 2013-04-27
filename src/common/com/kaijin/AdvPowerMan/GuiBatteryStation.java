@@ -64,9 +64,8 @@ public class GuiBatteryStation extends GuiContainer
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
-		final int textureID = mc.renderEngine.getTexture(Info.GUI2_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(textureID);
+		mc.renderEngine.bindTexture(Info.GUI2_PNG);
 
 		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
