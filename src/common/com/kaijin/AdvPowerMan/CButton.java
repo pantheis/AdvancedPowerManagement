@@ -76,9 +76,8 @@ public class CButton extends GuiButton
 
 			if (texture != null)
 			{
-				int textureID = mc.renderEngine.getTexture(texture);
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-				mc.renderEngine.bindTexture(textureID);
+				mc.renderEngine.bindTexture(texture);
 			}
 
 			isHovering = xLoc >= xPosition && yLoc >= yPosition && xLoc < xPosition + width && yLoc < yPosition + height;
