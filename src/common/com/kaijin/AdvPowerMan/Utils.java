@@ -5,6 +5,7 @@
 
 package com.kaijin.AdvPowerMan;
 
+import ic2.api.IElectricItem;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -202,5 +203,27 @@ public class Utils
 			return tag;
 		}
 		return null;
+	}
+
+	public static boolean isItemChargeable(ItemStack stack, int tier)
+	{
+		// Decide if the item is a valid IC2 electrical item
+		if (stack != null && stack.getItem() instanceof IElectricItem)
+		{
+			IElectricItem item = (IElectricItem)(stack.getItem());
+			if (item.getTier(stack) <= tier) return true;
+		}
+		return false;
+	}
+
+	public static boolean isItemDrainable(ItemStack stack, int tier)
+	{
+		// Decide if the item is a valid IC2 power source
+		if (stack != null && stack.getItem() instanceof IElectricItem)
+		{
+			IElectricItem item = (IElectricItem)(stack.getItem());
+			if (item.canProvideEnergy(stack) && item.getTier(stack) <= tier) return true;
+		}
+		return false;
 	}
 }

@@ -22,12 +22,7 @@ public class SlotInput extends SlotCustom
 	public boolean isItemValid(ItemStack stack)
 	{
 		// Decide if the item is a valid IC2 electrical item
-		if (stack != null && stack.getItem() instanceof IElectricItem)
-		{
-			IElectricItem item = (IElectricItem)(stack.getItem());
-			if (item.getTier(stack) <= chargeTier) return true;
-		}
-		return false; 
+		return Utils.isItemChargeable(stack, chargeTier);
 	}
 
 	@Override

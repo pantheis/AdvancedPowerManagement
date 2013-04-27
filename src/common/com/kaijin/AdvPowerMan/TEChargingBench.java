@@ -16,13 +16,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -43,6 +43,10 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 	public float drainFactor;
 	public float chargeFactor;
+
+	private static final int[] ChargingBenchSideInput = {Info.CB_SLOT_INPUT};
+	private static final int[] ChargingBenchSideOutput = {Info.CB_SLOT_OUTPUT};
+	private static final int[] ChargingBenchSidePower = {Info.CB_SLOT_POWER_SOURCE};
 
 	public TEChargingBench() // Default constructor used only when loading tile entity from world save
 	{
@@ -124,13 +128,12 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public void setStored(int energy)
 	{
-		// TODO Auto-generated method stub
+		// What uses this?
 	}
 
 	@Override
 	public int addEnergy(int amount)
 	{
-		// TODO Auto-generated method stub
 		// Returning our current energy value always, we do not implement this function
 		return currentEnergy;
 	}
@@ -142,8 +145,8 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	}
 
 	@Override
-	public int getMaxSafeInput() {
-		// TODO Auto-generated method stub
+	public int getMaxSafeInput()
+	{
 		return adjustedMaxInput;
 	}
 
@@ -653,7 +656,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 	// ISidedInventory
 
-	@Override
+/*	@Override
 	public int getStartInventorySide(ForgeDirection side)
 	{
 		switch (side)
@@ -667,12 +670,57 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		}
 	}
 
-	//TODO
 	@Override
 	public int getSizeInventorySide(ForgeDirection side)
 	{
 		// Each side accesses a single slot
 		return 1;
+	}
+*/
+
+	@Override
+	public int[] getSizeInventorySide(int side)
+	{
+		switch (side)
+		{
+		//TODO Determine correct values for top and bottom sides
+		case 0:
+			return ChargingBenchSideInput;
+		case 1:
+			return ChargingBenchSideOutput;
+		default:
+			return ChargingBenchSidePower;
+		}
+	}
+
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack stack)
+	{
+		// Decide if the item is a valid IC2 electrical item
+		if (i == Info.CB_SLOT_POWER_SOURCE) return Utils.isItemDrainable(stack, powerTier);
+		if (i == Info.CB_SLOT_INPUT) return Utils.isItemChargeable(stack, powerTier); 
+		// Info.CB_SLOT_OUTPUT ?
+		return false;
+	}
+
+	@Override
+	public boolean func_102007_a(int i, ItemStack itemstack, int j)
+	{
+		// TODO Auto-generated method stub - determine what this needs to do!
+		return false;
+	}
+
+	@Override
+	public boolean func_102008_b(int i, ItemStack itemstack, int j)
+	{
+		// TODO Auto-generated method stub - determine what this needs to do!
+		return false;
+	}
+
+	@Override
+	public boolean isInvNameLocalized()
+	{
+		return false;
 	}
 
 	// IInventory

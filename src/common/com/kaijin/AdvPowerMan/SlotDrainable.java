@@ -21,12 +21,7 @@ public class SlotDrainable extends SlotCustom
 	public boolean isItemValid(ItemStack stack)
 	{
 		// Decide if the item is a valid IC2 power source
-		if (stack != null && stack.getItem() instanceof IElectricItem)
-		{
-			IElectricItem item = (IElectricItem)(stack.getItem());
-			if (item.canProvideEnergy(stack) && item.getTier(stack) <= powerTier) return true;
-		}
-		return false;
+		return Utils.isItemDrainable(stack, powerTier);
 	}
 
 	@Override
