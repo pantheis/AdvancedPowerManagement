@@ -7,11 +7,12 @@ package com.kaijin.AdvPowerMan;
 import ic2.api.IElectricItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 public class SlotPowerSource extends SlotCustom
 {
 	private int powerTier;
-	private int iconIndex;
+	//private int iconIndex;
 
 	public SlotPowerSource(IInventory inv, int index, int xpos, int ypos, int tier)
 	{
@@ -24,7 +25,7 @@ public class SlotPowerSource extends SlotCustom
 		if (tier < 1) tier = 1;
 		if (tier > 3) tier = 3;
 		powerTier = tier;
-		iconIndex = 223 + tier;
+		//iconIndex = 223 + tier;
 	}
 
 	/**
@@ -44,8 +45,9 @@ public class SlotPowerSource extends SlotCustom
 	}
 
 	@Override
-	public int getBackgroundIconIndex()
+	public Icon getBackgroundIconIndex()
 	{
-		return iconIndex;
+		return Info.iconSlotPowerSource[powerTier];
+		// return iconIndex;
 	}
 }

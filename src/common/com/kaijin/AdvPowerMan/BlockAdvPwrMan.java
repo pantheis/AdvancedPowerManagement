@@ -27,10 +27,6 @@ public class BlockAdvPwrMan extends BlockContainer
 {
 	static final String[] tierPrefix = {"LV", "MV", "HV"};  
 
-	//base texture index
-	//private final int baseTexture = 16;
-	//private final int sideTexture = 32;
-
 	//TODO Register GUI slot overlay icons!
 
 	protected Icon benchBottom;

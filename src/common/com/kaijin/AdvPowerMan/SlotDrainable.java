@@ -3,6 +3,7 @@ package com.kaijin.AdvPowerMan;
 import ic2.api.IElectricItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 public class SlotDrainable extends SlotCustom
 {
@@ -25,8 +26,9 @@ public class SlotDrainable extends SlotCustom
 	}
 
 	@Override
-	public int getBackgroundIconIndex()
+	public Icon getBackgroundIconIndex()
 	{
-		return -1; // 232;
+		return Info.iconSlotDrainable;
+		// return -1; // 232;
 	}
 }

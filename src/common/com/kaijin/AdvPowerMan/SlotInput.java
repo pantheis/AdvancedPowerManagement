@@ -7,6 +7,7 @@ package com.kaijin.AdvPowerMan;
 import ic2.api.IElectricItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 public class SlotInput extends SlotCustom
 {
@@ -26,8 +27,9 @@ public class SlotInput extends SlotCustom
 	}
 
 	@Override
-	public int getBackgroundIconIndex()
+	public Icon getBackgroundIconIndex()
 	{
-		return 249;
+		return Info.iconSlotInput;
+		// return 249;
 	}
 }

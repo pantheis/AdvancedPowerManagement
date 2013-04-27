@@ -50,6 +50,20 @@ public class ItemBenchTools extends Item
 		{
 			itemIcons[i] = iconRegister.registerIcon("AdvancedPowerManagement:" + benchToolsNames[i]);
 		}
+
+		// Until/unless a better way is found, register GUI slot backgrounds here.
+		Info.iconSlotChargeable = iconRegister.registerIcon("AdvancedPowerManagement:SlotChargeable");
+		Info.iconSlotDrainable = iconRegister.registerIcon("AdvancedPowerManagement:SlotDrainable");
+		Info.iconSlotInput = iconRegister.registerIcon("AdvancedPowerManagement:SlotInput");
+		Info.iconSlotOutput = iconRegister.registerIcon("AdvancedPowerManagement:SlotOutput");
+		Info.iconSlotMachineUpgrade = iconRegister.registerIcon("AdvancedPowerManagement:SlotMachineUpgrade");
+		Info.iconSlotLinkCard = iconRegister.registerIcon("AdvancedPowerManagement:SlotLinkCard");
+		Info.iconSlotPowerSource = new Icon[3];
+		Info.iconSlotPlayerArmor = new Icon[4];
+		for (int i = 0; i < 3; i++)
+			Info.iconSlotPowerSource[i] = iconRegister.registerIcon("AdvancedPowerManagement:SlotPowerSource" + Integer.toString(i));
+		for (int i = 0; i < 4; i++)
+			Info.iconSlotPlayerArmor[i] = iconRegister.registerIcon("AdvancedPowerManagement:SlotPlayerArmor" + Integer.toString(i));
     }
 
 	@Override
