@@ -93,27 +93,27 @@ public class BlockAdvPwrMan extends BlockContainer
 		bsSides = new Icon[3][2];
 		smSides = new Icon[2][13];
 		benchTop = new Icon[3];
-		benchBottom = iconRegister.registerIcon("AdvancedPowerManagement:BenchBottom");
-		smTop = iconRegister.registerIcon("AdvancedPowerManagement:StorageMonitorTop");
-		smBottom = iconRegister.registerIcon("AdvancedPowerManagement:StorageMonitorBottom");
-		smInvalid = iconRegister.registerIcon("AdvancedPowerManagement:StorageMonitorInvalid");
-		emitter = iconRegister.registerIcon("AdvancedPowerManagement:Emitter");
+		benchBottom = iconRegister.registerIcon(Info.TITLE_PACKED + ":BenchBottom");
+		smTop = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorTop");
+		smBottom = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorBottom");
+		smInvalid = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorInvalid");
+		emitter = iconRegister.registerIcon(Info.TITLE_PACKED + ":Emitter");
 		for (int i = 0; i < 13; i++)
 		{
 			String temp = Integer.toString(i);
 			for (int j = 0; j < 3; j++)
 			{
-				cbSides[j][0][i] = iconRegister.registerIcon("AdvancedPowerManagement:" + tierPrefix[j] + "ChargingBenchOff" + temp);
-				cbSides[j][1][i] = iconRegister.registerIcon("AdvancedPowerManagement:" + tierPrefix[j] + "ChargingBenchOn" + temp);
+				cbSides[j][0][i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "ChargingBenchOff" + temp);
+				cbSides[j][1][i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "ChargingBenchOn" + temp);
 			}
-			smSides[0][i] = iconRegister.registerIcon("AdvancedPowerManagement:StorageMonitorOff" + temp);
-			smSides[1][i] = iconRegister.registerIcon("AdvancedPowerManagement:StorageMonitorOn" + temp);
+			smSides[0][i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorOff" + temp);
+			smSides[1][i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorOn" + temp);
 		}
 		for (int j = 0; j < 3; j++)
 		{
-			benchTop[j] = iconRegister.registerIcon("AdvancedPowerManagement:" + tierPrefix[j] + "ChargingBenchTop");
-			bsSides[j][0] = iconRegister.registerIcon("AdvancedPowerManagement:" + tierPrefix[j] + "BatteryStationOff");
-			bsSides[j][1] = iconRegister.registerIcon("AdvancedPowerManagement:" + tierPrefix[j] + "BatteryStationOn");
+			benchTop[j] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "ChargingBenchTop");
+			bsSides[j][0] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "BatteryStationOff");
+			bsSides[j][1] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "BatteryStationOn");
 		}
 	}
 

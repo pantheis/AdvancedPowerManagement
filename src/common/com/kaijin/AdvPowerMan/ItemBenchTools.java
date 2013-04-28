@@ -48,22 +48,22 @@ public class ItemBenchTools extends Item
 		itemIcons = new Icon[benchToolsNames.length];
 		for (int i = 0; i < itemIcons.length; i++)
 		{
-			itemIcons[i] = iconRegister.registerIcon("AdvancedPowerManagement:" + benchToolsNames[i]);
+			itemIcons[i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + benchToolsNames[i]);
 		}
 
 		// Until/unless a better way is found, register GUI slot backgrounds here.
-		Info.iconSlotChargeable = iconRegister.registerIcon("AdvancedPowerManagement:SlotChargeable");
-		Info.iconSlotDrainable = iconRegister.registerIcon("AdvancedPowerManagement:SlotDrainable");
-		Info.iconSlotInput = iconRegister.registerIcon("AdvancedPowerManagement:SlotInput");
-		Info.iconSlotOutput = iconRegister.registerIcon("AdvancedPowerManagement:SlotOutput");
-		Info.iconSlotMachineUpgrade = iconRegister.registerIcon("AdvancedPowerManagement:SlotMachineUpgrade");
-		Info.iconSlotLinkCard = iconRegister.registerIcon("AdvancedPowerManagement:SlotLinkCard");
+		Info.iconSlotChargeable = iconRegister.registerIcon(Info.TITLE_PACKED + ":SlotChargeable");
+		Info.iconSlotDrainable = iconRegister.registerIcon(Info.TITLE_PACKED + ":SlotDrainable");
+		Info.iconSlotInput = iconRegister.registerIcon(Info.TITLE_PACKED + ":SlotInput");
+		Info.iconSlotOutput = iconRegister.registerIcon(Info.TITLE_PACKED + ":SlotOutput");
+		Info.iconSlotMachineUpgrade = iconRegister.registerIcon(Info.TITLE_PACKED + ":SlotMachineUpgrade");
+		Info.iconSlotLinkCard = iconRegister.registerIcon(Info.TITLE_PACKED + ":SlotLinkCard");
 		Info.iconSlotPowerSource = new Icon[3];
 		Info.iconSlotPlayerArmor = new Icon[4];
 		for (int i = 0; i < 3; i++)
-			Info.iconSlotPowerSource[i] = iconRegister.registerIcon("AdvancedPowerManagement:SlotPowerSource" + Integer.toString(i));
+			Info.iconSlotPowerSource[i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":SlotPowerSource" + Integer.toString(i));
 		for (int i = 0; i < 4; i++)
-			Info.iconSlotPlayerArmor[i] = iconRegister.registerIcon("AdvancedPowerManagement:SlotPlayerArmor" + Integer.toString(i));
+			Info.iconSlotPlayerArmor[i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":SlotPlayerArmor" + Integer.toString(i));
     }
 
 	@Override

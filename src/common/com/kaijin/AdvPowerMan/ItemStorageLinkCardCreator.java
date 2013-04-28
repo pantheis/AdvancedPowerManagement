@@ -25,7 +25,7 @@ public class ItemStorageLinkCardCreator extends ItemCardBase
 	@Override
 	public void registerIcons(IconRegister iconRegister)
 	{
-		itemIcon = iconRegister.registerIcon("AdvancedPowerManagement:LinkCardCreator");
+		itemIcon = iconRegister.registerIcon(Info.TITLE_PACKED + ":LinkCardCreator");
 	}
 
 	@Override
