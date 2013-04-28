@@ -23,7 +23,8 @@ public class ItemBlockAdvPwrMan extends ItemBlock
 		return meta;
 	}
 
-	public String getItemNameIS(ItemStack var1)
+	@Override
+	public String getUnlocalizedName(ItemStack var1)
 	{
 		int var2 = var1.getItemDamage();
 

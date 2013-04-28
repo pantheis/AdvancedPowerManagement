@@ -62,6 +62,7 @@ public class ItemStorageLinkCard extends ItemCardBase
 	 * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
 	 * @return The ItemStack to replace it with.
 	 */
+	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
 	{
 		if (player.isSneaking())

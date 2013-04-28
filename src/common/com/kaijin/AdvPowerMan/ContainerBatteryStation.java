@@ -284,7 +284,7 @@ public class ContainerBatteryStation extends Container
 		return original;
 	}
 
-	@Override
+/*	@Override
 	public ItemStack slotClick(int slotID, int button, int shiftclick, EntityPlayer par4EntityPlayer)
 	{
 		ItemStack result = null;
@@ -448,6 +448,7 @@ public class ContainerBatteryStation extends Container
 			return result;
 		}
 	}
+*/
 
 	public boolean canInteractWith(EntityPlayer var1)
 	{

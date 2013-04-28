@@ -36,6 +36,7 @@ public class ItemBenchTools extends Item
 	/**
 	 * Gets an icon based on an item's damage value
 	 */
+	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIconFromDamage(int par1)
 	{
@@ -72,7 +73,8 @@ public class ItemBenchTools extends Item
 		return false;
 	}
 
-	public String getItemNameIS(ItemStack par1ItemStack)
+	@Override
+	public String getUnlocalizedName(ItemStack par1ItemStack)
 	{
 		int meta = MathHelper.clamp_int(par1ItemStack.getItemDamage(), 0, 3);
 		return "item.benchTools." + benchToolsNames[meta];
@@ -95,6 +97,7 @@ public class ItemBenchTools extends Item
 	 * @param side The side of the target hit
 	 * @return Return true to prevent any further processing.
 	 */
+	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) 
 	{
 		if (AdvancedPowerManagement.proxy.isClient()) return false;
@@ -120,6 +123,7 @@ public class ItemBenchTools extends Item
 	/**
 	 * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
 	 */
+	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
 	{
 		if (player.isSneaking() && stack.getItemDamage() > 0 && stack.getItemDamage() < 4)
@@ -148,6 +152,7 @@ public class ItemBenchTools extends Item
 	/**
 	 * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
 	 */
+	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
 	{
