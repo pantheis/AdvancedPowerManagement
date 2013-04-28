@@ -5,8 +5,8 @@
 package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
-import ic2.api.ElectricItem;
-import ic2.api.IElectricItem;
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IElectricItem;
 import ic2.api.IEnergyStorage;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.tile.IEnergySink;
@@ -16,13 +16,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -43,6 +43,10 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 	public float drainFactor;
 	public float chargeFactor;
+
+	private static final int[] ChargingBenchSideInput = {Info.CB_SLOT_INPUT};
+	private static final int[] ChargingBenchSideOutput = {Info.CB_SLOT_OUTPUT};
+	private static final int[] ChargingBenchSidePower = {Info.CB_SLOT_POWER_SOURCE};
 
 	public TEChargingBench() // Default constructor used only when loading tile entity from world save
 	{
@@ -103,7 +107,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	{
 		int oldTier = baseTier;
 		baseTier = newTier;
-		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newTier - 1);
+		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newTier - 1, 3);
 		initializeBaseValues();
 		doUpgradeEffects();
 		chargeLevel = gaugeEnergyScaled(12);
@@ -124,13 +128,12 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public void setStored(int energy)
 	{
-		// TODO Auto-generated method stub
+		// What uses this?
 	}
 
 	@Override
 	public int addEnergy(int amount)
 	{
-		// TODO Auto-generated method stub
 		// Returning our current energy value always, we do not implement this function
 		return currentEnergy;
 	}
@@ -142,8 +145,8 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	}
 
 	@Override
-	public int getMaxSafeInput() {
-		// TODO Auto-generated method stub
+	public int getMaxSafeInput()
+	{
 		return adjustedMaxInput;
 	}
 
@@ -255,7 +258,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		dropContents();
 		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, baseTier - 1);
 		dropItem(stack);
-		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
+		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		this.invalidate();
 	}
 
@@ -327,10 +330,10 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		{
 			IElectricItem item = (IElectricItem)(stack.getItem());
 			// Is the item appropriate for this slot?
-			if (slot == Info.CB_SLOT_POWER_SOURCE && item.canProvideEnergy() && item.getTier() <= powerTier) return true;
-			if (slot >= Info.CB_SLOT_CHARGING && slot < Info.CB_SLOT_CHARGING + 12 && item.getTier() <= baseTier) return true;
+			if (slot == Info.CB_SLOT_POWER_SOURCE && item.canProvideEnergy(stack) && item.getTier(stack) <= powerTier) return true;
+			if (slot >= Info.CB_SLOT_CHARGING && slot < Info.CB_SLOT_CHARGING + 12 && item.getTier(stack) <= baseTier) return true;
 			if (slot >= Info.CB_SLOT_UPGRADE && slot < Info.CB_SLOT_UPGRADE + 4 && (stack.isItemEqual(Info.ic2overclockerUpg) || stack.isItemEqual(Info.ic2transformerUpg) || stack.isItemEqual(Info.ic2storageUpg))) return true;
-			if (slot == Info.CB_SLOT_INPUT && item.getTier() <= baseTier) return true;
+			if (slot == Info.CB_SLOT_INPUT && item.getTier(stack) <= baseTier) return true;
 			if (slot == Info.CB_SLOT_OUTPUT) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
 		}
 		return false; 
@@ -448,14 +451,14 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		{
 			IElectricItem powerSource = (IElectricItem)(stack.getItem());
 
-			int emptyItemID = powerSource.getEmptyItemId();
-			int chargedItemID = powerSource.getChargedItemId();
+			int emptyItemID = powerSource.getEmptyItemId(stack);
+			int chargedItemID = powerSource.getChargedItemId(stack);
 
 			if (stack.itemID == chargedItemID)
 			{
-				if (powerSource.getTier() <= powerTier && powerSource.canProvideEnergy())
+				if (powerSource.getTier(stack) <= powerTier && powerSource.canProvideEnergy(stack))
 				{
-					int itemTransferLimit = powerSource.getTransferLimit();
+					int itemTransferLimit = powerSource.getTransferLimit(stack);
 					int energyNeeded = adjustedStorage - currentEnergy;
 
 					// Test if the amount of energy we have room for is greater than what the item can transfer per tick.
@@ -505,14 +508,14 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 			if (currentEnergy > 0 && stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				IElectricItem item = (IElectricItem)(stack.getItem());
-				if (item.getTier() <= baseTier)
+				if (item.getTier(stack) <= baseTier)
 				{
-					int itemTransferLimit = item.getTransferLimit();
+					int itemTransferLimit = item.getTransferLimit(stack);
 					if (itemTransferLimit == 0) itemTransferLimit = baseMaxInput;
 					int adjustedTransferLimit = (int)Math.ceil(chargeFactor * itemTransferLimit);
 
 					int amountNeeded;
-					if (item.getChargedItemId() != item.getEmptyItemId() || stack.isStackable())
+					if (item.getChargedItemId(stack) != item.getEmptyItemId(stack) || stack.isStackable())
 					{
 						// Running stack.copy() on every item every tick would be a horrible thing for performance, but the workaround is needed
 						// for ElectricItem.charge adding stackTagCompounds for charge level to EmptyItemID batteries even when run in simulate mode.
@@ -653,7 +656,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 	// ISidedInventory
 
-	@Override
+/*	@Override
 	public int getStartInventorySide(ForgeDirection side)
 	{
 		switch (side)
@@ -673,8 +676,56 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		// Each side accesses a single slot
 		return 1;
 	}
+*/
+
+	@Override
+	public int[] getSizeInventorySide(int side)
+	{
+		switch (side)
+		{
+		//TODO Determine correct values for top and bottom sides
+		case 0:
+			return ChargingBenchSideInput;
+		case 1:
+			return ChargingBenchSideOutput;
+		default:
+			return ChargingBenchSidePower;
+		}
+	}
+
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack stack)
+	{
+		// Decide if the item is a valid IC2 electrical item
+		if (i == Info.CB_SLOT_POWER_SOURCE) return Utils.isItemDrainable(stack, powerTier);
+		if (i == Info.CB_SLOT_INPUT) return Utils.isItemChargeable(stack, powerTier); 
+		// Info.CB_SLOT_OUTPUT ?
+		return false;
+	}
+
+	// Returns true if automation can insert the given item in the given slot from the given side. Args: Slot, item, side
+	@Override
+	public boolean func_102007_a(int i, ItemStack itemstack, int j) // canInsertItem
+	{
+		// TODO Auto-generated method stub - determine what this needs to do!
+		return true;
+	}
+
+	// Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item, side
+	@Override
+	public boolean func_102008_b(int i, ItemStack itemstack, int j) // canExtractItem
+	{
+		// TODO Auto-generated method stub - determine what this needs to do!
+		return true;
+	}
 
 	// IInventory
+
+	@Override
+	public boolean isInvNameLocalized()
+	{
+		return false;
+	}
 
 	@Override
 	public int getSizeInventory()

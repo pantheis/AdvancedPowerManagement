@@ -5,6 +5,7 @@
 package com.kaijin.AdvPowerMan;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class Info
@@ -110,6 +111,16 @@ public class Info
 	public static ItemStack ic2overclockerUpg;
 	public static ItemStack ic2transformerUpg;
 	public static ItemStack ic2storageUpg;
+
+	// Icons for GUI slots
+	public static Icon iconSlotChargeable;
+	public static Icon iconSlotDrainable;
+	public static Icon iconSlotInput;
+	public static Icon iconSlotOutput;
+	public static Icon iconSlotMachineUpgrade;
+	public static Icon iconSlotLinkCard;
+	public static Icon[] iconSlotPowerSource;
+	public static Icon[] iconSlotPlayerArmor;
 
 	public static void registerTranslations()
 	{

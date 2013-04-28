@@ -63,9 +63,8 @@ public class GuiAdvEmitter extends GuiContainer
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
-		final int textureID = mc.renderEngine.getTexture(Info.GUI4_PNG);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(textureID);
+		mc.renderEngine.bindTexture(Info.GUI4_PNG);
 
 		// Draw GUI background graphic
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);

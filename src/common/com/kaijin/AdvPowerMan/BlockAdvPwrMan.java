@@ -8,11 +8,14 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -22,13 +25,23 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockAdvPwrMan extends BlockContainer
 {
-	//base texture index
-	private final int baseTexture = 16;
-	private final int sideTexture = 32;
+	static final String[] tierPrefix = {"LV", "MV", "HV"};  
 
-	public BlockAdvPwrMan(int i, int j, Material material)
+	//TODO Register GUI slot overlay icons!
+
+	protected Icon benchBottom;
+	protected Icon smTop;
+	protected Icon smBottom;
+	protected Icon smInvalid;
+	protected Icon emitter;
+	protected Icon[] benchTop;
+	protected Icon[][][] cbSides;
+	protected Icon[][] bsSides; 
+	protected Icon[][] smSides;
+
+	public BlockAdvPwrMan(int i, Material material)
 	{
-		super(i, j, material);
+		super(i, material);
 	}
 
     @SideOnly(Side.CLIENT)
@@ -73,57 +86,73 @@ public class BlockAdvPwrMan extends BlockContainer
 		return true;
 	}
 
-	public String getTextureFile()
+	@Override
+	public void registerIcons(IconRegister iconRegister)
 	{
-		return Info.BLOCK_PNG;
+		cbSides = new Icon[3][2][13];
+		bsSides = new Icon[3][2];
+		smSides = new Icon[2][13];
+		benchTop = new Icon[3];
+		benchBottom = iconRegister.registerIcon(Info.TITLE_PACKED + ":BenchBottom");
+		smTop = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorTop");
+		smBottom = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorBottom");
+		smInvalid = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorInvalid");
+		emitter = iconRegister.registerIcon(Info.TITLE_PACKED + ":Emitter");
+		for (int i = 0; i < 13; i++)
+		{
+			String temp = Integer.toString(i);
+			for (int j = 0; j < 3; j++)
+			{
+				cbSides[j][0][i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "ChargingBenchOff" + temp);
+				cbSides[j][1][i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "ChargingBenchOn" + temp);
+			}
+			smSides[0][i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorOff" + temp);
+			smSides[1][i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorOn" + temp);
+		}
+		for (int j = 0; j < 3; j++)
+		{
+			benchTop[j] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "BenchTop");
+			bsSides[j][0] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "BatteryStationOff");
+			bsSides[j][1] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "BatteryStationOn");
+		}
 	}
 
 	//Textures in the world
 	@SideOnly(Side.CLIENT)
-	public int getBlockTexture(IBlockAccess blocks, int x, int y, int z, int side)
+	public Icon getBlockTexture(IBlockAccess blocks, int x, int y, int z, int side)
 	{
 		final int meta = blocks.getBlockMetadata(x, y, z);
 		TileEntity tile = blocks.getBlockTileEntity(x, y, z);
-		if (tile instanceof TEChargingBench) // TODO What's faster, TE instanceof tests or block metadata comparisons? We probably want to switch. 
+		if (tile instanceof TEChargingBench) 
 		{
 			switch (side)
 			{
 			case 0: // bottom
-				return 0;
+				return benchBottom;
 
 			case 1: // top
-				return baseTexture + meta;
+				return benchTop[meta];
 
 			default:
-				final int chargeLevel = ((TEChargingBench)tile).chargeLevel * 16;
-				final int working = ((TEChargingBench)tile).doingWork ? 3 : 0;
-				return sideTexture + meta + chargeLevel + working;
+				return cbSides[meta][((TEChargingBench)tile).doingWork ? 1 : 0][((TEChargingBench)tile).chargeLevel];
 			}
 		}
 		else if (tile instanceof TEAdvEmitter)
 		{
-			switch (side)
-			{
-			case 0: // bottom
-				return 0;
-				
-			default:
-				return baseTexture + meta;
-			}
+			return emitter;
 		}
 		else if (tile instanceof TEBatteryStation)
 		{
 			switch (side)
 			{
 			case 0: // bottom
-				return 0;
+				return benchBottom;
 
 			case 1: // top
-				return meta + 8; // 16 + meta - 8 = 16 through 18
+				return benchTop[meta - 8];
 
 			default:
-				final int working = ((TEBatteryStation)tile).doingWork ? 3 : 0;
-				return meta - 6 + working; // = 2 through 7
+				return bsSides[meta - 8][((TEBatteryStation)tile).doingWork ? 1 : 0];
 			}
 		}
 		else if (tile instanceof TEStorageMonitor)
@@ -131,80 +160,78 @@ public class BlockAdvPwrMan extends BlockContainer
 			switch (side)
 			{
 			case 0: // bottom
-				return 15;
+				return smBottom;
 
 			case 1: // top
-				return 14;
+				return smTop;
 
 			default:
 				if (((TEStorageMonitor)tile).blockState)
 				{
-					final int chargeLevel = ((TEStorageMonitor)tile).chargeLevel * 16;
-					final int isPowering = ((TEStorageMonitor)tile).isPowering ? 1 : 0;
-					return 30 + isPowering + chargeLevel;
+					return smSides[((TEStorageMonitor)tile).isPowering ? 1 : 0][((TEStorageMonitor)tile).chargeLevel];
 				}
-				else return 238;
+				else return smInvalid;
 			}
 		}
 
 		//If we're here, something is wrong
-		return 0;
+		return benchBottom;
 	}
 
 	//Textures in your inventory
 	@Override
-	public int getBlockTextureFromSideAndMetadata(int i, int meta)
+	public Icon getIcon(int side, int meta)
 	{
-		switch (i)
+		if (meta >= 3 && meta < 8)
+		{
+			return emitter;
+		}
+		switch (side)
 		{
 		case 0: // bottom
-			return meta < 11 ? 0 : 15;
+			return meta == 11 ? smBottom : benchBottom;
 
 		case 1: // top
-			if (meta < 8) // CB or emitter tops
+			if (meta < 3) // CB tops
 			{
-				return baseTexture + meta;				
+				return benchTop[meta];				
 			}
 			else if (meta < 11) // Battery Station top
 			{
-				return meta + 8;
+				return benchTop[meta - 8];
 			}
 			else
 			{
-				return 14;
+				return smTop;
 			}
 
 		default: // side
 			if (meta < 3) // Charging Bench
 			{
-				return sideTexture + meta;
-			}
-			else if (meta < 8) // Emitters
-			{
-				return baseTexture + meta;
+				return cbSides[meta][0][0];
 			}
 			else if (meta < 11) // Battery Station
 			{
-				return meta - 6;
+				return bsSides[meta - 8][0];
 			}
 			else
 			{
-				return 238; 
+				return smInvalid;
 			}
 		}
 	}
 
 	@Override
-	public boolean isProvidingWeakPower(IBlockAccess block, int x, int y, int z, int side)
+	public int isProvidingWeakPower(IBlockAccess block, int x, int y, int z, int side)
 	{
 		TileEntity tile = block.getBlockTileEntity(x, y, z);
-		return tile instanceof TEStorageMonitor && ((TEStorageMonitor)tile).isPowering;
+		return tile instanceof TEStorageMonitor && ((TEStorageMonitor)tile).isPowering ? 1 : 0; // TODO Verify this works properly
 	}
 
 	@Override
-	public boolean isProvidingStrongPower(IBlockAccess block, int x, int y, int z, int side)
+	public int isProvidingStrongPower(IBlockAccess block, int x, int y, int z, int side)
 	{
-		return false;
+		return 0;
 	}
 
 	@Override
@@ -238,7 +265,7 @@ public class BlockAdvPwrMan extends BlockContainer
 	}
 	
 	@Override
-	public TileEntity createNewTileEntity(World world, int metadata)
+	public TileEntity createTileEntity(World world, int metadata)
 	{
 		//if (ChargingBench.isDebugging) System.out.println("BlockAdvPwrMan.createTileEntity");
 		switch (metadata)
