@@ -4,7 +4,7 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import ic2.api.IEnergyStorage;
+import ic2.api.tile.IEnergyStorage;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
