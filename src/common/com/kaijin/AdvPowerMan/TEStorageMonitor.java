@@ -4,7 +4,7 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import ic2.api.IEnergyStorage;
+import ic2.api.tile.IEnergyStorage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
