@@ -5,6 +5,7 @@
 package com.kaijin.AdvPowerMan;
 
 import ic2.api.IEnergyStorage;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -17,9 +18,14 @@ public class ItemStorageLinkCardCreator extends ItemCardBase
 	public ItemStorageLinkCardCreator(int id)
 	{
 		super(id);
-		setIconIndex(17);
 		setMaxStackSize(1);
 		setCreativeTab(CreativeTabs.tabMisc);
+	}
+
+	@Override
+	public void registerIcons(IconRegister iconRegister)
+	{
+		itemIcon = iconRegister.registerIcon(Info.TITLE_PACKED + ":LinkCardCreator");
 	}
 
 	@Override

@@ -5,8 +5,8 @@
 package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
-import ic2.api.ElectricItem;
-import ic2.api.IElectricItem;
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IElectricItem;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileSourceEvent;
 import ic2.api.energy.tile.IEnergySource;
@@ -16,13 +16,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -43,6 +43,9 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	private int energyOut = 0;
 	public MovingAverage outputTracker = new MovingAverage(10);
+
+	private static final int[] BatteryStationSideInput = {Info.BS_SLOT_INPUT};
+	private static final int[] BatteryStationSideOutput = {Info.BS_SLOT_OUTPUT};
 
 	public TEBatteryStation() // Default constructor used only when loading tile entity from world save
 	{
@@ -507,7 +510,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	// ISidedInventory
 
-	@Override
+/*	@Override
 	public int getStartInventorySide(ForgeDirection side)
 	{
 		switch (side)
@@ -526,8 +529,52 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		// Each side accesses a single slot
 		return 1;
 	}
+*/
+
+	@Override
+	public int[] getSizeInventorySide(int side)
+	{
+		switch (side)
+		{
+		//TODO Determine correct values for top and bottom sides
+		case 0:
+		case 1:
+			return BatteryStationSideInput;
+		default:
+			return BatteryStationSideOutput;
+		}
+	}
+
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack stack)
+	{
+		if (i == Info.BS_SLOT_INPUT) return Utils.isItemDrainable(stack, powerTier); 
+		return false;
+	}
+
+	// Returns true if automation can insert the given item in the given slot from the given side. Args: Slot, item, side
+	@Override
+	public boolean func_102007_a(int i, ItemStack itemstack, int j) // canInsertItem
+	{
+		// TODO Auto-generated method stub - determine what this needs to do!
+		return false;
+	}
+
+	// Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item, side
+	@Override
+	public boolean func_102008_b(int i, ItemStack itemstack, int j) // canExtractItem
+	{
+		// TODO Auto-generated method stub - determine what this needs to do!
+		return false;
+	}
 
 	// IInventory
+
+	@Override
+	public boolean isInvNameLocalized()
+	{
+		return false;
+	}
 
 	@Override
 	public int getSizeInventory()
