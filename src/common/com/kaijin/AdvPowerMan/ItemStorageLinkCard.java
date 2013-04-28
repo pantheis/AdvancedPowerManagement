@@ -6,6 +6,7 @@ package com.kaijin.AdvPowerMan;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,10 +21,15 @@ public class ItemStorageLinkCard extends ItemCardBase
 	public ItemStorageLinkCard(int id)
 	{
 		super(id);
-		setIconIndex(16);
 		setMaxStackSize(1);
 		// This shouldn't be easily spawnable, so don't show in creative tabs
 		// setTabToDisplayOn(CreativeTabs.tabMisc);
+	}
+
+	@Override
+	public void registerIcons(IconRegister iconRegister)
+	{
+		itemIcon = iconRegister.registerIcon(Info.TITLE_PACKED + ":LinkCard");
 	}
 
 	@Override

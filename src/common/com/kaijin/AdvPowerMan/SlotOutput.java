@@ -6,6 +6,7 @@ package com.kaijin.AdvPowerMan;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 public class SlotOutput extends SlotCustom
 {
@@ -25,8 +26,9 @@ public class SlotOutput extends SlotCustom
 	}
 
 	@Override
-	public int getBackgroundIconIndex()
+	public Icon getBackgroundIconIndex()
 	{
-		return -1; // 250
+		return Info.iconSlotOutput;
+		// return -1; // 250
 	}
 }

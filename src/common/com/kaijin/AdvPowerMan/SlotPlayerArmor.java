@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 class SlotPlayerArmor extends SlotCustom
 {
@@ -34,8 +35,9 @@ class SlotPlayerArmor extends SlotCustom
 	}
 
 	@Override
-	public int getBackgroundIconIndex()
+	public Icon getBackgroundIconIndex()
 	{
-		return 240 + armorType;
+		return Info.iconSlotPlayerArmor[armorType];
+		// return 240 + armorType;
 	}
 }

@@ -17,12 +17,6 @@ public class ItemCardBase extends Item
 	}
 
 	@Override
-	public String getTextureFile()
-	{
-		return Info.ITEM_PNG;
-	}
-
-	@Override
 	public boolean isRepairable()
 	{
 		return false;

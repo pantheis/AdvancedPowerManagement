@@ -13,17 +13,17 @@ import java.io.IOException;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TEStorageMonitor extends TECommon implements IInventory, ISidedInventory
+public class TEStorageMonitor extends TECommon implements ISidedInventory
 {
 	private ItemStack[] contents;
 
@@ -43,6 +43,8 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 	public boolean blockState = false;
 
 	public int[] targetCoords;
+
+	private static final int[] storageMonitorSideUniversal = {Info.SM_SLOT_UNIVERSAL};
 
 	public TEStorageMonitor()
 	{
@@ -413,39 +415,56 @@ public class TEStorageMonitor extends TECommon implements IInventory, ISidedInve
 
 	// ISidedInventory
 
-	@Override
+/*	@Override
 	public int getStartInventorySide(ForgeDirection side)
 	{
-		/*
-		switch (side)
-		{
-		case UP:
-			return StorageMonitor.slotUp;
-		case DOWN:
-			return StorageMonitor.slotDown;
-		case NORTH:
-			return StorageMonitor.slotNorth;
-		case SOUTH:
-			return StorageMonitor.slotSouth;
-		case WEST:
-			return StorageMonitor.slotWest;
-		case EAST:
-			return StorageMonitor.slotEast;
-		default:
-			return StorageMonitor.slotUniversal;
-		}
-		 */
 		return Info.SM_SLOT_UNIVERSAL;
 	}
 
 	@Override
-	public int getSizeInventorySide(ForgeDirection side)
+	public int getSizeInventorySide(int side)
 	{
 		// Each side accesses a single slot
 		return 1;
 	}
+*/
+
+	@Override
+	public int[] getSizeInventorySide(int side)
+	{
+		return storageMonitorSideUniversal;
+	}
+
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack stack)
+	{
+		// Decide if the item is a link card
+		return (i == Info.SM_SLOT_UNIVERSAL && stack != null && stack.getItem() instanceof ItemStorageLinkCard); 
+	}
+
+	// Returns true if automation can insert the given item in the given slot from the given side. Args: Slot, item, side
+	@Override
+	public boolean func_102007_a(int i, ItemStack itemstack, int j) // canInsertItem
+	{
+		// TODO Auto-generated method stub - determine what this needs to do!
+		return false;
+	}
+
+	// Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item, side
+	@Override
+	public boolean func_102008_b(int i, ItemStack itemstack, int j) // canExtractItem
+	{
+		// TODO Auto-generated method stub - determine what this needs to do!
+		return false;
+	}
 
 	// IInventory
+
+	@Override
+	public boolean isInvNameLocalized()
+	{
+		return false;
+	}
 
 	@Override
 	public int getSizeInventory()
