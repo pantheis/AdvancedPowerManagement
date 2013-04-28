@@ -4,7 +4,7 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import ic2.api.Items;
+import ic2.api.item.Items;
 
 import java.io.File;
 import java.util.logging.Level;

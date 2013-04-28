@@ -7,7 +7,7 @@ package com.kaijin.AdvPowerMan;
 import ic2.api.Direction;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
-import ic2.api.IEnergyStorage;
+import ic2.api.tile.IEnergyStorage;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.tile.IEnergySink;
 
