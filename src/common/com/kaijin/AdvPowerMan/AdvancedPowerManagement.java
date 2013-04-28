@@ -79,7 +79,7 @@ public class AdvancedPowerManagement implements ICraftingHandler
 					Configuration oldconfig = new Configuration(oldFile);
 					oldconfig.load();
 					blockIDAdvPwrMan = oldconfig.get(configuration.CATEGORY_BLOCK, "ChargingBench", blockIDAdvPwrMan).getInt();
-					Info.isDebugging = Boolean.parseBoolean((oldconfig.get(configuration.CATEGORY_GENERAL, "debug",  Info.isDebugging).value));
+					Info.isDebugging = (oldconfig.get(configuration.CATEGORY_GENERAL, "debug",  Info.isDebugging).getBoolean(Info.isDebugging));
 					oldconfig.save();
 					boolean success = oldFile.delete();
 					if (success)
@@ -99,7 +99,7 @@ public class AdvancedPowerManagement implements ICraftingHandler
 			itemIDBenchTools = configuration.getItem(configuration.CATEGORY_ITEM, "BenchTools", itemIDBenchTools).getInt();
 			itemIDStorageLinkCard = configuration.getItem(configuration.CATEGORY_ITEM, "LinkCard", itemIDStorageLinkCard).getInt();
 			itemIDStorageLinkCardCreator = configuration.getItem(configuration.CATEGORY_ITEM, "LinkCardCreator", itemIDStorageLinkCardCreator).getInt();
-			Info.isDebugging = Boolean.parseBoolean((configuration.get(configuration.CATEGORY_GENERAL, "debug",  Info.isDebugging).value));
+			Info.isDebugging = (configuration.get(configuration.CATEGORY_GENERAL, "debug",  Info.isDebugging).getBoolean(Info.isDebugging));
 			configuration.save();
 			if (migrate)
 			{
@@ -119,7 +119,7 @@ public class AdvancedPowerManagement implements ICraftingHandler
 		FMLLog.getLogger().fine(Info.TITLE_LOG + "Loading.");
 		GameRegistry.registerCraftingHandler(this);
 
-		blockAdvPwrMan = new BlockAdvPwrMan(blockIDAdvPwrMan, 0, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setBlockName("AdvPwrMan").setCreativeTab(CreativeTabs.tabDecorations);
+		blockAdvPwrMan = new BlockAdvPwrMan(blockIDAdvPwrMan, Material.ground).setHardness(0.75F).setResistance(5F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("AdvPwrMan").setCreativeTab(CreativeTabs.tabDecorations);
 		GameRegistry.registerBlock(blockAdvPwrMan, ItemBlockAdvPwrMan.class, "blockAdvPwrMan");
 
 		// Charging Benches
@@ -146,11 +146,11 @@ public class AdvancedPowerManagement implements ICraftingHandler
 		GameRegistry.registerTileEntity(TEAdvEmitter.class, "kaijin.advEmitter");
 
 		// Items
-		itemBenchTools = new ItemBenchTools(itemIDBenchTools).setItemName(Info.TOOLKIT_NAME);
+		itemBenchTools = new ItemBenchTools(itemIDBenchTools).setUnlocalizedName(Info.TOOLKIT_NAME);
 
-		itemStorageLinkCard = new ItemStorageLinkCard(itemIDStorageLinkCard).setItemName(Info.LINK_CARD_NAME);
+		itemStorageLinkCard = new ItemStorageLinkCard(itemIDStorageLinkCard).setUnlocalizedName(Info.LINK_CARD_NAME);
 		
-		itemStorageLinkCardCreator = new ItemStorageLinkCardCreator(itemIDStorageLinkCardCreator).setItemName(Info.LINK_CREATOR_NAME);
+		itemStorageLinkCardCreator = new ItemStorageLinkCardCreator(itemIDStorageLinkCardCreator).setUnlocalizedName(Info.LINK_CREATOR_NAME);
 
 		Info.registerTranslations();
 

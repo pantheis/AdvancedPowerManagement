@@ -6,6 +6,7 @@ package com.kaijin.AdvPowerMan;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,10 +21,15 @@ public class ItemStorageLinkCard extends ItemCardBase
 	public ItemStorageLinkCard(int id)
 	{
 		super(id);
-		setIconIndex(16);
 		setMaxStackSize(1);
 		// This shouldn't be easily spawnable, so don't show in creative tabs
 		// setTabToDisplayOn(CreativeTabs.tabMisc);
+	}
+
+	@Override
+	public void registerIcons(IconRegister iconRegister)
+	{
+		itemIcon = iconRegister.registerIcon(Info.TITLE_PACKED + ":LinkCard");
 	}
 
 	@Override
@@ -56,6 +62,7 @@ public class ItemStorageLinkCard extends ItemCardBase
 	 * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
 	 * @return The ItemStack to replace it with.
 	 */
+	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
 	{
 		if (player.isSneaking())

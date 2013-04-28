@@ -1,8 +1,8 @@
 package com.kaijin.AdvPowerMan;
 
-import ic2.api.IElectricItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 public class SlotDrainable extends SlotCustom
 {
@@ -21,17 +21,13 @@ public class SlotDrainable extends SlotCustom
 	public boolean isItemValid(ItemStack stack)
 	{
 		// Decide if the item is a valid IC2 power source
-		if (stack != null && stack.getItem() instanceof IElectricItem)
-		{
-			IElectricItem item = (IElectricItem)(stack.getItem());
-			if (item.canProvideEnergy() && item.getTier() <= powerTier) return true;
-		}
-		return false;
+		return Utils.isItemDrainable(stack, powerTier);
 	}
 
 	@Override
-	public int getBackgroundIconIndex()
+	public Icon getBackgroundIconIndex()
 	{
-		return -1; // 232;
+		return Info.iconSlotDrainable;
+		// return -1; // 232;
 	}
 }

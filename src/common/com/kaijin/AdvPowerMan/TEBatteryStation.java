@@ -5,8 +5,8 @@
 package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
-import ic2.api.ElectricItem;
-import ic2.api.IElectricItem;
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IElectricItem;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileSourceEvent;
 import ic2.api.energy.tile.IEnergySource;
@@ -16,13 +16,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -43,6 +43,9 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	private int energyOut = 0;
 	public MovingAverage outputTracker = new MovingAverage(10);
+
+	private static final int[] BatteryStationSideInput = {Info.BS_SLOT_INPUT};
+	private static final int[] BatteryStationSideOutput = {Info.BS_SLOT_OUTPUT};
 
 	public TEBatteryStation() // Default constructor used only when loading tile entity from world save
 	{
@@ -113,7 +116,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		dropContents();
 		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, baseTier - 1);
 		dropItem(stack);
-		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0, 0);
+		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		this.invalidate();
 	}
 
@@ -125,7 +128,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			IElectricItem item = (IElectricItem)(stack.getItem());
 			// Is the item appropriate for this slot?
 			if (slot == Info.BS_SLOT_OUTPUT) return true; // GUI won't allow placement of items here, but if the bench or an external machine does, it should at least let it sit there as long as it's an electrical item.
-			if (item.canProvideEnergy() && item.getTier() <= powerTier)
+			if (item.canProvideEnergy(stack) && item.getTier(stack) <= powerTier)
 			{
 				if ((slot >= Info.BS_SLOT_POWER_START && slot < Info.BS_SLOT_POWER_START + 12) || slot == Info.BS_SLOT_INPUT) return true;
 			}
@@ -277,14 +280,14 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				IElectricItem item = (IElectricItem)(stack.getItem());
-				if (item.getTier() <= powerTier && item.canProvideEnergy())
+				if (item.getTier(stack) <= powerTier && item.canProvideEnergy(stack))
 				{
-					int emptyItemID = item.getEmptyItemId();
-					int chargedItemID = item.getChargedItemId();
+					int emptyItemID = item.getEmptyItemId(stack);
+					int chargedItemID = item.getChargedItemId(stack);
 
 					if (stack.itemID == chargedItemID)
 					{
-						int transferLimit = item.getTransferLimit();
+						int transferLimit = item.getTransferLimit(stack);
 						//int amountNeeded = baseMaxOutput - currentEnergy;
 						if (transferLimit == 0) transferLimit = packetSize;
 						//if (transferLimit > amountNeeded) transferLimit = amountNeeded;
@@ -330,10 +333,10 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 				if (currentStack != null && currentStack.getItem() instanceof IElectricItem)
 				{
 					IElectricItem powerSource = (IElectricItem)(currentStack.getItem());
-					if (powerSource.getTier() <= powerTier) // && powerSource.canProvideEnergy()
+					if (powerSource.getTier(currentStack) <= powerTier) // && powerSource.canProvideEnergy()
 					{
-						int emptyItemID = powerSource.getEmptyItemId();
-						int chargedItemID = powerSource.getChargedItemId();
+						int emptyItemID = powerSource.getEmptyItemId(currentStack);
+						int chargedItemID = powerSource.getChargedItemId(currentStack);
 						if (emptyItemID != chargedItemID)
 						{
 							if (currentStack.itemID == emptyItemID)
@@ -409,7 +412,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		if (stack == null || !(stack.getItem() instanceof IElectricItem) || (opMode == 1 && hasEnoughItems)) return;
 
 		IElectricItem item = (IElectricItem)stack.getItem();
-		if (item.canProvideEnergy())
+		if (item.canProvideEnergy(stack))
 		{
 			// Input slot contains a power source. If possible, move one of it into the discharging area.
 			for (int slot = Info.BS_SLOT_POWER_START; slot < Info.BS_SLOT_POWER_START + 12; ++slot)
@@ -450,7 +453,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				final IElectricItem item = (IElectricItem)(stack.getItem());
-				if (item.getTier() <= powerTier && item.canProvideEnergy() && stack.itemID == item.getChargedItemId())
+				if (item.getTier(stack) <= powerTier && item.canProvideEnergy(stack) && stack.itemID == item.getChargedItemId(stack))
 				{
 					final int chargeReturned = ElectricItem.discharge(stack, Integer.MAX_VALUE, powerTier, true, true);
 					if (chargeReturned > 0)
@@ -507,7 +510,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	// ISidedInventory
 
-	@Override
+/*	@Override
 	public int getStartInventorySide(ForgeDirection side)
 	{
 		switch (side)
@@ -526,8 +529,52 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		// Each side accesses a single slot
 		return 1;
 	}
+*/
+
+	@Override
+	public int[] getSizeInventorySide(int side)
+	{
+		switch (side)
+		{
+		//TODO Determine correct values for top and bottom sides
+		case 0:
+		case 1:
+			return BatteryStationSideInput;
+		default:
+			return BatteryStationSideOutput;
+		}
+	}
+
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack stack)
+	{
+		if (i == Info.BS_SLOT_INPUT) return Utils.isItemDrainable(stack, powerTier); 
+		return false;
+	}
+
+	// Returns true if automation can insert the given item in the given slot from the given side. Args: Slot, item, side
+	@Override
+	public boolean func_102007_a(int i, ItemStack itemstack, int j) // canInsertItem
+	{
+		// TODO Auto-generated method stub - determine what this needs to do!
+		return true;
+	}
+
+	// Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item, side
+	@Override
+	public boolean func_102008_b(int i, ItemStack itemstack, int j) // canExtractItem
+	{
+		// TODO Auto-generated method stub - determine what this needs to do!
+		return true;
+	}
 
 	// IInventory
+
+	@Override
+	public boolean isInvNameLocalized()
+	{
+		return false;
+	}
 
 	@Override
 	public int getSizeInventory()

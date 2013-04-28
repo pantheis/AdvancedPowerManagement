@@ -7,6 +7,7 @@ package com.kaijin.AdvPowerMan;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 public class SlotLinkCard extends Slot
 {
@@ -36,9 +37,10 @@ public class SlotLinkCard extends Slot
 	}
 
 	@Override
-	public int getBackgroundIconIndex()
+	public Icon getBackgroundIconIndex()
 	{
-		return 246;
+		return Info.iconSlotLinkCard;
+		// return 246;
 	}
 
 	@Override

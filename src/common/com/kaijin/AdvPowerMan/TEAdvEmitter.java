@@ -117,7 +117,7 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 			if (meta != 7)
 			{
 				FMLLog.info(Info.TITLE_LOG + "Resetting Emitter block meta value from " + meta + " to 7");
-				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, 7);
+				worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 7, 3);
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				return;
 			}
