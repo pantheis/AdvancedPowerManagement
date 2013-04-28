@@ -557,7 +557,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	public boolean func_102007_a(int i, ItemStack itemstack, int j) // canInsertItem
 	{
 		// TODO Auto-generated method stub - determine what this needs to do!
-		return false;
+		return true;
 	}
 
 	// Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item, side
@@ -565,7 +565,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	public boolean func_102008_b(int i, ItemStack itemstack, int j) // canExtractItem
 	{
 		// TODO Auto-generated method stub - determine what this needs to do!
-		return false;
+		return true;
 	}
 
 	// IInventory
