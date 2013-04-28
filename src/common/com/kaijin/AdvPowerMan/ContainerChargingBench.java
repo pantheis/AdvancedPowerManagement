@@ -368,12 +368,12 @@ public class ContainerChargingBench extends Container
 		return original;
 	}
 
-	@Override
+/*	@Override
 	public ItemStack slotClick(int slotID, int button, int shiftclick, EntityPlayer par4EntityPlayer)
 	{
 		ItemStack result = null;
 
-		// if (ChargingBench.isDebugging && ChargingBench.proxy.isServer()) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ");");
+		if (Info.isDebugging) System.out.println("ContainerChargingBench.slotClick(slotID=" + slotID + ", button=" + button + ", shift=" + shiftclick + ") by " + (AdvancedPowerManagement.proxy.isClient() ? "client" : "server"));
 
 		if (button > 1)
 		{
@@ -532,7 +532,7 @@ public class ContainerChargingBench extends Container
 			return result;
 		}
 	}
-
+*/
 	public boolean canInteractWith(EntityPlayer var1)
 	{
 		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.canInteractWith");
