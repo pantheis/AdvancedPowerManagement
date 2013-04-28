@@ -111,7 +111,7 @@ public class BlockAdvPwrMan extends BlockContainer
 		}
 		for (int j = 0; j < 3; j++)
 		{
-			benchTop[j] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "ChargingBenchTop");
+			benchTop[j] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "BenchTop");
 			bsSides[j][0] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "BatteryStationOff");
 			bsSides[j][1] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "BatteryStationOn");
 		}

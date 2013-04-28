@@ -4,7 +4,6 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import ic2.api.IElectricItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;

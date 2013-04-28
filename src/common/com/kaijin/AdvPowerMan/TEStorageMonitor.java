@@ -442,27 +442,29 @@ public class TEStorageMonitor extends TECommon implements ISidedInventory
 		return (i == Info.SM_SLOT_UNIVERSAL && stack != null && stack.getItem() instanceof ItemStorageLinkCard); 
 	}
 
+	// Returns true if automation can insert the given item in the given slot from the given side. Args: Slot, item, side
 	@Override
-	public boolean func_102007_a(int i, ItemStack itemstack, int j)
+	public boolean func_102007_a(int i, ItemStack itemstack, int j) // canInsertItem
 	{
 		// TODO Auto-generated method stub - determine what this needs to do!
 		return false;
 	}
 
+	// Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item, side
 	@Override
-	public boolean func_102008_b(int i, ItemStack itemstack, int j)
+	public boolean func_102008_b(int i, ItemStack itemstack, int j) // canExtractItem
 	{
 		// TODO Auto-generated method stub - determine what this needs to do!
 		return false;
 	}
+
+	// IInventory
 
 	@Override
 	public boolean isInvNameLocalized()
 	{
 		return false;
 	}
-
-	// IInventory
 
 	@Override
 	public int getSizeInventory()

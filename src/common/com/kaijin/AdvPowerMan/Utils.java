@@ -5,7 +5,7 @@
 
 package com.kaijin.AdvPowerMan;
 
-import ic2.api.IElectricItem;
+import ic2.api.item.IElectricItem;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

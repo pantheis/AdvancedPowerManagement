@@ -4,7 +4,6 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
-import ic2.api.IElectricItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
@@ -47,7 +46,7 @@ public class SlotPowerSource extends SlotCustom
 	@Override
 	public Icon getBackgroundIconIndex()
 	{
-		return Info.iconSlotPowerSource[powerTier];
+		return Info.iconSlotPowerSource[powerTier - 1];
 		// return iconIndex;
 	}
 }

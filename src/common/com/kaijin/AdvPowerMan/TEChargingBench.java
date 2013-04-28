@@ -5,8 +5,8 @@
 package com.kaijin.AdvPowerMan;
 
 import ic2.api.Direction;
-import ic2.api.ElectricItem;
-import ic2.api.IElectricItem;
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IElectricItem;
 import ic2.api.IEnergyStorage;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.tile.IEnergySink;
@@ -703,27 +703,29 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		return false;
 	}
 
+	// Returns true if automation can insert the given item in the given slot from the given side. Args: Slot, item, side
 	@Override
-	public boolean func_102007_a(int i, ItemStack itemstack, int j)
+	public boolean func_102007_a(int i, ItemStack itemstack, int j) // canInsertItem
 	{
 		// TODO Auto-generated method stub - determine what this needs to do!
 		return false;
 	}
 
+	// Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item, side
 	@Override
-	public boolean func_102008_b(int i, ItemStack itemstack, int j)
+	public boolean func_102008_b(int i, ItemStack itemstack, int j) // canExtractItem
 	{
 		// TODO Auto-generated method stub - determine what this needs to do!
 		return false;
 	}
+
+	// IInventory
 
 	@Override
 	public boolean isInvNameLocalized()
 	{
 		return false;
 	}
-
-	// IInventory
 
 	@Override
 	public int getSizeInventory()
