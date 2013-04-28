@@ -212,7 +212,7 @@ public class BlockAdvPwrMan extends BlockContainer
 			}
 			else if (meta < 11) // Battery Station
 			{
-				return cbSides[meta - 8][0][0];
+				return bsSides[meta - 8][0];
 			}
 			else
 			{
