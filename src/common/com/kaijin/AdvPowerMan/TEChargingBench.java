@@ -27,7 +27,7 @@ import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TEChargingBench extends TECommonBench implements IEnergySink, IEnergyStorage, IInventory, ISidedInventory
+public class TEChargingBench extends TECommonBench implements IEnergySink, IEnergyStorage, IInventory, ISidedInventory, net.minecraftforge.common.ISidedInventory
 {
 	// Base values
 	public int baseMaxInput;
@@ -657,7 +657,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 	// ISidedInventory
 
-/*	@Override
+	@Override
 	public int getStartInventorySide(ForgeDirection side)
 	{
 		switch (side)
@@ -677,7 +677,6 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		// Each side accesses a single slot
 		return 1;
 	}
-*/
 
 	@Override
 	public int[] getSizeInventorySide(int side)
@@ -700,7 +699,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	{
 		// Decide if the item is a valid IC2 electrical item
 		if (i == Info.CB_SLOT_POWER_SOURCE) return Utils.isItemDrainable(stack, powerTier);
-		if (i == Info.CB_SLOT_INPUT) return Utils.isItemChargeable(stack, powerTier); 
+		if (i == Info.CB_SLOT_INPUT) return Utils.isItemChargeable(stack, powerTier);
 		// Info.CB_SLOT_OUTPUT ?
 		return false;
 	}
