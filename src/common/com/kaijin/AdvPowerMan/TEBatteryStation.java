@@ -46,6 +46,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	private static final int[] BatteryStationSideInput = {Info.BS_SLOT_INPUT};
 	private static final int[] BatteryStationSideOutput = {Info.BS_SLOT_OUTPUT};
+	private static final int[] BatteryStationSideInOut = {Info.BS_SLOT_INPUT, Info.BS_SLOT_OUTPUT};
 
 	public TEBatteryStation() // Default constructor used only when loading tile entity from world save
 	{
@@ -534,7 +535,8 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public int[] getSizeInventorySide(int side)
 	{
-		switch (side)
+		return BatteryStationSideInOut; // Testing I/O constraint methods func_102007_a, func_102008_b
+/*		switch (side)
 		{
 		//TODO Determine correct values for top and bottom sides
 		case 0:
@@ -542,7 +544,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			return BatteryStationSideInput;
 		default:
 			return BatteryStationSideOutput;
-		}
+		}*/
 	}
 
 	@Override
@@ -557,7 +559,8 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	public boolean func_102007_a(int i, ItemStack itemstack, int j) // canInsertItem
 	{
 		// TODO Auto-generated method stub - determine what this needs to do!
-		return true;
+		if (i == Info.BS_SLOT_INPUT) return true;
+		return false;
 	}
 
 	// Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item, side
@@ -565,7 +568,8 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	public boolean func_102008_b(int i, ItemStack itemstack, int j) // canExtractItem
 	{
 		// TODO Auto-generated method stub - determine what this needs to do!
-		return true;
+		if (i == Info.BS_SLOT_OUTPUT) return true;
+		return false;
 	}
 
 	// IInventory
