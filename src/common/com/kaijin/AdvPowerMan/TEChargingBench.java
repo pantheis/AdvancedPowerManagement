@@ -46,6 +46,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 	private static final int[] ChargingBenchSideInput = {Info.CB_SLOT_INPUT};
 	private static final int[] ChargingBenchSideOutput = {Info.CB_SLOT_OUTPUT};
+	private static final int[] ChargingBenchSideInOut = {Info.CB_SLOT_INPUT, Info.CB_SLOT_OUTPUT};
 	private static final int[] ChargingBenchSidePower = {Info.CB_SLOT_POWER_SOURCE};
 
 	public TEChargingBench() // Default constructor used only when loading tile entity from world save
@@ -683,11 +684,12 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	{
 		switch (side)
 		{
-		//TODO Determine correct values for top and bottom sides
+			//Correct values for top and bottom sides: 0 = bottom, 1 = top 
 		case 0:
-			return ChargingBenchSideInput;
+			// return ChargingBenchSideOutput;
 		case 1:
-			return ChargingBenchSideOutput;
+			// return ChargingBenchSideInput;
+			return ChargingBenchSideInOut;
 		default:
 			return ChargingBenchSidePower;
 		}
@@ -707,16 +709,16 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public boolean func_102007_a(int i, ItemStack itemstack, int j) // canInsertItem
 	{
-		// TODO Auto-generated method stub - determine what this needs to do!
-		return true;
+		if (i == Info.CB_SLOT_INPUT || i == Info.CB_SLOT_POWER_SOURCE) return true;
+		return false;
 	}
 
 	// Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item, side
 	@Override
 	public boolean func_102008_b(int i, ItemStack itemstack, int j) // canExtractItem
 	{
-		// TODO Auto-generated method stub - determine what this needs to do!
-		return true;
+		if (i == Info.CB_SLOT_OUTPUT || i == Info.CB_SLOT_POWER_SOURCE) return true;
+		return false;
 	}
 
 	// IInventory
