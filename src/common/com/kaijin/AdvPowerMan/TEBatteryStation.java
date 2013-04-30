@@ -27,7 +27,7 @@ import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TEBatteryStation extends TECommonBench implements IEnergySource, IInventory, ISidedInventory
+public class TEBatteryStation extends TECommonBench implements IEnergySource, IInventory, ISidedInventory, net.minecraftforge.common.ISidedInventory
 {
 	public int opMode;
 
@@ -511,7 +511,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	// ISidedInventory
 
-/*	@Override
+	@Override
 	public int getStartInventorySide(ForgeDirection side)
 	{
 		switch (side)
@@ -530,7 +530,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		// Each side accesses a single slot
 		return 1;
 	}
-*/
 
 	@Override
 	public int[] getSizeInventorySide(int side)
