@@ -31,7 +31,7 @@ public class Info
 	public static final String GUI4_PNG    = TEX_BASE + "GUIAdvEmitter.png";
 
 	public static final String[] KEY_BLOCK_NAMES = new String[] {"blockChargingBench1", "blockChargingBench2", "blockChargingBench3",
-		"blockEmitterBlock1", "blockEmitterBlock2", "blockEmitterBlock3", "blockEmitterBlock4", "blockEmitterAdjustable",
+		"blockEmitterBlock1", "blockEmitterBlock2", "blockEmitterBlock3", "blockAdjustableTransformer", "blockEmitterAdjustable",
 		"blockBatteryStation1", "blockBatteryStation2", "blockBatteryStation3", "blockStorageMonitor"};
 	public static final String KEY_NAME_SUFFIX = ".name";
 
@@ -41,6 +41,7 @@ public class Info
 	public static final String MONITOR_NAME = "Storage Monitor";
 	public static final String EMITTER_NAME = "Emitter";
 	public static final String ADV_EMITTER_NAME = "Adjustable Emitter";
+	public static final String ADJ_TRANSFORMER_NAME = "Adjustable Transformer";
 
 	// Items
 	public static final String TOOLKIT_NAME = CHARGER_NAME + " Toolkit";
@@ -49,8 +50,22 @@ public class Info
 	public static final String LINK_CARD_NAME = "Energy Link Card";
 	public static final String LINK_CREATOR_NAME = "Energy Link Card (Blank)";
 
+	// GUI IDs
+	public static final int GUI_ID_CHARGING_BENCH = 1;
+	public static final int GUI_ID_BATTERY_STATION = 2;
+	public static final int GUI_ID_STORAGE_MONITOR = 3;
+	public static final int GUI_ID_ADJUSTABLE_EMITTER = 4;
+	public static final int GUI_ID_ADJUSTABLE_TRANSFORMER = 5;
+
 	// Other constants for use in multiple classes
 	public static final int LAST_META_VALUE = 11;
+
+	public static final int CB_META = 0; // through 2
+	// 3-5 are unused
+	public static final int AT_META = 6;
+	public static final int AE_META = 7;
+	public static final int BS_META = 8; // through 10
+	public static final int SM_META = 11;
 
 	public static final int CB_SLOT_INPUT = 0;
 	public static final int CB_SLOT_OUTPUT = 1;
@@ -126,29 +141,31 @@ public class Info
 	{
 		LanguageRegistry lang = LanguageRegistry.instance();
 
-		lang.addStringLocalization(KEY_BLOCK_NAMES[0] + KEY_NAME_SUFFIX, "LV " + Info.CHARGER_NAME);
-		lang.addStringLocalization(KEY_BLOCK_NAMES[1] + KEY_NAME_SUFFIX, "MV " + Info.CHARGER_NAME);
-		lang.addStringLocalization(KEY_BLOCK_NAMES[2] + KEY_NAME_SUFFIX, "HV " + Info.CHARGER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[0] + KEY_NAME_SUFFIX, "LV " + CHARGER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[1] + KEY_NAME_SUFFIX, "MV " + CHARGER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[2] + KEY_NAME_SUFFIX, "HV " + CHARGER_NAME);
 
-		lang.addStringLocalization(KEY_BLOCK_NAMES[3] + KEY_NAME_SUFFIX, "LV " + Info.EMITTER_NAME);
-		lang.addStringLocalization(KEY_BLOCK_NAMES[4] + KEY_NAME_SUFFIX, "MV " + Info.EMITTER_NAME);
-		lang.addStringLocalization(KEY_BLOCK_NAMES[5] + KEY_NAME_SUFFIX, "HV " + Info.EMITTER_NAME);
-		lang.addStringLocalization(KEY_BLOCK_NAMES[6] + KEY_NAME_SUFFIX, "EV " + Info.EMITTER_NAME);
-		lang.addStringLocalization(KEY_BLOCK_NAMES[7] + KEY_NAME_SUFFIX, "Adjustable " + Info.EMITTER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[3] + KEY_NAME_SUFFIX, "LV " + EMITTER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[4] + KEY_NAME_SUFFIX, "MV " + EMITTER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[5] + KEY_NAME_SUFFIX, "HV " + EMITTER_NAME);
 
-		lang.addStringLocalization(KEY_BLOCK_NAMES[8] + KEY_NAME_SUFFIX, "LV " + Info.DISCHARGER_NAME);
-		lang.addStringLocalization(KEY_BLOCK_NAMES[9] + KEY_NAME_SUFFIX, "MV " + Info.DISCHARGER_NAME);
-		lang.addStringLocalization(KEY_BLOCK_NAMES[10] + KEY_NAME_SUFFIX, "HV " + Info.DISCHARGER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[6] + KEY_NAME_SUFFIX, ADJ_TRANSFORMER_NAME);
 
-		lang.addStringLocalization(KEY_BLOCK_NAMES[11] + KEY_NAME_SUFFIX, Info.MONITOR_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[7] + KEY_NAME_SUFFIX, ADV_EMITTER_NAME);
 
-		lang.addStringLocalization("item.benchTools.toolkit.name", Info.TOOLKIT_NAME);
-		lang.addStringLocalization("item.benchTools.LV-kit.name", "LV " + Info.COMPONENTS_NAME);
-		lang.addStringLocalization("item.benchTools.MV-kit.name", "MV " + Info.COMPONENTS_NAME);
-		lang.addStringLocalization("item.benchTools.HV-kit.name", "HV " + Info.COMPONENTS_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[8] + KEY_NAME_SUFFIX, "LV " + DISCHARGER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[9] + KEY_NAME_SUFFIX, "MV " + DISCHARGER_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[10] + KEY_NAME_SUFFIX, "HV " + DISCHARGER_NAME);
 
-		LanguageRegistry.addName(AdvancedPowerManagement.itemStorageLinkCard, Info.LINK_CARD_NAME);
-		LanguageRegistry.addName(AdvancedPowerManagement.itemStorageLinkCardCreator, Info.LINK_CREATOR_NAME);
+		lang.addStringLocalization(KEY_BLOCK_NAMES[11] + KEY_NAME_SUFFIX, MONITOR_NAME);
+
+		lang.addStringLocalization("item.benchTools.toolkit.name", TOOLKIT_NAME);
+		lang.addStringLocalization("item.benchTools.LV-kit.name", "LV " + COMPONENTS_NAME);
+		lang.addStringLocalization("item.benchTools.MV-kit.name", "MV " + COMPONENTS_NAME);
+		lang.addStringLocalization("item.benchTools.HV-kit.name", "HV " + COMPONENTS_NAME);
+
+		LanguageRegistry.addName(AdvancedPowerManagement.itemStorageLinkCard, LINK_CARD_NAME);
+		LanguageRegistry.addName(AdvancedPowerManagement.itemStorageLinkCardCreator, LINK_CREATOR_NAME);
 
 		lang.addStringLocalization(KEY_TITLE, TITLE);
 

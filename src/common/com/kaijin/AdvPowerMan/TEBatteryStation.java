@@ -103,7 +103,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public int getGuiID()
 	{
-		return 3;
+		return Info.GUI_ID_BATTERY_STATION;
 	}
 
 	/**
