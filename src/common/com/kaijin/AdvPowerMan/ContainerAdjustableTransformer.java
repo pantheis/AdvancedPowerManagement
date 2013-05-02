@@ -71,22 +71,18 @@ public class ContainerAdjustableTransformer extends Container
 		switch (param)
 		{
 		case 0:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & -65536) + " | " + value);
 			te.outputRate = te.outputRate & -65536 | value;
 			break;
 
 		case 1:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (this.tileentity.currentEnergy & 65535) + " | " + (value << 16));
 			te.outputRate = te.outputRate & 65535 | (value << 16);
 			break;
 
 		case 2:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & -65536) + " | " + value);
 			te.packetSize = te.packetSize & -65536 | value;
 			break;
 
 		case 3:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & 65535) + " | " + (value << 16));
 			te.packetSize = te.packetSize & 65535 | (value << 16);
 			break;
 
