@@ -29,6 +29,7 @@ public class Info
 	public static final String GUI2_PNG    = TEX_BASE + "GUIBatteryStation.png";
 	public static final String GUI3_PNG    = TEX_BASE + "GUIStorageMonitor.png";
 	public static final String GUI4_PNG    = TEX_BASE + "GUIAdvEmitter.png";
+	public static final String GUI5_PNG    = TEX_BASE + "GUIAdjustableTransformer.png";
 
 	public static final String[] KEY_BLOCK_NAMES = new String[] {"blockChargingBench1", "blockChargingBench2", "blockChargingBench3",
 		"blockEmitterBlock1", "blockEmitterBlock2", "blockEmitterBlock3", "blockAdjustableTransformer", "blockEmitterAdjustable",
@@ -92,6 +93,8 @@ public class Info
 	// GUI strings
 	public static final String KEY_TITLE = "AdvPwrMan.title";
 	public static final String KEY_EU = "AdvPwrMan.misc.EU";
+	public static final String KEY_IN = "AdvPwrMan.misc.in";
+	public static final String KEY_OUT = "AdvPwrMan.misc.out";
 	public static final String KEY_EMITTER_PACKET = "AdvPwrMan.emitter.packet";
 	public static final String KEY_EMITTER_OUTPUT = "AdvPwrMan.emitter.output";
 	public static final String KEY_MONITOR_INVALID = "AdvPwrMan.monitor.invalid";
@@ -106,6 +109,8 @@ public class Info
 
 	public static final String AE_PACKET_RANGE = "[" + AE_MIN_PACKET + " - " + AE_MAX_PACKET + "]";
 	public static final String AE_OUTPUT_RANGE = "[" + AE_MIN_OUTPUT + " - " + AE_MAX_OUTPUT + "]";
+
+	public static final String[] KEY_DIRECTION_NAMES = {"AdvPwrMan.dir.down", "AdvPwrMan.dir.up", "AdvPwrMan.dir.north", "AdvPwrMan.dir.south", "AdvPwrMan.dir.west", "AdvPwrMan.dir.east"};
 
 	// Some global variables
 	public static boolean isDebugging;
@@ -159,6 +164,13 @@ public class Info
 
 		lang.addStringLocalization(KEY_BLOCK_NAMES[11] + KEY_NAME_SUFFIX, MONITOR_NAME);
 
+		lang.addStringLocalization(KEY_DIRECTION_NAMES[0], "Down");
+		lang.addStringLocalization(KEY_DIRECTION_NAMES[1], "Up");
+		lang.addStringLocalization(KEY_DIRECTION_NAMES[2], "North");
+		lang.addStringLocalization(KEY_DIRECTION_NAMES[3], "South");
+		lang.addStringLocalization(KEY_DIRECTION_NAMES[4], "East");
+		lang.addStringLocalization(KEY_DIRECTION_NAMES[5], "West");
+
 		lang.addStringLocalization("item.benchTools.toolkit.name", TOOLKIT_NAME);
 		lang.addStringLocalization("item.benchTools.LV-kit.name", "LV " + COMPONENTS_NAME);
 		lang.addStringLocalization("item.benchTools.MV-kit.name", "MV " + COMPONENTS_NAME);
@@ -170,6 +182,8 @@ public class Info
 		lang.addStringLocalization(KEY_TITLE, TITLE);
 
 		lang.addStringLocalization(KEY_EU, "EU");
+		lang.addStringLocalization(KEY_IN, "In");
+		lang.addStringLocalization(KEY_OUT, "Out");
 
 		// GUI strings
 		lang.addStringLocalization(KEY_EMITTER_PACKET, "Packet size (Voltage)");

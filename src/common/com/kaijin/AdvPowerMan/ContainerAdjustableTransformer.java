@@ -17,6 +17,7 @@ public class ContainerAdjustableTransformer extends Container
 	public TEAdjustableTransformer te;
 	public int outputRate;
 	public int packetSize;
+	public byte[] sideSettings = {0, 0, 0, 0, 0, 0}; // DOWN, UP, NORTH, SOUTH, WEST, EAST
 
 	public ContainerAdjustableTransformer(TEAdjustableTransformer tile)
 	{
@@ -24,6 +25,8 @@ public class ContainerAdjustableTransformer extends Container
 		te = tile;
 		outputRate = -1;
 		packetSize = -1;
+		for (int i : sideSettings)
+			i = (byte)255;
 	}
 
 	@Override
@@ -44,13 +47,23 @@ public class ContainerAdjustableTransformer extends Container
 				crafter.sendProgressBarUpdate(this, 2, te.packetSize & 65535);
 				crafter.sendProgressBarUpdate(this, 3, te.packetSize >>> 16);
 			}
+
+			for (int i = 0; i < 6; i++)
+				if (this.sideSettings[i] != te.sideSettings[i])
+			{
+				crafter.sendProgressBarUpdate(this, 4 + i, te.sideSettings[i]);
+			}
 		}
-		
+
 		// Done sending updates, record the new current values
 		this.outputRate = te.outputRate;
 		this.packetSize = te.packetSize;
+		for (int i = 0; i < 6; i++)
+		{
+			this.sideSettings[i] = te.sideSettings[i];
+		}
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void updateProgressBar(int param, int value)
@@ -75,6 +88,15 @@ public class ContainerAdjustableTransformer extends Container
 		case 3:
 			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (this.tileentity.adjustedStorage & 65535) + " | " + (value << 16));
 			te.packetSize = te.packetSize & 65535 | (value << 16);
+			break;
+
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+			te.sideSettings[param - 4] = (byte)value;
 			break;
 
 		default:

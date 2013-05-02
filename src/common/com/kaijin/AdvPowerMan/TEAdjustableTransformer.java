@@ -14,6 +14,7 @@ import ic2.api.energy.tile.IEnergySource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLLog;
@@ -22,10 +23,13 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 {
 	protected boolean initialized;
 
+	protected int maxInput = 8192;
+	protected int energyBuffer = 0;
+
 	public int outputRate = 32;
 	public int packetSize = 32;
-	public int maxInput = 8192;
-	private int energyBuffer = 0;
+
+	public byte[] sideSettings = {0, 0, 0, 0, 0, 0}; // DOWN, UP, NORTH, SOUTH, WEST, EAST
 
 	public TEAdjustableTransformer() // Constructor used when placing a new tile entity, to set up correct parameters
 	{
@@ -40,26 +44,25 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	{
 		super.readFromNBT(nbttagcompound);
 
-		// Test if block used to be an old style emitter and if so use appropriate settings
-		int baseTier = nbttagcompound.getInteger("baseTier");
-		if (baseTier > 0)
-		{
-			packetSize = outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
-			FMLLog.info(Info.TITLE_LOG + "Loading NBT data for old Emitter block with baseTier of " + baseTier + " and setting output to " + packetSize);
+		// Normal load
+		outputRate = nbttagcompound.getInteger("outputRate");
+		packetSize = nbttagcompound.getInteger("packetSize");
+		energyBuffer = nbttagcompound.getInteger("energyBuffer");
+		if (packetSize > Info.AE_MAX_PACKET) packetSize = Info.AE_MAX_PACKET;
+		if (packetSize < Info.AE_MIN_PACKET) packetSize = Info.AE_MIN_PACKET;
+		if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
+		if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
+		if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
+		if (energyBuffer > packetSize * Info.AE_PACKETS_TICK) energyBuffer = packetSize * Info.AE_PACKETS_TICK;
 
-		}
-		else
+		NBTTagList nbttaglist = nbttagcompound.getTagList("SideSettings");
+		for (int i = 0; i < nbttaglist.tagCount(); ++i)
 		{
-			// Normal load
-			outputRate = nbttagcompound.getInteger("outputRate");
-			packetSize = nbttagcompound.getInteger("packetSize");
-			energyBuffer = nbttagcompound.getInteger("energyBuffer");
-			if (packetSize > Info.AE_MAX_PACKET) packetSize = Info.AE_MAX_PACKET;
-			if (packetSize < Info.AE_MIN_PACKET) packetSize = Info.AE_MIN_PACKET;
-			if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
-			if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
-			if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
-			if (energyBuffer > packetSize * Info.AE_PACKETS_TICK) energyBuffer = packetSize * Info.AE_PACKETS_TICK;
+			NBTTagCompound entry = (NBTTagCompound)nbttaglist.tagAt(i);
+			if (i >= 0 && i < sideSettings.length)
+			{
+				sideSettings[i] = (byte)(entry.getByte("Flags") & 255);
+			}
 		}
 	}
 
@@ -73,6 +76,15 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 		nbttagcompound.setInteger("outputRate", outputRate);
 		nbttagcompound.setInteger("packetSize", packetSize);
 		nbttagcompound.setInteger("energyBuffer", energyBuffer);
+
+		NBTTagList nbttaglist = new NBTTagList();
+		for (int i = 0; i < sideSettings.length; ++i)
+		{
+			NBTTagCompound entry = new NBTTagCompound();
+			entry.setByte("Flags", sideSettings[i]);
+			nbttaglist.appendTag(entry);
+		}
+		nbttagcompound.setTag("SideSettings", nbttaglist);
 	}
 
 	@Override
@@ -82,7 +94,6 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 		{
 			EnergyTileUnloadEvent unloadEvent = new EnergyTileUnloadEvent(this);
 			MinecraftForge.EVENT_BUS.post(unloadEvent);
-			//			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
 		}
 		super.invalidate();
 	}
@@ -171,6 +182,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	@Override
 	public boolean emitsEnergyTo(TileEntity receiver, Direction direction)
 	{
+		// TODO if (sideSettings[direction.toSideValue()] & 254 == 0)
 		return true;
 	}
 
@@ -189,6 +201,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
 	{
+		// TODO if (sideSettings[direction.toSideValue()] & 254 > 0)
 		return true;
 	}
 
@@ -323,6 +336,14 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 		case 15:
 			outputRate /= 2;
 			if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
+			break;
+		case 16:
+		case 17:
+		case 18:
+		case 19:
+		case 20:
+		case 21:
+			sideSettings[id - 16] ^= 1;
 			break;
 		}
 	}
