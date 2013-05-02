@@ -20,8 +20,8 @@
 
 	<property name="mcp.version"         value="744"/>
 	<property name="forge.version"       value="1.5.1-7.7.1.666"/>
-	<property name="mymod.version"       value="1.1"/>
-    <property name="ic2.version"         value="IC2_1.115"/>
+	<property name="mymod.version"       value="1.2"/>
+    <property name="ic2.version"         value="IC2-1.115"/>
 
     <available property="forge-exists" file="${download_dir}/minecraftforge-src-${forge.version}.zip"/>
     <condition property="should-download-ant-contrib">
@@ -140,11 +140,11 @@
 
 		<!-- Reobf -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
-			<arg line="/c reobfuscate.bat"/>
+			<arg line="/c reobfuscate_srg.bat"/>
 		</exec>
 
 		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
-			<arg value="reobfuscate.sh" />
+			<arg value="reobfuscate_srg.sh" />
 		</exec>
 
 		<!-- Copy MyMod classes -->
