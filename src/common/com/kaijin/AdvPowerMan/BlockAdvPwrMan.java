@@ -32,6 +32,7 @@ public class BlockAdvPwrMan extends BlockContainer
 	protected Icon smBottom;
 	protected Icon smInvalid;
 	protected Icon emitter;
+	protected Icon accepter; 
 	protected Icon[] benchTop;
 	protected Icon[][][] cbSides;
 	protected Icon[][] bsSides; 
@@ -96,6 +97,7 @@ public class BlockAdvPwrMan extends BlockContainer
 		smBottom = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorBottom");
 		smInvalid = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorInvalid");
 		emitter = iconRegister.registerIcon(Info.TITLE_PACKED + ":Emitter");
+		accepter = iconRegister.registerIcon(Info.TITLE_PACKED + ":Accepter");
 		for (int i = 0; i < 13; i++)
 		{
 			String temp = Integer.toString(i);
@@ -135,10 +137,14 @@ public class BlockAdvPwrMan extends BlockContainer
 				return cbSides[meta - Info.CB_META][((TEChargingBench)tile).doingWork ? 1 : 0][((TEChargingBench)tile).chargeLevel];
 			}
 		}
-		else if (tile instanceof TEAdvEmitter || tile instanceof TEAdjustableTransformer)
+		else if (tile instanceof TEAdvEmitter)
 		{
-			// TODO: Give transformer its own textures
 			return emitter;
+		}
+		else if (tile instanceof TEAdjustableTransformer)
+		{
+			// TODO: Give transformer better textures
+			return (((TEAdjustableTransformer)tile).sideSettings[side] & 1) == 0 ? accepter : emitter;
 		}
 		else if (tile instanceof TEBatteryStation)
 		{
@@ -181,15 +187,16 @@ public class BlockAdvPwrMan extends BlockContainer
 	@Override
 	public Icon getIcon(int side, int meta)
 	{
-		if (meta == Info.AE_META || meta == Info.AT_META)
+		if (meta == Info.AE_META)
 		{
-			// TODO: Give transformer its own textures
 			return emitter;
 		}
-		//if (meta == Info.AT_META)
-		//{
-			//return transformer;
-		//}
+		if (meta == Info.AT_META)
+		{
+			// TODO: Give transformer better textures
+			if (side == 1) return emitter;
+			return accepter;
+		}
 		switch (side)
 		{
 		case 0: // bottom

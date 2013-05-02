@@ -4,6 +4,10 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import ic2.api.Direction;
 import ic2.api.energy.EnergyNet;
 import ic2.api.energy.event.EnergyTileLoadEvent;
@@ -15,9 +19,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TEAdjustableTransformer extends TECommon implements IEnergySource, IEnergySink
 {
@@ -258,6 +265,40 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 
 	// Networking stuff
 
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void receiveDescriptionData(int packetID, DataInputStream stream)
+	{
+		try
+		{
+			for (int i = 0; i < 6; i++)
+			{
+				sideSettings[i] = stream.readByte();
+			}
+		}
+		catch (IOException e)
+		{
+			logDescPacketError(e);
+			return;
+		}
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+
+	@Override
+	public Packet250CustomPayload getDescriptionPacket()
+	{
+		return createDescPacket();
+	}
+
+	@Override
+	protected void addUniqueDescriptionData(DataOutputStream data) throws IOException
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			data.writeByte(sideSettings[i]);
+		}
+	}
+
 	/**
 	 * Packet reception by server of what button was clicked on the client's GUI.
 	 * @param id = the button ID
@@ -353,6 +394,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			sideSettings[id - 16] ^= 1;
 			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
 			initialized = true;
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			break;
 		}
 	}
