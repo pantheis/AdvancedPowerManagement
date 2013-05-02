@@ -97,7 +97,7 @@ public class GuiAdjustableTransformer extends GuiContainer
 		// Side input/output settings text
 		for (int i = 0; i < 6; i++)
 		{
-			Utils.drawGlowingText(fontRenderer, lang.translateKey((tile.sideSettings[i] & 1) == 1 ? Info.KEY_IN : Info.KEY_OUT), xLoc + 214, yLoc + 27 + 13 * i, GREEN, GREENGLOW);
+			Utils.drawGlowingText(fontRenderer, lang.translateKey((tile.sideSettings[i] & 1) == 0 ? Info.KEY_IN : Info.KEY_OUT), xLoc + 214, yLoc + 27 + 13 * i, GREEN, GREENGLOW);
 		}
 
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
@@ -135,5 +135,4 @@ public class GuiAdjustableTransformer extends GuiContainer
 		}
 		super.mouseClicked(par1, par2, par3); // Finally, do all that other normal stuff. 
 	}
-
 }

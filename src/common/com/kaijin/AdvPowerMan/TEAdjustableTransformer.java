@@ -44,7 +44,6 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	{
 		super.readFromNBT(nbttagcompound);
 
-		// Normal load
 		outputRate = nbttagcompound.getInteger("outputRate");
 		packetSize = nbttagcompound.getInteger("packetSize");
 		energyBuffer = nbttagcompound.getInteger("energyBuffer");
@@ -182,14 +181,15 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	@Override
 	public boolean emitsEnergyTo(TileEntity receiver, Direction direction)
 	{
-		// TODO if (sideSettings[direction.toSideValue()] & 254 == 0)
-		return true;
+		// TODO Side I/O
+		//System.out.println("emit   - direction.toSideValue() = " + direction.toSideValue() + " setting = " + ((sideSettings[direction.toSideValue()] & 1) == 1));
+		return (sideSettings[direction.toSideValue()] & 1) == 1;
 	}
 
 	@Override
 	public int getMaxEnergyOutput()
 	{
-		return Info.AE_MAX_PACKET;
+		return Integer.MAX_VALUE;
 	}
 
 	@Override
@@ -201,8 +201,9 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
 	{
-		// TODO if (sideSettings[direction.toSideValue()] & 254 > 0)
-		return true;
+		// TODO Side I/O
+		//System.out.println("accept - direction.toSideValue() = " + direction.toSideValue() + " setting = " + ((sideSettings[direction.toSideValue()] & 1) == 0));
+		return (sideSettings[direction.toSideValue()] & 1) == 0;
 	}
 
 	@Override
@@ -210,7 +211,9 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	{
 		if(!receivingRedstoneSignal())
 		{
-			return Math.max(outputRate - energyBuffer, 0);
+			final int amt = Math.max(outputRate - energyBuffer, 0); 
+			//System.out.println("demandsEnergy: " + amt);
+			return amt;
 		}
 		return 0;
 	}
@@ -218,6 +221,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	@Override
 	public int injectEnergy(Direction directionFrom, int supply)
 	{
+		//System.out.println("energyBuffer: " + energyBuffer);
 		int surplus = 0;
 		if (AdvancedPowerManagement.proxy.isServer())
 		{
@@ -343,7 +347,12 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 		case 19:
 		case 20:
 		case 21:
+			//TODO How can we make IC2 check the new emit/accept values without doing a reload?
+			if (initialized) MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+			initialized = false;
 			sideSettings[id - 16] ^= 1;
+			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+			initialized = true;
 			break;
 		}
 	}
