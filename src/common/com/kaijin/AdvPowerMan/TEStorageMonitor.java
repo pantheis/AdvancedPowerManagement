@@ -118,7 +118,7 @@ public class TEStorageMonitor extends TECommon implements ISidedInventory
 	@Override
 	public int getGuiID()
 	{
-		return 4;
+		return Info.GUI_ID_STORAGE_MONITOR;
 	}
 
 	/**

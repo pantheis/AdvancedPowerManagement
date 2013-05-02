@@ -134,6 +134,9 @@ public class AdvancedPowerManagement implements ICraftingHandler
 		GameRegistry.registerTileEntity(TEBatteryStation.class, "HV " + Info.DISCHARGER_NAME); // Legacy
 		GameRegistry.registerTileEntity(TEBatteryStation.class, "kaijin.batteryStation"); // Proper mapping
 
+		// Adjustable Transformer
+		GameRegistry.registerTileEntity(TEAdjustableTransformer.class, "kaijin.adjTransformer");
+
 		// Storage Monitor
 		GameRegistry.registerTileEntity(TEStorageMonitor.class, "kaijin.storageMonitor");
 
@@ -143,7 +146,7 @@ public class AdvancedPowerManagement implements ICraftingHandler
 		GameRegistry.registerTileEntity(TEAdvEmitter.class, "HV " + Info.EMITTER_NAME); // Legacy
 		GameRegistry.registerTileEntity(TEAdvEmitter.class, "EV " + Info.EMITTER_NAME); // Legacy
 		GameRegistry.registerTileEntity(TEAdvEmitter.class, "kaijin.emitter"); // Now legacy as well
-		GameRegistry.registerTileEntity(TEAdvEmitter.class, "kaijin.advEmitter");
+		GameRegistry.registerTileEntity(TEAdvEmitter.class, "kaijin.advEmitter"); // Proper mapping
 
 		// Items
 		itemBenchTools = new ItemBenchTools(itemIDBenchTools).setUnlocalizedName(Info.TOOLKIT_NAME);
@@ -196,17 +199,20 @@ public class AdvancedPowerManagement implements ICraftingHandler
 		FMLLog.getLogger().fine(Info.TITLE_LOG + "Adding crafting recipes.");
 
 		// Charging Bench recipes
-		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, 0), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("batBox")});
-		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, 1), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("doubleInsulatedGoldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mfeUnit")});
-		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, 2), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("trippleInsulatedIronCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mfsUnit")});
+		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, Info.CB_META + 0), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("batBox")});
+		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, Info.CB_META + 1), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("doubleInsulatedGoldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mfeUnit")});
+		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, Info.CB_META + 2), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("trippleInsulatedIronCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mfsUnit")});
 
 		// Battery Station recipes
-		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1,  8), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("lvTransformer")});
-		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1,  9), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("doubleInsulatedGoldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mvTransformer")});
-		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, 10), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("trippleInsulatedIronCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("hvTransformer")});
+		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, Info.BS_META + 0), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("insulatedCopperCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("lvTransformer")});
+		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, Info.BS_META + 1), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("doubleInsulatedGoldCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("mvTransformer")});
+		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, Info.BS_META + 2), new Object[] {"UUU", "WCW", "WBW", 'U', Items.getItem("trippleInsulatedIronCableItem"), 'W', Block.planks, 'C', Items.getItem("electronicCircuit"), 'B', Items.getItem("hvTransformer")});
+
+		// Adjustable Transformer recipe
+		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, Info.AT_META), new Object[] {"L", "C", "H", 'L', Items.getItem("lvTransformer"), 'C', Items.getItem("advancedCircuit"), 'H', Items.getItem("hvTransformer")});
 
 		// Storage Monitor recipe
-		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, 11), new Object[] {"WUW", "GCG", "WRW", 'W', Block.planks, 'U', Items.getItem("goldCableItem"), 'G', Block.glass, 'C', Items.getItem("electronicCircuit"), 'R', Item.redstone});
+		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, Info.SM_META), new Object[] {"WUW", "GCG", "WRW", 'W', Block.planks, 'U', Items.getItem("goldCableItem"), 'G', Block.glass, 'C', Items.getItem("electronicCircuit"), 'R', Item.redstone});
 
 		// Link Card Creator recipe
 		GameRegistry.addRecipe(new ItemStack(itemStorageLinkCardCreator, 1, 0), new Object[] {"U  ", " C ", "  V", 'U', Items.getItem("insulatedCopperCableItem"), 'C', Items.getItem("electronicCircuit"), 'V', Item.paper});
