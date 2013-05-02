@@ -47,21 +47,25 @@ public class CommonProxy implements IGuiHandler
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-		if (ID == 1 && tile instanceof TEChargingBench)
+		if (ID == Info.GUI_ID_CHARGING_BENCH && tile instanceof TEChargingBench)
 		{
 			return new ContainerChargingBench(player.inventory, (TEChargingBench)tile);
 		}
-		else if (ID == 2 && tile instanceof TEAdvEmitter)
-		{
-			return new ContainerAdvEmitter((TEAdvEmitter)tile);
-		}
-		else if (ID == 3 && tile instanceof TEBatteryStation)
+		else if (ID == Info.GUI_ID_BATTERY_STATION && tile instanceof TEBatteryStation)
 		{
 			return new ContainerBatteryStation(player.inventory, (TEBatteryStation)tile);
 		}
-		else if (ID == 4 && tile instanceof TEStorageMonitor)
+		else if (ID == Info.GUI_ID_STORAGE_MONITOR && tile instanceof TEStorageMonitor)
 		{
 			return new ContainerStorageMonitor(player.inventory, (TEStorageMonitor)tile);
+		}
+		else if (ID == Info.GUI_ID_ADJUSTABLE_EMITTER && tile instanceof TEAdvEmitter)
+		{
+			return new ContainerAdvEmitter((TEAdvEmitter)tile);
+		}
+		else if (ID == Info.GUI_ID_ADJUSTABLE_TRANSFORMER && tile instanceof TEAdjustableTransformer)
+		{
+			return new ContainerAdjustableTransformer((TEAdjustableTransformer)tile);
 		}
 
 		return null;
@@ -74,21 +78,25 @@ public class CommonProxy implements IGuiHandler
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-		if (ID == 1 && tile instanceof TEChargingBench)
+		if (ID == Info.GUI_ID_CHARGING_BENCH && tile instanceof TEChargingBench)
 		{
 			return new GuiChargingBench(player.inventory, (TEChargingBench)tile);
 		}
-		else if (ID == 2 && tile instanceof TEAdvEmitter)
-		{
-			return new GuiAdvEmitter((TEAdvEmitter)tile);
-		}
-		else if (ID == 3 && tile instanceof TEBatteryStation)
+		else if (ID == Info.GUI_ID_BATTERY_STATION && tile instanceof TEBatteryStation)
 		{
 			return new GuiBatteryStation(player.inventory, (TEBatteryStation)tile);
 		}
-		else if (ID == 4 && tile instanceof TEStorageMonitor)
+		else if (ID == Info.GUI_ID_STORAGE_MONITOR && tile instanceof TEStorageMonitor)
 		{
 			return new GuiStorageMonitor(player.inventory, (TEStorageMonitor)tile);
+		}
+		else if (ID == Info.GUI_ID_ADJUSTABLE_EMITTER && tile instanceof TEAdvEmitter)
+		{
+			return new GuiAdvEmitter((TEAdvEmitter)tile);
+		}
+		else if (ID == Info.GUI_ID_ADJUSTABLE_TRANSFORMER && tile instanceof TEAdjustableTransformer)
+		{
+			return new GuiAdjustableTransformer((TEAdjustableTransformer)tile);
 		}
 
 		return null;

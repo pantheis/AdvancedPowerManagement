@@ -108,7 +108,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	{
 		int oldTier = baseTier;
 		baseTier = newTier;
-		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newTier - 1, 3);
+		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, Info.CB_META + newTier - 1, 3);
 		initializeBaseValues();
 		doUpgradeEffects();
 		chargeLevel = gaugeEnergyScaled(12);
@@ -245,7 +245,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public int getGuiID()
 	{
-		return 1;
+		return Info.GUI_ID_CHARGING_BENCH;
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	protected void selfDestroy()
 	{
 		dropContents();
-		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, baseTier - 1);
+		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, Info.CB_META + baseTier - 1);
 		dropItem(stack);
 		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		this.invalidate();

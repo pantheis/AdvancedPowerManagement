@@ -4,36 +4,43 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import ic2.api.Direction;
 import ic2.api.energy.EnergyNet;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileSourceEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-public class TEAdvEmitter extends TECommon implements IEnergySource
+public class TEAdjustableTransformer extends TECommon implements IEnergySource, IEnergySink
 {
 	protected boolean initialized;
 
+	protected int maxInput = 8192;
+	protected int energyBuffer = 0;
+
 	public int outputRate = 32;
 	public int packetSize = 32;
-	private int energyBuffer = 0;
 
-	public TEAdvEmitter() // Constructor used when placing a new tile entity, to set up correct parameters
+	public byte[] sideSettings = {0, 0, 0, 0, 0, 0}; // DOWN, UP, NORTH, SOUTH, WEST, EAST
+
+	public TEAdjustableTransformer() // Constructor used when placing a new tile entity, to set up correct parameters
 	{
 		super();
-	}
-
-	public TEAdvEmitter(int i) // Constructor used when placing a new tile entity, to set up correct parameters
-	{
-		super();
-		packetSize = outputRate = (int)Math.pow(2.0D, (double)(2 * i + 3));
-		FMLLog.info(Info.TITLE_LOG + "Updating old Emitter block of tier " + i);
 	}
 
 	/**
@@ -44,26 +51,24 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 	{
 		super.readFromNBT(nbttagcompound);
 
-		// Test if block used to be an old style emitter and if so use appropriate settings
-		int baseTier = nbttagcompound.getInteger("baseTier");
-		if (baseTier > 0)
-		{
-			packetSize = outputRate = (int)Math.pow(2.0D, (double)(2 * baseTier + 3));
-			FMLLog.info(Info.TITLE_LOG + "Loading NBT data for old Emitter block with baseTier of " + baseTier + " and setting output to " + packetSize);
+		outputRate = nbttagcompound.getInteger("outputRate");
+		packetSize = nbttagcompound.getInteger("packetSize");
+		energyBuffer = nbttagcompound.getInteger("energyBuffer");
+		if (packetSize > Info.AE_MAX_PACKET) packetSize = Info.AE_MAX_PACKET;
+		if (packetSize < Info.AE_MIN_PACKET) packetSize = Info.AE_MIN_PACKET;
+		if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
+		if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
+		if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
+		if (energyBuffer > packetSize * Info.AE_PACKETS_TICK) energyBuffer = packetSize * Info.AE_PACKETS_TICK;
 
-		}
-		else
+		NBTTagList nbttaglist = nbttagcompound.getTagList("SideSettings");
+		for (int i = 0; i < nbttaglist.tagCount(); ++i)
 		{
-			// Normal load
-			outputRate = nbttagcompound.getInteger("outputRate");
-			packetSize = nbttagcompound.getInteger("packetSize");
-			energyBuffer = nbttagcompound.getInteger("energyBuffer");
-			if (packetSize > Info.AE_MAX_PACKET) packetSize = Info.AE_MAX_PACKET;
-			if (packetSize < Info.AE_MIN_PACKET) packetSize = Info.AE_MIN_PACKET;
-			if (outputRate > packetSize * Info.AE_PACKETS_TICK) outputRate = packetSize * Info.AE_PACKETS_TICK;
-			if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
-			if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
-			if (energyBuffer > packetSize * Info.AE_PACKETS_TICK) energyBuffer = packetSize * Info.AE_PACKETS_TICK;
+			NBTTagCompound entry = (NBTTagCompound)nbttaglist.tagAt(i);
+			if (i >= 0 && i < sideSettings.length)
+			{
+				sideSettings[i] = (byte)(entry.getByte("Flags") & 255);
+			}
 		}
 	}
 
@@ -77,6 +82,15 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 		nbttagcompound.setInteger("outputRate", outputRate);
 		nbttagcompound.setInteger("packetSize", packetSize);
 		nbttagcompound.setInteger("energyBuffer", energyBuffer);
+
+		NBTTagList nbttaglist = new NBTTagList();
+		for (int i = 0; i < sideSettings.length; ++i)
+		{
+			NBTTagCompound entry = new NBTTagCompound();
+			entry.setByte("Flags", sideSettings[i]);
+			nbttaglist.appendTag(entry);
+		}
+		nbttagcompound.setTag("SideSettings", nbttaglist);
 	}
 
 	@Override
@@ -86,7 +100,6 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 		{
 			EnergyTileUnloadEvent unloadEvent = new EnergyTileUnloadEvent(this);
 			MinecraftForge.EVENT_BUS.post(unloadEvent);
-			//			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
 		}
 		super.invalidate();
 	}
@@ -100,7 +113,7 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 	@Override
 	public int getGuiID()
 	{
-		return Info.GUI_ID_ADJUSTABLE_EMITTER;
+		return Info.GUI_ID_ADJUSTABLE_TRANSFORMER;
 	}
 
 	@Override
@@ -112,32 +125,27 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 		{
 			if (worldObj == null) return;
 
-			// Test if this is an old emitter block and needs its meta value adjusted
-			final int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-			if (meta != 7)
-			{
-				FMLLog.info(Info.TITLE_LOG + "Resetting Emitter block meta value from " + meta + " to 7");
-				worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 7, 3);
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-				return;
-			}
-			EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
-			MinecraftForge.EVENT_BUS.post(loadEvent);
-			//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
+			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
 			initialized = true;
 		}
 
-		if (receivingRedstoneSignal())
+		if (!receivingRedstoneSignal() && energyBuffer >= packetSize)
 		{
-			energyBuffer += outputRate;
 			EnergyNet net = EnergyNet.getForWorld(worldObj);
-			while (energyBuffer >= packetSize)
+			boolean packetSent;
+			do
 			{
+				packetSent = false;
 				EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
 				MinecraftForge.EVENT_BUS.post(sourceEvent);
-				//				net.emitEnergyFrom(this, packetSize); // No reason to save any surplus. Output is always the same.
-				energyBuffer -= packetSize;
+				final int surplus = sourceEvent.amount;
+				if (surplus < packetSize)
+				{
+					packetSent = true;
+					energyBuffer += surplus - packetSize; // Subtracts transferred amount
+				}
 			}
+			while (packetSent && energyBuffer >= packetSize);
 		}
 	}
 
@@ -148,7 +156,7 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 
 	public String getInvName()
 	{
-		return Info.KEY_BLOCK_NAMES[7] + Info.KEY_NAME_SUFFIX;
+		return Info.KEY_BLOCK_NAMES[6] + Info.KEY_NAME_SUFFIX;
 	}
 
 	public boolean isUseableByPlayer(EntityPlayer entityplayer)
@@ -159,6 +167,14 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 		}
 
 		return entityplayer.getDistanceSq((double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D) <= 64D;
+	}
+
+	protected void selfDestroy()
+	{
+		//dropContents();
+		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, Info.AT_META);
+		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+		this.invalidate();
 	}
 
 	// IC2 API stuff
@@ -172,7 +188,9 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 	@Override
 	public boolean emitsEnergyTo(TileEntity receiver, Direction direction)
 	{
-		return true;
+		// TODO Side I/O
+		//System.out.println("emit   - direction.toSideValue() = " + direction.toSideValue() + " setting = " + ((sideSettings[direction.toSideValue()] & 1) == 1));
+		return (sideSettings[direction.toSideValue()] & 1) == 1;
 	}
 
 	@Override
@@ -181,7 +199,95 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 		return Integer.MAX_VALUE;
 	}
 
+	@Override
+	public int getMaxSafeInput()
+	{
+		return maxInput;
+	}
+
+	@Override
+	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
+	{
+		// TODO Side I/O
+		//System.out.println("accept - direction.toSideValue() = " + direction.toSideValue() + " setting = " + ((sideSettings[direction.toSideValue()] & 1) == 0));
+		return (sideSettings[direction.toSideValue()] & 1) == 0;
+	}
+
+	@Override
+	public int demandsEnergy()
+	{
+		if(!receivingRedstoneSignal())
+		{
+			final int amt = Math.max(outputRate - energyBuffer, 0); 
+			//System.out.println("demandsEnergy: " + amt);
+			return amt;
+		}
+		return 0;
+	}
+
+	@Override
+	public int injectEnergy(Direction directionFrom, int supply)
+	{
+		//System.out.println("energyBuffer: " + energyBuffer);
+		if (AdvancedPowerManagement.proxy.isServer())
+		{
+			// if supply is greater than the max we can take per tick
+			if (supply > maxInput)
+			{
+				//If the supplied EU is over the baseMaxInput, we're getting
+				//supplied higher than acceptable current. Pop ourselves off
+				//into the world and return all but 1 EU, or if the supply
+				//somehow was 1EU, return zero to keep IC2 from spitting out 
+				//massive errors in the log
+				selfDestroy();
+				if (supply <= 1)
+					return 0;
+				else
+					return supply - 1;
+			}
+			else
+			{
+				energyBuffer += supply;
+			}
+		}
+		return 0;
+	}
+
 	// Networking stuff
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void receiveDescriptionData(int packetID, DataInputStream stream)
+	{
+		try
+		{
+			for (int i = 0; i < 6; i++)
+			{
+				sideSettings[i] = stream.readByte();
+			}
+		}
+		catch (IOException e)
+		{
+			logDescPacketError(e);
+			return;
+		}
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+
+	@Override
+	public Packet250CustomPayload getDescriptionPacket()
+	{
+		return createDescPacket();
+	}
+
+	@Override
+	protected void addUniqueDescriptionData(DataOutputStream data) throws IOException
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			data.writeByte(sideSettings[i]);
+		}
+	}
 
 	/**
 	 * Packet reception by server of what button was clicked on the client's GUI.
@@ -265,6 +371,20 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 		case 15:
 			outputRate /= 2;
 			if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
+			break;
+		case 16:
+		case 17:
+		case 18:
+		case 19:
+		case 20:
+		case 21:
+			//TODO How can we make IC2 check the new emit/accept values without doing a reload?
+			if (initialized) MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+			initialized = false;
+			sideSettings[id - 16] ^= 1;
+			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+			initialized = true;
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			break;
 		}
 	}

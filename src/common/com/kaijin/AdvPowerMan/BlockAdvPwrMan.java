@@ -27,13 +27,12 @@ public class BlockAdvPwrMan extends BlockContainer
 {
 	static final String[] tierPrefix = {"LV", "MV", "HV"};  
 
-	//TODO Register GUI slot overlay icons!
-
 	protected Icon benchBottom;
 	protected Icon smTop;
 	protected Icon smBottom;
 	protected Icon smInvalid;
 	protected Icon emitter;
+	protected Icon accepter; 
 	protected Icon[] benchTop;
 	protected Icon[][][] cbSides;
 	protected Icon[][] bsSides; 
@@ -50,7 +49,7 @@ public class BlockAdvPwrMan extends BlockContainer
 	{
 		for (int i = 0; i <= Info.LAST_META_VALUE; ++i)
 		{
-			if (i >= 3 && i <= 6) continue; // Don't add legacy emitters to creative inventory
+			if (i >= 3 && i <= 5) continue; // Don't add legacy emitters to creative inventory
 			list.add(new ItemStack(blockID, 1, i));
 		}
 	}
@@ -98,6 +97,7 @@ public class BlockAdvPwrMan extends BlockContainer
 		smBottom = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorBottom");
 		smInvalid = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorInvalid");
 		emitter = iconRegister.registerIcon(Info.TITLE_PACKED + ":Emitter");
+		accepter = iconRegister.registerIcon(Info.TITLE_PACKED + ":Accepter");
 		for (int i = 0; i < 13; i++)
 		{
 			String temp = Integer.toString(i);
@@ -131,15 +131,20 @@ public class BlockAdvPwrMan extends BlockContainer
 				return benchBottom;
 
 			case 1: // top
-				return benchTop[meta];
+				return benchTop[meta - Info.CB_META];
 
 			default:
-				return cbSides[meta][((TEChargingBench)tile).doingWork ? 1 : 0][((TEChargingBench)tile).chargeLevel];
+				return cbSides[meta - Info.CB_META][((TEChargingBench)tile).doingWork ? 1 : 0][((TEChargingBench)tile).chargeLevel];
 			}
 		}
 		else if (tile instanceof TEAdvEmitter)
 		{
 			return emitter;
+		}
+		else if (tile instanceof TEAdjustableTransformer)
+		{
+			// TODO: Give transformer better textures
+			return (((TEAdjustableTransformer)tile).sideSettings[side] & 1) == 0 ? accepter : emitter;
 		}
 		else if (tile instanceof TEBatteryStation)
 		{
@@ -149,10 +154,10 @@ public class BlockAdvPwrMan extends BlockContainer
 				return benchBottom;
 
 			case 1: // top
-				return benchTop[meta - 8];
+				return benchTop[meta - Info.BS_META];
 
 			default:
-				return bsSides[meta - 8][((TEBatteryStation)tile).doingWork ? 1 : 0];
+				return bsSides[meta - Info.BS_META][((TEBatteryStation)tile).doingWork ? 1 : 0];
 			}
 		}
 		else if (tile instanceof TEStorageMonitor)
@@ -182,23 +187,29 @@ public class BlockAdvPwrMan extends BlockContainer
 	@Override
 	public Icon getIcon(int side, int meta)
 	{
-		if (meta >= 3 && meta < 8)
+		if (meta == Info.AE_META)
 		{
 			return emitter;
+		}
+		if (meta == Info.AT_META)
+		{
+			// TODO: Give transformer better textures
+			if (side == 1) return emitter;
+			return accepter;
 		}
 		switch (side)
 		{
 		case 0: // bottom
-			return meta == 11 ? smBottom : benchBottom;
+			return meta == Info.SM_META ? smBottom : benchBottom;
 
 		case 1: // top
 			if (meta < 3) // CB tops
 			{
-				return benchTop[meta];				
+				return benchTop[meta - Info.CB_META];				
 			}
 			else if (meta < 11) // Battery Station top
 			{
-				return benchTop[meta - 8];
+				return benchTop[meta - Info.BS_META];
 			}
 			else
 			{
@@ -208,11 +219,11 @@ public class BlockAdvPwrMan extends BlockContainer
 		default: // side
 			if (meta < 3) // Charging Bench
 			{
-				return cbSides[meta][0][0];
+				return cbSides[meta - Info.CB_META][0][0];
 			}
 			else if (meta < 11) // Battery Station
 			{
-				return bsSides[meta - 8][0];
+				return bsSides[meta - Info.BS_META][0];
 			}
 			else
 			{
@@ -289,7 +300,7 @@ public class BlockAdvPwrMan extends BlockContainer
 			return new TEAdvEmitter(3); // Update old emitter tier 3
 
 		case 6:
-			return new TEAdvEmitter(4); // Update old emitter tier 4
+			return new TEAdjustableTransformer();
 
 		case 7:
 			return new TEAdvEmitter();
