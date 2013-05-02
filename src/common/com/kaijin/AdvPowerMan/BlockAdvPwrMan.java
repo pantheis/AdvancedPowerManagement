@@ -236,7 +236,7 @@ public class BlockAdvPwrMan extends BlockContainer
 	public int isProvidingWeakPower(IBlockAccess block, int x, int y, int z, int side)
 	{
 		TileEntity tile = block.getBlockTileEntity(x, y, z);
-		return tile instanceof TEStorageMonitor && ((TEStorageMonitor)tile).isPowering ? 1 : 0; // TODO Verify this works properly
+		return tile instanceof TEStorageMonitor && ((TEStorageMonitor)tile).isPowering ? 15 : 0; // TODO Verify this works properly
 	}
 
 	@Override
