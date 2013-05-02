@@ -44,7 +44,7 @@ public abstract class TECommon extends TileEntity
 		DataOutputStream data = new DataOutputStream(bytes);
 		try
 		{
-			data.writeInt(0); // Packet ID for Storage Monitor GUI button clicks
+			data.writeInt(0); // Packet ID for GUI button clicks
 			data.writeInt(xCoord);
 			data.writeInt(yCoord);
 			data.writeInt(zCoord);

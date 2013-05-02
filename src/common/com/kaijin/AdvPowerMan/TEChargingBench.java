@@ -27,7 +27,7 @@ import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TEChargingBench extends TECommonBench implements IEnergySink, IEnergyStorage, IInventory, ISidedInventory
+public class TEChargingBench extends TECommonBench implements IEnergySink, IEnergyStorage, IInventory, ISidedInventory, net.minecraftforge.common.ISidedInventory
 {
 	// Base values
 	public int baseMaxInput;
@@ -108,7 +108,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	{
 		int oldTier = baseTier;
 		baseTier = newTier;
-		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newTier - 1, 3);
+		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, Info.CB_META + newTier - 1, 3);
 		initializeBaseValues();
 		doUpgradeEffects();
 		chargeLevel = gaugeEnergyScaled(12);
@@ -245,7 +245,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	@Override
 	public int getGuiID()
 	{
-		return 1;
+		return Info.GUI_ID_CHARGING_BENCH;
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	protected void selfDestroy()
 	{
 		dropContents();
-		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, baseTier - 1);
+		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, Info.CB_META + baseTier - 1);
 		dropItem(stack);
 		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		this.invalidate();
@@ -657,7 +657,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 	// ISidedInventory
 
-/*	@Override
+	@Override
 	public int getStartInventorySide(ForgeDirection side)
 	{
 		switch (side)
@@ -677,7 +677,6 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		// Each side accesses a single slot
 		return 1;
 	}
-*/
 
 	@Override
 	public int[] getSizeInventorySide(int side)
@@ -700,7 +699,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	{
 		// Decide if the item is a valid IC2 electrical item
 		if (i == Info.CB_SLOT_POWER_SOURCE) return Utils.isItemDrainable(stack, powerTier);
-		if (i == Info.CB_SLOT_INPUT) return Utils.isItemChargeable(stack, powerTier); 
+		if (i == Info.CB_SLOT_INPUT) return Utils.isItemChargeable(stack, powerTier);
 		// Info.CB_SLOT_OUTPUT ?
 		return false;
 	}
