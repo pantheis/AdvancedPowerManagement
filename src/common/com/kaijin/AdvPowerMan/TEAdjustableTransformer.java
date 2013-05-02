@@ -229,7 +229,6 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	public int injectEnergy(Direction directionFrom, int supply)
 	{
 		//System.out.println("energyBuffer: " + energyBuffer);
-		int surplus = 0;
 		if (AdvancedPowerManagement.proxy.isServer())
 		{
 			// if supply is greater than the max we can take per tick
@@ -249,18 +248,9 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			else
 			{
 				energyBuffer += supply;
-				// check if our current energy level is now over the max energy level
-				if (energyBuffer > outputRate)
-				{
-					//if so, our surplus to return is equal to that amount over
-					surplus = energyBuffer - outputRate;
-					//and set our current energy level TO our max energy level
-					energyBuffer = outputRate;
-				}
-				//surplus may be zero or greater here
 			}
 		}
-		return surplus;
+		return 0;
 	}
 
 	// Networking stuff
