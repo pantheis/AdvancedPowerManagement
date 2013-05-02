@@ -168,8 +168,8 @@ public class Info
 		lang.addStringLocalization(KEY_DIRECTION_NAMES[1], "Up");
 		lang.addStringLocalization(KEY_DIRECTION_NAMES[2], "North");
 		lang.addStringLocalization(KEY_DIRECTION_NAMES[3], "South");
-		lang.addStringLocalization(KEY_DIRECTION_NAMES[4], "East");
-		lang.addStringLocalization(KEY_DIRECTION_NAMES[5], "West");
+		lang.addStringLocalization(KEY_DIRECTION_NAMES[4], "West");
+		lang.addStringLocalization(KEY_DIRECTION_NAMES[5], "East");
 
 		lang.addStringLocalization("item.benchTools.toolkit.name", TOOLKIT_NAME);
 		lang.addStringLocalization("item.benchTools.LV-kit.name", "LV " + COMPONENTS_NAME);
