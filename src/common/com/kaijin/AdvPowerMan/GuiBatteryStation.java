@@ -44,7 +44,7 @@ public class GuiBatteryStation extends GuiContainer
 		tile = tileentity;
 		xSize = 176; // The X size of the GUI window in pixels.
 		ySize = 182; // The Y size of the GUI window in pixels.
-		button = new CButton(0, 0, 0, 18, 12, 30, 200, 30, 200, "", 4210752, 16777120, Info.GUI2_PNG);
+		button = new CButton(0, 0, 0, 18, 12, 30, 200, 30, 200, "", 4210752, 16777120, Info.GUI_TEX_BATTERY_STATION);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class GuiBatteryStation extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(Info.GUI2_PNG);
+		mc.renderEngine.bindTexture(Info.GUI_TEX_BATTERY_STATION);
 
 		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 

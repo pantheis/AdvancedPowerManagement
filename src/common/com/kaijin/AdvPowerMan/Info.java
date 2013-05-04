@@ -22,14 +22,12 @@ public class Info
 	public static final String TITLE_LOG = "[" + TITLE_PACKED + "] ";
 
 	// Textures
-	public static final String TEX_BASE    = "/com/kaijin/AdvPowerMan/textures/";
-	public static final String BLOCK_PNG   = TEX_BASE + "AdvPowerManBlocks.png";
-	public static final String ITEM_PNG    = TEX_BASE + "AdvPowerManItems.png";
-	public static final String GUI1_PNG    = TEX_BASE + "GUIChargingBench.png";
-	public static final String GUI2_PNG    = TEX_BASE + "GUIBatteryStation.png";
-	public static final String GUI3_PNG    = TEX_BASE + "GUIStorageMonitor.png";
-	public static final String GUI4_PNG    = TEX_BASE + "GUIAdvEmitter.png";
-	public static final String GUI5_PNG    = TEX_BASE + "GUIAdjustableTransformer.png";
+	public static final String TEX_BASE = "/com/kaijin/AdvPowerMan/textures/";
+	public static final String GUI_TEX_CHARGING_BENCH  = TEX_BASE + "GUIChargingBench.png";
+	public static final String GUI_TEX_BATTERY_STATION = TEX_BASE + "GUIBatteryStation.png";
+	public static final String GUI_TEX_STORAGE_MONITOR = TEX_BASE + "GUIStorageMonitor.png";
+	public static final String GUI_TEX_EMITTER         = TEX_BASE + "GUIAdvEmitter.png";
+	public static final String GUI_TEX_ADJ_TRANSFORMER = TEX_BASE + "GUIAdjustableTransformer.png";
 
 	public static final String[] KEY_BLOCK_NAMES = new String[] {"blockChargingBench1", "blockChargingBench2", "blockChargingBench3",
 		"blockEmitterBlock1", "blockEmitterBlock2", "blockEmitterBlock3", "blockAdjustableTransformer", "blockEmitterAdjustable",

@@ -41,11 +41,11 @@ public class GuiAdjustableTransformer extends GuiContainer
 		for (int i = 0; i < buttons.length; i++)
 		{
 			//16777120 old highlight color code, saved here for reference
-			buttons[i] = new CButton(i, 0, 0, 24, 13, 1, 192, 1, 207, displayStrings[i % 8], 4210752, 16777120, Info.GUI5_PNG);
+			buttons[i] = new CButton(i, 0, 0, 24, 13, 1, 192, 1, 207, displayStrings[i % 8], 4210752, 16777120, Info.GUI_TEX_ADJ_TRANSFORMER);
 		}
 		for (int i = 0; i < dirButtons.length; i++)
 		{
-			dirButtons[i] = new CButton(i + 16, 0, 0, 32, 13, 27, 192, 27, 207, lang.translateKey(Info.KEY_DIRECTION_NAMES[i]), 4210752, 16777120, Info.GUI5_PNG);
+			dirButtons[i] = new CButton(i + 16, 0, 0, 32, 13, 27, 192, 27, 207, lang.translateKey(Info.KEY_DIRECTION_NAMES[i]), 4210752, 16777120, Info.GUI_TEX_ADJ_TRANSFORMER);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class GuiAdjustableTransformer extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(Info.GUI5_PNG);
+		mc.renderEngine.bindTexture(Info.GUI_TEX_ADJ_TRANSFORMER);
 
 		// Draw GUI background graphic
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
