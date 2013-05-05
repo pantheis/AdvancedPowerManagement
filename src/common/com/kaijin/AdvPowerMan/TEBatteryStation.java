@@ -251,7 +251,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		{
 			EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
 			MinecraftForge.EVENT_BUS.post(sourceEvent);
-			//			final int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, packetSize);
 			final int surplus = sourceEvent.amount;
 
 			if (surplus < packetSize)

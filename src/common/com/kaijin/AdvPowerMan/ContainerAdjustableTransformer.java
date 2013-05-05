@@ -14,15 +14,17 @@ public class ContainerAdjustableTransformer extends Container
 {
 	private final int playerInventoryStartSlot = 1;
 
-	public TEAdjustableTransformer te;
+	public TEAdjustableTransformer tile;
 	public int outputRate;
 	public int packetSize;
 	public byte[] sideSettings = {0, 0, 0, 0, 0, 0}; // DOWN, UP, NORTH, SOUTH, WEST, EAST
+	public int outputAvg;
+	public int inputAvg;
 
-	public ContainerAdjustableTransformer(TEAdjustableTransformer tile)
+	public ContainerAdjustableTransformer(TEAdjustableTransformer tileentity)
 	{
 		if (Info.isDebugging) System.out.println("ContainerAdjustableTransformer");
-		te = tile;
+		tile = tileentity;
 		outputRate = -1;
 		packetSize = -1;
 		for (int i : sideSettings)
@@ -32,36 +34,53 @@ public class ContainerAdjustableTransformer extends Container
 	@Override
 	public void detectAndSendChanges()
 	{
+		final int syncOutAvg = (int)(tile.outputTracker.getAverage() * 100);
+		final int syncInAvg = (int)(tile.inputTracker.getAverage() * 100);
+
 		for (int crafterIndex = 0; crafterIndex < crafters.size(); ++crafterIndex)
 		{
 			ICrafting crafter = (ICrafting)crafters.get(crafterIndex);
 
-			if (this.outputRate != te.outputRate)
+			if (this.outputRate != tile.outputRate)
 			{
-				crafter.sendProgressBarUpdate(this, 0, te.outputRate & 65535);
-				crafter.sendProgressBarUpdate(this, 1, te.outputRate >>> 16);
+				crafter.sendProgressBarUpdate(this, 0, tile.outputRate & 65535);
+				crafter.sendProgressBarUpdate(this, 1, tile.outputRate >>> 16);
 			}
 
-			if (this.packetSize != te.packetSize)
+			if (this.packetSize != tile.packetSize)
 			{
-				crafter.sendProgressBarUpdate(this, 2, te.packetSize & 65535);
-				crafter.sendProgressBarUpdate(this, 3, te.packetSize >>> 16);
+				crafter.sendProgressBarUpdate(this, 2, tile.packetSize & 65535);
+				crafter.sendProgressBarUpdate(this, 3, tile.packetSize >>> 16);
 			}
 
 			for (int i = 0; i < 6; i++)
-				if (this.sideSettings[i] != te.sideSettings[i])
+				if (this.sideSettings[i] != tile.sideSettings[i])
 			{
-				crafter.sendProgressBarUpdate(this, 4 + i, te.sideSettings[i]);
+				crafter.sendProgressBarUpdate(this, 4 + i, tile.sideSettings[i]);
+			}
+
+			if (outputAvg != syncOutAvg)
+			{
+				crafter.sendProgressBarUpdate(this, 10, syncOutAvg & 65535);
+				crafter.sendProgressBarUpdate(this, 11, syncOutAvg >>> 16);
+			}
+
+			if (inputAvg != syncInAvg)
+			{
+				crafter.sendProgressBarUpdate(this, 12, syncInAvg & 65535);
+				crafter.sendProgressBarUpdate(this, 13, syncInAvg >>> 16);
 			}
 		}
 
 		// Done sending updates, record the new current values
-		this.outputRate = te.outputRate;
-		this.packetSize = te.packetSize;
+		this.outputRate = tile.outputRate;
+		this.packetSize = tile.packetSize;
 		for (int i = 0; i < 6; i++)
 		{
-			this.sideSettings[i] = te.sideSettings[i];
+			this.sideSettings[i] = tile.sideSettings[i];
 		}
+		outputAvg = syncOutAvg;
+		inputAvg = syncInAvg;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -71,19 +90,19 @@ public class ContainerAdjustableTransformer extends Container
 		switch (param)
 		{
 		case 0:
-			te.outputRate = te.outputRate & -65536 | value;
+			tile.outputRate = tile.outputRate & -65536 | value;
 			break;
 
 		case 1:
-			te.outputRate = te.outputRate & 65535 | (value << 16);
+			tile.outputRate = tile.outputRate & 65535 | (value << 16);
 			break;
 
 		case 2:
-			te.packetSize = te.packetSize & -65536 | value;
+			tile.packetSize = tile.packetSize & -65536 | value;
 			break;
 
 		case 3:
-			te.packetSize = te.packetSize & 65535 | (value << 16);
+			tile.packetSize = tile.packetSize & 65535 | (value << 16);
 			break;
 
 		case 4:
@@ -92,7 +111,23 @@ public class ContainerAdjustableTransformer extends Container
 		case 7:
 		case 8:
 		case 9:
-			te.sideSettings[param - 4] = (byte)value;
+			tile.sideSettings[param - 4] = (byte)value;
+			break;
+
+		case 10:
+			outputAvg = outputAvg & -65536 | value;
+			break;
+
+		case 11:
+			outputAvg = outputAvg & 65535 | (value << 16);
+			break;
+
+		case 12:
+			inputAvg = inputAvg & -65536 | value;
+			break;
+
+		case 13:
+			inputAvg = inputAvg & 65535 | (value << 16);
 			break;
 
 		default:
@@ -103,6 +138,6 @@ public class ContainerAdjustableTransformer extends Container
 	@Override
 	public boolean canInteractWith(EntityPlayer var1)
 	{
-		return te.isUseableByPlayer(var1);
+		return tile.isUseableByPlayer(var1);
 	}
 }

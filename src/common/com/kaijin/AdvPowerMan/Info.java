@@ -100,10 +100,11 @@ public class Info
 	public static final String KEY_MONITOR_LOWER = "AdvPwrMan.monitor.lower";
 	public static final String KEY_DISCHARGER_MODE_LINE1 = "AdvPwrMan.station.modeline1";
 	public static final String KEY_DISCHARGER_MODE_LINE2 = "AdvPwrMan.station.modeline2";
-	public static final String KEY_DISCHARGER_AVERAGE = "AdvPwrMan.station.average";
-	public static final String KEY_DISCHARGER_REMAINING = "AdvPwrMan.station.remaining";
-	public static final String KEY_DISCHARGER_DISPLAY_DAYS = "AdvPwrMan.station.led.days";
-	public static final String KEY_DISCHARGER_DISPLAY_UNKNOWN = "AdvPwrMan.station.led.unknown";
+	public static final String KEY_STATS_AVERAGE_EU = "AdvPwrMan.station.average";
+	public static final String KEY_STATS_TIME_REMAINING = "AdvPwrMan.station.remaining";
+	public static final String KEY_STATS_DISPLAY_DAYS = "AdvPwrMan.station.led.days";
+	public static final String KEY_STATS_DISPLAY_UNKNOWN = "AdvPwrMan.station.led.unknown";
+	public static final String KEY_STATS_AVERAGE_INPUT = "AdvPwrMan.station.packetIn";
 
 	public static final String AE_PACKET_RANGE = "[" + AE_MIN_PACKET + " - " + AE_MAX_PACKET + "]";
 	public static final String AE_OUTPUT_RANGE = "[" + AE_MIN_OUTPUT + " - " + AE_MAX_OUTPUT + "]";
@@ -191,9 +192,11 @@ public class Info
 		lang.addStringLocalization(KEY_MONITOR_LOWER, "Lower Threshold (On)");
 		lang.addStringLocalization(KEY_DISCHARGER_MODE_LINE1, "Only when");
 		lang.addStringLocalization(KEY_DISCHARGER_MODE_LINE2, "required");
-		lang.addStringLocalization(KEY_DISCHARGER_AVERAGE, "Avg. EU/t");
-		lang.addStringLocalization(KEY_DISCHARGER_REMAINING, "Remaining");
-		lang.addStringLocalization(KEY_DISCHARGER_DISPLAY_DAYS, " DAYS");
-		lang.addStringLocalization(KEY_DISCHARGER_DISPLAY_UNKNOWN, "UNKNOWN");
+		lang.addStringLocalization(KEY_STATS_AVERAGE_EU, "Avg. EU/t");
+		lang.addStringLocalization(KEY_STATS_TIME_REMAINING, "Remaining");
+		lang.addStringLocalization(KEY_STATS_DISPLAY_DAYS, " DAYS");
+		lang.addStringLocalization(KEY_STATS_DISPLAY_UNKNOWN, "UNKNOWN");
+		lang.addStringLocalization(KEY_STATS_AVERAGE_INPUT, "Avg. Pkt In");
+		
 	}
 }

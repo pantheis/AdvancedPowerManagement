@@ -30,6 +30,10 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 {
 	protected boolean initialized;
 
+	public MovingAverage outputTracker = new MovingAverage(10);
+	public MovingAverage inputTracker = new MovingAverage(10);
+	int energyReceived = 0;
+
 	protected int maxInput = 8192;
 	protected int energyBuffer = 0;
 
@@ -129,6 +133,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			initialized = true;
 		}
 
+		int energySent = 0;
 		if (!receivingRedstoneSignal() && energyBuffer >= packetSize)
 		{
 			EnergyNet net = EnergyNet.getForWorld(worldObj);
@@ -141,12 +146,15 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 				final int surplus = sourceEvent.amount;
 				if (surplus < packetSize)
 				{
+					final int sent = packetSize - surplus;
+					energySent += sent;
+					energyBuffer -= sent;
 					packetSent = true;
-					energyBuffer += surplus - packetSize; // Subtracts transferred amount
 				}
 			}
 			while (packetSent && energyBuffer >= packetSize);
 		}
+		outputTracker.tick(energySent);
 	}
 
 	protected boolean receivingRedstoneSignal()
@@ -248,6 +256,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			else
 			{
 				energyBuffer += supply;
+				inputTracker.tick(supply);
 			}
 		}
 		return 0;

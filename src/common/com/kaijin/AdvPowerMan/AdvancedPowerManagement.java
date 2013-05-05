@@ -152,7 +152,7 @@ public class AdvancedPowerManagement implements ICraftingHandler
 		itemBenchTools = new ItemBenchTools(itemIDBenchTools).setUnlocalizedName(Info.TOOLKIT_NAME);
 
 		itemStorageLinkCard = new ItemStorageLinkCard(itemIDStorageLinkCard).setUnlocalizedName(Info.LINK_CARD_NAME);
-		
+
 		itemStorageLinkCardCreator = new ItemStorageLinkCardCreator(itemIDStorageLinkCardCreator).setUnlocalizedName(Info.LINK_CREATOR_NAME);
 
 		Info.registerTranslations();
@@ -191,7 +191,7 @@ public class AdvancedPowerManagement implements ICraftingHandler
 		}
 
 		FMLLog.getLogger().fine(Info.TITLE_LOG + "Done loading.");
-}
+	}
 
 	@PostInit
 	public void modsLoaded(FMLPostInitializationEvent event)
