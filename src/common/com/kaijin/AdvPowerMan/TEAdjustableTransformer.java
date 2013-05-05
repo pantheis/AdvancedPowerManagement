@@ -134,25 +134,35 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 		}
 
 		int energySent = 0;
-		if (!receivingRedstoneSignal() && energyBuffer >= packetSize)
+		if (!receivingRedstoneSignal())
 		{
-			EnergyNet net = EnergyNet.getForWorld(worldObj);
-			boolean packetSent;
-			do
+			if (energyReceived > 0)
 			{
-				packetSent = false;
-				EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
-				MinecraftForge.EVENT_BUS.post(sourceEvent);
-				final int surplus = sourceEvent.amount;
-				if (surplus < packetSize)
-				{
-					final int sent = packetSize - surplus;
-					energySent += sent;
-					energyBuffer -= sent;
-					packetSent = true;
-				}
+				final int limit = Math.max(0, Math.max(packetSize, outputRate) - energyBuffer);
+				final int transfer = Math.min(Math.min(energyReceived, outputRate), limit);
+				energyBuffer += transfer;
+				energyReceived -= transfer;
 			}
-			while (packetSent && energyBuffer >= packetSize);
+			if (energyBuffer >= packetSize)
+			{
+				EnergyNet net = EnergyNet.getForWorld(worldObj);
+				boolean packetSent;
+				do
+				{
+					packetSent = false;
+					EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
+					MinecraftForge.EVENT_BUS.post(sourceEvent);
+					final int surplus = sourceEvent.amount;
+					if (surplus < packetSize)
+					{
+						final int sent = packetSize - surplus;
+						energySent += sent;
+						energyBuffer -= sent;
+						packetSent = true;
+					}
+				}
+				while (packetSent && energyBuffer >= packetSize && energySent < outputRate);
+			}
 		}
 		outputTracker.tick(energySent);
 	}
@@ -226,7 +236,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	{
 		if(!receivingRedstoneSignal())
 		{
-			final int amt = Math.max(outputRate - energyBuffer, 0); 
+			final int amt = Math.max(outputRate - energyReceived, 0); 
 			//System.out.println("demandsEnergy: " + amt);
 			return amt;
 		}
@@ -255,7 +265,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			}
 			else
 			{
-				energyBuffer += supply;
+				energyReceived += supply;
 				inputTracker.tick(supply);
 			}
 		}
