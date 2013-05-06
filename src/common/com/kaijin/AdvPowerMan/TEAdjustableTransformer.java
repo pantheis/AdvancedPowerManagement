@@ -28,14 +28,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class TEAdjustableTransformer extends TECommon implements IEnergySource, IEnergySink
 {
-	protected boolean initialized;
+	protected boolean initialized = false;
 
 	public MovingAverage outputTracker = new MovingAverage(10);
 	public MovingAverage inputTracker = new MovingAverage(10);
-	int energyReceived = 0;
 
 	protected int maxInput = 8192;
-	protected int energyBuffer = 0;
+	public int energyBuffer = 0;
+	public int energyReceived = 0;
 
 	public int outputRate = 32;
 	public int packetSize = 32;

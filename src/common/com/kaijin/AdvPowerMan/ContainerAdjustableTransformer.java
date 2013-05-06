@@ -20,6 +20,7 @@ public class ContainerAdjustableTransformer extends Container
 	public byte[] sideSettings = {0, 0, 0, 0, 0, 0}; // DOWN, UP, NORTH, SOUTH, WEST, EAST
 	public int outputAvg;
 	public int inputAvg;
+	public int energyBuffer;
 
 	public ContainerAdjustableTransformer(TEAdjustableTransformer tileentity)
 	{
@@ -29,6 +30,9 @@ public class ContainerAdjustableTransformer extends Container
 		packetSize = -1;
 		for (int i : sideSettings)
 			i = (byte)255;
+		outputAvg = -1;
+		inputAvg = -1;
+		energyBuffer = -1;
 	}
 
 	@Override
@@ -70,6 +74,12 @@ public class ContainerAdjustableTransformer extends Container
 				crafter.sendProgressBarUpdate(this, 12, syncInAvg & 65535);
 				crafter.sendProgressBarUpdate(this, 13, syncInAvg >>> 16);
 			}
+
+			if (this.energyBuffer != tile.energyBuffer)
+			{
+				crafter.sendProgressBarUpdate(this, 14, tile.energyBuffer & 65535);
+				crafter.sendProgressBarUpdate(this, 15, tile.energyBuffer >>> 16);
+			}
 		}
 
 		// Done sending updates, record the new current values
@@ -81,6 +91,7 @@ public class ContainerAdjustableTransformer extends Container
 		}
 		outputAvg = syncOutAvg;
 		inputAvg = syncInAvg;
+		this.energyBuffer = tile.energyBuffer;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -128,6 +139,14 @@ public class ContainerAdjustableTransformer extends Container
 
 		case 13:
 			inputAvg = inputAvg & 65535 | (value << 16);
+			break;
+
+		case 14:
+			tile.energyBuffer = tile.energyBuffer & -65536 | value;
+			break;
+
+		case 15:
+			tile.energyBuffer = tile.energyBuffer & 65535 | (value << 16);
 			break;
 
 		default:

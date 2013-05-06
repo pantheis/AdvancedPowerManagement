@@ -105,6 +105,7 @@ public class Info
 	public static final String KEY_STATS_DISPLAY_DAYS = "AdvPwrMan.station.led.days";
 	public static final String KEY_STATS_DISPLAY_UNKNOWN = "AdvPwrMan.station.led.unknown";
 	public static final String KEY_STATS_AVERAGE_INPUT = "AdvPwrMan.station.packetIn";
+	public static final String KEY_EU_BUFFERED = "AdvPwrMan.station.EUbuffered";
 
 	public static final String AE_PACKET_RANGE = "[" + AE_MIN_PACKET + " - " + AE_MAX_PACKET + "]";
 	public static final String AE_OUTPUT_RANGE = "[" + AE_MIN_OUTPUT + " - " + AE_MAX_OUTPUT + "]";
@@ -197,6 +198,6 @@ public class Info
 		lang.addStringLocalization(KEY_STATS_DISPLAY_DAYS, " DAYS");
 		lang.addStringLocalization(KEY_STATS_DISPLAY_UNKNOWN, "UNKNOWN");
 		lang.addStringLocalization(KEY_STATS_AVERAGE_INPUT, "Avg. Pkt In");
-		
+		lang.addStringLocalization(KEY_EU_BUFFERED, "EU Buffered");
 	}
 }

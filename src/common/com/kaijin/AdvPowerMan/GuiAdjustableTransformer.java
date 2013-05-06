@@ -25,7 +25,7 @@ public class GuiAdjustableTransformer extends GuiContainer
 
 	private int xLoc;
 	private int yLoc;
-	private final int yOff = 12;
+	private final int yOff = 30;
 
 	protected static StringTranslate lang = StringTranslate.getInstance();
 
@@ -40,7 +40,7 @@ public class GuiAdjustableTransformer extends GuiContainer
 		super(new ContainerAdjustableTransformer(tileentity));
 		tile = tileentity;
 		xSize = 240; // The X size of the GUI window in pixels.
-		ySize = 122; // The Y size of the GUI window in pixels.
+		ySize = 140; // The Y size of the GUI window in pixels.
 
 		//Button definition - mouse over CButton for details
 		for (int i = 0; i < buttons.length; i++)
@@ -85,17 +85,19 @@ public class GuiAdjustableTransformer extends GuiContainer
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
 		// Draw title text
-		Utils.drawLeftAlignedText(fontRenderer, lang.translateKey(tile.getInvName()), xLoc + 7, yLoc + 7, 4210752);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), width / 2, yLoc + 6, 4210752);
 
 		// Draw stats text
-		Utils.drawRightAlignedText(fontRenderer, lang.translateKey(Info.KEY_STATS_AVERAGE_EU), xLoc + 180, yLoc + 10, 4210752);
-		Utils.drawRightAlignedText(fontRenderer, lang.translateKey(Info.KEY_STATS_AVERAGE_INPUT), xLoc + 180, yLoc + 20, 4210752);
+		Utils.drawRightAlignedText(fontRenderer, lang.translateKey(Info.KEY_STATS_AVERAGE_EU), xLoc + 180, yLoc + 26, 4210752);
+		Utils.drawRightAlignedText(fontRenderer, lang.translateKey(Info.KEY_STATS_AVERAGE_INPUT), xLoc + 180, yLoc + 36, 4210752);
+		Utils.drawLeftAlignedText(fontRenderer, lang.translateKey(Info.KEY_EU_BUFFERED), xLoc + 49, yLoc + 26, 4210752);
 
+		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.energyBuffer), xLoc + 44, yLoc + 26, GREEN, GREENGLOW);
 		// Factor of 100 because data is in fixed point (x100)
 		final float outAvg = (float)(((ContainerAdjustableTransformer)inventorySlots).outputAvg) / 100F;
 		final float inAvg = (float)(((ContainerAdjustableTransformer)inventorySlots).inputAvg) / 100F;
-		Utils.drawRightAlignedGlowingText(fontRenderer, fraction.format(outAvg), xLoc + 231, yLoc + 10, GREEN, GREENGLOW);
-		Utils.drawRightAlignedGlowingText(fontRenderer, fraction.format(inAvg), xLoc + 231, yLoc + 20, GREEN, GREENGLOW);
+		Utils.drawRightAlignedGlowingText(fontRenderer, fraction.format(outAvg), xLoc + 230, yLoc + 26, GREEN, GREENGLOW);
+		Utils.drawRightAlignedGlowingText(fontRenderer, fraction.format(inAvg), xLoc + 230, yLoc + 36, GREEN, GREENGLOW);
 
 		// Packet size section text
 		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_EMITTER_PACKET), xLoc + 88, yLoc + yOff + 21, 0xB00000);
