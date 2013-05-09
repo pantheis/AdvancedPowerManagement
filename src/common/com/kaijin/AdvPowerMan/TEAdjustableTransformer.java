@@ -39,6 +39,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 
 	public int outputRate = 32;
 	public int packetSize = 32;
+	public int energyCap = 32; 
 
 	public byte[] sideSettings = {0, 0, 0, 0, 0, 0}; // DOWN, UP, NORTH, SOUTH, WEST, EAST
 
@@ -64,6 +65,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 		if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
 		if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
 		if (energyBuffer > packetSize * Info.AE_PACKETS_TICK) energyBuffer = packetSize * Info.AE_PACKETS_TICK;
+		energyCap = Math.max(packetSize, outputRate);
 
 		NBTTagList nbttaglist = nbttagcompound.getTagList("SideSettings");
 		for (int i = 0; i < nbttaglist.tagCount(); ++i)
@@ -234,9 +236,10 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	{
 		if(!receivingRedstoneSignal())
 		{
-			final int amt = Math.max(outputRate - energyReceived, 0); 
+			final int tickAmt = Math.max(outputRate - energyReceived, 0);
+			final int capAmt = Math.max(energyCap - energyBuffer, 0);
 			//System.out.println("demandsEnergy: " + amt);
-			return amt;
+			return Math.min(tickAmt, capAmt);
 		}
 		return 0;
 	}
@@ -405,5 +408,6 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			break;
 		}
+		energyCap = Math.max(packetSize, outputRate);
 	}
 }
