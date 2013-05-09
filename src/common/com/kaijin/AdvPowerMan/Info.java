@@ -95,6 +95,7 @@ public class Info
 	public static final String KEY_OUT = "AdvPwrMan.misc.out";
 	public static final String KEY_EMITTER_PACKET = "AdvPwrMan.emitter.packet";
 	public static final String KEY_EMITTER_OUTPUT = "AdvPwrMan.emitter.output";
+	public static final String KEY_TRANSFORMER_OUTPUT = "AdvPwrMan.transformer.limit";
 	public static final String KEY_MONITOR_INVALID = "AdvPwrMan.monitor.invalid";
 	public static final String KEY_MONITOR_UPPER = "AdvPwrMan.monitor.upper";
 	public static final String KEY_MONITOR_LOWER = "AdvPwrMan.monitor.lower";
@@ -188,6 +189,7 @@ public class Info
 		// GUI strings
 		lang.addStringLocalization(KEY_EMITTER_PACKET, "Packet size (Voltage)");
 		lang.addStringLocalization(KEY_EMITTER_OUTPUT, "Output / Tick (Max 64 Packets)");
+		lang.addStringLocalization(KEY_TRANSFORMER_OUTPUT, "Transfer Limit (Max 64 Packets)");
 		lang.addStringLocalization(KEY_MONITOR_INVALID, "No Valid Link");
 		lang.addStringLocalization(KEY_MONITOR_UPPER, "Upper Threshold (Off)");
 		lang.addStringLocalization(KEY_MONITOR_LOWER, "Lower Threshold (On)");

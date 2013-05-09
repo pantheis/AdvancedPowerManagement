@@ -106,7 +106,7 @@ public class GuiAdjustableTransformer extends GuiContainer
 		fontRenderer.drawString(lang.translateKey(Info.KEY_EU), xLoc + 152, yLoc + yOff + 49, 4210752);
 
 		// Output rate section text
-		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_EMITTER_OUTPUT), xLoc + 88, yLoc + yOff + 64, 0xB00000);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_TRANSFORMER_OUTPUT), xLoc + 88, yLoc + yOff + 64, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.outputRate), xLoc + 146, yLoc + yOff + 92, GREEN, GREENGLOW);
 		fontRenderer.drawString(Info.AE_OUTPUT_RANGE, xLoc + 110, yLoc + yOff + 78, 4210752);
 		fontRenderer.drawString(lang.translateKey(Info.KEY_EU), xLoc + 152, yLoc + yOff + 92, 4210752);
