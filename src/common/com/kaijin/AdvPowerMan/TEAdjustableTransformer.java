@@ -405,9 +405,13 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			sideSettings[id - 16] ^= 1;
 			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
 			initialized = true;
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			//worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			break;
 		}
 		energyCap = Math.max(packetSize, outputRate);
+		final byte voltLevel = (byte)(packetSize <= 32 ? 0 : packetSize <= 128 ? 2 : packetSize <= 512 ? 4 : 6);
+		for (int i = 0; i < 6; i++)
+			sideSettings[i] = (byte)(sideSettings[i] & 249 | voltLevel);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 }

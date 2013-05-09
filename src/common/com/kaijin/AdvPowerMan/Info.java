@@ -189,7 +189,7 @@ public class Info
 		// GUI strings
 		lang.addStringLocalization(KEY_EMITTER_PACKET, "Packet size (Voltage)");
 		lang.addStringLocalization(KEY_EMITTER_OUTPUT, "Output / Tick (Max 64 Packets)");
-		lang.addStringLocalization(KEY_TRANSFORMER_OUTPUT, "Transfer Limit (Max 64 Packets)");
+		lang.addStringLocalization(KEY_TRANSFORMER_OUTPUT, "Transfer Rate (Max 64 Packets)");
 		lang.addStringLocalization(KEY_MONITOR_INVALID, "No Valid Link");
 		lang.addStringLocalization(KEY_MONITOR_UPPER, "Upper Threshold (Off)");
 		lang.addStringLocalization(KEY_MONITOR_LOWER, "Lower Threshold (On)");
