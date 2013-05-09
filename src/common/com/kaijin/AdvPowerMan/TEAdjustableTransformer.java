@@ -136,13 +136,10 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 		int energySent = 0;
 		if (!receivingRedstoneSignal())
 		{
-			if (energyReceived > 0)
-			{
-				final int limit = Math.max(0, Math.max(packetSize, outputRate) - energyBuffer);
-				final int transfer = Math.min(Math.min(energyReceived, outputRate), limit);
-				energyBuffer += transfer;
-				energyReceived -= transfer;
-			}
+			// Reset input limiter
+			if (energyReceived > outputRate) energyReceived -= outputRate;
+			else energyReceived = 0;
+
 			if (energyBuffer >= packetSize)
 			{
 				EnergyNet net = EnergyNet.getForWorld(worldObj);
@@ -153,14 +150,15 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 					EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
 					MinecraftForge.EVENT_BUS.post(sourceEvent);
 					final int surplus = sourceEvent.amount;
-					if (surplus < packetSize)
+
+					if (surplus < packetSize) // If any of it was consumed...
 					{
-						final int sent = packetSize - surplus;
-						energySent += sent;
-						energyBuffer -= sent;
 						packetSent = true;
+						final int amountSent = packetSize - surplus;
+						energySent += amountSent;
+						energyBuffer -= amountSent;
 					}
-				}
+				} // Repeat until output failed, or not enough EU for one packet, or rate limit reached
 				while (packetSent && energyBuffer >= packetSize && energySent < outputRate);
 			}
 		}
@@ -266,6 +264,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			else
 			{
 				energyReceived += supply;
+				energyBuffer += supply;
 				inputTracker.tick(supply);
 			}
 		}
