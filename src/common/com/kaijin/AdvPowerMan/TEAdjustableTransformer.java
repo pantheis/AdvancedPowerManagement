@@ -111,12 +111,6 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	}
 
 	@Override
-	public boolean canUpdate()
-	{
-		return true;
-	}
-
-	@Override
 	public int getGuiID()
 	{
 		return Info.GUI_ID_ADJUSTABLE_TRANSFORMER;

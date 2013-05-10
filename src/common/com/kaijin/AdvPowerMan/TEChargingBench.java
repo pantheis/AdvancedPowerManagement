@@ -116,12 +116,6 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		return oldTier;
 	}
 
-	@Override
-	public boolean canUpdate()
-	{
-		return true;
-	}
-
 	// IC2 API stuff
 
 	// IEnergySink

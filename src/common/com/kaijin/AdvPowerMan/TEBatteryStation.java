@@ -90,12 +90,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	// End IC2 API
 
 	@Override
-	public boolean canUpdate()
-	{
-		return true;
-	}
-
-	@Override
 	public int getGuiID()
 	{
 		return Info.GUI_ID_BATTERY_STATION;

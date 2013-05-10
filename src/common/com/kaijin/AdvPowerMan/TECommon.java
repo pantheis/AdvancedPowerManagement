@@ -11,6 +11,12 @@ import cpw.mods.fml.common.FMLLog;
 
 public abstract class TECommon extends TileEntity
 {
+	@Override
+	public boolean canUpdate()
+	{
+		return true;
+	}
+
 	/**
 	 * TileEntities override this to select a GUI to open on block activation
 	 * @return int guiID

@@ -110,12 +110,6 @@ public class TEStorageMonitor extends TECommon implements ISidedInventory
 	}
 
 	@Override
-	public boolean canUpdate()
-	{
-		return true;
-	}
-
-	@Override
 	public int getGuiID()
 	{
 		return Info.GUI_ID_STORAGE_MONITOR;
