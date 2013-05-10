@@ -30,8 +30,8 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 {
 	protected boolean initialized = false;
 
-	public MovingAverage outputTracker = new MovingAverage(10);
-	public MovingAverage inputTracker = new MovingAverage(10);
+	public MovingAverage outputTracker = new MovingAverage(12);
+	public MovingAverage inputTracker = new MovingAverage(12);
 
 	protected int maxInput = 8192;
 	public int energyBuffer = 0;

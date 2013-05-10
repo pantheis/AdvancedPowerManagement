@@ -51,7 +51,16 @@ public class MovingAverage
 			delta = newAvg - average;
 			average = newAvg;
 		}
-		else delay++;
+		else
+		{
+			delay++;
+			// Estimate decline of average based on increased average delay
+			if (delays.length * delay > window)
+			{
+				window++;
+				average = ((float)sumPackets()) / ((float)window);
+			}
+		}
 	}
 
 	protected int sumDelays()

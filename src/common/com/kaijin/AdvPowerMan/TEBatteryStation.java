@@ -42,7 +42,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	public boolean doingWork;
 
 	private int energyOut = 0;
-	public MovingAverage outputTracker = new MovingAverage(10);
+	public MovingAverage outputTracker = new MovingAverage(12);
 
 	private static final int[] BatteryStationSideInput = {Info.BS_SLOT_INPUT};
 	private static final int[] BatteryStationSideOutput = {Info.BS_SLOT_OUTPUT};
