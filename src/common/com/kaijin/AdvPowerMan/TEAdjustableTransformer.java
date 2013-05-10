@@ -28,13 +28,18 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class TEAdjustableTransformer extends TECommon implements IEnergySource, IEnergySink
 {
-	protected boolean initialized;
+	protected boolean initialized = false;
+
+	public MovingAverage outputTracker = new MovingAverage(10);
+	public MovingAverage inputTracker = new MovingAverage(10);
 
 	protected int maxInput = 8192;
-	protected int energyBuffer = 0;
+	public int energyBuffer = 0;
+	public int energyReceived = 0;
 
 	public int outputRate = 32;
 	public int packetSize = 32;
+	public int energyCap = 32; 
 
 	public byte[] sideSettings = {0, 0, 0, 0, 0, 0}; // DOWN, UP, NORTH, SOUTH, WEST, EAST
 
@@ -60,6 +65,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 		if (outputRate > Info.AE_MAX_OUTPUT) outputRate = Info.AE_MAX_OUTPUT;
 		if (outputRate < Info.AE_MIN_OUTPUT) outputRate = Info.AE_MIN_OUTPUT;
 		if (energyBuffer > packetSize * Info.AE_PACKETS_TICK) energyBuffer = packetSize * Info.AE_PACKETS_TICK;
+		energyCap = Math.max(packetSize, outputRate);
 
 		NBTTagList nbttaglist = nbttagcompound.getTagList("SideSettings");
 		for (int i = 0; i < nbttaglist.tagCount(); ++i)
@@ -129,24 +135,36 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			initialized = true;
 		}
 
-		if (!receivingRedstoneSignal() && energyBuffer >= packetSize)
+		int energySent = 0;
+		if (!receivingRedstoneSignal())
 		{
-			EnergyNet net = EnergyNet.getForWorld(worldObj);
-			boolean packetSent;
-			do
+			// Reset input limiter
+			if (energyReceived > outputRate) energyReceived -= outputRate;
+			else energyReceived = 0;
+
+			if (energyBuffer >= packetSize)
 			{
-				packetSent = false;
-				EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
-				MinecraftForge.EVENT_BUS.post(sourceEvent);
-				final int surplus = sourceEvent.amount;
-				if (surplus < packetSize)
+				EnergyNet net = EnergyNet.getForWorld(worldObj);
+				boolean packetSent;
+				do
 				{
-					packetSent = true;
-					energyBuffer += surplus - packetSize; // Subtracts transferred amount
-				}
+					packetSent = false;
+					EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
+					MinecraftForge.EVENT_BUS.post(sourceEvent);
+					final int surplus = sourceEvent.amount;
+
+					if (surplus < packetSize) // If any of it was consumed...
+					{
+						packetSent = true;
+						final int amountSent = packetSize - surplus;
+						energySent += amountSent;
+						energyBuffer -= amountSent;
+					}
+				} // Repeat until output failed, or not enough EU for one packet, or rate limit reached
+				while (packetSent && energyBuffer >= packetSize && energySent < outputRate);
 			}
-			while (packetSent && energyBuffer >= packetSize);
 		}
+		outputTracker.tick(energySent);
 	}
 
 	protected boolean receivingRedstoneSignal()
@@ -218,9 +236,10 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	{
 		if(!receivingRedstoneSignal())
 		{
-			final int amt = Math.max(outputRate - energyBuffer, 0); 
+			final int tickAmt = Math.max(outputRate - energyReceived, 0);
+			final int capAmt = Math.max(energyCap - energyBuffer, 0);
 			//System.out.println("demandsEnergy: " + amt);
-			return amt;
+			return Math.min(tickAmt, capAmt);
 		}
 		return 0;
 	}
@@ -247,7 +266,9 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			}
 			else
 			{
+				energyReceived += supply;
 				energyBuffer += supply;
+				inputTracker.tick(supply);
 			}
 		}
 		return 0;
@@ -384,8 +405,13 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			sideSettings[id - 16] ^= 1;
 			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
 			initialized = true;
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			//worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			break;
 		}
+		energyCap = Math.max(packetSize, outputRate);
+		final byte voltLevel = (byte)(packetSize <= 32 ? 0 : packetSize <= 128 ? 2 : packetSize <= 512 ? 4 : 6);
+		for (int i = 0; i < 6; i++)
+			sideSettings[i] = (byte)(sideSettings[i] & 249 | voltLevel);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 }

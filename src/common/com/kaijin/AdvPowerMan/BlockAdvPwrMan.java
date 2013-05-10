@@ -25,14 +25,16 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockAdvPwrMan extends BlockContainer
 {
-	static final String[] tierPrefix = {"LV", "MV", "HV"};  
+	static final String[] tierPrefix = {"LV", "MV", "HV", "EV"};  
 
 	protected Icon benchBottom;
 	protected Icon smTop;
 	protected Icon smBottom;
 	protected Icon smInvalid;
 	protected Icon emitter;
-	protected Icon accepter; 
+	protected Icon atOut;
+	protected Icon atInput; 
+	protected Icon[] atOutput;
 	protected Icon[] benchTop;
 	protected Icon[][][] cbSides;
 	protected Icon[][] bsSides; 
@@ -92,16 +94,20 @@ public class BlockAdvPwrMan extends BlockContainer
 		bsSides = new Icon[3][2];
 		smSides = new Icon[2][13];
 		benchTop = new Icon[3];
+		atOutput = new Icon[4];
+
 		benchBottom = iconRegister.registerIcon(Info.TITLE_PACKED + ":BenchBottom");
 		smTop = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorTop");
 		smBottom = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorBottom");
 		smInvalid = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorInvalid");
 		emitter = iconRegister.registerIcon(Info.TITLE_PACKED + ":Emitter");
-		accepter = iconRegister.registerIcon(Info.TITLE_PACKED + ":Accepter");
-		for (int i = 0; i < 13; i++)
+		atInput = iconRegister.registerIcon(Info.TITLE_PACKED + ":TransformerInput");
+
+		int i, j;
+		for (i = 0; i < 13; i++)
 		{
 			String temp = Integer.toString(i);
-			for (int j = 0; j < 3; j++)
+			for (j = 0; j < 3; j++)
 			{
 				cbSides[j][0][i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "ChargingBenchOff" + temp);
 				cbSides[j][1][i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "ChargingBenchOn" + temp);
@@ -109,11 +115,15 @@ public class BlockAdvPwrMan extends BlockContainer
 			smSides[0][i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorOff" + temp);
 			smSides[1][i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":StorageMonitorOn" + temp);
 		}
-		for (int j = 0; j < 3; j++)
+		for (i = 0; i < 3; i++)
 		{
-			benchTop[j] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "BenchTop");
-			bsSides[j][0] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "BatteryStationOff");
-			bsSides[j][1] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[j] + "BatteryStationOn");
+			benchTop[i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[i] + "BenchTop");
+			bsSides[i][0] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[i] + "BatteryStationOff");
+			bsSides[i][1] = iconRegister.registerIcon(Info.TITLE_PACKED + ":" + tierPrefix[i] + "BatteryStationOn");
+		}
+		for (i = 0; i < 4; i++)
+		{
+			atOutput[i] = iconRegister.registerIcon(Info.TITLE_PACKED + ":TransformerOutput1" + tierPrefix[i]);
 		}
 	}
 
@@ -143,8 +153,9 @@ public class BlockAdvPwrMan extends BlockContainer
 		}
 		else if (tile instanceof TEAdjustableTransformer)
 		{
-			// TODO: Give transformer better textures
-			return (((TEAdjustableTransformer)tile).sideSettings[side] & 1) == 0 ? accepter : emitter;
+			final byte flags = ((TEAdjustableTransformer)tile).sideSettings[side];
+			if ((flags & 1) == 0) return atInput;
+			return atOutput[(flags >>> 1) & 3];
 		}
 		else if (tile instanceof TEBatteryStation)
 		{
@@ -194,8 +205,7 @@ public class BlockAdvPwrMan extends BlockContainer
 		if (meta == Info.AT_META)
 		{
 			// TODO: Give transformer better textures
-			if (side == 1) return emitter;
-			return accepter;
+			return atInput;
 		}
 		switch (side)
 		{

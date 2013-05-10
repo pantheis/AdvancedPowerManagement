@@ -44,7 +44,7 @@ public class GuiStorageMonitor extends GuiContainer
 		for (int i = 0; i < buttons.length; i++)
 		{
 			//16777120 old highlight color code, saved here for reference
-			buttons[i] = new CButton(i, 0, 0, 24, 13, 1, 192, 1, 207, DISPLAYSTRINGS[i % 4], 4210752, 0xFFFFAF, Info.GUI3_PNG);
+			buttons[i] = new CButton(i, 0, 0, 24, 13, 1, 192, 1, 207, DISPLAYSTRINGS[i % 4], 4210752, 0xFFFFAF, Info.GUI_TEX_STORAGE_MONITOR);
 		}
 	}
 
@@ -69,7 +69,7 @@ public class GuiStorageMonitor extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(Info.GUI3_PNG);
+		mc.renderEngine.bindTexture(Info.GUI_TEX_STORAGE_MONITOR);
 
 		// Draw GUI background
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);

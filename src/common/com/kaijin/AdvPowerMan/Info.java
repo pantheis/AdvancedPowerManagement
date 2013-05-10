@@ -22,14 +22,12 @@ public class Info
 	public static final String TITLE_LOG = "[" + TITLE_PACKED + "] ";
 
 	// Textures
-	public static final String TEX_BASE    = "/com/kaijin/AdvPowerMan/textures/";
-	public static final String BLOCK_PNG   = TEX_BASE + "AdvPowerManBlocks.png";
-	public static final String ITEM_PNG    = TEX_BASE + "AdvPowerManItems.png";
-	public static final String GUI1_PNG    = TEX_BASE + "GUIChargingBench.png";
-	public static final String GUI2_PNG    = TEX_BASE + "GUIBatteryStation.png";
-	public static final String GUI3_PNG    = TEX_BASE + "GUIStorageMonitor.png";
-	public static final String GUI4_PNG    = TEX_BASE + "GUIAdvEmitter.png";
-	public static final String GUI5_PNG    = TEX_BASE + "GUIAdjustableTransformer.png";
+	public static final String TEX_BASE = "/com/kaijin/AdvPowerMan/textures/";
+	public static final String GUI_TEX_CHARGING_BENCH  = TEX_BASE + "GUIChargingBench.png";
+	public static final String GUI_TEX_BATTERY_STATION = TEX_BASE + "GUIBatteryStation.png";
+	public static final String GUI_TEX_STORAGE_MONITOR = TEX_BASE + "GUIStorageMonitor.png";
+	public static final String GUI_TEX_EMITTER         = TEX_BASE + "GUIAdvEmitter.png";
+	public static final String GUI_TEX_ADJ_TRANSFORMER = TEX_BASE + "GUIAdjustableTransformer.png";
 
 	public static final String[] KEY_BLOCK_NAMES = new String[] {"blockChargingBench1", "blockChargingBench2", "blockChargingBench3",
 		"blockEmitterBlock1", "blockEmitterBlock2", "blockEmitterBlock3", "blockAdjustableTransformer", "blockEmitterAdjustable",
@@ -97,15 +95,18 @@ public class Info
 	public static final String KEY_OUT = "AdvPwrMan.misc.out";
 	public static final String KEY_EMITTER_PACKET = "AdvPwrMan.emitter.packet";
 	public static final String KEY_EMITTER_OUTPUT = "AdvPwrMan.emitter.output";
+	public static final String KEY_TRANSFORMER_OUTPUT = "AdvPwrMan.transformer.limit";
 	public static final String KEY_MONITOR_INVALID = "AdvPwrMan.monitor.invalid";
 	public static final String KEY_MONITOR_UPPER = "AdvPwrMan.monitor.upper";
 	public static final String KEY_MONITOR_LOWER = "AdvPwrMan.monitor.lower";
 	public static final String KEY_DISCHARGER_MODE_LINE1 = "AdvPwrMan.station.modeline1";
 	public static final String KEY_DISCHARGER_MODE_LINE2 = "AdvPwrMan.station.modeline2";
-	public static final String KEY_DISCHARGER_AVERAGE = "AdvPwrMan.station.average";
-	public static final String KEY_DISCHARGER_REMAINING = "AdvPwrMan.station.remaining";
-	public static final String KEY_DISCHARGER_DISPLAY_DAYS = "AdvPwrMan.station.led.days";
-	public static final String KEY_DISCHARGER_DISPLAY_UNKNOWN = "AdvPwrMan.station.led.unknown";
+	public static final String KEY_STATS_AVERAGE_EU = "AdvPwrMan.station.average";
+	public static final String KEY_STATS_TIME_REMAINING = "AdvPwrMan.station.remaining";
+	public static final String KEY_STATS_DISPLAY_DAYS = "AdvPwrMan.station.led.days";
+	public static final String KEY_STATS_DISPLAY_UNKNOWN = "AdvPwrMan.station.led.unknown";
+	public static final String KEY_STATS_AVERAGE_INPUT = "AdvPwrMan.station.packetIn";
+	public static final String KEY_EU_BUFFERED = "AdvPwrMan.station.EUbuffered";
 
 	public static final String AE_PACKET_RANGE = "[" + AE_MIN_PACKET + " - " + AE_MAX_PACKET + "]";
 	public static final String AE_OUTPUT_RANGE = "[" + AE_MIN_OUTPUT + " - " + AE_MAX_OUTPUT + "]";
@@ -188,14 +189,17 @@ public class Info
 		// GUI strings
 		lang.addStringLocalization(KEY_EMITTER_PACKET, "Packet size (Voltage)");
 		lang.addStringLocalization(KEY_EMITTER_OUTPUT, "Output / Tick (Max 64 Packets)");
+		lang.addStringLocalization(KEY_TRANSFORMER_OUTPUT, "Transfer Rate (Max 64 Packets)");
 		lang.addStringLocalization(KEY_MONITOR_INVALID, "No Valid Link");
 		lang.addStringLocalization(KEY_MONITOR_UPPER, "Upper Threshold (Off)");
 		lang.addStringLocalization(KEY_MONITOR_LOWER, "Lower Threshold (On)");
 		lang.addStringLocalization(KEY_DISCHARGER_MODE_LINE1, "Only when");
 		lang.addStringLocalization(KEY_DISCHARGER_MODE_LINE2, "required");
-		lang.addStringLocalization(KEY_DISCHARGER_AVERAGE, "Avg. EU/t");
-		lang.addStringLocalization(KEY_DISCHARGER_REMAINING, "Remaining");
-		lang.addStringLocalization(KEY_DISCHARGER_DISPLAY_DAYS, " DAYS");
-		lang.addStringLocalization(KEY_DISCHARGER_DISPLAY_UNKNOWN, "UNKNOWN");
+		lang.addStringLocalization(KEY_STATS_AVERAGE_EU, "Avg. EU/t");
+		lang.addStringLocalization(KEY_STATS_TIME_REMAINING, "Remaining");
+		lang.addStringLocalization(KEY_STATS_DISPLAY_DAYS, " DAYS");
+		lang.addStringLocalization(KEY_STATS_DISPLAY_UNKNOWN, "UNKNOWN");
+		lang.addStringLocalization(KEY_STATS_AVERAGE_INPUT, "Avg. Pkt In");
+		lang.addStringLocalization(KEY_EU_BUFFERED, "EU Buffered");
 	}
 }

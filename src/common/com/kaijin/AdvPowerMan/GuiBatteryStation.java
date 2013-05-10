@@ -44,7 +44,7 @@ public class GuiBatteryStation extends GuiContainer
 		tile = tileentity;
 		xSize = 176; // The X size of the GUI window in pixels.
 		ySize = 182; // The Y size of the GUI window in pixels.
-		button = new CButton(0, 0, 0, 18, 12, 30, 200, 30, 200, "", 4210752, 16777120, Info.GUI2_PNG);
+		button = new CButton(0, 0, 0, 18, 12, 30, 200, 30, 200, "", 4210752, 16777120, Info.GUI_TEX_BATTERY_STATION);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class GuiBatteryStation extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(Info.GUI2_PNG);
+		mc.renderEngine.bindTexture(Info.GUI_TEX_BATTERY_STATION);
 
 		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
@@ -89,8 +89,8 @@ public class GuiBatteryStation extends GuiContainer
 
 		Utils.drawLeftAlignedText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_MODE_LINE1), xLoc + 7, yLoc + 59, 4210752);
 		Utils.drawLeftAlignedText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_MODE_LINE2), xLoc + 7, yLoc + 70, 4210752);
-		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_AVERAGE), xLoc + 144, yLoc + 27, 4210752);
-		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_DISCHARGER_REMAINING), xLoc + 144, yLoc + 65, 4210752);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_STATS_AVERAGE_EU), xLoc + 144, yLoc + 27, 4210752);
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_STATS_TIME_REMAINING), xLoc + 144, yLoc + 65, 4210752);
 
 		// Factor of 100 because data is in fixed point (x100)
 		final float rate = (float)(((ContainerBatteryStation)inventorySlots).average) / 100F;
@@ -112,10 +112,10 @@ public class GuiBatteryStation extends GuiContainer
 			else
 			{
 				float dayScratch = ((float)timeScratch) / 86400F; // 60 * 60 * 24 or 1 day
-				clock = (dayScratch < 10F ? dayFrac.format(dayScratch) : dayScratch < 100 ? days.format((int)dayScratch) : "??") + lang.translateKey(Info.KEY_DISCHARGER_DISPLAY_DAYS);
+				clock = (dayScratch < 10F ? dayFrac.format(dayScratch) : dayScratch < 100 ? days.format((int)dayScratch) : "??") + lang.translateKey(Info.KEY_STATS_DISPLAY_DAYS);
 			}
 		}
-		else clock = lang.translateKey(Info.KEY_DISCHARGER_DISPLAY_UNKNOWN);
+		else clock = lang.translateKey(Info.KEY_STATS_DISPLAY_UNKNOWN);
 		Utils.drawRightAlignedGlowingText(fontRenderer, clock, xLoc + 166, yLoc + 51, GREEN, GREENGLOW);
 		
 		button.drawButton(mc, mouseX, mouseY);

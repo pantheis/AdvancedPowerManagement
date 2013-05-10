@@ -723,12 +723,6 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	// IInventory
 
 	@Override
-	public boolean isInvNameLocalized()
-	{
-		return false;
-	}
-
-	@Override
 	public int getSizeInventory()
 	{
 		// Only input/output slots are accessible to machines

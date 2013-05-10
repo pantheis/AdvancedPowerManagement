@@ -11,12 +11,6 @@ public class SlotCustom extends Slot
 	}
 
 	@Override
-	public String getBackgroundIconTexture()
-	{
-		return Info.ITEM_PNG;
-	}
-
-	@Override
 	public void onSlotChanged()
 	{
 		if (inventory instanceof TECommon)
