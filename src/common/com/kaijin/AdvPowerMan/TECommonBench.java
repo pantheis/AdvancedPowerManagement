@@ -16,7 +16,7 @@ public abstract class TECommonBench extends TECommon implements IInventory
 {
 	protected ItemStack[] contents;
 
-	protected boolean initialized;
+	protected boolean initialized = false;
 
 	public int baseTier;
 	public int powerTier; // Transformer upgrades allow charging from energy crystals and lapotrons
@@ -36,12 +36,11 @@ public abstract class TECommonBench extends TECommon implements IInventory
 		{
 			EnergyTileUnloadEvent unloadEvent = new EnergyTileUnloadEvent((IEnergyTile)this);
 			MinecraftForge.EVENT_BUS.post(unloadEvent);
-//			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
 		}
 		super.invalidate();
 	}
 
-	// IC2 API functions
+	// Common IC2 API function
 	public boolean isAddedToEnergyNet()
 	{
 		return initialized;
@@ -65,8 +64,7 @@ public abstract class TECommonBench extends TECommon implements IInventory
 	public void dropContents()
 	{
 		ItemStack item;
-		int i;
-		for (i = 0; i < contents.length; ++i)
+		for (int i = 0; i < contents.length; ++i)
 		{
 			item = contents[i];
 			contents[i] = null;
@@ -144,6 +142,12 @@ public abstract class TECommonBench extends TECommon implements IInventory
      */
 	@Override
     public abstract String getInvName();
+
+	@Override
+	public boolean isInvNameLocalized()
+	{
+		return false;
+	}
 
 	@Override
 	public int getInventoryStackLimit()

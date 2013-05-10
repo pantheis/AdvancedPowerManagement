@@ -52,7 +52,7 @@ public class GuiChargingBench extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(Info.GUI1_PNG);
+		mc.renderEngine.bindTexture(Info.GUI_TEX_CHARGING_BENCH);
 
 		// Draw GUI background
 		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);

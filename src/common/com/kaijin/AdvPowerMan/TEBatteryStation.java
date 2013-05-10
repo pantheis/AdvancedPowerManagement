@@ -75,11 +75,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	// IC2 API functions
 
-	public boolean isAddedToEnergyNet()
-	{
-		return initialized;
-	}
-
 	@Override
 	public boolean emitsEnergyTo(TileEntity receiver, Direction direction)
 	{
@@ -115,7 +110,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	protected void selfDestroy()
 	{
 		dropContents();
-		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, baseTier - 1);
+		ItemStack stack = new ItemStack(AdvancedPowerManagement.blockAdvPwrMan, 1, Info.BS_META + baseTier - 1);
 		dropItem(stack);
 		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		this.invalidate();
@@ -251,7 +246,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		{
 			EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
 			MinecraftForge.EVENT_BUS.post(sourceEvent);
-			//			final int surplus = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, packetSize);
 			final int surplus = sourceEvent.amount;
 
 			if (surplus < packetSize)
@@ -486,7 +480,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public void receiveDescriptionData(int packetID, DataInputStream stream)
 	{
-		final boolean b;
+		boolean b = doingWork;
 		try
 		{
 			b = stream.readBoolean();
@@ -535,15 +529,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	public int[] getSizeInventorySide(int side)
 	{
 		return BatteryStationSideInOut; // Testing I/O constraint methods func_102007_a, func_102008_b
-/*		switch (side)
-		{
-		//TODO Determine correct values for top and bottom sides
-		case 0:
-		case 1:
-			return BatteryStationSideInput;
-		default:
-			return BatteryStationSideOutput;
-		}*/
 	}
 
 	@Override
@@ -557,7 +542,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public boolean func_102007_a(int i, ItemStack itemstack, int j) // canInsertItem
 	{
-		// TODO Auto-generated method stub - determine what this needs to do!
 		if (i == Info.BS_SLOT_INPUT) return true;
 		return false;
 	}
@@ -566,18 +550,11 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	@Override
 	public boolean func_102008_b(int i, ItemStack itemstack, int j) // canExtractItem
 	{
-		// TODO Auto-generated method stub - determine what this needs to do!
 		if (i == Info.BS_SLOT_OUTPUT) return true;
 		return false;
 	}
 
 	// IInventory
-
-	@Override
-	public boolean isInvNameLocalized()
-	{
-		return false;
-	}
 
 	@Override
 	public int getSizeInventory()
