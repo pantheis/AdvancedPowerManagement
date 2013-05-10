@@ -44,6 +44,9 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	public float drainFactor;
 	public float chargeFactor;
 
+	private int energyReceived = 0;
+	public MovingAverage inputTracker = new MovingAverage(12);
+
 	private static final int[] ChargingBenchSideInput = {Info.CB_SLOT_INPUT};
 	private static final int[] ChargingBenchSideOutput = {Info.CB_SLOT_OUTPUT};
 	private static final int[] ChargingBenchSideInOut = {Info.CB_SLOT_INPUT, Info.CB_SLOT_OUTPUT};
@@ -184,7 +187,9 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 			}
 			else
 			{
+				if (currentEnergy > adjustedStorage) currentEnergy = adjustedStorage;
 				currentEnergy += supply;
+				energyReceived += supply;
 				// check if our current energy level is now over the max energy level
 				if (currentEnergy > adjustedStorage)
 				{
@@ -192,6 +197,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 					surplus = currentEnergy - adjustedStorage;
 					//and set our current energy level TO our max energy level
 					currentEnergy = adjustedStorage;
+					energyReceived -= surplus;
 				}
 				//surplus may be zero or greater here
 			}
@@ -410,6 +416,9 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 			//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
+
+		inputTracker.tick(energyReceived);
+		energyReceived = 0;
 
 		boolean lastWorkState = doingWork;
 		doingWork = false;
