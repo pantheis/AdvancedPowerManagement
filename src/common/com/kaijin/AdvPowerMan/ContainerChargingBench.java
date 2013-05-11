@@ -4,6 +4,8 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import ic2.api.item.IElectricItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -15,7 +17,7 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerChargingBench extends Container
 {
-	private static final int topOffset = 40; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
+	private static final int topOffset = 72; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
 	protected final int benchShiftClickRange = 17;
 	protected final int playerInventoryStartSlot = 19;
@@ -26,6 +28,9 @@ public class ContainerChargingBench extends Container
 	protected int adjustedStorage;
 	protected short adjustedMaxInput;
 	protected short powerTier;
+	protected int energyRequired;
+	protected int ticksRequired;
+	protected int averageInput;
 	protected SlotPowerSource powerSlot;
 
 	public ContainerChargingBench(InventoryPlayer player, TEChargingBench tile)
@@ -36,6 +41,9 @@ public class ContainerChargingBench extends Container
 		adjustedMaxInput = -1;
 		adjustedStorage = -1;
 		powerTier = -1;
+		energyRequired = -1;
+		ticksRequired = -1;
+		averageInput = -1;
 
 		int xCol;
 		int yRow;
@@ -93,6 +101,7 @@ public class ContainerChargingBench extends Container
 		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateCraftingResults");
 		super.detectAndSendChanges();
 
+		final int syncAvg = (int)(tileentity.inputTracker.getAverage());
 		for (int crafterIndex = 0; crafterIndex < crafters.size(); ++crafterIndex)
 		{
 			ICrafting crafter = (ICrafting)crafters.get(crafterIndex);
@@ -118,14 +127,36 @@ public class ContainerChargingBench extends Container
 			{
 				crafter.sendProgressBarUpdate(this, 5, tileentity.powerTier);
 			}
+
+			if (this.energyRequired != tileentity.energyRequired)
+			{
+				crafter.sendProgressBarUpdate(this, 6, tileentity.energyRequired & 65535);
+				crafter.sendProgressBarUpdate(this, 7, tileentity.energyRequired >>> 16);
+			}
+
+			if (this.ticksRequired != tileentity.ticksRequired)
+			{
+				crafter.sendProgressBarUpdate(this, 8, tileentity.ticksRequired & 65535);
+				crafter.sendProgressBarUpdate(this, 9, tileentity.ticksRequired >>> 16);
+			}
+
+			if (averageInput != syncAvg)
+			{
+				crafter.sendProgressBarUpdate(this, 10, syncAvg & 65535);
+				crafter.sendProgressBarUpdate(this, 11, syncAvg >>> 16);
+			}
 		}
 		this.currentEnergy = tileentity.currentEnergy;
 		this.adjustedStorage = tileentity.adjustedStorage;
 		this.adjustedMaxInput = (short)tileentity.adjustedMaxInput;
 		this.powerTier = (short)tileentity.powerTier;
+		this.energyRequired = tileentity.energyRequired;
+		this.ticksRequired = tileentity.ticksRequired;
+		this.averageInput = syncAvg;
 		powerSlot.setTier(powerTier);
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void updateProgressBar(int param, int value)
 	{
@@ -133,34 +164,52 @@ public class ContainerChargingBench extends Container
 		switch (param)
 		{
 		case 0:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 0 tileentity.currentEnergy = " + (tileentity.currentEnergy & -65536) + " | " + value);
 			tileentity.currentEnergy = tileentity.currentEnergy & -65536 | value;
 			break;
 
 		case 1:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 1 tileentity.currentEnergy = " + (tileentity.currentEnergy & 65535) + " | " + (value << 16));
 			tileentity.currentEnergy = tileentity.currentEnergy & 65535 | (value << 16);
 			break;
 
 		case 2:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 2 tileentity.adjustedMaxInput = " + value);
 			tileentity.adjustedMaxInput = value;
 			break;
 
 		case 3:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 3 tileentity.adjustedStorage = " + (tileentity.adjustedStorage & -65536) + " | " + value);
 			tileentity.adjustedStorage = tileentity.adjustedStorage & -65536 | value;
 			break;
 
 		case 4:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 4 tileentity.adjustedStorage = " + (tileentity.adjustedStorage & 65535) + " | " + (value << 16));
 			tileentity.adjustedStorage = tileentity.adjustedStorage & 65535 | (value << 16);
 			break;
 
 		case 5:
-			//if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateProgressBar case 5 tileentity.powerTier = " + value);
 			tileentity.powerTier = value;
 			powerSlot.setTier(value);
+			break;
+
+		case 6:
+			tileentity.energyRequired = tileentity.energyRequired & -65536 | value;
+			break;
+
+		case 7:
+			tileentity.energyRequired = tileentity.energyRequired & 65535 | (value << 16);
+			break;
+
+		case 8:
+			tileentity.ticksRequired = tileentity.ticksRequired & -65536 | value;
+			break;
+
+		case 9:
+			tileentity.ticksRequired = tileentity.ticksRequired & 65535 | (value << 16);
+			break;
+
+		case 10:
+			averageInput = averageInput & -65536 | value;
+			break;
+
+		case 11:
+			averageInput = averageInput & 65535 | (value << 16);
 			break;
 
 		default:
