@@ -47,6 +47,9 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	private int energyReceived = 0;
 	public MovingAverage inputTracker = new MovingAverage(12);
 
+	int ticksRequired = 0;
+	int energyRequired = 0;
+
 	private static final int[] ChargingBenchSideInput = {Info.CB_SLOT_INPUT};
 	private static final int[] ChargingBenchSideOutput = {Info.CB_SLOT_OUTPUT};
 	private static final int[] ChargingBenchSideInOut = {Info.CB_SLOT_INPUT, Info.CB_SLOT_OUTPUT};
@@ -419,6 +422,8 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 		inputTracker.tick(energyReceived);
 		energyReceived = 0;
+		ticksRequired = 0;
+		energyRequired = 0;
 
 		boolean lastWorkState = doingWork;
 		doingWork = false;
@@ -428,6 +433,14 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		chargeItems();
 		moveOutputItems();
 		acceptInputItems();
+
+		// Determine if and how completion time will be affected by lack of energy and input rate
+		if (energyRequired > currentEnergy)
+		{
+			final int deficit = energyRequired - currentEnergy;
+			final int time = (int)Math.ceil(((float)deficit) / inputTracker.average);
+			if (time > ticksRequired) ticksRequired = time;
+		}
 
 		// Trigger this only when charge level passes where it would need to update the client texture
 		int oldChargeLevel = chargeLevel;
@@ -519,18 +532,36 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 					int adjustedTransferLimit = (int)Math.ceil(chargeFactor * itemTransferLimit);
 
 					int amountNeeded;
+					int missing;
+					int consumption;
 					if (item.getChargedItemId(stack) != item.getEmptyItemId(stack) || stack.isStackable())
 					{
 						// Running stack.copy() on every item every tick would be a horrible thing for performance, but the workaround is needed
 						// for ElectricItem.charge adding stackTagCompounds for charge level to EmptyItemID batteries even when run in simulate mode.
 						// Limiting its use by what is hopefully a broad enough test to catch all cases where it's necessary in order to avoid problems.
 						// Using it for any item types listed as stackable and for any items where the charged and empty item IDs differ.
-						amountNeeded = ElectricItem.charge(stack.copy(), adjustedTransferLimit, powerTier, true, true);
+						final ItemStack stackCopy = stack.copy();
+						amountNeeded = ElectricItem.charge(stackCopy, adjustedTransferLimit, powerTier, true, true);
+						if (amountNeeded == adjustedTransferLimit)
+						{
+							missing = ElectricItem.charge(stackCopy, item.getMaxCharge(stackCopy), powerTier, true, true);
+						}
+						else missing = amountNeeded;
 					}
 					else
 					{
 						amountNeeded = ElectricItem.charge(stack, adjustedTransferLimit, powerTier, true, true);
+						if (amountNeeded == adjustedTransferLimit)
+						{
+							missing = ElectricItem.charge(stack, item.getMaxCharge(stack), powerTier, true, true);
+						}
+						else missing = amountNeeded;
 					}
+
+					// How long will this item take and how much will it drain?
+					int eta = (int)Math.ceil(((float)missing) / ((float)adjustedTransferLimit));
+					if (ticksRequired < eta) ticksRequired = eta;
+					energyRequired += (int)Math.ceil((drainFactor / chargeFactor) * missing);
 
 					int adjustedEnergyUse = (int)Math.ceil((drainFactor / chargeFactor) * amountNeeded);
 					if (adjustedEnergyUse > 0)
