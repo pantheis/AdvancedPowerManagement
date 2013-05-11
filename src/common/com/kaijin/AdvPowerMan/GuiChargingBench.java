@@ -4,6 +4,8 @@
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
 
+import java.text.DecimalFormat;
+
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
@@ -26,6 +28,11 @@ public class GuiChargingBench extends GuiContainer
 
 	protected static StringTranslate lang = StringTranslate.getInstance();
 
+	private DecimalFormat fraction = new DecimalFormat("##0.00");
+	private DecimalFormat time = new DecimalFormat("00");
+	private DecimalFormat days = new DecimalFormat("#0");
+	private DecimalFormat dayFrac = new DecimalFormat("0.#");
+
 	private static final int GREEN = 0x55FF55;
 	private static final int GREENGLOW = Utils.multiplyColorComponents(GREEN, 0.16F);
 
@@ -34,7 +41,7 @@ public class GuiChargingBench extends GuiContainer
 		super(new ContainerChargingBench(player, tileentity));
 		tile = tileentity;
 		xSize = 176; // The X size of the GUI window in pixels.
-		ySize = 198; // The Y size of the GUI window in pixels.
+		ySize = 226; // The Y size of the GUI window in pixels.
 	}
 
 	@Override
@@ -55,24 +62,65 @@ public class GuiChargingBench extends GuiContainer
 		mc.renderEngine.bindTexture(Info.GUI_TEX_CHARGING_BENCH);
 
 		// Draw GUI background
-		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
+		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
+		// Energy bar
 		if (tile.currentEnergy > 0)
 		{
 			// Make each box light up all at once like a LED instead of gradually using barLength = tile.gaugeEnergyScaled(66); 
 			int barLength = 5 * tile.gaugeEnergyScaled(13);
 			if (barLength > 0) barLength++;
-			this.drawTexturedModalRect(xLoc + 32, yLoc + 108 - barLength, 176, 66 - barLength, 12, barLength);
+			drawTexturedModalRect(xLoc + 32, yLoc + 136 - barLength, 176, 66 - barLength, 12, barLength);
 		}
 
-		// Draw tier and title
-		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), xCenter, yLoc + 8, 4210752);
+		// Redstone power indicator
+		drawTexturedModalRect(xLoc + 129, yLoc + 48, tile.receivingRedstoneSignal() ? 188 : 206, 0, 18, 15);
+
+		// Draw labels
+		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), xCenter, yLoc + 7, 4210752);
+
+		Utils.drawRightAlignedText(fontRenderer, lang.translateKey(Info.KEY_EU), xLoc + 25, yLoc + 23, 4210752);
+		Utils.drawLeftAlignedText(fontRenderer, lang.translateKey(Info.KEY_CHARGER_MAX), xLoc + 151, yLoc + 23, 4210752);
+
+		Utils.drawRightAlignedText(fontRenderer, lang.translateKey(Info.KEY_CHARGER_REQ), xLoc + 25, yLoc + 33, 4210752);
+		Utils.drawLeftAlignedText(fontRenderer, lang.translateKey(Info.KEY_CHARGER_ETC), xLoc + 151, yLoc + 33, 4210752);
+
+		Utils.drawRightAlignedText(fontRenderer, lang.translateKey(Info.KEY_CHARGER_AVG), xLoc + 70, yLoc + 52, 4210752);
+		Utils.drawLeftAlignedText(fontRenderer, lang.translateKey(Info.KEY_CHARGER_PWR), xLoc + 151, yLoc + 52, 4210752);
 
 		// Draw current and max storage
-		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.currentEnergy), xCenter - 7, yLoc + 24, GREEN, GREENGLOW);
-		Utils.drawGlowingText(fontRenderer, " / " + Integer.toString(tile.adjustedStorage), xCenter - 7, yLoc + 24, GREEN, GREENGLOW);
+		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.currentEnergy), xCenter - 7, yLoc + 23, GREEN, GREENGLOW);
+		Utils.drawGlowingText(fontRenderer, " / " + Integer.toString(tile.adjustedStorage), xCenter - 7, yLoc + 23, GREEN, GREENGLOW);
 
-		// Test separator		
-		//Utils.drawCenteredText(fontRenderer, " / ", xCenter, yLoc + 24, 4210752);
+		// Factor of 100 because data is in fixed point (x100)
+		final float rate = (float)(((ContainerChargingBench)inventorySlots).averageInput) / 100F;
+		Utils.drawRightAlignedGlowingText(fontRenderer, fraction.format(rate), xLoc + 122, yLoc + 52, GREEN, GREENGLOW);
+
+		// Charging stats (only displayed while charging items)
+		if (tile.energyRequired > 0)
+		{
+			final String clock;
+			if (tile.ticksRequired > 0)
+			{
+				int timeScratch = tile.ticksRequired / 20;
+				if (timeScratch <= 345600) // 60 * 60 * 96 or 4 days
+				{
+					final int sec = timeScratch % 60;
+					timeScratch /= 60;
+					final int min = timeScratch % 60;
+					timeScratch /= 60;
+					clock = time.format(timeScratch) + ":" + time.format(min) + ":" + time.format(sec);
+				}
+				else
+				{
+					float dayScratch = ((float)timeScratch) / 86400F; // 60 * 60 * 24 or 1 day
+					clock = (dayScratch < 10F ? dayFrac.format(dayScratch) : dayScratch < 100 ? days.format((int)dayScratch) : "??") + lang.translateKey(Info.KEY_STATS_DISPLAY_DAYS);
+				}
+			}
+			else clock = lang.translateKey(Info.KEY_STATS_DISPLAY_UNKNOWN);
+			final String energyReq = tile.energyRequired > 9999999 ? dayFrac.format(((float)tile.energyRequired) / 1000000F) + "M" : Integer.toString(tile.energyRequired);
+			Utils.drawRightAlignedGlowingText(fontRenderer, energyReq, xCenter - 7, yLoc + 33, GREEN, GREENGLOW);
+			Utils.drawRightAlignedGlowingText(fontRenderer, clock, xLoc + 144, yLoc + 33, GREEN, GREENGLOW);
+		}
 	}
 }

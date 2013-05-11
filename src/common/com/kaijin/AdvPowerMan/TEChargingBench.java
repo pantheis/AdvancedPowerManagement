@@ -44,11 +44,11 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	public float drainFactor;
 	public float chargeFactor;
 
-	private int energyReceived = 0;
+	protected int energyReceived = 0;
 	public MovingAverage inputTracker = new MovingAverage(12);
 
-	int ticksRequired = 0;
-	int energyRequired = 0;
+	public int ticksRequired = 0;
+	public int energyRequired = 0;
 
 	private static final int[] ChargingBenchSideInput = {Info.CB_SLOT_INPUT};
 	private static final int[] ChargingBenchSideOutput = {Info.CB_SLOT_OUTPUT};
@@ -294,7 +294,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		}
 
 		// Cap upgrades at sane quantities that won't result in negative energy storage from integer overflows and such.
-		if (ocCount > 64) ocCount = 64;
+		if (ocCount > 20) ocCount = 20;
 		if (esCount > 64) esCount = 64;
 		if (tfCount > 3) tfCount = 3;
 
@@ -438,8 +438,13 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		if (energyRequired > currentEnergy)
 		{
 			final int deficit = energyRequired - currentEnergy;
-			final int time = (int)Math.ceil(((float)deficit) / inputTracker.average);
-			if (time > ticksRequired) ticksRequired = time;
+			final float avg = inputTracker.getAverage();
+			if (avg >= 1.0F)
+			{
+				final int time = (int)Math.ceil(((float)deficit) / avg);
+				if (time > ticksRequired) ticksRequired = time;
+			}
+			else ticksRequired = -1;
 		}
 
 		// Trigger this only when charge level passes where it would need to update the client texture
@@ -530,7 +535,6 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 					int itemTransferLimit = item.getTransferLimit(stack);
 					if (itemTransferLimit == 0) itemTransferLimit = baseMaxInput;
 					int adjustedTransferLimit = (int)Math.ceil(chargeFactor * itemTransferLimit);
-
 					int amountNeeded;
 					int missing;
 					int consumption;
@@ -559,7 +563,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 					}
 
 					// How long will this item take and how much will it drain?
-					int eta = (int)Math.ceil(((float)missing) / ((float)adjustedTransferLimit));
+					final int eta = (int)Math.ceil(((float)missing) / ((float)adjustedTransferLimit));
 					if (ticksRequired < eta) ticksRequired = eta;
 					energyRequired += (int)Math.ceil((drainFactor / chargeFactor) * missing);
 

@@ -93,6 +93,11 @@ public class Info
 	public static final String KEY_EU = "AdvPwrMan.misc.EU";
 	public static final String KEY_IN = "AdvPwrMan.misc.in";
 	public static final String KEY_OUT = "AdvPwrMan.misc.out";
+	public static final String KEY_CHARGER_MAX = "AdvPwrMan.charger.maxEU";
+	public static final String KEY_CHARGER_REQ = "AdvPwrMan.charger.requiredEU";
+	public static final String KEY_CHARGER_PWR = "AdvPwrMan.charger.redstonePower";
+	public static final String KEY_CHARGER_ETC = "AdvPwrMan.charger.estimatedTime";
+	public static final String KEY_CHARGER_AVG = "AdvPwrMan.charger.averageInput";
 	public static final String KEY_EMITTER_PACKET = "AdvPwrMan.emitter.packet";
 	public static final String KEY_EMITTER_OUTPUT = "AdvPwrMan.emitter.output";
 	public static final String KEY_TRANSFORMER_OUTPUT = "AdvPwrMan.transformer.limit";
@@ -187,6 +192,11 @@ public class Info
 		lang.addStringLocalization(KEY_OUT, "Out");
 
 		// GUI strings
+		lang.addStringLocalization(KEY_CHARGER_MAX, "Max");
+		lang.addStringLocalization(KEY_CHARGER_REQ, "Req");
+		lang.addStringLocalization(KEY_CHARGER_PWR, "Pwr");
+		lang.addStringLocalization(KEY_CHARGER_ETC, "ETC");
+		lang.addStringLocalization(KEY_CHARGER_AVG, "Avg. EU/t In");
 		lang.addStringLocalization(KEY_EMITTER_PACKET, "Packet size (Voltage)");
 		lang.addStringLocalization(KEY_EMITTER_OUTPUT, "Output / Tick (Max 64 Packets)");
 		lang.addStringLocalization(KEY_TRANSFORMER_OUTPUT, "Transfer Rate (Max 64 Packets)");

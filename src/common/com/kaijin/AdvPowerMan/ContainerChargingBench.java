@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerChargingBench extends Container
 {
-	private static final int topOffset = 72; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
+	private static final int topOffset = 68; // Got tired of forgetting to manually alter ALL of the constants. (This won't affect the energy bar!)
 
 	protected final int benchShiftClickRange = 17;
 	protected final int playerInventoryStartSlot = 19;
@@ -101,7 +101,7 @@ public class ContainerChargingBench extends Container
 		// if (ChargingBench.isDebugging) System.out.println("ContainerChargingBench.updateCraftingResults");
 		super.detectAndSendChanges();
 
-		final int syncAvg = (int)(tileentity.inputTracker.getAverage());
+		final int syncAvg = (int)(tileentity.inputTracker.getAverage() * 100);
 		for (int crafterIndex = 0; crafterIndex < crafters.size(); ++crafterIndex)
 		{
 			ICrafting crafter = (ICrafting)crafters.get(crafterIndex);
