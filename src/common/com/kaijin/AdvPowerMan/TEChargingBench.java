@@ -522,7 +522,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		for (int i = Info.CB_SLOT_CHARGING; i < Info.CB_SLOT_CHARGING + 12; i++)
 		{
 			ItemStack stack = contents[i];
-			if (currentEnergy > 0 && stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
+			if (stack != null && stack.getItem() instanceof IElectricItem && stack.stackSize == 1)
 			{
 				IElectricItem item = (IElectricItem)(stack.getItem());
 				if (item.getTier(stack) <= baseTier)
@@ -564,7 +564,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 					energyRequired += (int)Math.ceil((drainFactor / chargeFactor) * missing);
 
 					int adjustedEnergyUse = (int)Math.ceil((drainFactor / chargeFactor) * amountNeeded);
-					if (adjustedEnergyUse > 0)
+					if (adjustedEnergyUse > 0 && currentEnergy > 0)
 					{
 						if (adjustedEnergyUse > currentEnergy)
 						{
