@@ -3,14 +3,14 @@
 	<!-- Properties -->
 
 	<property name="mod.name"            value="AdvancedPowerManagement"/>
-	<property name="mod.dir"             value="AdvancedPowerManagement"/>
+	<property name="mod.dir"             value="env.JOB_NAME"/>
 	<property name="build.dir"           value="${mod.dir}/build"/>
 	<property name="src.dir"             value="${mod.dir}/src"/>
 	<property name="res.dir"             value="${mod.dir}/resources"/>
 
 	<property name="download.dir"        value="download"/>
-	    
-    <property name="classes.dir"         value="${build.dir}/classes"/>
+
+	<property name="classes.dir"         value="${build.dir}/classes"/>
 	<property name="jar.dir"             value="${build.dir}/dist"/>
 
 	<property name="forge.dir"           value="${build.dir}/forge"/>
@@ -21,10 +21,10 @@
 	<property name="mcp.version"         value="751"/>
 	<property name="forge.version"       value="1.5.2-7.8.0.696"/>
 	<property name="mymod.version"       value="1.2"/>
-    <property name="ic2.version"         value="IC2-1.115"/>
+	<property name="ic2.version"         value="IC2-1.115"/>
 
-    <available property="forge-exists" file="${download_dir}/minecraftforge-src-${forge.version}.zip"/>
-    <condition property="should-download-ant-contrib">
+	<available property="forge-exists" file="${download_dir}/minecraftforge-src-${forge.version}.zip"/>
+	<condition property="should-download-ant-contrib">
 		<or>
 			<available file="${download.dir}/ant-contrib/ant-contrib-1.0b3.jar"/>
 			<available file="${download.dir}/minecraftforge-src-${forge.version}.zip"/>
@@ -52,10 +52,10 @@
 		<property name="build.number" value="${env.BUILD_NUMBER}"/>
 	</target>
 
-    <!-- Download necessary files -->
+	<!-- Download necessary files -->
 	<target name="download-files" depends="download-forge"/>
 
-    <!-- Download ant-contrib, necessary to be able to download forge (only if neither forge zip nor ant-contrib exist) -->
+	<!-- Download ant-contrib, necessary to be able to download forge (only if neither forge zip nor ant-contrib exist) -->
 	<target name="download-ant-contrib" unless="should-download-ant-contrib">
 
 		<echo message="Getting: ant-contrib"/>
