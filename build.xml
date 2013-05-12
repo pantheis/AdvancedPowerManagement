@@ -3,7 +3,7 @@
 	<!-- Properties -->
 
 	<property name="mod.name"            value="AdvancedPowerManagement"/>
-	<property name="mod.dir"             value="env.JOB_NAME"/>
+	<property name="mod.dir"             value="${env.JOB_NAME}"/>
 	<property name="build.dir"           value="${mod.dir}/build"/>
 	<property name="src.dir"             value="${mod.dir}/src"/>
 	<property name="res.dir"             value="${mod.dir}/resources"/>
