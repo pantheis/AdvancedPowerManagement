@@ -520,7 +520,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	}
 
 	@Override
-	public int[] getSizeInventorySide(int side)
+	public int[] getAccessibleSlotsFromSide(int side)
 	{
 		return BatteryStationSideInOut; // Testing I/O constraint methods func_102007_a, func_102008_b
 	}
@@ -534,7 +534,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	// Returns true if automation can insert the given item in the given slot from the given side. Args: Slot, item, side
 	@Override
-	public boolean func_102007_a(int i, ItemStack itemstack, int j) // canInsertItem
+	public boolean canInsertItem(int i, ItemStack itemstack, int j) // canInsertItem
 	{
 		if (i == Info.BS_SLOT_INPUT) return true;
 		return false;
@@ -542,7 +542,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	// Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item, side
 	@Override
-	public boolean func_102008_b(int i, ItemStack itemstack, int j) // canExtractItem
+	public boolean canExtractItem(int i, ItemStack itemstack, int j) // canExtractItem
 	{
 		if (i == Info.BS_SLOT_OUTPUT) return true;
 		return false;
