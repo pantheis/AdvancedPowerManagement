@@ -29,6 +29,12 @@ public class SlotDrainable extends SlotCustom
 	}
 
 	@Override
+	public int getSlotStackLimit()
+	{
+		return 1;
+	}
+
+	@Override
 	public Icon getBackgroundIconIndex()
 	{
 		return Info.iconSlotDrainable;
