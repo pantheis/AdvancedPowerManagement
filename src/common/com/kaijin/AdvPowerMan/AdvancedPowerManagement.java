@@ -210,6 +210,7 @@ public class AdvancedPowerManagement implements ICraftingHandler
 
 		// Adjustable Transformer recipe
 		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, Info.AT_META), new Object[] {"L", "C", "H", 'L', Items.getItem("lvTransformer"), 'C', Items.getItem("advancedCircuit"), 'H', Items.getItem("hvTransformer")});
+		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, Info.AT_META), new Object[] {"H", "C", "L", 'H', Items.getItem("hvTransformer"), 'C', Items.getItem("advancedCircuit"), 'L', Items.getItem("lvTransformer")});
 
 		// Storage Monitor recipe
 		GameRegistry.addRecipe(new ItemStack(blockAdvPwrMan, 1, Info.SM_META), new Object[] {"WUW", "GCG", "WRW", 'W', Block.planks, 'U', Items.getItem("goldCableItem"), 'G', Block.glass, 'C', Items.getItem("electronicCircuit"), 'R', Item.redstone});
