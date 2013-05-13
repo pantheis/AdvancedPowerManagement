@@ -24,15 +24,8 @@
 	<property name="forge.filename"      value="minecraftforge-src-${forge.version}.zip"/>
 	<property name="mcpsrc.backup"       value="mcpsrc-backup-${forge.version}.zip"/>
 
-	<available property="forge-exists" file="${download.dir}/${forge.filename}"/>
-	<condition property="out-of-date">
-		<not>
-			<and>
-				<available file="${download.dir}/${forge.filename}"/>
-				<available file="${mcpsrc.dir}"/>
-			</and>
-		</not>
-	</condition>
+	<available property="forge-exists"   file="${download.dir}/${forge.filename}"/>
+	<available property="can-restore"    file="${forge.dir}/../${mcpsrc.backup}"/>
 
 	<mkdir dir="${download.dir}"/>
 
@@ -61,7 +54,7 @@
 	</target>
 
 <!-- Setup mcp and forge -->
-	<target name="setup-forge" depends="initialize-version,download-forge" if="out-of-date">
+	<target name="setup-forge" depends="initialize-version,download-forge" unless="can-restore">
 		<delete dir="${build.dir}" failonerror="false"/>
 		<unzip dest="${forge.dir}/.." src="${download.dir}/${forge.filename}"/>
 
@@ -78,7 +71,7 @@
 	</target>
 
 <!-- Restore the mcp src folder to pristine state -->
-	<target name="restore-mcp-src" depends="initialize-version" unless="out-of-date">
+	<target name="restore-mcp-src" depends="initialize-version" if="can-restore">
 		<delete dir="${mcpsrc.dir}"/>
 		<mkdir dir="${mcpsrc.dir}"/>
 		<unzip dest="${mcpsrc.dir}" src="${forge.dir}/../${mcpsrc.backup}"/>
