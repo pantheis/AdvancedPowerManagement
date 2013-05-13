@@ -1,4 +1,4 @@
-<project name="AdvancedPowerManagement" basedir="../" default="main">
+<project name="AdvancedPowerManagement" basedir="../../" default="main">
 	<property environment="env" />
 
 	<property name="mcp.version"         value="751"/>
