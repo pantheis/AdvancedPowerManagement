@@ -1,4 +1,4 @@
-<project name="AdvancedPowerManagement" basedir="../../" default="main">
+<project name="AdvancedPowerManagement" basedir="../" default="main">
 	<property environment="env" />
 
 	<property name="mcp.version"         value="751"/>
@@ -7,12 +7,12 @@
 	<property name="ic2.version"         value="IC2-1.115"/>
 
 	<property name="mod.name"            value="${env.JOB_NAME}"/>
-	<property name="mod.dir"             value="${env.JOB_NAME}/repo"/>
-	<property name="build.dir"           value="${env.JOB_NAME}/build"/>
+	<property name="mod.dir"             value="repo"/>
+	<property name="build.dir"           value="build"/>
 	<property name="src.dir"             value="${mod.dir}/src"/>
 	<property name="res.dir"             value="${mod.dir}/resources"/>
 
-	<property name="download.dir"        value="download"/>
+	<property name="download.dir"        value="../download"/>
 
 	<property name="classes.dir"         value="${build.dir}/classes"/>
 	<property name="jar.dir"             value="${build.dir}/dist"/>
@@ -139,7 +139,8 @@
 	<!-- Zip the compiled files -->
 		<jar destfile="${jar.dir}/${mod.name}-${mymod.version.full}.jar" basedir="${classes.dir}"/>
 
-	<!-- Finally, clear out the repo for a fresh start next time -->
+	<!-- Finally, clear out the repo and class files for a fresh start next time -->
+		<delete dir="${classes.dir}" deleteonexit="true"/>
 		<delete dir="${mod.dir}" deleteonexit="true"/>
 	</target>
 </project>
