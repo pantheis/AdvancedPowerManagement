@@ -136,11 +136,14 @@
 			</fileset>
 		</copy>		
 
-	<!-- Zip the compiled files -->
+	<!-- Jar the files -->
 		<jar destfile="${jar.dir}/${mod.name}-${mymod.version.full}.jar" basedir="${classes.dir}"/>
 
 	<!-- Finally, clear out the repo and class files for a fresh start next time -->
 		<delete dir="${classes.dir}" deleteonexit="true"/>
 		<delete dir="${mod.dir}" deleteonexit="true"/>
+
+	<!-- Jar signing test -->
+		<signjar jar="${jar.dir}/${mod.name}-${mymod.version.full}.jar" alias="kaijin" keystore="${download.dir}/kaijin.keystore" storepass="jenkins"/>
 	</target>
 </project>
