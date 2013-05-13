@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Yancarlo Ramsey and CJ Bowman
+ * Copyright (c) 2012-2013 Yancarlo Ramsey and CJ Bowman
  * Licensed as open source with restrictions. Please see attached LICENSE.txt.
  ******************************************************************************/
 package com.kaijin.AdvPowerMan;
@@ -717,7 +717,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	}
 
 	@Override
-	public int[] getSizeInventorySide(int side)
+	public int[] getAccessibleSlotsFromSide(int side)
 	{
 		switch (side)
 		{
@@ -744,7 +744,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 	// Returns true if automation can insert the given item in the given slot from the given side. Args: Slot, item, side
 	@Override
-	public boolean func_102007_a(int i, ItemStack itemstack, int j) // canInsertItem
+	public boolean canInsertItem(int i, ItemStack itemstack, int j) // canInsertItem
 	{
 		if (i == Info.CB_SLOT_INPUT || i == Info.CB_SLOT_POWER_SOURCE) return true;
 		return false;
@@ -752,7 +752,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 	// Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item, side
 	@Override
-	public boolean func_102008_b(int i, ItemStack itemstack, int j) // canExtractItem
+	public boolean canExtractItem(int i, ItemStack itemstack, int j) // canExtractItem
 	{
 		if (i == Info.CB_SLOT_OUTPUT || i == Info.CB_SLOT_POWER_SOURCE) return true;
 		return false;

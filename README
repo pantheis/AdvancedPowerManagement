@@ -75,6 +75,17 @@ from the output slot (or the charging area, if you've let some other item loiter
 in the output slot) and it will automatically equip the armor in the correct
 location. It doesn't get much easier than that!
 
+You will also see several helpful displays on the main interface. In addition to
+the energy meter bar and digital readouts for capacity and contents that we're
+all familiar with, the following are now available: A redstone power indicator
+light; The average rate at which the bench is receiving energy; The amount of EU
+required to complete the charging of all items in the bench's charging area; And
+the time required to finish charging those items. The effects of overclockers
+are included in the calculations. If the EU stored in the bench is insufficient
+to finish charging the items, the ETC will estimate the time to completion by
+taking into account the average EU input to the bench, which should be extremely
+accurate if the bench is receiving a steady flow of energy.
+
 And we're not done yet with the awesome features of this mod! Each charging
 bench now includes a pair of indicators visible right on the outside of the
 bench. The storage meter lets you see just how much power is available for
@@ -93,13 +104,14 @@ with each having a very specific effect.
 
 - The transformer upgrade will allow the lower tier benches to accept higher
   input energy, including energy crystals, lappacks, and lapotrons in the power
-  input slot.
+  input slot. Up to 3 may be used, depending on the bench's tier.
 
 - The energy storage upgrade will increase the maximum energy storage of the
   device. The LV bench now gains 10,000 EU per upgrade, the same amount the
   battery used to craft the upgrade would be able to store. The MV bench gains
   60,000 EU or 10% of its base storage capacity for each upgrade installed. And
-  the HV bench gains a whopping 500,000 EU capacity per upgrade!
+  the HV bench gains a whopping 500,000 EU capacity per upgrade! Up to 64 may be
+  used.
 
 - The overclocker upgrade lets you push your Charging Bench to the limit. By
   using quantum tunneling technology, the Charging Bench is able to carefully
@@ -112,7 +124,8 @@ with each having a very specific effect.
   internal storage by 50%, growing exponentially with every overclocker added.
   Since it's hard to do that kind of math in your head, here's an example: Five
   overclockers approximately doubles the energy used to charge any given item,
-  but the time required to charge it is reduced by nearly 75%!
+  but the time required to charge it is reduced by nearly 75%! Up to 20 may be
+  used.
 
   For those interested, the formulas for some useful values are:
     Speed:           S = (1.3^x)
@@ -131,6 +144,15 @@ the player to design their systems so that the wrong types of items don't get
 tossed onto the bench. But not to worry, there are no negative consequences to
 inserting incorrect items, aside from temporarily clogging up the slot; the
 bench simply will not do anything with items that it can't process.
+
+NEW! Mods which have updated to use the vanilla Minecraft 1.5 inventory access
+interface, as well as the vanilla Hopper and Dropper, follow new rules for side
+access: The input and output slots are accessed from both the top or the bottom!
+This is possible because the input slot now only allows items to be inserted,
+and the output slot now only allows items to be removed. Additionally, machines
+should follow the same rules for what items can be inserted as players do when
+interacting with the GUI, so if something drops sand into your input hopper, it
+won't end up jammed into your Charging Bench's innards!
 
 Valid electrical items placed into the charging bench via tubes will
 automatically be moved from the input slot to an available charging slot, then
@@ -214,8 +236,8 @@ Features of the Battery Station
 -------------------
 Each battery station will output one packet of energy every tick, if it's able
 to drain enough EU from the items in its inventory. Remember that different
-energy storage items have different transfer rates, so a single battery in a HV
-Battery Station will not allow it to provide power every tick. It will take
+energy storage items have different transfer rates, so a single RE-battery in a
+HV Battery Station will not allow it to provide power every tick. It will take
 multiple ticks for the station to drain sufficient EU from one battery into its
 buffer.
 
@@ -251,6 +273,15 @@ be accessible. Cabling to accept the EU output from the battery station may be
 attached to any face (top, bottom, or sides), or the station may be placed
 directly adjacent to the machines you want it to power.
 
+NEW! Mods which have updated to use the vanilla Minecraft 1.5 inventory access
+interface, as well as the vanilla Hopper and Dropper, follow new rules for side
+access: The input and output slots can be accessed from any side you want!
+This is possible because the input slot now only allows items to be inserted,
+and the output slot now only allows items to be removed. Additionally, machines
+should follow the same rules for what items can be inserted as players do when
+interacting with the GUI, so if something drops clay into your input hopper, it
+won't end up oozing through your Battery Station's innards!
+
 To help with automation, there is now a toggle button below the input slot which
 controls the mode it operates in. If the button is dark, all valid items placed
 in the input slot will immediately be transferred to the working area, as usual.
@@ -265,9 +296,9 @@ automation can't add more and/or can tell that it already has a spare.
 Additionally, there is a new feature on the right side which lists some useful
 statistics relevant to the battery station's operation. The top value is an
 adaptive average based on the delay between packets. Its display will adjust
-rapidly to increased energy consumption, although it can take up to 5 minutes
-to settle back to zero (or 256 seconds to return to an induction furnace's
-idle consumption of 1 EU per tick, for example). In testing it has proven to be
+rapidly to increased OR decreased energy consumption, although settling all the
+way back to zero or to a trickle current (like an induction furnace's 1 EU/tick
+consumption rate when idle) can take some time. In testing it has proven to be
 a stable and highly accurate measure of energy consumption rates, and yet has
 no detectable impact on server performance! The bottom display is the estimated
 length of time for which the battery station could maintain the current rate of
@@ -346,37 +377,73 @@ Pattern:
     P   P = Paper
 
 
-Emitters? What's this?
+Adjustable Transformer
 -------------------
 
-Originally created for testing purposes, we have added these Emitter blocks to
+If you've ever gotten fed up with the way the simplistic standard transformers
+work, or just wished for more control over your EU or more information about
+what's going on under the hood, or had to set up 16 LV and 4 MV transformers
+in parallel just to keep up with 1 HV transformer, then this block is for you!
+The Adjustable Transformer is three transformers in one: It can accept any input
+voltage and produce any output voltage, and transmits up to 64 packets per tick,
+great for going directly from EV to LV without a huge tree of blocks cluttering
+up the place! You can even configure exactly which sides are inputs and outputs.
+
+The GUI provides an easy to use control panel for setting up the desired output.
+The input doesn't need to be configured in any way - the transformer will simply
+accept any EU provided, into a buffer which is kept just full enough to handle
+the configured output on the next tick. The directional buttons on the right
+assign each side as an input or output side, and you can see which is which by
+looking at the block: Inputs have four different-colored dots, while outputs are
+a single dot, with their color determined by the voltage range that the output
+packet size falls into.
+
+You will also find some useful information on display above the control panel:
+- The amount of EU currently residing in the buffer.
+- The average EU per tick being passed through the transformer.
+- The average size of the packets the transformer is receiving as input.
+
+This information can be a powerful tool for debugging your energy network,
+allowing you to find cable losses, improve efficiency, or simply learn more
+about what's going on "under the hood".
+
+The crafting recipe for the Adjustable Transformer uses one HV-transformer, one
+LV-transformer, and one Advanced Circuit.
+
+Crafting recipe
+-------------------
+
+Adjustable Transformer:
+  1 HV-transformer
+  1 Advanced Circuit
+  1 LV-transformer
+
+Pattern:
+   H    H = HV-transformer
+   C    C = Advanced Circuit
+   L    L = LV-transformer
+
+
+Adjustable Emitter? What's this?
+-------------------
+
+Originally created for testing purposes, we have added this Emitter block to
 the creative inventory as a bonus for people playing in creative mode or wanting
 to test electrical builds without having to constantly spawn lapotron crystals
-and MFSUs.
+and MFSUs, or for use behind the scenes in adventure maps and such.
 
-There are five versions available. They have no crafting recipes, and must be
-acquired from the creative inventory or via tools like NEI.
+They have no crafting recipe, and must be acquired from the creative inventory
+or via tools like Chickenbones' NEI.
 
-LV Emitter
--  Emits LV current (32 EU/t) when powered by redstone
-
-MV Emitter
--  Emits MV current (128 EU/t) when powered by redstone
-
-HV Emitter
--  Emits HV current (512 EU/t) when powered by redstone
-
-EV Emitter
--  Emits EV current (2048 EU/t) when powered by redstone
-
-Adjustable Emitter
--  Emits a custom amount of energy when powered by redstone.
--  Comes with a GUI that allows you to configure the amount of energy per packet
-   and the rate of energy generation. Packet size can range from 4 to 8192 EU
-   (in case you have cables that can carry more than 2048) and EU generation
-   rate can range from 1 EU per tick to 65536 EU/t, but has an additional cap of
-   64 packets per tick to prevent excessive server lag. If packet size is
-   greater than EU generation then a packet will not be emitted on every tick.
+The Adjustable Emitter does nothing unless powered by redstone, such as a lever.
+When powered, it produces EU at the rate and packet size specified in the GUI.
+Packet size can range from 4 to 8192 EU (in case you have cables that can carry
+more than 2048) and EU generation rate can range from 1 EU/tick to 32768 EU/t,
+but has an additional limit of 64 packets per tick to prevent excessive server
+lag. If packet size is greater than EU generation then a packet will not be
+emitted on every tick, as the energy being produced will take time to reach the
+required amount. For example, you can produce 1 EU per tick but send it out in
+packets of 512 EU (which will happen once every 512 ticks).
 
 
 Credits
