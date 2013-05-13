@@ -2,7 +2,7 @@
 	<property environment="env" />
 	<!-- Properties -->
 
-	<property name="mod.name"            value="AdvancedPowerManagement"/>
+	<property name="mod.name"            value="${env.JOB_NAME}"/>
 	<property name="mod.dir"             value="${env.JOB_NAME}"/>
 	<property name="build.dir"           value="${mod.dir}/build"/>
 	<property name="src.dir"             value="${mod.dir}/src"/>
@@ -24,13 +24,7 @@
 	<property name="ic2.version"         value="IC2-1.115"/>
 
 	<available property="forge-exists" file="${download_dir}/minecraftforge-src-${forge.version}.zip"/>
-	<condition property="should-download-ant-contrib">
-		<or>
-			<available file="${download.dir}/ant-contrib/ant-contrib-1.0b3.jar"/>
-			<available file="${download.dir}/minecraftforge-src-${forge.version}.zip"/>
-		</or>
-	</condition>
-    
+
 	<mkdir dir="${download.dir}"/>
 
 	<!-- Targets -->
@@ -55,50 +49,13 @@
 	<!-- Download necessary files -->
 	<target name="download-files" depends="download-forge"/>
 
-	<!-- Download ant-contrib, necessary to be able to download forge (only if neither forge zip nor ant-contrib exist) -->
-	<target name="download-ant-contrib" unless="should-download-ant-contrib">
-
-		<echo message="Getting: ant-contrib"/>
-		<mkdir dir="${download.dir}/tmp"/>
-
-		<get src="http://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download" dest="${download.dir}/tmp/ant-contrib-1.0b3-bin.zip"/>
-		<get src="http://archive.apache.org/dist/commons/codec/binaries/commons-codec-1.6-bin.zip" dest="${download.dir}/tmp/commons-codec-1.6-bin.zip"/>
-
-		<unzip src="${download.dir}/tmp/ant-contrib-1.0b3-bin.zip" dest="${download.dir}"/>
-		<unzip src="${download.dir}/tmp/commons-codec-1.6-bin.zip" dest="${download.dir}/tmp"/>
-
-		<move todir="${download.dir}/ant-contrib/lib">
-			<fileset file="${download.dir}/tmp/commons-codec-1.6/commons-codec-1.6.jar"/>
-		</move>
-
-		<!-- Delete useless files -->
-		<delete dir="${download.dir}/ant-contrib/docs"/>
-		<delete dir="${download.dir}/tmp"/>
-
-	</target>
-
 	<!-- Download forge (if it doesn't exist) -->
-	<target name="download-forge" depends="download-ant-contrib" unless="forge-exists" >
-
-		<taskdef resource="net/sf/antcontrib/antlib.xml">
-			<classpath>
-				<pathelement location="${download.dir}/ant-contrib/ant-contrib-1.0b3.jar"/>
-				<fileset dir="${download.dir}/ant-contrib/lib">
-					<include name="*.jar"/>
-				</fileset>
-			</classpath>
-		</taskdef>
-
-		<getMethod url="http://files.minecraftforge.net/minecraftforge-src-${forge.version}.zip"
-				   responseDataFile="${download.dir}/minecraftforge-src-${forge.version}.zip">
-			<header name="User-Agent" value="Ant-${ant.version}/${ant.java.version}"/>
-		</getMethod>
-
+	<target name="download-forge" unless="forge-exists">
+		<get src="http://files.minecraftforge.net/minecraftforge-src-${forge.version}.zip" dest="${download.dir}" usetimestamp="True"/>
 	</target>
-    
+
 	<!-- Setup mcp and forge -->
 	<target name="setup" depends="initialize-version">
-
 		<!-- Unzip forge -->
 		<unzip dest="${build.dir}">
 			<fileset dir="${download.dir}">
@@ -106,34 +63,30 @@
 			</fileset>
 		</unzip>
 
-        <!-- Install forge -->
+		<!-- Install forge -->
 		<exec dir="${forge.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c install.cmd"/>
 		</exec>
-
 		<exec dir="${forge.dir}" executable="sh" osfamily="unix">
 			<arg value="install.sh" />
 		</exec>
 
-        <!-- Copy MyMod source -->
+		<!-- Copy MyMod source -->
 		<copy todir="${mcpsrc.dir}">
 			<fileset dir="${src.dir}/common">
 			</fileset>
 			<filterset>
-                <filter token="VERSION" value="${mymod.version.full}" />
+				<filter token="VERSION" value="${mymod.version.full}" />
 				<filter token="BUILD_NUMBER" value="${build.number}" />
-            </filterset>
-			
+			</filterset>
 		</copy>
 	</target>
 
 	<target name="compile" depends="setup">
-
 		<!-- Recompile -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c recompile.bat"/>
 		</exec>
-
 		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
 			<arg value="recompile.sh" />
 		</exec>
@@ -142,7 +95,6 @@
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c reobfuscate_srg.bat"/>
 		</exec>
-
 		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
 			<arg value="reobfuscate_srg.sh" />
 		</exec>
@@ -150,8 +102,8 @@
 		<!-- Copy MyMod classes -->
 		<copy todir="${classes.dir}">
 			<fileset dir="${mcp.dir}/reobf/minecraft">
-                <exclude name="**/ic2/**" />
-            </fileset>
+				<exclude name="**/ic2/**" />
+			</fileset>
 		</copy>
 
 		<!-- Copy common resources -->
@@ -159,11 +111,11 @@
 			<fileset dir="${res.dir}/common">
 			</fileset>
 			<filterset>
-                <filter token="VERSION" value="${mymod.version.full}" />
+				<filter token="VERSION" value="${mymod.version.full}" />
 				<filter token="BUILD_NUMBER" value="${build.number}" />
-            </filterset>
+			</filterset>
 		</copy>
-		
+
 		<!-- Copy documentation -->
 		<copy todir="${classes.dir}">
 			<fileset file="${mod.dir}/LICENSE.txt">
@@ -171,9 +123,9 @@
 			<fileset file="${mod.dir}/README">
 			</fileset>
 			<filterset>
-                <filter token="VERSION" value="${mymod.version.full}" />
+				<filter token="VERSION" value="${mymod.version.full}" />
 				<filter token="BUILD_NUMBER" value="${build.number}" />
-            </filterset>
+			</filterset>
 		</copy>
 
 		<!-- Copy client resources -->
@@ -181,14 +133,11 @@
 			<fileset dir="${res.dir}/client">
 			</fileset>
 		</copy>		
-
 	</target>
 
 	<!-- Zip the compiled files -->
 	<target name="package" depends="compile">
-
 		<jar destfile="${jar.dir}/${mod.name}-${mymod.version.full}.jar" basedir="${classes.dir}"/>
-
 	</target>
 
 	<!-- Default target to run -->
