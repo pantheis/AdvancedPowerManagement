@@ -1,6 +1,5 @@
 <project name="AdvancedPowerManagement" basedir="../" default="main">
 	<property environment="env" />
-<!-- Properties -->
 
 	<property name="mcp.version"         value="751"/>
 	<property name="forge.version"       value="1.5.2-7.8.0.696"/>
@@ -8,8 +7,8 @@
 	<property name="ic2.version"         value="IC2-1.115"/>
 
 	<property name="mod.name"            value="${env.JOB_NAME}"/>
-	<property name="mod.dir"             value="${env.JOB_NAME}"/>
-	<property name="build.dir"           value="${mod.dir}/build"/>
+	<property name="mod.dir"             value="${env.JOB_NAME}/repo"/>
+	<property name="build.dir"           value="${env.JOB_NAME}/build"/>
 	<property name="src.dir"             value="${mod.dir}/src"/>
 	<property name="res.dir"             value="${mod.dir}/resources"/>
 
@@ -28,11 +27,6 @@
 	<available property="can-restore"    file="${forge.dir}/../${mcpsrc.backup}"/>
 
 	<mkdir dir="${download.dir}"/>
-
-<!-- Targets -->
-	<target name="clean">
-		<delete dir="${build.dir}"/>
-	</target>
 
 <!-- Set build number -->
 	<target name="initialize-version" depends="version-provided,version-not-provided">
@@ -72,6 +66,8 @@
 
 <!-- Restore the mcp src folder to pristine state -->
 	<target name="restore-mcp-src" depends="initialize-version" if="can-restore">
+		<delete dir="${classes.dir}"/>
+		<delete dir="${jar.dir}"/>
 		<delete dir="${mcpsrc.dir}"/>
 		<mkdir dir="${mcpsrc.dir}"/>
 		<unzip dest="${mcpsrc.dir}" src="${forge.dir}/../${mcpsrc.backup}"/>
