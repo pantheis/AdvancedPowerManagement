@@ -85,7 +85,11 @@
 		<echo message="Starting main build process"/>
 
 		<echo message="Loading certificate fingerprint"/>
-		<loadfile property="fingerprint" srcFile="${sign.dir}/.fingerprint"/>
+		<loadfile property="fingerprint" srcFile="${sign.dir}/.fingerprint">
+			<filterchain>
+				<striplinebreaks/>
+			</filterchain>
+		</loadfile>
 
 	<!-- Copy mod source to mcp -->
 		<echo message="Copying mod source from ${src.dir}/common to ${mcpsrc.dir}"/>
