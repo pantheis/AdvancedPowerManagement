@@ -7,7 +7,7 @@
 	<property name="ic2.version"         value="IC2-1.115"/>
 
 	<property name="mod.name"            value="${env.JOB_NAME}"/>
-	<property name="mod.dir"             value="repo"/>
+	<property name="mod.dir"             value="AdvancedPowerManagement"/>
 	<property name="build.dir"           value="build"/>
 	<property name="src.dir"             value="${mod.dir}/src"/>
 	<property name="res.dir"             value="${mod.dir}/resources"/>
