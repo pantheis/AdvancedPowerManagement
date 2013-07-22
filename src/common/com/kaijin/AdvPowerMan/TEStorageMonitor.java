@@ -430,7 +430,7 @@ public class TEStorageMonitor extends TECommon implements ISidedInventory
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int i, ItemStack stack)
+	public boolean isItemValidForSlot(int i, ItemStack stack)
 	{
 		// Decide if the item is a link card
 		return (i == Info.SM_SLOT_UNIVERSAL && stack != null && stack.getItem() instanceof ItemStorageLinkCard); 
