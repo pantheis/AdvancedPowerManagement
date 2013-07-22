@@ -27,7 +27,7 @@ import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TEBatteryStation extends TECommonBench implements IEnergySource, IInventory, ISidedInventory, net.minecraftforge.common.ISidedInventory
+public class TEBatteryStation extends TECommonBench implements IEnergySource, IInventory, ISidedInventory
 {
 	public int opMode;
 
@@ -499,6 +499,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 
 	// ISidedInventory
 
+	/*
 	@Override
 	public int getStartInventorySide(ForgeDirection side)
 	{
@@ -518,6 +519,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		// Each side accesses a single slot
 		return 1;
 	}
+	*/
 
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side)
@@ -526,7 +528,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int i, ItemStack stack)
+	public boolean isItemValidForSlot(int i, ItemStack stack)
 	{
 		if (i == Info.BS_SLOT_INPUT) return Utils.isItemDrainable(stack, powerTier); 
 		return false;
