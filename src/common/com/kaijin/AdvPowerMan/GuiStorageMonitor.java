@@ -5,8 +5,10 @@
 package com.kaijin.AdvPowerMan;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.opengl.GL11;
@@ -23,8 +25,6 @@ public class GuiStorageMonitor extends GuiContainer
 
 	private int xLoc;
 	private int yLoc;
-
-	protected static StringTranslate lang = StringTranslate.getInstance();
 
 	private static final String DISPLAYSTRINGS[] = {"-10", "-1", "+1", "+10"};
 	private static final int HORIZONTALOFFSETS[] = {-57, -33, 25, 49};
@@ -69,7 +69,7 @@ public class GuiStorageMonitor extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(Info.GUI_TEX_STORAGE_MONITOR);
+		mc.renderEngine.func_110577_a(new ResourceLocation("advancedpowermanagement", Info.GUI_TEX_STORAGE_MONITOR));
 
 		// Draw GUI background
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
@@ -88,12 +88,12 @@ public class GuiStorageMonitor extends GuiContainer
 		}
 
 		// Draw title text
-		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), xLoc + 96, yLoc + 12, 4210752);
+		Utils.drawCenteredText(fontRenderer, I18n.func_135053_a(tile.getInvName()), xLoc + 96, yLoc + 12, 4210752);
 
 		if (tile.energyCapacity <= 0)
 		{
 			// Error message: No card or storage unit not found
-			Utils.drawCenteredGlowingText(fontRenderer, lang.translateKey(Info.KEY_MONITOR_INVALID), xLoc + 96, yLoc + 35, RED, REDGLOW);
+			Utils.drawCenteredGlowingText(fontRenderer, I18n.func_135053_a(Info.KEY_MONITOR_INVALID), xLoc + 96, yLoc + 35, RED, REDGLOW);
 		}
 		else
 		{
@@ -110,10 +110,10 @@ public class GuiStorageMonitor extends GuiContainer
 		}
 
 		// Draw control section labels and readouts
-		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_MONITOR_UPPER), xLoc + 96, yLoc + 49, 0xB00000);
+		Utils.drawCenteredText(fontRenderer, I18n.func_135053_a(Info.KEY_MONITOR_UPPER), xLoc + 96, yLoc + 49, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.upperBoundary) + "%", xLoc + 109, yLoc + 63, GREEN, GREENGLOW);
 		
-		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_MONITOR_LOWER), xLoc + 96, yLoc + 78, 0xB00000);
+		Utils.drawCenteredText(fontRenderer, I18n.func_135053_a(Info.KEY_MONITOR_LOWER), xLoc + 96, yLoc + 78, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.lowerBoundary) + "%", xLoc + 109, yLoc + 92, GREEN, GREENGLOW);
 
 		for (CButton button : /* Who's got the */ buttons)

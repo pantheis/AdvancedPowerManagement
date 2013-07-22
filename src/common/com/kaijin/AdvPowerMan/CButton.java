@@ -7,6 +7,7 @@ package com.kaijin.AdvPowerMan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
@@ -76,7 +77,7 @@ public class CButton extends GuiButton
 			if (texture != null)
 			{
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-				mc.renderEngine.bindTexture(texture);
+				mc.renderEngine.func_110577_a(new ResourceLocation("advancedpowermanagement", texture));
 			}
 
 			isHovering = xLoc >= xPosition && yLoc >= yPosition && xLoc < xPosition + width && yLoc < yPosition + height;
