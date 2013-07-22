@@ -138,9 +138,10 @@
 
 	<!-- Zip the compiled files -->
 		<jar destfile="${jar.dir}/${mod.name}-${mymod.version.full}.jar" basedir="${classes.dir}"/>
-
-	<!-- Finally, clear out the repo and class files for a fresh start next time -->
-		<delete dir="${classes.dir}" deleteonexit="true"/>
-		<delete dir="${mod.dir}" deleteonexit="true"/>
+	</target>
+	<target name="clean">
+		<!-- Finally, clear out the repo and class files for a fresh start next time -->
+		<delete dir="${classes.dir}"/>
+		<delete dir="${mod.dir}"/>
 	</target>
 </project>
