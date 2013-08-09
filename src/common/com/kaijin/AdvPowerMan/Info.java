@@ -13,7 +13,7 @@ public class Info
 	// Mod Info
 	public static final String VERSION = "1.3.2-IC2-1.118";
 	//public static final String BUILD_NUMBER = "2";
-	public static final String DEPENDENCIES = "required-after:IC2@[1.118,);required-after:Forge@[9.10.0.784,)";
+	public static final String DEPENDENCIES = "required-after:IC2@[1.118,);required-after:Forge@[9.10.0.804,)";
 	public static final String CLIENT_PROXY = "com.kaijin.AdvPowerMan.ClientProxy";
 	public static final String SERVER_PROXY = "com.kaijin.AdvPowerMan.CommonProxy";
 	public static final String PACKET_CHANNEL = "kaijinAdvPwrMan"; // CHANNEL MAX 16 CHARS

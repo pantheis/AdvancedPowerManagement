@@ -77,7 +77,7 @@ public class CButton extends GuiButton
 			if (texture != null)
 			{
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-				mc.renderEngine.func_110577_a(new ResourceLocation("advancedpowermanagement", texture));
+				mc.renderEngine.func_110577_a(new ResourceLocation(Info.TITLE_PACKED, texture));
 			}
 
 			isHovering = xLoc >= xPosition && yLoc >= yPosition && xLoc < xPosition + width && yLoc < yPosition + height;

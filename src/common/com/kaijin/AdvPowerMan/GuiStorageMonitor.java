@@ -69,7 +69,7 @@ public class GuiStorageMonitor extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_110577_a(new ResourceLocation("advancedpowermanagement", Info.GUI_TEX_STORAGE_MONITOR));
+		mc.renderEngine.func_110577_a(new ResourceLocation(Info.TITLE_PACKED, Info.GUI_TEX_STORAGE_MONITOR));
 
 		// Draw GUI background
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
