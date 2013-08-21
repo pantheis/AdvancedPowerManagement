@@ -7,7 +7,9 @@ package com.kaijin.AdvPowerMan;
 import java.text.DecimalFormat;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.opengl.GL11;
@@ -26,8 +28,6 @@ public class GuiAdjustableTransformer extends GuiContainer
 	private int xLoc;
 	private int yLoc;
 	private final int yOff = 30;
-
-	protected static StringTranslate lang = StringTranslate.getInstance();
 
 	private static final String displayStrings[] = {"+1", "+10", "+64", "x2", "-1", "-10", "-64", "/2"};
 	private static final int GREEN = 0x55FF55;
@@ -50,7 +50,7 @@ public class GuiAdjustableTransformer extends GuiContainer
 		}
 		for (int i = 0; i < dirButtons.length; i++)
 		{
-			dirButtons[i] = new CButton(i + 16, 0, 0, 32, 13, 27, 192, 27, 207, lang.translateKey(Info.KEY_DIRECTION_NAMES[i]), 4210752, 16777120, Info.GUI_TEX_ADJ_TRANSFORMER);
+			dirButtons[i] = new CButton(i + 16, 0, 0, 32, 13, 27, 192, 27, 207, I18n.func_135053_a(Info.KEY_DIRECTION_NAMES[i]), 4210752, 16777120, Info.GUI_TEX_ADJ_TRANSFORMER);
 		}
 	}
 
@@ -79,18 +79,18 @@ public class GuiAdjustableTransformer extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(Info.GUI_TEX_ADJ_TRANSFORMER);
+		mc.renderEngine.func_110577_a(new ResourceLocation(Info.TITLE_PACKED.toLowerCase(), Info.GUI_TEX_ADJ_TRANSFORMER));
 
 		// Draw GUI background graphic
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
 		// Draw title text
-		Utils.drawCenteredText(fontRenderer, lang.translateKey(tile.getInvName()), width / 2, yLoc + 6, 4210752);
+		Utils.drawCenteredText(fontRenderer, I18n.func_135053_a(tile.getInvName()), width / 2, yLoc + 6, 4210752);
 
 		// Draw stats text
-		Utils.drawRightAlignedText(fontRenderer, lang.translateKey(Info.KEY_STATS_AVERAGE_EU), xLoc + 180, yLoc + 26, 4210752);
-		Utils.drawRightAlignedText(fontRenderer, lang.translateKey(Info.KEY_STATS_AVERAGE_INPUT), xLoc + 180, yLoc + 36, 4210752);
-		Utils.drawLeftAlignedText(fontRenderer, lang.translateKey(Info.KEY_EU_BUFFERED), xLoc + 49, yLoc + 26, 4210752);
+		Utils.drawRightAlignedText(fontRenderer, I18n.func_135053_a(Info.KEY_STATS_AVERAGE_EU), xLoc + 180, yLoc + 26, 4210752);
+		Utils.drawRightAlignedText(fontRenderer, I18n.func_135053_a(Info.KEY_STATS_AVERAGE_INPUT), xLoc + 180, yLoc + 36, 4210752);
+		Utils.drawLeftAlignedText(fontRenderer, I18n.func_135053_a(Info.KEY_EU_BUFFERED), xLoc + 49, yLoc + 26, 4210752);
 
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.energyBuffer), xLoc + 44, yLoc + 26, GREEN, GREENGLOW);
 		// Factor of 100 because data is in fixed point (x100)
@@ -100,21 +100,21 @@ public class GuiAdjustableTransformer extends GuiContainer
 		Utils.drawRightAlignedGlowingText(fontRenderer, fraction.format(inAvg), xLoc + 230, yLoc + 36, GREEN, GREENGLOW);
 
 		// Packet size section text
-		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_EMITTER_PACKET), xLoc + 88, yLoc + yOff + 21, 0xB00000);
+		Utils.drawCenteredText(fontRenderer, I18n.func_135053_a(Info.KEY_EMITTER_PACKET), xLoc + 88, yLoc + yOff + 21, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.packetSize), xLoc + 146, yLoc + yOff + 49, GREEN, GREENGLOW);
 		fontRenderer.drawString(Info.AE_PACKET_RANGE, xLoc + 110, yLoc + yOff + 35, 4210752);
-		fontRenderer.drawString(lang.translateKey(Info.KEY_EU), xLoc + 152, yLoc + yOff + 49, 4210752);
+		fontRenderer.drawString(I18n.func_135053_a(Info.KEY_EU), xLoc + 152, yLoc + yOff + 49, 4210752);
 
 		// Transfer rate section text
-		Utils.drawCenteredText(fontRenderer, lang.translateKey(Info.KEY_TRANSFORMER_OUTPUT), xLoc + 88, yLoc + yOff + 64, 0xB00000);
+		Utils.drawCenteredText(fontRenderer, I18n.func_135053_a(Info.KEY_TRANSFORMER_OUTPUT), xLoc + 88, yLoc + yOff + 64, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.outputRate), xLoc + 146, yLoc + yOff + 92, GREEN, GREENGLOW);
 		fontRenderer.drawString(Info.AE_OUTPUT_RANGE, xLoc + 110, yLoc + yOff + 78, 4210752);
-		fontRenderer.drawString(lang.translateKey(Info.KEY_EU), xLoc + 152, yLoc + yOff + 92, 4210752);
+		fontRenderer.drawString(I18n.func_135053_a(Info.KEY_EU), xLoc + 152, yLoc + yOff + 92, 4210752);
 
 		// Side input/output settings text
 		for (int i = 0; i < 6; i++)
 		{
-			Utils.drawGlowingText(fontRenderer, lang.translateKey((tile.sideSettings[i] & 1) == 0 ? Info.KEY_IN : Info.KEY_OUT), xLoc + 214, yLoc + yOff + 27 + 13 * i, GREEN, GREENGLOW);
+			Utils.drawGlowingText(fontRenderer, I18n.func_135053_a((tile.sideSettings[i] & 1) == 0 ? Info.KEY_IN : Info.KEY_OUT), xLoc + 214, yLoc + yOff + 27 + 13 * i, GREEN, GREENGLOW);
 		}
 
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
