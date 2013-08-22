@@ -22,7 +22,7 @@ public class Info
 	public static final String TITLE_LOG = "[" + TITLE_PACKED + "] ";
 
 	// Textures
-	public static final String TEX_BASE = "/textures/";
+	public static final String TEX_BASE = "textures/";
 	public static final String GUI_TEX_CHARGING_BENCH  = TEX_BASE + "GUIChargingBench.png";
 	public static final String GUI_TEX_BATTERY_STATION = TEX_BASE + "GUIBatteryStation.png";
 	public static final String GUI_TEX_STORAGE_MONITOR = TEX_BASE + "GUIStorageMonitor.png";
