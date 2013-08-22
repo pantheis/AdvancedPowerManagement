@@ -13,7 +13,7 @@ public class Info
 	// Mod Info
 	public static final String VERSION = "@VERSION@";
 	//public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
-	public static final String DEPENDENCIES = "required-after:IC2@[1.118,);required-after:Forge@[9.10.0.804,)";
+	public static final String DEPENDENCIES = "required-after:IC2@[1.118,);required-after:Forge@[9.10.0.789,)";
 	public static final String CLIENT_PROXY = "com.kaijin.AdvPowerMan.ClientProxy";
 	public static final String SERVER_PROXY = "com.kaijin.AdvPowerMan.CommonProxy";
 	public static final String PACKET_CHANNEL = "kaijinAdvPwrMan"; // CHANNEL MAX 16 CHARS
@@ -22,7 +22,7 @@ public class Info
 	public static final String TITLE_LOG = "[" + TITLE_PACKED + "] ";
 
 	// Textures
-	public static final String TEX_BASE = "/textures/";
+	public static final String TEX_BASE = "textures/";
 	public static final String GUI_TEX_CHARGING_BENCH  = TEX_BASE + "GUIChargingBench.png";
 	public static final String GUI_TEX_BATTERY_STATION = TEX_BASE + "GUIBatteryStation.png";
 	public static final String GUI_TEX_STORAGE_MONITOR = TEX_BASE + "GUIStorageMonitor.png";

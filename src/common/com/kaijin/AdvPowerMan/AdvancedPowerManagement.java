@@ -20,11 +20,13 @@ import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.FingerprintWarning;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -33,7 +35,7 @@ import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod(modid = Info.TITLE_PACKED, name=Info.TITLE, version=Info.VERSION, dependencies = Info.DEPENDENCIES)
+@Mod(modid = Info.TITLE_PACKED, name=Info.TITLE, version=Info.VERSION, /* @CERTIFICATE_SUM@ */ dependencies = Info.DEPENDENCIES)
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,
 clientPacketHandlerSpec = @SidedPacketHandler(channels = {Info.PACKET_CHANNEL}, packetHandler = ClientPacketHandler.class),
 serverPacketHandlerSpec = @SidedPacketHandler(channels = (Info.PACKET_CHANNEL), packetHandler = ServerPacketHandler.class))
@@ -230,6 +232,14 @@ public class AdvancedPowerManagement implements ICraftingHandler
 		GameRegistry.addShapelessRecipe(new ItemStack(blockAdvPwrMan, 1, 0), new ItemStack(itemBenchTools, 1, 0), new ItemStack(itemBenchTools, 1, 1));
 		GameRegistry.addShapelessRecipe(new ItemStack(blockAdvPwrMan, 1, 1), new ItemStack(itemBenchTools, 1, 0), new ItemStack(itemBenchTools, 1, 2));
 		GameRegistry.addShapelessRecipe(new ItemStack(blockAdvPwrMan, 1, 2), new ItemStack(itemBenchTools, 1, 0), new ItemStack(itemBenchTools, 1, 3));
+	}
+
+	@FingerprintWarning
+	public void certificateWarning(FMLFingerprintViolationEvent warning)
+	{
+		FMLLog.getLogger().log(Level.SEVERE, Info.TITLE_LOG + "[Certificate Error] Fingerprint does not match! This mod's jar file has been modified from the original version.");
+		FMLLog.getLogger().log(Level.SEVERE, Info.TITLE_LOG + "[Certificate Error] Expected fingerprint: " + warning.expectedFingerprint);
+		FMLLog.getLogger().log(Level.SEVERE, Info.TITLE_LOG + "[Certificate Error] File: " + warning.source.getAbsolutePath());
 	}
 
 	// ICraftingHandler

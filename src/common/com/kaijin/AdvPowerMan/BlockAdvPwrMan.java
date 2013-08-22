@@ -129,6 +129,7 @@ public class BlockAdvPwrMan extends BlockContainer
 
 	//Textures in the world
 	@SideOnly(Side.CLIENT)
+	@Override
 	public Icon getBlockTexture(IBlockAccess blocks, int x, int y, int z, int side)
 	{
 		final int meta = blocks.getBlockMetadata(x, y, z);
@@ -338,12 +339,14 @@ public class BlockAdvPwrMan extends BlockContainer
 		return metadata >= 0 && metadata <= Info.LAST_META_VALUE;
 	}
 
+	@Override
 	public int idDropped(int var1, Random var2, int var3)
 	{
 		//if (ChargingBench.isDebugging) System.out.println("BlockAdvPwrMan.idDropped");
 		return blockID;
 	}
 
+	@Override
 	public int damageDropped(int meta)
 	{
 		//if (ChargingBench.isDebugging) System.out.println("BlockAdvPwrMan.damageDropped");
