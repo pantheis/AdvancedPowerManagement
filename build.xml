@@ -12,6 +12,7 @@
 	<property name="src.dir"             value="${mod.dir}/src"/>
 	<property name="res.dir"             value="${mod.dir}/resources"/>
 
+	<property name="sign.dir"            value="/var/lib/jenkins/.sign"/>
 	<property name="download.dir"        value="../download"/>
 
 	<property name="classes.dir"         value="${build.dir}/classes"/>
@@ -35,20 +36,24 @@
 	</target>
 
 	<target name="version-not-provided" unless="env.BUILD_NUMBER">
+		<echo message="Setting build number"/>
 		<buildnumber/>
 	</target>
 
 	<target name="version-provided" if="env.BUILD_NUMBER">
+		<echo message="Checking build number"/>
 		<property name="build.number" value="${env.BUILD_NUMBER}"/>
 	</target>
 
 <!-- Download forge (if it doesn't exist) -->
 	<target name="download-forge" depends="initialize-version" unless="forge-exists">
+		<echo message="Downloading Minecraft Forge ${forge.version}"/>
 		<get src="http://files.minecraftforge.net/minecraftforge-src-${forge.version}.zip" dest="${download.dir}" usetimestamp="True"/>
 	</target>
 
 <!-- Setup mcp and forge -->
 	<target name="setup-forge" depends="initialize-version,download-forge" unless="can-restore">
+		<echo message="Setting up Forge and MCP"/>
 		<delete dir="${build.dir}" failonerror="false"/>
 		<unzip dest="${forge.dir}/.." src="${download.dir}/${forge.filename}"/>
 
@@ -66,6 +71,7 @@
 
 <!-- Restore the mcp src folder to pristine state -->
 	<target name="restore-mcp-src" depends="initialize-version" if="can-restore">
+		<echo message="Restoring MCP source"/>
 		<delete dir="${classes.dir}"/>
 		<delete dir="${jar.dir}"/>
 		<delete dir="${mcpsrc.dir}"/>
@@ -75,7 +81,18 @@
 
 <!-- Main body of script handles everything that isn't conditional -->
 	<target name="main" depends="setup-forge,restore-mcp-src">
-		<!-- Copy mod source to mcp -->
+
+		<echo message="Loading certificate fingerprint"/>
+		<loadfile property="fingerprint" srcFile="${sign.dir}/.fingerprint">
+			<filterchain>
+				<striplinebreaks/>
+			</filterchain>
+		</loadfile>
+		<echo message="Loading key info"/>
+		<loadfile property="keypass" srcFile="${sign.dir}/.key"/>
+
+	<!-- Copy mod source to mcp -->
+		<echo message="Copying source files"/>
 		<copy todir="${mcpsrc.dir}">
 			<fileset dir="${src.dir}/common">
 			</fileset>
@@ -86,6 +103,7 @@
 		</copy>
 
 	<!-- Recompile -->
+		<echo message="Compiling"/>
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c recompile.bat"/>
 		</exec>
@@ -94,6 +112,7 @@
 		</exec>
 
 	<!-- Reobf -->
+		<echo message="Reobfuscating with srg names"/>
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c reobfuscate_srg.bat"/>
 		</exec>
@@ -102,6 +121,7 @@
 		</exec>
 
 	<!-- Copy mod classes -->
+		<echo message="Copying compiled classes"/>
 		<copy todir="${classes.dir}">
 			<fileset dir="${mcp.dir}/reobf/minecraft">
 				<exclude name="**/ic2/**" />
@@ -109,6 +129,7 @@
 		</copy>
 
 	<!-- Copy common resources -->
+		<echo message="Copying common resources"/>
 		<copy todir="${classes.dir}">
 			<fileset dir="${res.dir}/common">
 			</fileset>
@@ -118,7 +139,15 @@
 			</filterset>
 		</copy>
 
+	<!-- Copy client resources -->
+		<echo message="Copying client resources"/>
+		<copy todir="${classes.dir}">
+			<fileset dir="${res.dir}/client">
+			</fileset>
+		</copy>		
+
 	<!-- Copy documentation -->
+		<echo message="Copying documentation"/>
 		<copy todir="${classes.dir}">
 			<fileset file="${mod.dir}/LICENSE.txt">
 			</fileset>
@@ -130,14 +159,19 @@
 			</filterset>
 		</copy>
 
-	<!-- Copy client resources -->
-		<copy todir="${classes.dir}">
-			<fileset dir="${res.dir}/client">
-			</fileset>
-		</copy>		
+	<!-- Jar the files -->
+		<echo message="Creating jar file ${jar.dir}/${mod.name}-${mymod.version.full}.jar"/>
+		<jar destfile="${jar.dir}/${mod.name}-${mymod.version.full}.jar" basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Built-By" value="Kaijin-Jenkins"/>
+				<attribute name="Implementation-Vendor" value="KaijinMods"/>
+				<attribute name="Implementation-Title" value="${env.JOB_NAME}"/>
+				<attribute name="Implementation-Version" value="${mymod.version.full}"/>
+			</manifest>
+		</jar>
 
-	<!-- Zip the compiled files -->
-		<jar destfile="${jar.dir}/${mod.name}-${mymod.version.full}.jar" basedir="${classes.dir}"/>
+		<echo message="Signing jar file"/>
+		<signjar jar="${jar.dir}/${mod.name}-${mymod.version.full}.jar" alias="KaijinCraft" keystore="${sign.dir}/.keystore" storepass="${keypass}"/>
 
 	<!-- Finally, clear out the repo and class files for a fresh start next time -->
 		<delete dir="${classes.dir}" deleteonexit="true"/>
