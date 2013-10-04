@@ -63,25 +63,25 @@ public class GuiAdvEmitter extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_110577_a(new ResourceLocation(Info.TITLE_PACKED.toLowerCase(), Info.GUI_TEX_EMITTER));
+		mc.renderEngine.bindTexture(new ResourceLocation(Info.TITLE_PACKED.toLowerCase(), Info.GUI_TEX_EMITTER));
 
 		// Draw GUI background graphic
 		drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
 		// Draw title text
-		Utils.drawCenteredText(fontRenderer, I18n.func_135053_a(tile.getInvName()), width / 2, yLoc + 7, 4210752);
+		Utils.drawCenteredText(fontRenderer, I18n.getString(tile.getInvName()), width / 2, yLoc + 7, 4210752);
 
 		// Packet size section text
-		Utils.drawCenteredText(fontRenderer, I18n.func_135053_a(Info.KEY_EMITTER_PACKET), width / 2, yLoc + 21, 0xB00000);
+		Utils.drawCenteredText(fontRenderer, I18n.getString(Info.KEY_EMITTER_PACKET), width / 2, yLoc + 21, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.packetSize), xLoc + 146, yLoc + 49, GREEN, GREENGLOW);
 		fontRenderer.drawString(Info.AE_PACKET_RANGE, xLoc + 110, yLoc + 35, 4210752);
-		fontRenderer.drawString(I18n.func_135053_a(Info.KEY_EU), xLoc + 152, yLoc + 49, 4210752);
+		fontRenderer.drawString(I18n.getString(Info.KEY_EU), xLoc + 152, yLoc + 49, 4210752);
 
 		// Output rate section text
-		Utils.drawCenteredText(fontRenderer, I18n.func_135053_a(Info.KEY_EMITTER_OUTPUT), width / 2, yLoc + 64, 0xB00000);
+		Utils.drawCenteredText(fontRenderer, I18n.getString(Info.KEY_EMITTER_OUTPUT), width / 2, yLoc + 64, 0xB00000);
 		Utils.drawRightAlignedGlowingText(fontRenderer, Integer.toString(tile.outputRate), xLoc + 146, yLoc + 92, GREEN, GREENGLOW);
 		fontRenderer.drawString(Info.AE_OUTPUT_RANGE, xLoc + 110, yLoc + 78, 4210752);
-		fontRenderer.drawString(I18n.func_135053_a(Info.KEY_EU), xLoc + 152, yLoc + 92, 4210752);
+		fontRenderer.drawString(I18n.getString(Info.KEY_EU), xLoc + 152, yLoc + 92, 4210752);
 
 		//Buttons MUST be drawn after other texture stuff or it will not draw the battery meter correctly
 		for (CButton button : buttons)

@@ -140,72 +140,9 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	}
 
 	@Override
-	public boolean isTeleporterCompatible(Direction side)
-	{
-		return false;
-	}
-
-	@Override
 	public int getMaxSafeInput()
 	{
 		return adjustedMaxInput;
-	}
-
-	@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
-	{
-		return true;
-	}
-
-	@Override
-	public int demandsEnergy()
-	{
-		//		return (currentEnergy < adjustedStorage && !receivingRedstoneSignal());
-		if(!receivingRedstoneSignal())
-		{
-			return adjustedStorage - currentEnergy;
-		}
-		return 0;
-	}
-
-	@Override
-	public int injectEnergy(Direction directionFrom, int supply)
-	{
-		int surplus = 0;
-		if (AdvancedPowerManagement.proxy.isServer())
-		{
-			// if supply is greater than the max we can take per tick
-			if (supply > adjustedMaxInput)
-			{
-				//If the supplied EU is over the baseMaxInput, we're getting
-				//supplied higher than acceptable current. Pop ourselves off
-				//into the world and return all but 1 EU, or if the supply
-				//somehow was 1EU, return zero to keep IC2 from spitting out 
-				//massive errors in the log
-				selfDestroy();
-				if (supply <= 1)
-					return 0;
-				else
-					return supply - 1;
-			}
-			else
-			{
-				if (currentEnergy > adjustedStorage) currentEnergy = adjustedStorage;
-				currentEnergy += supply;
-				energyReceived += supply;
-				// check if our current energy level is now over the max energy level
-				if (currentEnergy > adjustedStorage)
-				{
-					//if so, our surplus to return is equal to that amount over
-					surplus = currentEnergy - adjustedStorage;
-					//and set our current energy level TO our max energy level
-					currentEnergy = adjustedStorage;
-					energyReceived -= surplus;
-				}
-				//surplus may be zero or greater here
-			}
-		}
-		return surplus;
 	}
 
 	// IEnergyStorage
@@ -822,5 +759,69 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		// We're not sure what called this or what slot was altered, so make sure the upgrade effects are correct just in case and then pass the call on.
 		doUpgradeEffects();
 		super.onInventoryChanged();
+	}
+
+	@Override
+	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
+		return true;
+	}
+
+	@Override
+	public double getOutputEnergyUnitsPerTick() {
+		return 0;
+	}
+
+	@Override
+	public boolean isTeleporterCompatible(ForgeDirection side) {
+		return false;
+	}
+
+	@Override
+	public double demandedEnergyUnits() {
+		//		return (currentEnergy < adjustedStorage && !receivingRedstoneSignal());
+		if(!receivingRedstoneSignal())
+		{
+			return adjustedStorage - currentEnergy;
+		}
+		return 0;
+	}
+
+	@Override
+	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+		int surplus = 0;
+		if (AdvancedPowerManagement.proxy.isServer())
+		{
+			// if supply is greater than the max we can take per tick
+			if (amount > adjustedMaxInput)
+			{
+				//If the supplied EU is over the baseMaxInput, we're getting
+				//supplied higher than acceptable current. Pop ourselves off
+				//into the world and return all but 1 EU, or if the supply
+				//somehow was 1EU, return zero to keep IC2 from spitting out 
+				//massive errors in the log
+				selfDestroy();
+				if (amount <= 1)
+					return 0;
+				else
+					return amount - 1;
+			}
+			else
+			{
+				if (currentEnergy > adjustedStorage) currentEnergy = adjustedStorage;
+				currentEnergy += amount;
+				energyReceived += amount;
+				// check if our current energy level is now over the max energy level
+				if (currentEnergy > adjustedStorage)
+				{
+					//if so, our surplus to return is equal to that amount over
+					surplus = currentEnergy - adjustedStorage;
+					//and set our current energy level TO our max energy level
+					currentEnergy = adjustedStorage;
+					energyReceived -= surplus;
+				}
+				//surplus may be zero or greater here
+			}
+		}
+		return surplus;
 	}
 }

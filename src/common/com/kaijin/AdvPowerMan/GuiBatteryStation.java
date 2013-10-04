@@ -64,12 +64,12 @@ public class GuiBatteryStation extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_110577_a(new ResourceLocation(Info.TITLE_PACKED.toLowerCase(), Info.GUI_TEX_BATTERY_STATION));
+		mc.renderEngine.bindTexture(new ResourceLocation(Info.TITLE_PACKED.toLowerCase(), Info.GUI_TEX_BATTERY_STATION));
 
 		this.drawTexturedModalRect(xLoc, yLoc, 0, 0, xSize, ySize);
 
 		// Draw title text
-		Utils.drawCenteredText(fontRenderer, I18n.func_135053_a(tile.getInvName()), xCenter, yLoc + 8, 4210752);
+		Utils.drawCenteredText(fontRenderer, I18n.getString(tile.getInvName()), xCenter, yLoc + 8, 4210752);
 
 		if (mode != ((ContainerBatteryStation)inventorySlots).opMode)
 		{
@@ -86,10 +86,10 @@ public class GuiBatteryStation extends GuiContainer
 			}
 		}
 
-		Utils.drawLeftAlignedText(fontRenderer, I18n.func_135053_a(Info.KEY_DISCHARGER_MODE_LINE1), xLoc + 7, yLoc + 59, 4210752);
-		Utils.drawLeftAlignedText(fontRenderer, I18n.func_135053_a(Info.KEY_DISCHARGER_MODE_LINE2), xLoc + 7, yLoc + 70, 4210752);
-		Utils.drawCenteredText(fontRenderer, I18n.func_135053_a(Info.KEY_STATS_AVERAGE_EU), xLoc + 144, yLoc + 27, 4210752);
-		Utils.drawCenteredText(fontRenderer, I18n.func_135053_a(Info.KEY_STATS_TIME_REMAINING), xLoc + 144, yLoc + 65, 4210752);
+		Utils.drawLeftAlignedText(fontRenderer, I18n.getString(Info.KEY_DISCHARGER_MODE_LINE1), xLoc + 7, yLoc + 59, 4210752);
+		Utils.drawLeftAlignedText(fontRenderer, I18n.getString(Info.KEY_DISCHARGER_MODE_LINE2), xLoc + 7, yLoc + 70, 4210752);
+		Utils.drawCenteredText(fontRenderer, I18n.getString(Info.KEY_STATS_AVERAGE_EU), xLoc + 144, yLoc + 27, 4210752);
+		Utils.drawCenteredText(fontRenderer, I18n.getString(Info.KEY_STATS_TIME_REMAINING), xLoc + 144, yLoc + 65, 4210752);
 
 		// Factor of 100 because data is in fixed point (x100)
 		final float rate = (float)(((ContainerBatteryStation)inventorySlots).average) / 100F;
@@ -111,10 +111,10 @@ public class GuiBatteryStation extends GuiContainer
 			else
 			{
 				float dayScratch = ((float)timeScratch) / 86400F; // 60 * 60 * 24 or 1 day
-				clock = (dayScratch < 10F ? dayFrac.format(dayScratch) : dayScratch < 100 ? days.format((int)dayScratch) : "??") + I18n.func_135053_a(Info.KEY_STATS_DISPLAY_DAYS);
+				clock = (dayScratch < 10F ? dayFrac.format(dayScratch) : dayScratch < 100 ? days.format((int)dayScratch) : "??") + I18n.getString(Info.KEY_STATS_DISPLAY_DAYS);
 			}
 		}
-		else clock = I18n.func_135053_a(Info.KEY_STATS_DISPLAY_UNKNOWN);
+		else clock = I18n.getString(Info.KEY_STATS_DISPLAY_UNKNOWN);
 		Utils.drawRightAlignedGlowingText(fontRenderer, clock, xLoc + 166, yLoc + 51, GREEN, GREENGLOW);
 		
 		button.drawButton(mc, mouseX, mouseY);
