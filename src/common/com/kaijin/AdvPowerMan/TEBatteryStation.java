@@ -8,7 +8,6 @@ import ic2.api.Direction;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
 import ic2.api.energy.event.EnergyTileLoadEvent;
-import ic2.api.energy.event.EnergyTileSourceEvent;
 import ic2.api.energy.tile.IEnergySource;
 
 import java.io.DataInputStream;
@@ -74,17 +73,25 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 	}
 
 	// IC2 API functions
-
+	
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, Direction direction)
-	{
+	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
 		return true;
 	}
 
 	@Override
-	public int getMaxEnergyOutput()
-	{
-		return packetSize;
+	public double getOfferedEnergy() {
+		return (!receivingRedstoneSignal()) ? Math.min(currentEnergy, packetSize) : 0;
+	}
+
+	@Override
+	public void drawEnergy(double amount) {
+		if (!receivingRedstoneSignal())
+		{
+			drainPowerSource();
+			outputTracker.tick((int) amount);
+			currentEnergy -= amount;
+		}
 	}
 
 	// End IC2 API
@@ -195,7 +202,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		{
 			EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
 			MinecraftForge.EVENT_BUS.post(loadEvent);
-			//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
 
@@ -208,17 +214,13 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		{
 			// Work done only when not redstone powered 
 			drainPowerSource();
-			energyOut = emitEnergy();
 		}
-		else
-		{
-			energyOut = 0;
-		}
+		
 		// Work done every tick
 		moveOutputItems();
 		repositionItems();
 		acceptInputItems();
-		outputTracker.tick(energyOut);
+		
 
 		if (invChanged)
 		{
@@ -231,26 +233,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 			//if (ChargingBench.isDebugging) System.out.println("TE oldChargeLevel: " + oldChargeLevel + " chargeLevel: " + chargeLevel); 
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
-	}
-
-	private int emitEnergy()
-	{
-		//if (ChargingBench.isDebugging) System.out.println("preEmit-currentEnergy: " + currentEnergy);
-		if (currentEnergy >= packetSize)
-		{
-			EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
-			MinecraftForge.EVENT_BUS.post(sourceEvent);
-			final int surplus = sourceEvent.amount;
-
-			if (surplus < packetSize)
-			{
-				final int sent = packetSize - surplus;
-				currentEnergy -= sent;
-				doingWork = true;
-				return sent; // For average tracker
-			}
-		}
-		return 0;
 	}
 
 	private void drainPowerSource()
@@ -281,7 +263,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 						if (transferLimit == 0) transferLimit = packetSize;
 						//if (transferLimit > amountNeeded) transferLimit = amountNeeded;
 
-						int chargeReturned = ElectricItem.discharge(stack, transferLimit, powerTier, false, false);
+						int chargeReturned = ElectricItem.manager.discharge(stack, transferLimit, powerTier, false, false);
 						if (chargeReturned > 0)
 						{
 							// Add the energy we received to our current energy level
@@ -290,7 +272,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 						}
 
 						// Workaround for buggy IC2 API .discharge that automatically switches stack to emptyItemID but leaves a stackTagCompound on it, so it can't be stacked with never-used empties  
-						if (chargedItemID != emptyItemID && (chargeReturned < transferLimit || ElectricItem.discharge(stack, 1, powerTier, false, true) == 0))
+						if (chargedItemID != emptyItemID && (chargeReturned < transferLimit || ElectricItem.manager.discharge(stack, 1, powerTier, false, true) == 0))
 						{
 							//if (ChargingBench.isDebugging) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
 							setInventorySlotContents(i, new ItemStack(emptyItemID, 1, 0));
@@ -349,7 +331,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 						}
 						else if (outputStack == null)
 						{
-							boolean empty = ElectricItem.discharge(currentStack, 1, powerTier, true, true) == 0;
+							boolean empty = ElectricItem.manager.discharge(currentStack, 1, powerTier, true, true) == 0;
 							if (empty)
 							{
 								// Pick Me
@@ -444,7 +426,7 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 				final IElectricItem item = (IElectricItem)(stack.getItem());
 				if (item.getTier(stack) <= powerTier && item.canProvideEnergy(stack) && stack.itemID == item.getChargedItemId(stack))
 				{
-					final int chargeReturned = ElectricItem.discharge(stack, Integer.MAX_VALUE, powerTier, true, true);
+					final int chargeReturned = ElectricItem.manager.discharge(stack, Integer.MAX_VALUE, powerTier, true, true);
 					if (chargeReturned > 0)
 					{
 						// Add the energy we received to our current energy level

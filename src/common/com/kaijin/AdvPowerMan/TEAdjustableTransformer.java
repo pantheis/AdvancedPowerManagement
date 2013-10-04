@@ -8,10 +8,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import ic2.api.Direction;
 import ic2.api.energy.EnergyNet;
 import ic2.api.energy.event.EnergyTileLoadEvent;
-import ic2.api.energy.event.EnergyTileSourceEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
@@ -21,8 +19,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -128,37 +126,6 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
 			initialized = true;
 		}
-
-		int energySent = 0;
-		if (!receivingRedstoneSignal())
-		{
-			// Reset input limiter
-			if (energyReceived > outputRate) energyReceived -= outputRate;
-			else energyReceived = 0;
-
-			if (energyBuffer >= packetSize)
-			{
-				EnergyNet net = EnergyNet.getForWorld(worldObj);
-				boolean packetSent;
-				do
-				{
-					packetSent = false;
-					EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
-					MinecraftForge.EVENT_BUS.post(sourceEvent);
-					final int surplus = sourceEvent.amount;
-
-					if (surplus < packetSize) // If any of it was consumed...
-					{
-						packetSent = true;
-						final int amountSent = packetSize - surplus;
-						energySent += amountSent;
-						energyBuffer -= amountSent;
-					}
-				} // Repeat until output failed, or not enough EU for one packet, or rate limit reached
-				while (packetSent && energyBuffer >= packetSize && energySent < outputRate);
-			}
-		}
-		outputTracker.tick(energySent);
 	}
 
 	protected boolean receivingRedstoneSignal()
@@ -191,24 +158,39 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 
 	// IC2 API stuff
 
-	@Override
+	//@Override - this method doesn't exist anymore
 	public boolean isAddedToEnergyNet()
 	{
 		return initialized;
 	}
 
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, Direction direction)
+	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction)
 	{
 		// TODO Side I/O
 		//System.out.println("emit   - direction.toSideValue() = " + direction.toSideValue() + " setting = " + ((sideSettings[direction.toSideValue()] & 1) == 1));
-		return (sideSettings[direction.toSideValue()] & 1) == 1;
+		return (sideSettings[direction.ordinal()] & 1) == 1;
 	}
 
 	@Override
-	public int getMaxEnergyOutput()
+	public double getOfferedEnergy()
 	{
-		return Integer.MAX_VALUE;
+		return (!receivingRedstoneSignal()) ? Math.min(energyBuffer, outputRate) : 0;
+	}
+	
+	@Override
+	public void drawEnergy(double amount)
+	{
+		if (!receivingRedstoneSignal())
+		{
+			// Reset input limiter
+			if (energyReceived > outputRate) energyReceived -= outputRate;
+			else energyReceived = 0;
+
+			energyBuffer -= amount;
+			
+			outputTracker.tick((int)amount);
+		}
 	}
 
 	@Override
@@ -218,15 +200,15 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	}
 
 	@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
+	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction)
 	{
 		// TODO Side I/O
 		//System.out.println("accept - direction.toSideValue() = " + direction.toSideValue() + " setting = " + ((sideSettings[direction.toSideValue()] & 1) == 0));
-		return (sideSettings[direction.toSideValue()] & 1) == 0;
+		return (sideSettings[direction.ordinal()] & 1) == 0;
 	}
 
 	@Override
-	public int demandsEnergy()
+	public double demandedEnergyUnits()
 	{
 		if(!receivingRedstoneSignal())
 		{
@@ -239,7 +221,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 	}
 
 	@Override
-	public int injectEnergy(Direction directionFrom, int supply)
+	public double injectEnergyUnits(ForgeDirection directionFrom, double supply)
 	{
 		//System.out.println("energyBuffer: " + energyBuffer);
 		if (AdvancedPowerManagement.proxy.isServer())
@@ -262,7 +244,7 @@ public class TEAdjustableTransformer extends TECommon implements IEnergySource, 
 			{
 				energyReceived += supply;
 				energyBuffer += supply;
-				inputTracker.tick(supply);
+				inputTracker.tick((int)supply);
 			}
 		}
 		return 0;

@@ -140,72 +140,9 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 	}
 
 	@Override
-	public boolean isTeleporterCompatible(Direction side)
-	{
-		return false;
-	}
-
-	@Override
 	public int getMaxSafeInput()
 	{
 		return adjustedMaxInput;
-	}
-
-	@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction)
-	{
-		return true;
-	}
-
-	@Override
-	public int demandsEnergy()
-	{
-		//		return (currentEnergy < adjustedStorage && !receivingRedstoneSignal());
-		if(!receivingRedstoneSignal())
-		{
-			return adjustedStorage - currentEnergy;
-		}
-		return 0;
-	}
-
-	@Override
-	public int injectEnergy(Direction directionFrom, int supply)
-	{
-		int surplus = 0;
-		if (AdvancedPowerManagement.proxy.isServer())
-		{
-			// if supply is greater than the max we can take per tick
-			if (supply > adjustedMaxInput)
-			{
-				//If the supplied EU is over the baseMaxInput, we're getting
-				//supplied higher than acceptable current. Pop ourselves off
-				//into the world and return all but 1 EU, or if the supply
-				//somehow was 1EU, return zero to keep IC2 from spitting out 
-				//massive errors in the log
-				selfDestroy();
-				if (supply <= 1)
-					return 0;
-				else
-					return supply - 1;
-			}
-			else
-			{
-				if (currentEnergy > adjustedStorage) currentEnergy = adjustedStorage;
-				currentEnergy += supply;
-				energyReceived += supply;
-				// check if our current energy level is now over the max energy level
-				if (currentEnergy > adjustedStorage)
-				{
-					//if so, our surplus to return is equal to that amount over
-					surplus = currentEnergy - adjustedStorage;
-					//and set our current energy level TO our max energy level
-					currentEnergy = adjustedStorage;
-					energyReceived -= surplus;
-				}
-				//surplus may be zero or greater here
-			}
-		}
-		return surplus;
 	}
 
 	// IEnergyStorage
@@ -493,7 +430,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 					if (energyNeeded > 0)
 					{
-						chargeReturned = ElectricItem.discharge(stack, energyNeeded, powerTier, false, false);
+						chargeReturned = ElectricItem.manager.discharge(stack, energyNeeded, powerTier, false, false);
 						// Add the energy we received to our current energy level,
 						currentEnergy += chargeReturned;
 						if (chargeReturned > 0) doingWork = true;
@@ -503,7 +440,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 				}
 
 				// Workaround for buggy IC2 API .discharge that automatically switches stack to emptyItemID but leaves a stackTagCompound on it, so it can't be stacked with never-used empties  
-				if (chargedItemID != emptyItemID && ElectricItem.discharge(stack, 1, powerTier, false, true) == 0)
+				if (chargedItemID != emptyItemID && ElectricItem.manager.discharge(stack, 1, powerTier, false, true) == 0)
 				{
 					//if (ChargingBench.isDebugging) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
 					setInventorySlotContents(Info.CB_SLOT_POWER_SOURCE, new ItemStack(emptyItemID, 1, 0));
@@ -545,19 +482,19 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 						// Limiting its use by what is hopefully a broad enough test to catch all cases where it's necessary in order to avoid problems.
 						// Using it for any item types listed as stackable and for any items where the charged and empty item IDs differ.
 						final ItemStack stackCopy = stack.copy();
-						amountNeeded = ElectricItem.charge(stackCopy, adjustedTransferLimit, baseTier, true, true);
+						amountNeeded = ElectricItem.manager.charge(stackCopy, adjustedTransferLimit, baseTier, true, true);
 						if (amountNeeded == adjustedTransferLimit)
 						{
-							missing = ElectricItem.charge(stackCopy, item.getMaxCharge(stackCopy), baseTier, true, true);
+							missing = ElectricItem.manager.charge(stackCopy, item.getMaxCharge(stackCopy), baseTier, true, true);
 						}
 						else missing = amountNeeded;
 					}
 					else
 					{
-						amountNeeded = ElectricItem.charge(stack, adjustedTransferLimit, baseTier, true, true);
+						amountNeeded = ElectricItem.manager.charge(stack, adjustedTransferLimit, baseTier, true, true);
 						if (amountNeeded == adjustedTransferLimit)
 						{
-							missing = ElectricItem.charge(stack, item.getMaxCharge(stack), baseTier, true, true);
+							missing = ElectricItem.manager.charge(stack, item.getMaxCharge(stack), baseTier, true, true);
 						}
 						else missing = amountNeeded;
 					}
@@ -582,7 +519,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 						//{
 						//	setInventorySlotContents(i, new ItemStack(chargedItemID, 1, 0));
 						//}
-						ElectricItem.charge(contents[i], adjustedTransferLimit, baseTier, true, false);
+						ElectricItem.manager.charge(contents[i], adjustedTransferLimit, baseTier, true, false);
 						currentEnergy -= adjustedEnergyUse;
 						if (currentEnergy < 0) currentEnergy = 0;
 						doingWork = true;
@@ -608,7 +545,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 				if (currentStack != null && currentStack.getItem() instanceof IElectricItem)
 				{
 					// Test if the item is fully charged (cannot accept any more power).
-					if (ElectricItem.charge(currentStack.copy(), 1, baseTier, false, true) == 0)
+					if (ElectricItem.manager.charge(currentStack.copy(), 1, baseTier, false, true) == 0)
 					{
 						contents[Info.CB_SLOT_OUTPUT] = currentStack;
 						contents[slot] = null;
@@ -822,5 +759,69 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 		// We're not sure what called this or what slot was altered, so make sure the upgrade effects are correct just in case and then pass the call on.
 		doUpgradeEffects();
 		super.onInventoryChanged();
+	}
+
+	@Override
+	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
+		return true;
+	}
+
+	@Override
+	public double getOutputEnergyUnitsPerTick() {
+		return 0;
+	}
+
+	@Override
+	public boolean isTeleporterCompatible(ForgeDirection side) {
+		return false;
+	}
+
+	@Override
+	public double demandedEnergyUnits() {
+		//		return (currentEnergy < adjustedStorage && !receivingRedstoneSignal());
+		if(!receivingRedstoneSignal())
+		{
+			return adjustedStorage - currentEnergy;
+		}
+		return 0;
+	}
+
+	@Override
+	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+		int surplus = 0;
+		if (AdvancedPowerManagement.proxy.isServer())
+		{
+			// if supply is greater than the max we can take per tick
+			if (amount > adjustedMaxInput)
+			{
+				//If the supplied EU is over the baseMaxInput, we're getting
+				//supplied higher than acceptable current. Pop ourselves off
+				//into the world and return all but 1 EU, or if the supply
+				//somehow was 1EU, return zero to keep IC2 from spitting out 
+				//massive errors in the log
+				selfDestroy();
+				if (amount <= 1)
+					return 0;
+				else
+					return amount - 1;
+			}
+			else
+			{
+				if (currentEnergy > adjustedStorage) currentEnergy = adjustedStorage;
+				currentEnergy += amount;
+				energyReceived += amount;
+				// check if our current energy level is now over the max energy level
+				if (currentEnergy > adjustedStorage)
+				{
+					//if so, our surplus to return is equal to that amount over
+					surplus = currentEnergy - adjustedStorage;
+					//and set our current energy level TO our max energy level
+					currentEnergy = adjustedStorage;
+					energyReceived -= surplus;
+				}
+				//surplus may be zero or greater here
+			}
+		}
+		return surplus;
 	}
 }

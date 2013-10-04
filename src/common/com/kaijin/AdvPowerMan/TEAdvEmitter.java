@@ -7,12 +7,12 @@ package com.kaijin.AdvPowerMan;
 import ic2.api.Direction;
 import ic2.api.energy.EnergyNet;
 import ic2.api.energy.event.EnergyTileLoadEvent;
-import ic2.api.energy.event.EnergyTileSourceEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLLog;
 
@@ -86,7 +86,6 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 		{
 			EnergyTileUnloadEvent unloadEvent = new EnergyTileUnloadEvent(this);
 			MinecraftForge.EVENT_BUS.post(unloadEvent);
-			//			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
 		}
 		super.invalidate();
 	}
@@ -123,21 +122,7 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 			}
 			EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
 			MinecraftForge.EVENT_BUS.post(loadEvent);
-			//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
-		}
-
-		if (receivingRedstoneSignal())
-		{
-			energyBuffer += outputRate;
-			EnergyNet net = EnergyNet.getForWorld(worldObj);
-			while (energyBuffer >= packetSize)
-			{
-				EnergyTileSourceEvent sourceEvent = new EnergyTileSourceEvent(this, packetSize);
-				MinecraftForge.EVENT_BUS.post(sourceEvent);
-				//				net.emitEnergyFrom(this, packetSize); // No reason to save any surplus. Output is always the same.
-				energyBuffer -= packetSize;
-			}
 		}
 	}
 
@@ -163,22 +148,32 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 
 	// IC2 API stuff
 
-	@Override
+	//@Override - this method doesn't exist anymore
 	public boolean isAddedToEnergyNet()
 	{
 		return initialized;
 	}
 
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, Direction direction)
+	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction)
 	{
 		return true;
 	}
 
 	@Override
-	public int getMaxEnergyOutput()
+	public double getOfferedEnergy()
 	{
-		return Integer.MAX_VALUE;
+		return Math.min(packetSize, outputRate);
+	}
+	
+	@Override
+	public void drawEnergy(double amount)
+	{
+		if (receivingRedstoneSignal())
+		{
+			energyBuffer += outputRate;
+			energyBuffer -= packetSize;
+		}
 	}
 
 	// Networking stuff
