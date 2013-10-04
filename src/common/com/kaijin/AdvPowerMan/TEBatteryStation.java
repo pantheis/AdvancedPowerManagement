@@ -23,7 +23,6 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -90,7 +89,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		if (!receivingRedstoneSignal())
 		{
 			drainPowerSource();
-			FMLLog.getLogger().info("DrawEnergy");
 			outputTracker.tick((int) amount);
 			currentEnergy -= amount;
 		}
@@ -204,7 +202,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		{
 			EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
 			MinecraftForge.EVENT_BUS.post(loadEvent);
-			//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
 
@@ -217,12 +214,8 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		{
 			// Work done only when not redstone powered 
 			drainPowerSource();
-			//energyOut = emitEnergy();
 		}
-		/*else
-		{
-			energyOut = 0;
-		}*/
+		
 		// Work done every tick
 		moveOutputItems();
 		repositionItems();
@@ -248,10 +241,8 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 		for (int i = Info.BS_SLOT_POWER_START; i < Info.BS_SLOT_POWER_START + 12; i++)
 		{
 			//if (ChargingBench.isDebugging) System.out.println("currentEnergy: " + currentEnergy + " baseMaxOutput: " + baseMaxOutput);
-			FMLLog.getLogger().info("currentEnergy: " + currentEnergy);
 			if (currentEnergy >= packetSize)
 			{
-				FMLLog.getLogger().info("hasenougitems");
 				hasEnoughItems = true;
 				break;
 			}
@@ -276,7 +267,6 @@ public class TEBatteryStation extends TECommonBench implements IEnergySource, II
 						if (chargeReturned > 0)
 						{
 							// Add the energy we received to our current energy level
-							FMLLog.getLogger().info("chargeReturned: " + chargeReturned);
 							currentEnergy += chargeReturned;
 							doingWork = true;
 						}

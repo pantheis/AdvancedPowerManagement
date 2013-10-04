@@ -430,7 +430,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 
 					if (energyNeeded > 0)
 					{
-						chargeReturned = ElectricItem.discharge(stack, energyNeeded, powerTier, false, false);
+						chargeReturned = ElectricItem.manager.discharge(stack, energyNeeded, powerTier, false, false);
 						// Add the energy we received to our current energy level,
 						currentEnergy += chargeReturned;
 						if (chargeReturned > 0) doingWork = true;
@@ -440,7 +440,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 				}
 
 				// Workaround for buggy IC2 API .discharge that automatically switches stack to emptyItemID but leaves a stackTagCompound on it, so it can't be stacked with never-used empties  
-				if (chargedItemID != emptyItemID && ElectricItem.discharge(stack, 1, powerTier, false, true) == 0)
+				if (chargedItemID != emptyItemID && ElectricItem.manager.discharge(stack, 1, powerTier, false, true) == 0)
 				{
 					//if (ChargingBench.isDebugging) System.out.println("Switching to emptyItemID: " + emptyItemID + " from stack.itemID: " + stack.itemID + " - chargedItemID: " + chargedItemID);
 					setInventorySlotContents(Info.CB_SLOT_POWER_SOURCE, new ItemStack(emptyItemID, 1, 0));
@@ -482,19 +482,19 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 						// Limiting its use by what is hopefully a broad enough test to catch all cases where it's necessary in order to avoid problems.
 						// Using it for any item types listed as stackable and for any items where the charged and empty item IDs differ.
 						final ItemStack stackCopy = stack.copy();
-						amountNeeded = ElectricItem.charge(stackCopy, adjustedTransferLimit, baseTier, true, true);
+						amountNeeded = ElectricItem.manager.charge(stackCopy, adjustedTransferLimit, baseTier, true, true);
 						if (amountNeeded == adjustedTransferLimit)
 						{
-							missing = ElectricItem.charge(stackCopy, item.getMaxCharge(stackCopy), baseTier, true, true);
+							missing = ElectricItem.manager.charge(stackCopy, item.getMaxCharge(stackCopy), baseTier, true, true);
 						}
 						else missing = amountNeeded;
 					}
 					else
 					{
-						amountNeeded = ElectricItem.charge(stack, adjustedTransferLimit, baseTier, true, true);
+						amountNeeded = ElectricItem.manager.charge(stack, adjustedTransferLimit, baseTier, true, true);
 						if (amountNeeded == adjustedTransferLimit)
 						{
-							missing = ElectricItem.charge(stack, item.getMaxCharge(stack), baseTier, true, true);
+							missing = ElectricItem.manager.charge(stack, item.getMaxCharge(stack), baseTier, true, true);
 						}
 						else missing = amountNeeded;
 					}
@@ -519,7 +519,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 						//{
 						//	setInventorySlotContents(i, new ItemStack(chargedItemID, 1, 0));
 						//}
-						ElectricItem.charge(contents[i], adjustedTransferLimit, baseTier, true, false);
+						ElectricItem.manager.charge(contents[i], adjustedTransferLimit, baseTier, true, false);
 						currentEnergy -= adjustedEnergyUse;
 						if (currentEnergy < 0) currentEnergy = 0;
 						doingWork = true;
@@ -545,7 +545,7 @@ public class TEChargingBench extends TECommonBench implements IEnergySink, IEner
 				if (currentStack != null && currentStack.getItem() instanceof IElectricItem)
 				{
 					// Test if the item is fully charged (cannot accept any more power).
-					if (ElectricItem.charge(currentStack.copy(), 1, baseTier, false, true) == 0)
+					if (ElectricItem.manager.charge(currentStack.copy(), 1, baseTier, false, true) == 0)
 					{
 						contents[Info.CB_SLOT_OUTPUT] = currentStack;
 						contents[slot] = null;

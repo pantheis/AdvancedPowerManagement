@@ -86,7 +86,6 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 		{
 			EnergyTileUnloadEvent unloadEvent = new EnergyTileUnloadEvent(this);
 			MinecraftForge.EVENT_BUS.post(unloadEvent);
-			//			EnergyNet.getForWorld(worldObj).removeTileEntity(this);
 		}
 		super.invalidate();
 	}
@@ -123,7 +122,6 @@ public class TEAdvEmitter extends TECommon implements IEnergySource
 			}
 			EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
 			MinecraftForge.EVENT_BUS.post(loadEvent);
-			//			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			initialized = true;
 		}
 	}
