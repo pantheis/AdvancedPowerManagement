@@ -81,22 +81,15 @@
 
 <!-- Main body of script handles everything that isn't conditional -->
 	<target name="main" depends="setup-forge,restore-mcp-src">
-	
-		<var name="sign-jar" value="false" />
-		<if>
-			<available file="${sign.dir}/.fingerprint"/>
-			<then>
-				<var name="sign-jar" value="true" />
-				<echo message="Loading certificate fingerprint"/>
-				<loadfile property="fingerprint" srcFile="${sign.dir}/.fingerprint">
-					<filterchain>
-						<striplinebreaks/>
-					</filterchain>
-				</loadfile>
-				<echo message="Loading key info"/>
-				<loadfile property="keypass" srcFile="${sign.dir}/.key"/>
-			</then>
-		</if>
+
+		<echo message="Loading certificate fingerprint"/>
+		<loadfile property="fingerprint" srcFile="${sign.dir}/.fingerprint">
+			<filterchain>
+				<striplinebreaks/>
+			</filterchain>
+		</loadfile>
+		<echo message="Loading key info"/>
+		<loadfile property="keypass" srcFile="${sign.dir}/.key"/>
 
 	<!-- Copy mod source to mcp -->
 		<echo message="Copying source files"/>
@@ -177,13 +170,8 @@
 			</manifest>
 		</jar>
 
-		<if>
-			<equals arg1="${sign-jar}" arg2="true" />
-			<then>
-				<echo message="Signing jar file"/>
-				<signjar jar="${jar.dir}/${mod.name}-${mymod.version.full}.jar" alias="KaijinCraft" keystore="${sign.dir}/.keystore" storepass="${keypass}"/>
-			</then>
-		</if>
+		<echo message="Signing jar file"/>
+		<signjar jar="${jar.dir}/${mod.name}-${mymod.version.full}.jar" alias="KaijinCraft" keystore="${sign.dir}/.keystore" storepass="${keypass}"/>
 
 	<!-- Finally, clear out the repo and class files for a fresh start next time -->
 		<delete dir="${classes.dir}" deleteonexit="true"/>
