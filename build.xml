@@ -181,7 +181,6 @@
 				<echo message="Signing jar file"/>
 				<signjar jar="${jar.dir}/${mod.name}-${mymod.version.full}.jar" alias="KaijinCraft" keystore="${sign.dir}/.keystore" storepass="${keypass}"/>
 			</then>
-		</if>
 
 	<!-- Finally, clear out the repo and class files for a fresh start next time -->
 		<delete dir="${classes.dir}" deleteonexit="true"/>
